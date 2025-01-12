@@ -1,0 +1,41 @@
+import { useEffect, useRef, useState } from 'react';
+
+export const useWebSocket = (
+    url: string,
+    onMessage?: (ev: MessageEvent) => any,
+    onOpen?: (ev: Event) => any
+) => {
+    const [socket, setSocket] = useState<WebSocket>();
+    const s = useRef<WebSocket>();
+    const reconnectTimeout = useRef<number>();
+    const initSocket = (url: string) => {
+        s.current = new WebSocket(url);
+        s.current.onclose = () => {
+            reconnectTimeout.current = setTimeout(() => {
+                initSocket(url);
+            }, 1000);
+        };
+        if (onMessage) {
+            s.current.onmessage = onMessage;
+        }
+        if (onOpen) {
+            s.current.onopen = onOpen;
+        }
+        setSocket(s.current);
+    };
+    useEffect(() => {
+        initSocket(url);
+        return () => {
+            if (reconnectTimeout.current) {
+                clearTimeout(reconnectTimeout.current);
+                reconnectTimeout.current = undefined;
+            }
+            if (s.current) {
+                s.current.onclose = null; // prevent restart
+                s.current.close();
+                s.current = undefined;
+            }
+        };
+    }, [url]);
+    return socket;
+};

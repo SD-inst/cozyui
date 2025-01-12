@@ -1,0 +1,24 @@
+{
+    "Hunyuan T2V": {
+        "workflow": "hunyuan_wf.json",
+        "api": "hunyuan_api.json",
+        "controls": {
+            "prompt": {
+                "id": "30",
+                "field": "prompt"
+            },
+            "seed": {
+                "id": "52",
+                "field": "value"
+            },
+            "steps": {
+                "id": "3",
+                "field": "steps"
+            },
+            "length": {
+                "id": "45",
+                "field": "value"
+            }
+        }
+    }
+}

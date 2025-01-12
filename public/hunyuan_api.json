@@ -1,0 +1,205 @@
+{
+  "1": {
+    "inputs": {
+      "model": "hyvid/mp_rank_00_model_states_fp8.pt",
+      "base_precision": "bf16",
+      "quantization": "fp8_scaled",
+      "load_device": "main_device",
+      "attention_mode": "sageattn_varlen",
+      "auto_cpu_offload": false
+    },
+    "class_type": "HyVideoModelLoader",
+    "_meta": {
+      "title": "HunyuanVideo Model Loader"
+    }
+  },
+  "3": {
+    "inputs": {
+      "width": [
+        "43",
+        0
+      ],
+      "height": [
+        "44",
+        0
+      ],
+      "num_frames": [
+        "45",
+        0
+      ],
+      "steps": 7,
+      "embedded_guidance_scale": 6,
+      "flow_shift": 9,
+      "seed": [
+        "52",
+        0
+      ],
+      "force_offload": 1,
+      "denoise_strength": 1,
+      "scheduler": "FlowMatchDiscreteScheduler",
+      "model": [
+        "1",
+        0
+      ],
+      "hyvid_embeds": [
+        "30",
+        0
+      ],
+      "feta_args": [
+        "54",
+        0
+      ]
+    },
+    "class_type": "HyVideoSampler",
+    "_meta": {
+      "title": "HunyuanVideo Sampler"
+    }
+  },
+  "5": {
+    "inputs": {
+      "enable_vae_tiling": true,
+      "temporal_tiling_sample_size": 8,
+      "spatial_tile_sample_min_size": 256,
+      "auto_tile_size": true,
+      "vae": [
+        "7",
+        0
+      ],
+      "samples": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "HyVideoDecode",
+    "_meta": {
+      "title": "HunyuanVideo Decode"
+    }
+  },
+  "7": {
+    "inputs": {
+      "model_name": "hyvid/hunyuan_video_vae_bf16.safetensors",
+      "precision": "bf16"
+    },
+    "class_type": "HyVideoVAELoader",
+    "_meta": {
+      "title": "HunyuanVideo VAE Loader"
+    }
+  },
+  "16": {
+    "inputs": {
+      "llm_model": "Kijai/llava-llama-3-8b-text-encoder-tokenizer",
+      "clip_model": "openai/clip-vit-large-patch14",
+      "precision": "fp16",
+      "apply_final_norm": false,
+      "hidden_state_skip_layer": 2,
+      "quantization": "disabled"
+    },
+    "class_type": "DownloadAndLoadHyVideoTextEncoder",
+    "_meta": {
+      "title": "(Down)Load HunyuanVideo TextEncoder"
+    }
+  },
+  "30": {
+    "inputs": {
+      "prompt": "high quality nature video of a red panda balancing on a bamboo stick while a bird lands on the panda's head, there's a waterfall in the background",
+      "force_offload": "bad quality video",
+      "prompt_template": "video",
+      "text_encoders": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "HyVideoTextEncode",
+    "_meta": {
+      "title": "HunyuanVideo TextEncode"
+    }
+  },
+  "34": {
+    "inputs": {
+      "frame_rate": 16,
+      "loop_count": 0,
+      "filename_prefix": [
+        "53",
+        0
+      ],
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": false,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": false,
+      "images": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "43": {
+    "inputs": {
+      "value": 208
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Width"
+    }
+  },
+  "44": {
+    "inputs": {
+      "value": 368
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Height"
+    }
+  },
+  "45": {
+    "inputs": {
+      "value": 85
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Length"
+    }
+  },
+  "52": {
+    "inputs": {
+      "value": 1234
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "53": {
+    "inputs": {
+      "prefix": "HunyuanVideo_",
+      "suffix": "",
+      "input": [
+        "52",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "54": {
+    "inputs": {
+      "weight": 2,
+      "single_blocks": true,
+      "double_blocks": true,
+      "start_percent": 0,
+      "end_percent": 0.8
+    },
+    "class_type": "HyVideoEnhanceAVideo",
+    "_meta": {
+      "title": "HunyuanVideo Enhance A Video"
+    }
+  }
+}
