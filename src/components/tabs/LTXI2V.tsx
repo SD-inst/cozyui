@@ -2,7 +2,7 @@ import { Paper } from '@mui/material';
 import { TextInput } from '../controls/TextInput';
 import { WFTab } from '../WFTab';
 
-const Content = ({ ...props }) => (
+const Content = () => (
     <Paper>
         <TextInput name='prompt' multiline />
     </Paper>

@@ -1,13 +1,15 @@
 import { SeedInput } from '../controls/SeedInput';
 import { TextInput } from '../controls/TextInput';
+import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 
-const Content = ({ ...props }) => (
+const Content = () => (
     <>
         <TextInput name='prompt' multiline />
         <TextInput type='number' name='length' defaultValue={85} />
-        <TextInput type='number' name='steps' defaultValue={7}/>
+        <TextInput type='number' name='steps' defaultValue={7} />
         <SeedInput name='seed' />
+        <VideoResult />
     </>
 );
 

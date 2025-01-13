@@ -12,16 +12,19 @@ export const WSReceiver = ({
     id,
     onStatus,
     onConnected,
+    onStart,
     onProgress,
     onError,
+    onExecuted,
     onComplete,
     onInterrupted,
-    ...props
 }: {
     id: string;
     onStatus: (data: any) => void;
     onConnected?: () => void;
-    onComplete?: (data: any) => void;
+    onStart?: () => void;
+    onComplete?: () => void;
+    onExecuted?: (data: any) => void;
     onProgress?: (data: any) => void;
     onError?: (data: any) => void;
     onInterrupted?: () => void;
@@ -30,8 +33,14 @@ export const WSReceiver = ({
         console.log(ev.data);
         const j = JSON.parse(ev.data);
         switch (j.type) {
+            case 'execution_success':
+                onComplete && onComplete();
+                break;
+            case 'execution_start':
+                onStart && onStart();
+                break;
             case 'executed':
-                onComplete && onComplete(j.data);
+                onExecuted && onExecuted(j.data);
                 break;
             case 'status':
                 onStatus && onStatus(j.data.status);

@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 
-export const WFTab = ({
-    ...props
-}: {
+export const WFTab = ({}: {
     label: string;
     value?: number | string;
     content: ReactNode;

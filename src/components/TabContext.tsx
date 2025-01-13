@@ -1,39 +1,28 @@
-import { createContext, useContext, useEffect } from 'react';
-import toast from 'react-hot-toast';
-import { useGet } from '../hooks/useGet';
+import { createContext, useContext } from 'react';
 
-const TabContext = createContext({});
+export const TabContext = createContext<TabBinding>({
+    workflow: '',
+    api: '',
+    controls: {},
+    result: {
+        id: '',
+        type: '',
+    },
+});
 
-type Tabs = {
-    [name: string]: {
-        workflow: string;
-        api: string;
-        controls: {
-            [control: string]: {
-                id: string;
-                field: string;
-            };
+type TabBinding = {
+    workflow: string;
+    api: string;
+    controls: {
+        [control: string]: {
+            id: string;
+            field: string;
         };
+    };
+    result: {
+        id: string;
+        type: string;
     };
 };
 
-export const useTabContext = () => useContext<Tabs>(TabContext);
-
-export const TabContextProvider = ({ ...props }) => {
-    const { data, error, isError, isSuccess } = useGet('tabs.json');
-    useEffect(() => {
-        if (isSuccess) {
-            toast.success('Got tabs');
-            return;
-        }
-        if (!isError) {
-            return;
-        }
-        toast.error('Error getting tabs: ' + error);
-    }, [isError, error, isSuccess]);
-    return (
-        <TabContext.Provider value={isSuccess ? data : {}}>
-            {props.children}
-        </TabContext.Provider>
-    );
-};
+export const useTabContext = () => useContext<TabBinding>(TabContext);

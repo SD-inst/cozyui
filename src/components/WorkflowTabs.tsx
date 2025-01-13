@@ -1,23 +1,33 @@
 import { Tab, Tabs } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { useGet } from '../hooks/useGet';
 import { GenerateButton } from './GenerateButton';
+import { TabContext } from './TabContext';
 import { VerticalBox } from './VerticalBox';
 
 export const WorkflowTabs = ({
     id,
-    disabled,
-    setDisabled,
     ...props
 }: {
     id: string;
-    disabled: boolean;
-    setDisabled: (disabled: boolean) => void;
 } & React.PropsWithChildren) => {
     const [currentTab, setCurrentTab] = useState(
         (React.Children.toArray(props.children)[0] as React.ReactElement).props
             .value || 0
     );
+    const { data, error, isError, isSuccess } = useGet('tabs.json');
+    useEffect(() => {
+        if (isSuccess) {
+            toast.success('Got tabs');
+            return;
+        }
+        if (!isError) {
+            return;
+        }
+        toast.error('Error getting tabs: ' + error);
+    }, [isError, error, isSuccess]);
     return (
         <>
             <Tabs value={currentTab} onChange={(_, v) => setCurrentTab(v)}>
@@ -40,15 +50,14 @@ export const WorkflowTabs = ({
                 const form = useForm();
                 return (
                     <VerticalBox mt={3}>
-                        <FormProvider {...form}>
-                            {content}
-                            <GenerateButton
-                                id={id}
-                                disabled={disabled}
-                                setDisabled={setDisabled}
-                                tab={value}
-                            />
-                        </FormProvider>
+                        <TabContext.Provider
+                            value={isSuccess && data[value] ? data[value] : {}}
+                        >
+                            <FormProvider {...form}>
+                                {content}
+                                <GenerateButton />
+                            </FormProvider>
+                        </TabContext.Provider>
                     </VerticalBox>
                 );
             })}

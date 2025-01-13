@@ -3,30 +3,20 @@ import { useMutation } from '@tanstack/react-query';
 import { cloneDeep } from 'lodash';
 import { useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useGet } from '../hooks/useGet';
-import { useTabContext } from './TabContext';
 import toast from 'react-hot-toast';
+import { useGet } from '../hooks/useGet';
+import { useStatus } from './StatusContext';
+import { useTabContext } from './TabContext';
 
-export const GenerateButton = ({
-    id,
-    disabled,
-    setDisabled,
-    tab,
-    ...props
-}: {
-    id: string;
-    disabled: boolean;
-    setDisabled: (disabled: boolean) => void;
-    tab: string;
-}) => {
+export const GenerateButton = () => {
+    const { generationDisabled, setStatus, client_id } = useStatus();
     const [params, setParams] = useState({
-        client_id: id,
+        client_id,
         prompt: {} as any,
         extra_data: {},
     });
     const { getValues } = useFormContext();
-    const tabs = useTabContext();
-    const currentTab = tabs[tab] || {};
+    const currentTab = useTabContext();
     const { data: apiData, isSuccess: apiSuccess } = useGet(
         currentTab.api,
         !!currentTab.api
@@ -56,7 +46,10 @@ export const GenerateButton = ({
                     if (r.status === 200) {
                         return;
                     }
-                    setDisabled(false);
+                    setStatus((s) => ({
+                        ...s,
+                        generationDisabled: false,
+                    }));
                     return r.json();
                 })
                 .then((j) => {
@@ -79,10 +72,14 @@ export const GenerateButton = ({
                 },
             },
         }));
-        setDisabled(false);
+        setStatus((s) => ({ ...s, generationDisabled: false }));
     }, [apiSuccess, wfSuccess, apiData, wfData]);
     const handleGenerate = () => {
-        setDisabled(true);
+        setStatus((s) => ({
+            ...s,
+            generationDisabled: true,
+            status: 'Waiting...',
+        }));
         mutate();
     };
     return (
@@ -90,7 +87,7 @@ export const GenerateButton = ({
             variant='contained'
             color='warning'
             onClick={handleGenerate}
-            disabled={disabled}
+            disabled={generationDisabled}
         >
             GENERATE
         </Button>
