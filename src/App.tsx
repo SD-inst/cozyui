@@ -20,7 +20,10 @@ function App() {
             .map(() => Math.floor(Math.random() * 16).toString(16))
             .join('')
     );
-    const [status, setStatus] = useState<status>(emptyStatus);
+    const [status, setStatus] = useState<status>({
+        ...emptyStatus,
+        generationDisabled: true,
+    });
     const reset = () => {
         setStatus((s) => ({
             ...emptyStatus,
@@ -31,12 +34,18 @@ function App() {
         reset();
     };
     const onStart = () => {
-        setStatus({
+        setStatus((s) => ({
             ...emptyStatus,
+            api: s.api,
             generationDisabled: true,
             status: 'Running',
-        });
+        }));
     };
+    const onExecuting = (data: any) =>
+        setStatus((s: status) => ({
+            ...s,
+            currentNode: '' + (data.node || ''),
+        }));
     const onExecuted = (data: any) =>
         setStatus((s: status) => ({
             ...s,
@@ -49,7 +58,7 @@ function App() {
         toast.error(data.exception_message);
     };
     const theme = createTheme({
-        colorSchemes: { dark: true, light: true },
+        colorSchemes: { dark: true },
         defaultColorScheme: 'dark',
     });
     return (
@@ -72,6 +81,7 @@ function App() {
                     }
                     onStart={onStart}
                     onExecuted={onExecuted}
+                    onExecuting={onExecuting}
                     onInterrupted={reset}
                     onComplete={onComplete}
                     onError={onError}

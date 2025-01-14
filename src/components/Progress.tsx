@@ -6,7 +6,9 @@ export const Progress = () => {
     const {
         progress: { max, min, value },
         status,
+        currentNode,
         queue,
+        api,
     } = useStatus();
     const range = max - min;
     const perc = ((value - min) * 100) / range || 0;
@@ -14,12 +16,18 @@ export const Progress = () => {
         <VerticalBox width='100%'>
             {status && (
                 <Typography variant='body2' color='primary'>
-                    {status}{' '}
-                    {queue > 1 ? (
-                        <Typography variant='body1'>
-                            / Queued: {queue - 1}
-                        </Typography>
-                    ) : null}
+                    {status}
+                </Typography>
+            )}
+            {queue > 1 ? (
+                <Typography variant='body1'>Queued: {queue - 1}</Typography>
+            ) : null}
+            {currentNode && (
+                <Typography variant='body2' color='info'>
+                    Executing node:{' '}
+                    {api[currentNode]?._meta?.title ||
+                        api[currentNode]?.class_type}{' '}
+                    [{currentNode}]
                 </Typography>
             )}
             {value >= 0 && (

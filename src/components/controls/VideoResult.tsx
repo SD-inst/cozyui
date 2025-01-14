@@ -1,19 +1,25 @@
 import { useResult } from '../StatusContext';
 import { useTabContext } from '../TabContext';
+import { VerticalBox } from '../VerticalBox';
 
 export const VideoResult = () => {
     const tb = useTabContext();
-    const r = useResult(tb.result?.id, tb.result?.type);
-    if (!r?.length) {
+    const results = useResult(tb.result?.id, tb.result?.type);
+    if (!results?.length) {
         return null;
     }
     return (
-        <video
-            style={{ maxWidth: 200 }}
-            src={`/cui/api/view?filename=${r[0].filename}&subfolder=${r[0].subfolder}&type=${r[0].type}`}
-            controls
-            autoPlay
-            loop
-        />
+        <VerticalBox width='100%'>
+            {results.map((r) => (
+                <video
+                    key={r.filename}
+                    style={{ width: '100%' }}
+                    src={`/cui/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`}
+                    controls
+                    autoPlay
+                    loop
+                />
+            ))}
+        </VerticalBox>
     );
 };

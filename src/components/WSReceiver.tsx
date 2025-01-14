@@ -16,6 +16,7 @@ export const WSReceiver = ({
     onProgress,
     onError,
     onExecuted,
+    onExecuting,
     onComplete,
     onInterrupted,
 }: {
@@ -25,6 +26,7 @@ export const WSReceiver = ({
     onStart?: () => void;
     onComplete?: () => void;
     onExecuted?: (data: any) => void;
+    onExecuting?: (data: any) => void;
     onProgress?: (data: any) => void;
     onError?: (data: any) => void;
     onInterrupted?: () => void;
@@ -41,6 +43,9 @@ export const WSReceiver = ({
                 break;
             case 'executed':
                 onExecuted && onExecuted(j.data);
+                break;
+            case 'executing':
+                onExecuting && onExecuting(j.data);
                 break;
             case 'status':
                 onStatus && onStatus(j.data.status);

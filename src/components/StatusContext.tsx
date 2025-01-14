@@ -12,6 +12,8 @@ export const emptyStatus: status = {
     result: {},
     setStatus: () => {},
     status: '',
+    currentNode: '',
+    api: {},
 };
 
 export const StatusContext = createContext<status>(emptyStatus);
@@ -24,6 +26,7 @@ export type status = {
         };
     };
     status: string;
+    currentNode: string;
     queue: number;
     progress: {
         min: number;
@@ -32,6 +35,7 @@ export type status = {
     };
     generationDisabled: boolean;
     setStatus: Dispatch<SetStateAction<status>>;
+    api: any;
 };
 
 export const useResult = (id: string, type: string) => {

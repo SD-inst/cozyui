@@ -18,7 +18,7 @@ export const SeedInput = ({ ...props }) => {
         <Box display='flex' gap={1}>
             <TextInput
                 type='number'
-                sx={{ width: 425 }}
+                fullWidth
                 defaultValue={1024}
                 {...props}
             />

@@ -3,7 +3,6 @@ import { useController } from 'react-hook-form';
 
 export const TextInput = ({
     defaultValue,
-    onChange,
     ...props
 }: {
     defaultValue?: any;
@@ -16,7 +15,7 @@ export const TextInput = ({
         <TextField
             label={props.name}
             variant='filled'
-            sx={{ width: 500 }}
+            fullWidth
             {...promptCtl.field}
             {...props}
         />

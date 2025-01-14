@@ -7,6 +7,14 @@
                 "id": "30",
                 "field": "prompt"
             },
+            "width": {
+                "id": "43",
+                "field": "value"
+            },
+            "height": {
+                "id": "44",
+                "field": "value"
+            },
             "seed": {
                 "id": "52",
                 "field": "value"

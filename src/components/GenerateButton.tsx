@@ -72,13 +72,13 @@ export const GenerateButton = () => {
                 },
             },
         }));
-        setStatus((s) => ({ ...s, generationDisabled: false }));
     }, [apiSuccess, wfSuccess, apiData, wfData]);
     const handleGenerate = () => {
         setStatus((s) => ({
             ...s,
             generationDisabled: true,
             status: 'Waiting...',
+            api: apiData,
         }));
         mutate();
     };
@@ -87,7 +87,7 @@ export const GenerateButton = () => {
             variant='contained'
             color='warning'
             onClick={handleGenerate}
-            disabled={generationDisabled}
+            disabled={generationDisabled || !apiSuccess || !wfSuccess}
         >
             GENERATE
         </Button>
