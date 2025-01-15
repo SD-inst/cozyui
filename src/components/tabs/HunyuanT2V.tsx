@@ -4,7 +4,8 @@ import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { SliderProps } from '@mui/material';
+import { Box, SliderProps } from '@mui/material';
+import { SwapButton } from '../controls/SwapButton';
 
 const HYSize = ({ ...props }: SliderProps) => {
     return <SliderInput min={128} max={720} step={16} {...props} />;
@@ -13,8 +14,15 @@ const HYSize = ({ ...props }: SliderProps) => {
 const Content = () => (
     <>
         <TextInput name='prompt' multiline />
-        <HYSize name='width' defaultValue={512} />
-        <HYSize name='height' defaultValue={320} />
+        <Box display='flex' flexDirection='row' width='100%'>
+            <Box display='flex' flexDirection='column' flex={1}>
+                <HYSize name='width' defaultValue={512} />
+                <HYSize name='height' defaultValue={320} />
+            </Box>
+            <Box display='flex' alignItems='center'>
+                <SwapButton names={['width', 'height']} sx={{ mt: 3 }} />
+            </Box>
+        </Box>
         <SliderInput
             name='length'
             defaultValue={85}

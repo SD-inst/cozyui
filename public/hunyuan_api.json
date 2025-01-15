@@ -102,7 +102,7 @@
   "30": {
     "inputs": {
       "prompt": "high quality nature video of a red panda balancing on a bamboo stick while a bird lands on the panda's head, there's a waterfall in the background",
-      "force_offload": "bad quality video",
+      "force_offload": true,
       "prompt_template": "video",
       "text_encoders": [
         "16",
@@ -191,7 +191,7 @@
   },
   "54": {
     "inputs": {
-      "weight": 2,
+      "weight": 4,
       "single_blocks": true,
       "double_blocks": true,
       "start_percent": 0,
