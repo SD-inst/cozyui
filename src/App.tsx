@@ -37,6 +37,7 @@ function App() {
         setStatus((s) => ({
             ...emptyStatus,
             api: s.api,
+            result: s.result,
             generationDisabled: true,
             status: 'Running',
         }));
