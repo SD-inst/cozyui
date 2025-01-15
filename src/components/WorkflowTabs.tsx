@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useGet } from '../hooks/useGet';
-import { GenerateButton } from './GenerateButton';
 import { TabContext } from './TabContext';
 import { VerticalBox } from './VerticalBox';
 
@@ -49,13 +48,12 @@ export const WorkflowTabs = ({
                 }
                 const form = useForm();
                 return (
-                    <VerticalBox mt={3}>
+                    <VerticalBox mt={3} width='100%'>
                         <TabContext.Provider
                             value={isSuccess && data[value] ? data[value] : {}}
                         >
                             <FormProvider {...form}>
                                 {content}
-                                <GenerateButton />
                             </FormProvider>
                         </TabContext.Provider>
                     </VerticalBox>
