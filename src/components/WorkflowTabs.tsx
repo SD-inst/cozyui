@@ -1,35 +1,21 @@
 import { Tab, Tabs } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import { useGet } from '../hooks/useGet';
-import { TabContext } from './TabContext';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
 
-export const WorkflowTabs = ({
-    id,
-    ...props
-}: {
-    id: string;
-} & React.PropsWithChildren) => {
-    const [currentTab, setCurrentTab] = useState(
-        (React.Children.toArray(props.children)[0] as React.ReactElement).props
-            .value || 0
-    );
-    const { data, error, isError, isSuccess } = useGet('tabs.json');
-    useEffect(() => {
-        if (isSuccess) {
-            toast.success('Got tabs');
-            return;
-        }
-        if (!isError) {
-            return;
-        }
-        toast.error('Error getting tabs: ' + error);
-    }, [isError, error, isSuccess]);
+export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
+    const { current_tab } = useAppSelector((s) => s.tab);
+    const dispatch = useAppDispatch();
     return (
         <>
-            <Tabs value={currentTab} onChange={(_, v) => setCurrentTab(v)}>
+            <Tabs
+                value={current_tab}
+                onChange={(_, v) => {
+                    dispatch(setTab(v));
+                }}
+            >
                 {React.Children.map(props.children, (c, i) => {
                     if (!React.isValidElement(c)) {
                         return;
@@ -39,23 +25,17 @@ export const WorkflowTabs = ({
                 })}
             </Tabs>
             {React.Children.map(props.children, (c, i) => {
+                const form = useForm();
                 if (!React.isValidElement(c)) {
                     return;
                 }
                 const { value, content } = c.props;
-                if (currentTab !== (value || i)) {
+                if (current_tab !== (value || i)) {
                     return null;
                 }
-                const form = useForm();
                 return (
                     <VerticalBox mt={3} width='100%'>
-                        <TabContext.Provider
-                            value={isSuccess && data[value] ? data[value] : {}}
-                        >
-                            <FormProvider {...form}>
-                                {content}
-                            </FormProvider>
-                        </TabContext.Provider>
+                        <FormProvider {...form}>{content}</FormProvider>
                     </VerticalBox>
                 );
             })}

@@ -1,6 +1,6 @@
 {
-  "last_node_id": 54,
-  "last_link_id": 72,
+  "last_node_id": 56,
+  "last_link_id": 75,
   "nodes": [
     {
       "id": 5,
@@ -14,7 +14,7 @@
         150
       ],
       "flags": {},
-      "order": 12,
+      "order": 9,
       "mode": 0,
       "inputs": [
         {
@@ -72,41 +72,6 @@
       "bgcolor": "#653"
     },
     {
-      "id": 44,
-      "type": "INTConstant",
-      "pos": [
-        653.3548583984375,
-        371.037841796875
-      ],
-      "size": [
-        210,
-        58
-      ],
-      "flags": {},
-      "order": 1,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "value",
-          "type": "INT",
-          "links": [
-            52
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Height",
-      "properties": {
-        "Node name for S&R": "INTConstant"
-      },
-      "widgets_values": [
-        360
-      ],
-      "color": "#1b4669",
-      "bgcolor": "#29699c"
-    },
-    {
       "id": 34,
       "type": "VHS_VideoCombine",
       "pos": [
@@ -115,10 +80,10 @@
       ],
       "size": [
         580.7774658203125,
-        1336.144775390625
+        330
       ],
       "flags": {},
-      "order": 13,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -178,53 +143,17 @@
           "hidden": false,
           "paused": false,
           "params": {
-            "filename": "HunyuanVideo_1234_00008.mp4",
+            "filename": "HunyuanVideo_1234_00006.mp4",
             "subfolder": "",
             "type": "temp",
             "format": "video/h264-mp4",
             "frame_rate": 16,
-            "workflow": "HunyuanVideo_1234_00008.png",
-            "fullpath": "/app/temp/HunyuanVideo_1234_00008.mp4"
+            "workflow": "HunyuanVideo_1234_00006.png",
+            "fullpath": "/app/temp/HunyuanVideo_1234_00006.mp4"
           },
           "muted": false
         }
       }
-    },
-    {
-      "id": 52,
-      "type": "INTConstant",
-      "pos": [
-        659.7592163085938,
-        607.4599609375
-      ],
-      "size": [
-        210,
-        58
-      ],
-      "flags": {},
-      "order": 2,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "value",
-          "type": "INT",
-          "links": [
-            68,
-            69
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Seed",
-      "properties": {
-        "Node name for S&R": "INTConstant"
-      },
-      "widgets_values": [
-        1234
-      ],
-      "color": "#1b4669",
-      "bgcolor": "#29699c"
     },
     {
       "id": 53,
@@ -238,7 +167,7 @@
         82
       ],
       "flags": {},
-      "order": 9,
+      "order": 6,
       "mode": 0,
       "inputs": [
         {
@@ -266,6 +195,139 @@
       ]
     },
     {
+      "id": 52,
+      "type": "INTConstant",
+      "pos": [
+        642.5803833007812,
+        319.71588134765625
+      ],
+      "size": [
+        210,
+        58
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "INT",
+          "links": [
+            68,
+            69
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Seed",
+      "properties": {
+        "Node name for S&R": "INTConstant"
+      },
+      "widgets_values": [
+        1234
+      ],
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
+    },
+    {
+      "id": 30,
+      "type": "HyVideoTextEncode",
+      "pos": [
+        174.1599884033203,
+        307.33984375
+      ],
+      "size": [
+        421.0154724121094,
+        218.6866912841797
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_encoders",
+          "type": "HYVIDTEXTENCODER",
+          "link": 35
+        },
+        {
+          "name": "custom_prompt_template",
+          "type": "PROMPT_TEMPLATE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "clip_l",
+          "type": "CLIP",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "hyvid_cfg",
+          "type": "HYVID_CFG",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "hyvid_embeds",
+          "type": "HYVIDEMBEDS",
+          "links": [
+            36
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HyVideoTextEncode"
+      },
+      "widgets_values": [
+        "high quality nature video of a red panda balancing on a bamboo stick while a bird lands on the panda's head, there's a waterfall in the background",
+        true,
+        "video"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "HyVideoVAELoader",
+      "pos": [
+        -277,
+        -284
+      ],
+      "size": [
+        379.166748046875,
+        82
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "compile_args",
+          "type": "COMPILEARGS",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "vae",
+          "type": "VAE",
+          "links": [
+            6
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "HyVideoVAELoader"
+      },
+      "widgets_values": [
+        "hyvid/hunyuan_video_vae_bf16.safetensors",
+        "bf16"
+      ]
+    },
+    {
       "id": 1,
       "type": "HyVideoModelLoader",
       "pos": [
@@ -274,7 +336,7 @@
       ],
       "size": [
         426.1773986816406,
-        218
+        242
       ],
       "flags": {},
       "order": 3,
@@ -318,104 +380,135 @@
         "fp8_scaled",
         "main_device",
         "sageattn_varlen",
-        false
+        false,
+        true
       ]
     },
     {
-      "id": 7,
-      "type": "HyVideoVAELoader",
+      "id": 54,
+      "type": "HyVideoEnhanceAVideo",
       "pos": [
-        -277,
-        -284
+        204.79901123046875,
+        -451.6938171386719
       ],
       "size": [
-        379.166748046875,
-        82
+        352.79998779296875,
+        154
       ],
       "flags": {},
       "order": 4,
       "mode": 0,
-      "inputs": [
-        {
-          "name": "compile_args",
-          "type": "COMPILEARGS",
-          "link": null,
-          "shape": 7
-        }
-      ],
+      "inputs": [],
       "outputs": [
         {
-          "name": "vae",
-          "type": "VAE",
+          "name": "feta_args",
+          "type": "FETAARGS",
           "links": [
-            6
+            75
           ],
           "slot_index": 0
         }
       ],
       "properties": {
-        "Node name for S&R": "HyVideoVAELoader"
+        "Node name for S&R": "HyVideoEnhanceAVideo"
       },
       "widgets_values": [
-        "hyvid/hunyuan_video_vae_bf16.safetensors",
-        "bf16"
+        4,
+        true,
+        true,
+        0,
+        0.8
       ]
     },
     {
-      "id": 30,
-      "type": "HyVideoTextEncode",
+      "id": 3,
+      "type": "HyVideoSampler",
       "pos": [
-        174.1599884033203,
-        307.33984375
+        266,
+        -141
       ],
       "size": [
-        421.0154724121094,
-        218.6866912841797
+        315,
+        390
       ],
       "flags": {},
-      "order": 10,
+      "order": 8,
       "mode": 0,
       "inputs": [
         {
-          "name": "text_encoders",
-          "type": "HYVIDTEXTENCODER",
-          "link": 35
+          "name": "model",
+          "type": "HYVIDEOMODEL",
+          "link": 2
         },
         {
-          "name": "custom_prompt_template",
-          "type": "PROMPT_TEMPLATE",
+          "name": "hyvid_embeds",
+          "type": "HYVIDEMBEDS",
+          "link": 36
+        },
+        {
+          "name": "samples",
+          "type": "LATENT",
           "link": null,
           "shape": 7
         },
         {
-          "name": "clip_l",
-          "type": "CLIP",
+          "name": "stg_args",
+          "type": "STGARGS",
           "link": null,
           "shape": 7
         },
         {
-          "name": "hyvid_cfg",
-          "type": "HYVID_CFG",
+          "name": "seed",
+          "type": "INT",
+          "link": 68,
+          "widget": {
+            "name": "seed"
+          }
+        },
+        {
+          "name": "feta_args",
+          "type": "FETAARGS",
+          "link": 75,
+          "shape": 7
+        },
+        {
+          "name": "teacache_args",
+          "type": "TEACACHEARGS",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "context_options",
+          "type": "HYVIDCONTEXT",
           "link": null,
           "shape": 7
         }
       ],
       "outputs": [
         {
-          "name": "hyvid_embeds",
-          "type": "HYVIDEMBEDS",
+          "name": "samples",
+          "type": "LATENT",
           "links": [
-            36
-          ]
+            4
+          ],
+          "slot_index": 0
         }
       ],
       "properties": {
-        "Node name for S&R": "HyVideoTextEncode"
+        "Node name for S&R": "HyVideoSampler"
       },
       "widgets_values": [
-        "high quality nature video of a red panda balancing on a bamboo stick while a bird lands on the panda's head, there's a waterfall in the background",
-        "bad quality video",
-        "video"
+        512,
+        320,
+        85,
+        7,
+        17,
+        17,
+        6,
+        "fixed",
+        1,
+        1,
+        "FlowMatchDiscreteScheduler"
       ]
     },
     {
@@ -453,227 +546,6 @@
         2,
         "disabled"
       ]
-    },
-    {
-      "id": 54,
-      "type": "HyVideoEnhanceAVideo",
-      "pos": [
-        194.31236267089844,
-        -462.1803894042969
-      ],
-      "size": [
-        352.79998779296875,
-        154
-      ],
-      "flags": {},
-      "order": 6,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "feta_args",
-          "type": "FETAARGS",
-          "links": [
-            72
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "HyVideoEnhanceAVideo"
-      },
-      "widgets_values": [
-        2,
-        true,
-        true,
-        0,
-        0.8
-      ]
-    },
-    {
-      "id": 43,
-      "type": "INTConstant",
-      "pos": [
-        653.4881591796875,
-        251.63792419433594
-      ],
-      "size": [
-        210,
-        58
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "value",
-          "type": "INT",
-          "links": [
-            51
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Width",
-      "properties": {
-        "Node name for S&R": "INTConstant"
-      },
-      "widgets_values": [
-        208
-      ],
-      "color": "#1b4669",
-      "bgcolor": "#29699c"
-    },
-    {
-      "id": 3,
-      "type": "HyVideoSampler",
-      "pos": [
-        266,
-        -141
-      ],
-      "size": [
-        315,
-        378
-      ],
-      "flags": {},
-      "order": 11,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "HYVIDEOMODEL",
-          "link": 2
-        },
-        {
-          "name": "hyvid_embeds",
-          "type": "HYVIDEMBEDS",
-          "link": 36
-        },
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "link": null,
-          "shape": 7
-        },
-        {
-          "name": "width",
-          "type": "INT",
-          "link": 51,
-          "widget": {
-            "name": "width"
-          }
-        },
-        {
-          "name": "height",
-          "type": "INT",
-          "link": 52,
-          "widget": {
-            "name": "height"
-          }
-        },
-        {
-          "name": "num_frames",
-          "type": "INT",
-          "link": 53,
-          "widget": {
-            "name": "num_frames"
-          }
-        },
-        {
-          "name": "teacache_args",
-          "type": "TEACACHEARGS",
-          "link": null,
-          "shape": 7
-        },
-        {
-          "name": "seed",
-          "type": "INT",
-          "link": 68,
-          "widget": {
-            "name": "seed"
-          }
-        },
-        {
-          "name": "context_options",
-          "type": "COGCONTEXT",
-          "link": null,
-          "shape": 7
-        },
-        {
-          "name": "feta_args",
-          "type": "FETAARGS",
-          "link": 72,
-          "shape": 7
-        },
-        {
-          "name": "stg_args",
-          "type": "STGARGS",
-          "link": null,
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "samples",
-          "type": "LATENT",
-          "links": [
-            4
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "HyVideoSampler"
-      },
-      "widgets_values": [
-        512,
-        320,
-        85,
-        7,
-        6,
-        9,
-        6,
-        "fixed",
-        1,
-        1,
-        "FlowMatchDiscreteScheduler"
-      ]
-    },
-    {
-      "id": 45,
-      "type": "INTConstant",
-      "pos": [
-        652.4884033203125,
-        488.97113037109375
-      ],
-      "size": [
-        210,
-        58
-      ],
-      "flags": {},
-      "order": 8,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "value",
-          "type": "INT",
-          "links": [
-            53
-          ],
-          "slot_index": 0
-        }
-      ],
-      "title": "Length",
-      "properties": {
-        "Node name for S&R": "INTConstant"
-      },
-      "widgets_values": [
-        41
-      ],
-      "color": "#1b4669",
-      "bgcolor": "#29699c"
     }
   ],
   "links": [
@@ -726,35 +598,11 @@
       "IMAGE"
     ],
     [
-      51,
-      43,
-      0,
-      3,
-      3,
-      "INT"
-    ],
-    [
-      52,
-      44,
-      0,
-      3,
-      4,
-      "INT"
-    ],
-    [
-      53,
-      45,
-      0,
-      3,
-      5,
-      "INT"
-    ],
-    [
       68,
       52,
       0,
       3,
-      7,
+      4,
       "INT"
     ],
     [
@@ -774,11 +622,11 @@
       "STRING"
     ],
     [
-      72,
+      75,
       54,
       0,
       3,
-      9,
+      5,
       "FETAARGS"
     ]
   ],
@@ -786,10 +634,10 @@
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6830134553650712,
+      "scale": 0.8264462809917354,
       "offset": [
-        508.03225096448546,
-        385.56246205382774
+        616.8022017025595,
+        484.9890360162307
       ]
     }
   },

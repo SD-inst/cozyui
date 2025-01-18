@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 export const useWebSocket = (
     url: string,
     onMessage?: (ev: MessageEvent) => any,
-    onOpen?: (ev: Event) => any
+    onOpen?: (ev: Event) => any,
+    enabled?: boolean
 ) => {
     const [socket, setSocket] = useState<WebSocket>();
     const s = useRef<WebSocket>();
@@ -24,6 +25,9 @@ export const useWebSocket = (
         setSocket(s.current);
     };
     useEffect(() => {
+        if (!enabled) {
+            return;
+        }
         initSocket(url);
         return () => {
             if (reconnectTimeout.current) {
@@ -36,6 +40,6 @@ export const useWebSocket = (
                 s.current = undefined;
             }
         };
-    }, [url]);
+    }, [url, enabled]);
     return socket;
 };

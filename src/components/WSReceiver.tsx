@@ -1,5 +1,14 @@
 import toast from 'react-hot-toast';
 import { useWebSocket } from '../hooks/useWebSocket';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import {
+    setCurrentNode,
+    setGenerationDisabled,
+    setProgress,
+    setQueue,
+    setStatus,
+} from '../redux/progress';
+import { addResult } from '../redux/result';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -8,63 +17,65 @@ export type WSHandlers = {
     onComplete?: (data: any) => void;
 };
 
-export const WSReceiver = ({
-    id,
-    onStatus,
-    onConnected,
-    onStart,
-    onProgress,
-    onError,
-    onExecuted,
-    onExecuting,
-    onComplete,
-    onInterrupted,
-}: {
-    id: string;
-    onStatus: (data: any) => void;
-    onConnected?: () => void;
-    onStart?: () => void;
-    onComplete?: () => void;
-    onExecuted?: (data: any) => void;
-    onExecuting?: (data: any) => void;
-    onProgress?: (data: any) => void;
-    onError?: (data: any) => void;
-    onInterrupted?: () => void;
-}) => {
+export const WSReceiver = () => {
+    const dispatch = useAppDispatch();
+    const reset = () => {
+        dispatch(setProgress({ max: 0, value: -1 }));
+        dispatch(setCurrentNode(''));
+        dispatch(setGenerationDisabled(false));
+    };
+    const client_id = useAppSelector((s) => s.config.client_id);
+    const apiUrl = useAppSelector((s) => s.config.api);
     const handleMessage = (ev: MessageEvent) => {
         console.log(ev.data);
         const j = JSON.parse(ev.data);
         switch (j.type) {
             case 'execution_success':
-                onComplete && onComplete();
+                dispatch(setStatus('Finished'));
+                reset();
                 break;
             case 'execution_start':
-                onStart && onStart();
+                dispatch(setStatus('Running'));
                 break;
             case 'executed':
-                onExecuted && onExecuted(j.data);
+                dispatch(
+                    addResult({ node_id: j.data.node, output: j.data.output })
+                );
                 break;
             case 'executing':
-                onExecuting && onExecuting(j.data);
+                dispatch(setCurrentNode(j.data.node || ''));
                 break;
             case 'status':
-                onStatus && onStatus(j.data.status);
+                dispatch(setQueue(j.data.status?.exec_info?.queue_remaining));
                 break;
             case 'progress':
-                onProgress && onProgress(j.data);
+                dispatch(
+                    setProgress({
+                        max: j.data.max,
+                        value: j.data.value,
+                    })
+                );
                 break;
             case 'execution_error':
-                onError && onError(j.data);
+                toast.error(j.data.exception_message);
+                dispatch(setStatus('Error: ' + j.data.exception_message));
+                reset();
                 break;
             case 'execution_interrupted':
-                onInterrupted && onInterrupted();
+                dispatch(setStatus('Interrupted'));
+                reset();
                 break;
         }
     };
-    useWebSocket('/cui/ws?clientId=' + id, handleMessage, () => {
-        console.log('Connected to ComfyUI!');
-        toast.success('Connected!');
-        onConnected && onConnected();
-    });
+    useWebSocket(
+        apiUrl + '/ws?clientId=' + client_id,
+        handleMessage,
+        () => {
+            console.log('Connected to ComfyUI!');
+            toast.success('Connected!');
+            dispatch(setStatus('Ready'));
+        },
+        !!apiUrl
+    );
     return null;
 };

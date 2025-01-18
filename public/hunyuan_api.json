@@ -6,7 +6,8 @@
       "quantization": "fp8_scaled",
       "load_device": "main_device",
       "attention_mode": "sageattn_varlen",
-      "auto_cpu_offload": false
+      "auto_cpu_offload": false,
+      "upcast_rope": true
     },
     "class_type": "HyVideoModelLoader",
     "_meta": {
@@ -15,21 +16,12 @@
   },
   "3": {
     "inputs": {
-      "width": [
-        "43",
-        0
-      ],
-      "height": [
-        "44",
-        0
-      ],
-      "num_frames": [
-        "45",
-        0
-      ],
+      "width": 512,
+      "height": 320,
+      "num_frames": 85,
       "steps": 7,
-      "embedded_guidance_scale": 6,
-      "flow_shift": 9,
+      "embedded_guidance_scale": 17,
+      "flow_shift": 17,
       "seed": [
         "52",
         0
@@ -137,33 +129,6 @@
     "class_type": "VHS_VideoCombine",
     "_meta": {
       "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "43": {
-    "inputs": {
-      "value": 208
-    },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Width"
-    }
-  },
-  "44": {
-    "inputs": {
-      "value": 368
-    },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Height"
-    }
-  },
-  "45": {
-    "inputs": {
-      "value": 85
-    },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Length"
     }
   },
   "52": {

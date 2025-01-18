@@ -1,17 +1,20 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
+import { useAppSelector } from '../redux/hooks';
 import { VerticalBox } from './VerticalBox';
-import { useStatus } from './StatusContext';
+import { get } from 'lodash';
 
 export const Progress = () => {
-    const {
-        progress: { max, min, value },
-        status,
-        currentNode,
-        queue,
-        api,
-    } = useStatus();
+    const { max, min, value, status, current_node, queue } = useAppSelector(
+        (s) => s.progress
+    );
+    const api = useAppSelector((s) => s.tab.api);
     const range = max - min;
     const perc = ((value - min) * 100) / range || 0;
+    const node_title = get(
+        api,
+        `["${current_node}"]._meta.title`,
+        get(api, `["${current_node}"].class_type`, current_node)
+    );
     return (
         <VerticalBox width='100%'>
             {status && (
@@ -22,12 +25,9 @@ export const Progress = () => {
             {queue > 1 ? (
                 <Typography variant='body1'>Queued: {queue - 1}</Typography>
             ) : null}
-            {currentNode && (
+            {current_node && (
                 <Typography variant='body2' color='info'>
-                    Executing node:{' '}
-                    {api[currentNode]?._meta?.title ||
-                        api[currentNode]?.class_type}{' '}
-                    [{currentNode}]
+                    Executing node: {node_title} [{current_node}]
                 </Typography>
             )}
             {value >= 0 && (

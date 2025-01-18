@@ -2,7 +2,7 @@ import { TextField, TextFieldProps } from '@mui/material';
 import { useController } from 'react-hook-form';
 
 export const TextInput = ({
-    defaultValue,
+    defaultValue = '',
     ...props
 }: {
     defaultValue?: any;

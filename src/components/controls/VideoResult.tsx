@@ -1,15 +1,22 @@
 import { Typography } from '@mui/material';
-import { useResult } from '../StatusContext';
-import { useTabContext } from '../TabContext';
+import { get } from 'lodash';
+import { useAppSelector } from '../../redux/hooks';
 import { VerticalBox } from '../VerticalBox';
 
 export const VideoResult = () => {
-    const tb = useTabContext();
-    const results = useResult(tb.result?.id, tb.result?.type);
+    const resultStore = useAppSelector((s) => s.result);
+    const current_tab = useAppSelector((s) => s.tab.current_tab);
+    const { id, type } = useAppSelector((s) =>
+        get(s, `config.tabs["${current_tab}"].result`, {
+            id: '',
+            type: '',
+        })
+    );
+    let results = get(resultStore, `["${id}"]["${type}"]`, []);
     return (
         <VerticalBox width='100%'>
             <Typography variant='body1'>Video</Typography>
-            {results?.map((r) => (
+            {results?.map((r: any) => (
                 <video
                     key={r.filename}
                     style={{ width: '100%' }}

@@ -1,7 +1,10 @@
 import { Box, Slider, SliderProps, Typography } from '@mui/material';
 import { useController } from 'react-hook-form';
 
-export const SliderInput = ({ defaultValue, ...props }: SliderProps) => {
+export const SliderInput = ({
+    defaultValue,
+    ...props
+}: { label?: string } & SliderProps) => {
     const ctl = useController({
         name: props.name!,
         defaultValue: defaultValue,
@@ -9,7 +12,7 @@ export const SliderInput = ({ defaultValue, ...props }: SliderProps) => {
     return (
         <Box width='100%'>
             <Typography gutterBottom>
-                {props.name}: {ctl.field.value}
+                {props.label || props.name}: {ctl.field.value}
             </Typography>
             <Slider valueLabelDisplay='auto' {...ctl.field} {...props} />
         </Box>

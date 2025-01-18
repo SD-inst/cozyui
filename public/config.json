@@ -1,0 +1,47 @@
+{
+    "tabs": {
+        "Hunyuan T2V": {
+            "workflow": "hunyuan_wf.json",
+            "api": "hunyuan_api.json",
+            "controls": {
+                "prompt": {
+                    "id": "30",
+                    "field": "prompt"
+                },
+                "width": {
+                    "id": "3",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "3",
+                    "field": "height"
+                },
+                "seed": {
+                    "id": "52",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "3",
+                    "field": "steps"
+                },
+                "length": {
+                    "id": "3",
+                    "field": "num_frames"
+                },
+                "flow_shift": {
+                    "id": "3",
+                    "field": "flow_shift"
+                },
+                "guidance": {
+                    "id": "3",
+                    "field": "embedded_guidance_scale"
+                }
+            },
+            "result": {
+                "id": "34",
+                "type": "gifs"
+            }
+        }
+    },
+    "api": "/cui"
+}
