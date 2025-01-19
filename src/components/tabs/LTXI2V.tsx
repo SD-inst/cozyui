@@ -11,6 +11,8 @@ import { SelectInput } from '../controls/SelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { LengthInput } from '../controls/LengthSlider';
 import { SliderInput } from '../controls/SliderInput';
+import { Box } from '@mui/system';
+import { SwapButton } from '../controls/SwapButton';
 
 const Content = () => {
     const results = useResult('Describe image');
@@ -41,6 +43,32 @@ const Content = () => {
                     hideErrors
                 />
                 <TextInput name='prompt' multiline />
+                <Box display='flex' flexDirection='row' width='100%' mt={2}>
+                    <Box display='flex' flexDirection='column' flex={1}>
+                        <SliderInput
+                            name='width'
+                            label='max width'
+                            defaultValue={800}
+                            min={128}
+                            max={1280}
+                            step={32}
+                        />
+                        <SliderInput
+                            name='height'
+                            label='max height'
+                            defaultValue={800}
+                            min={128}
+                            max={1280}
+                            step={32}
+                        />
+                    </Box>
+                    <Box display='flex' alignItems='center'>
+                        <SwapButton
+                            names={['width', 'height']}
+                            sx={{ mt: 3 }}
+                        />
+                    </Box>
+                </Box>
                 <LengthInput
                     name='length'
                     min={9}

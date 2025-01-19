@@ -70,6 +70,14 @@
                     "id": "81",
                     "field": "steps"
                 },
+                "width": {
+                    "id": "155",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "155",
+                    "field": "height"
+                },
                 "suffix": {
                     "id": ""
                 }
