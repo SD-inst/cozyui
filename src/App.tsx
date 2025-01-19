@@ -10,27 +10,52 @@ import { WorkflowTabs } from './components/WorkflowTabs';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
 import { useGet } from './hooks/useGet';
-import { setConfig } from './redux/config';
+import { configType, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
 import { setTab } from './redux/tab';
 
 function App() {
-    const { data, error, isError, isSuccess } = useGet('config.json');
+    const {
+        data: dataConfig,
+        error: errorConfig,
+        isError: isErrorConfig,
+        isSuccess: isSuccessConfig,
+    } = useGet('config.json');
+    const {
+        data: dataObj,
+        error: errorObj,
+        isError: isErrorObj,
+        isSuccess: isSuccessObj,
+    } = useGet(
+        (dataConfig as configType)?.api + '/api/object_info',
+        isSuccessConfig
+    );
     const dispatch = useAppDispatch();
     useEffect(() => {
-        if (isSuccess) {
-            toast.success('Got config');
-            dispatch(setConfig(data));
-            dispatch(setTab(Object.keys(data.tabs)[0]));
-            dispatch(setGenerationDisabled(false));
+        if (isErrorConfig) {
+            toast.error('Error getting config: ' + errorConfig);
+        }
+        if (isErrorObj) {
+            toast.error('Error getting object info: ' + errorObj);
+        }
+        if (!isSuccessConfig || !isSuccessObj) {
             return;
         }
-        if (!isError) {
-            return;
-        }
-        toast.error('Error getting config: ' + error);
-    }, [isError, error, isSuccess, data]);
+        toast.success('Got config');
+        dispatch(setConfig({ ...dataConfig, object_info: dataObj }));
+        dispatch(setTab(Object.keys(dataConfig.tabs)[0]));
+        dispatch(setGenerationDisabled(false));
+    }, [
+        isErrorConfig,
+        errorConfig,
+        isSuccessConfig,
+        dataConfig,
+        isErrorObj,
+        errorObj,
+        isSuccessObj,
+        dataObj,
+    ]);
     const theme = createTheme({
         colorSchemes: { dark: true },
         defaultColorScheme: 'dark',

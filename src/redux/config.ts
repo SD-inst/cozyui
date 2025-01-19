@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-type configType = {
+export type configType = {
     tabs: {
         [tabName: string]: {
             workflow: string;
@@ -15,6 +15,31 @@ type configType = {
                 id: string;
                 type: string;
             };
+        };
+    };
+    object_info: {
+        [obj: string]: {
+            category: string;
+            description: string;
+            display_name: string;
+            input: {
+                optional: {
+                    [key: string]: any[];
+                };
+                required: {
+                    [key: string]: any[];
+                };
+            };
+            input_order: {
+                optional: string[];
+                required: string[];
+            };
+            name?: string;
+            output: string[];
+            output_is_list: boolean[];
+            output_name: string[];
+            output_node: boolean;
+            python_module: string;
         };
     };
     api: string;

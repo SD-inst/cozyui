@@ -27,10 +27,12 @@ export const GenerateButton = ({
     tabOverride,
     text = 'Generate',
     hideErrors,
+    noexec,
 }: {
     tabOverride?: string;
     text?: string;
     hideErrors?: boolean;
+    noexec?: boolean;
 }) => {
     const dispatch = useAppDispatch();
     const client_id = useAppSelector((s) => s.config.client_id);
@@ -72,7 +74,8 @@ export const GenerateButton = ({
             };
 
             for (const name in controls) {
-                if (!controls[name].id) { // way to ignore unrelated controls
+                if (!controls[name].id) {
+                    // way to ignore unrelated controls
                     continue;
                 }
                 const val = getValues(name);
@@ -81,6 +84,15 @@ export const GenerateButton = ({
                         ...e,
                         controls: [...e.controls, name],
                     }));
+                    continue;
+                }
+                if (
+                    controls[name].id === 'handle' &&
+                    typeof val === 'object' &&
+                    val.handler !== undefined &&
+                    val.ctl_value !== undefined
+                ) {
+                    val.handler(params.prompt, val.ctl_value); // modify api request
                     continue;
                 }
                 if (params.prompt[controls[name].id] === undefined) {
@@ -113,6 +125,12 @@ export const GenerateButton = ({
                 if (!(k in controls)) {
                     setErrors((e) => ({ ...e, api: [...e.api, k] }));
                 }
+            }
+            if (noexec) {
+                dispatch(setGenerationDisabled(false));
+                toast.success('Execution skipped');
+                console.log(params);
+                return Promise.resolve();
             }
             return fetch(apiUrl + '/api/prompt', {
                 method: 'POST',

@@ -8,6 +8,14 @@
                     "id": "30",
                     "field": "prompt"
                 },
+                "model": {
+                    "id": "1",
+                    "field": "model"
+                },
+                "quantization": {
+                    "id": "1",
+                    "field": "quantization"
+                },
                 "width": {
                     "id": "3",
                     "field": "width"
@@ -35,6 +43,9 @@
                 "guidance": {
                     "id": "3",
                     "field": "embedded_guidance_scale"
+                },
+                "lora": {
+                    "id": "handle"
                 }
             },
             "result": {

@@ -8,6 +8,8 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { LoraInput } from '../controls/LoraInput';
+import { SelectInput } from '../controls/SelectInput';
 
 const HYSize = ({ ...props }: SliderProps) => {
     return <SliderInput min={128} max={720} step={16} {...props} />;
@@ -17,6 +19,42 @@ const Content = () => (
     <Layout>
         <GridLeft>
             <TextInput name='prompt' multiline />
+            <SelectInput
+                name='model'
+                defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
+                choices={[
+                    {
+                        text: 'Original',
+                        value: 'hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors',
+                        alsoSet: [
+                            {
+                                name: 'quantization',
+                                value: 'fp8_e4m3fn',
+                            },
+                        ],
+                    },
+                    {
+                        text: 'FP8 (doesn\'t work well with loras)',
+                        value: 'hyvid/mp_rank_00_model_states_fp8.pt',
+                        alsoSet: [
+                            {
+                                name: 'quantization',
+                                value: 'fp8_scaled',
+                            },
+                        ],
+                    },
+                    {
+                        text: 'Fast (needs >13 flow shift and guidance)',
+                        value: 'hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors',
+                        alsoSet: [
+                            {
+                                name: 'quantization',
+                                value: 'fp8_e4m3fn',
+                            },
+                        ],
+                    },
+                ]}
+            />
             <Box display='flex' flexDirection='row' width='100%' mt={2}>
                 <Box display='flex' flexDirection='column' flex={1}>
                     <HYSize name='width' defaultValue={512} />
@@ -50,6 +88,7 @@ const Content = () => (
                 defaultValue={6}
             />
             <SeedInput name='seed' defaultValue={1024} />
+            <LoraInput name='lora' />
         </GridLeft>
         <GridRight>
             <VideoResult />
