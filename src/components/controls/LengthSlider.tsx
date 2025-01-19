@@ -16,7 +16,10 @@ export const LengthInput = ({
     label?: string;
     fps?: number;
 } & SliderProps) => {
-    const value = useWatch({ name: props.name! });
+    const value = useWatch({
+        name: props.name!,
+        defaultValue: props.defaultValue,
+    });
     return (
         <SliderInput
             min={5}
