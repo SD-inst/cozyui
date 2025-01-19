@@ -7,16 +7,19 @@ export const TextInput = ({
 }: {
     defaultValue?: any;
 } & TextFieldProps) => {
-    const promptCtl = useController({
+    const ctl = useController({
         name: props.name!,
         defaultValue: defaultValue,
     });
     return (
         <TextField
+            sx={{
+                mb: 1,
+            }}
             label={props.name}
             variant='filled'
             fullWidth
-            {...promptCtl.field}
+            {...ctl.field}
             {...props}
         />
     );

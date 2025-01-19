@@ -48,6 +48,7 @@ const RAW_RUNTIME_STATE =
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:18.3.1"],\
+          ["react-dropzone", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:14.3.5"],\
           ["react-hook-form", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:7.54.2"],\
           ["react-hot-toast", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:2.5.1"],\
           ["react-redux", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:9.2.0"],\
@@ -1947,6 +1948,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["attr-accept", [\
+      ["npm:2.2.5", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/attr-accept-npm-2.2.5-45a3959164-10c0.zip/node_modules/attr-accept/",\
+        "packageDependencies": [\
+          ["attr-accept", "npm:2.2.5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["babel-plugin-macros", [\
       ["npm:3.1.0", {\
         "packageLocation": "../../../home/rkfg/.yarn/berry/cache/babel-plugin-macros-npm-3.1.0-320e781f4e-10c0.zip/node_modules/babel-plugin-macros/",\
@@ -2142,6 +2152,7 @@ const RAW_RUNTIME_STATE =
           ["lodash", "npm:4.17.21"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:18.3.1"],\
+          ["react-dropzone", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:14.3.5"],\
           ["react-hook-form", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:7.54.2"],\
           ["react-hot-toast", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:2.5.1"],\
           ["react-redux", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:9.2.0"],\
@@ -2567,6 +2578,16 @@ const RAW_RUNTIME_STATE =
         "packageDependencies": [\
           ["file-entry-cache", "npm:8.0.0"],\
           ["flat-cache", "npm:4.0.1"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["file-selector", [\
+      ["npm:2.1.2", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/file-selector-npm-2.1.2-4d0c93ca53-10c0.zip/node_modules/file-selector/",\
+        "packageDependencies": [\
+          ["file-selector", "npm:2.1.2"],\
+          ["tslib", "npm:2.8.1"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -3577,6 +3598,31 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["react-dropzone", [\
+      ["npm:14.3.5", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/react-dropzone-npm-14.3.5-1dc0066433-10c0.zip/node_modules/react-dropzone/",\
+        "packageDependencies": [\
+          ["react-dropzone", "npm:14.3.5"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:14.3.5", {\
+        "packageLocation": "./.yarn/__virtual__/react-dropzone-virtual-3cb129d05c/4/home/rkfg/.yarn/berry/cache/react-dropzone-npm-14.3.5-1dc0066433-10c0.zip/node_modules/react-dropzone/",\
+        "packageDependencies": [\
+          ["react-dropzone", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:14.3.5"],\
+          ["@types/react", "npm:18.3.18"],\
+          ["attr-accept", "npm:2.2.5"],\
+          ["file-selector", "npm:2.1.2"],\
+          ["prop-types", "npm:15.8.1"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["react-hook-form", [\
       ["npm:7.54.2", {\
         "packageLocation": "../../../home/rkfg/.yarn/berry/cache/react-hook-form-npm-7.54.2-9e7394f4c4-10c0.zip/node_modules/react-hook-form/",\
@@ -4150,6 +4196,15 @@ const RAW_RUNTIME_STATE =
         "packagePeers": [\
           "@types/typescript",\
           "typescript"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["tslib", [\
+      ["npm:2.8.1", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/tslib-npm-2.8.1-66590b21b8-10c0.zip/node_modules/tslib/",\
+        "packageDependencies": [\
+          ["tslib", "npm:2.8.1"]\
         ],\
         "linkType": "HARD"\
       }]\

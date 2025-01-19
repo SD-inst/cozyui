@@ -1,5 +1,6 @@
-import { Box, Grid2 as Grid, SliderProps } from '@mui/material';
-import { Mark } from '@mui/material/Slider/useSlider.types';
+import { Box, SliderProps } from '@mui/material';
+import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
+import { LengthInput } from '../controls/LengthSlider';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
@@ -12,28 +13,9 @@ const HYSize = ({ ...props }: SliderProps) => {
     return <SliderInput min={128} max={720} step={16} {...props} />;
 };
 
-const HYLength = ({ ...props }: { label?: string } & SliderProps) => {
-    return (
-        <SliderInput
-            min={5}
-            max={257}
-            marks={(() => {
-                const result: Mark[] = [];
-                for (let i = 1; i <= 64; i++) {
-                    result.push({ value: i * 4 + 1 });
-                }
-                return result;
-            })()}
-            step={null}
-            track={false}
-            {...props}
-        />
-    );
-};
-
 const Content = () => (
-    <Grid container width='100%' spacing={2}>
-        <Grid size={{ xs: 12, md: 8 }}>
+    <Layout>
+        <GridLeft>
             <TextInput name='prompt' multiline />
             <Box display='flex' flexDirection='row' width='100%' mt={2}>
                 <Box display='flex' flexDirection='column' flex={1}>
@@ -44,7 +26,11 @@ const Content = () => (
                     <SwapButton names={['width', 'height']} sx={{ mt: 3 }} />
                 </Box>
             </Box>
-            <HYLength
+            <LengthInput
+                min={5}
+                max={257}
+                step={4}
+                fps={16}
                 name='length'
                 defaultValue={85}
             />
@@ -63,22 +49,15 @@ const Content = () => (
                 max={20}
                 defaultValue={6}
             />
-            <SeedInput name='seed' />
-        </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+            <SeedInput name='seed' defaultValue={1024} />
+        </GridLeft>
+        <GridRight>
             <VideoResult />
-        </Grid>
-        <Grid
-            justifyContent='center'
-            size={{ xs: 12, md: 8 }}
-            container
-            spacing={2}
-        >
-            <Grid>
-                <GenerateButton />
-            </Grid>
-        </Grid>
-    </Grid>
+        </GridRight>
+        <GridBottom>
+            <GenerateButton />
+        </GridBottom>
+    </Layout>
 );
 
 export const HunyanT2VTab = (

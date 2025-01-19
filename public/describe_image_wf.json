@@ -1,0 +1,555 @@
+{
+  "last_node_id": 12,
+  "last_link_id": 9,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "DownloadAndLoadFlorence2Model",
+      "pos": [
+        -87.95084381103516,
+        636.7861938476562
+      ],
+      "size": [
+        365.4000244140625,
+        106
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "lora",
+          "type": "PEFTLORA",
+          "link": null,
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "florence2_model",
+          "type": "FL2MODEL",
+          "links": [
+            1
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "DownloadAndLoadFlorence2Model"
+      },
+      "widgets_values": [
+        "microsoft/Florence-2-base",
+        "fp16",
+        "sdpa"
+      ]
+    },
+    {
+      "id": 4,
+      "type": "Florence2Run",
+      "pos": [
+        -87.95084381103516,
+        786.4785766601562
+      ],
+      "size": [
+        361.86187744140625,
+        352
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 8
+        },
+        {
+          "name": "florence2_model",
+          "type": "FL2MODEL",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "links": null
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        },
+        {
+          "name": "caption",
+          "type": "STRING",
+          "links": [
+            2
+          ],
+          "slot_index": 2
+        },
+        {
+          "name": "data",
+          "type": "JSON",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Florence2Run"
+      },
+      "widgets_values": [
+        "",
+        "more_detailed_caption",
+        true,
+        false,
+        256,
+        3,
+        true,
+        "",
+        285091998992135,
+        "fixed"
+      ]
+    },
+    {
+      "id": 5,
+      "type": "StringFunction|pysssss",
+      "pos": [
+        305.7198181152344,
+        644.1505737304688
+      ],
+      "size": [
+        210,
+        244
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 2,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            7
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringFunction|pysssss"
+      },
+      "widgets_values": [
+        "replace",
+        "no",
+        "",
+        "image",
+        "video"
+      ]
+    },
+    {
+      "id": 7,
+      "type": "StringFunction|pysssss",
+      "pos": [
+        300.11151123046875,
+        1196.8587646484375
+      ],
+      "size": [
+        210,
+        224
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 4,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            6
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringFunction|pysssss"
+      },
+      "widgets_values": [
+        "replace",
+        "no",
+        "",
+        "painting",
+        "video"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "StringFunction|pysssss",
+      "pos": [
+        551.9296875,
+        1409.9959716796875
+      ],
+      "size": [
+        212.45692443847656,
+        224
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 5,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            3
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringFunction|pysssss"
+      },
+      "widgets_values": [
+        "replace",
+        "no",
+        "",
+        "illustration",
+        "video"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "StringFunction|pysssss",
+      "pos": [
+        46.470970153808594,
+        1416.897216796875
+      ],
+      "size": [
+        210,
+        224
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 6,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            5
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringFunction|pysssss"
+      },
+      "widgets_values": [
+        "replace",
+        "no",
+        "",
+        "photo",
+        "video"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "StringFunction|pysssss",
+      "pos": [
+        303.0385437011719,
+        948.08349609375
+      ],
+      "size": [
+        210,
+        244
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 7,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            4
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "StringFunction|pysssss"
+      },
+      "widgets_values": [
+        "replace",
+        "no",
+        "",
+        "photograph",
+        "video"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "LoadImage",
+      "pos": [
+        -511.3742370605469,
+        784.97412109375
+      ],
+      "size": [
+        375.0259094238281,
+        376.8178405761719
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            8
+          ],
+          "slot_index": 0
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "image.png",
+        "image"
+      ]
+    },
+    {
+      "id": 12,
+      "type": "SimpleText",
+      "pos": [
+        -512.2760009765625,
+        1217.392578125
+      ],
+      "size": [
+        321.624267578125,
+        76
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            9
+          ],
+          "slot_index": 0
+        }
+      ],
+      "title": "Scene suffix",
+      "properties": {
+        "Node name for S&R": "SimpleText"
+      },
+      "widgets_values": [
+        "The scene appears to be from a movie or TV show."
+      ]
+    },
+    {
+      "id": 6,
+      "type": "StringFunction|pysssss",
+      "pos": [
+        545.7510375976562,
+        630.4653930664062
+      ],
+      "size": [
+        319.0057373046875,
+        495.6424255371094
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "type": "STRING",
+          "link": 3,
+          "widget": {
+            "name": "text_a"
+          },
+          "shape": 7
+        },
+        {
+          "name": "text_c",
+          "type": "STRING",
+          "link": 9,
+          "widget": {
+            "name": "text_c"
+          },
+          "shape": 7
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [],
+          "slot_index": 0
+        }
+      ],
+      "title": "Image description",
+      "properties": {
+        "Node name for S&R": "StringFunction|pysssss"
+      },
+      "widgets_values": [
+        "append",
+        "no",
+        "",
+        "",
+        "The scene appears to be from a movie or TV show."
+      ]
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      4,
+      1,
+      "FL2MODEL"
+    ],
+    [
+      2,
+      4,
+      2,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      3,
+      8,
+      0,
+      6,
+      0,
+      "STRING"
+    ],
+    [
+      4,
+      10,
+      0,
+      7,
+      0,
+      "STRING"
+    ],
+    [
+      5,
+      9,
+      0,
+      8,
+      0,
+      "STRING"
+    ],
+    [
+      6,
+      7,
+      0,
+      9,
+      0,
+      "STRING"
+    ],
+    [
+      7,
+      5,
+      0,
+      10,
+      0,
+      "STRING"
+    ],
+    [
+      8,
+      11,
+      0,
+      4,
+      0,
+      "IMAGE"
+    ],
+    [
+      9,
+      12,
+      0,
+      6,
+      1,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "ds": {
+      "scale": 0.7400249944258813,
+      "offset": [
+        874.8756784624428,
+        -578.9839912181912
+      ]
+    }
+  },
+  "version": 0.4
+}

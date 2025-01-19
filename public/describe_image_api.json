@@ -1,0 +1,156 @@
+{
+  "1": {
+    "inputs": {
+      "model": "microsoft/Florence-2-base",
+      "precision": "fp16",
+      "attention": "sdpa"
+    },
+    "class_type": "DownloadAndLoadFlorence2Model",
+    "_meta": {
+      "title": "DownloadAndLoadFlorence2Model"
+    }
+  },
+  "4": {
+    "inputs": {
+      "text_input": "",
+      "task": "more_detailed_caption",
+      "fill_mask": true,
+      "keep_model_loaded": false,
+      "max_new_tokens": 256,
+      "num_beams": 3,
+      "do_sample": true,
+      "output_mask_select": "",
+      "seed": 285091998992135,
+      "image": [
+        "11",
+        0
+      ],
+      "florence2_model": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "Florence2Run",
+    "_meta": {
+      "title": "Florence2Run"
+    }
+  },
+  "5": {
+    "inputs": {
+      "action": "replace",
+      "tidy_tags": "no",
+      "text_a": [
+        "4",
+        2
+      ],
+      "text_b": "image",
+      "text_c": "video"
+    },
+    "class_type": "StringFunction|pysssss",
+    "_meta": {
+      "title": "String Function 🐍"
+    }
+  },
+  "6": {
+    "inputs": {
+      "action": "append",
+      "tidy_tags": "no",
+      "text_a": [
+        "8",
+        0
+      ],
+      "text_b": "",
+      "text_c": [
+        "12",
+        0
+      ]
+    },
+    "class_type": "StringFunction|pysssss",
+    "_meta": {
+      "title": "Image description"
+    }
+  },
+  "7": {
+    "inputs": {
+      "action": "replace",
+      "tidy_tags": "no",
+      "text_a": [
+        "10",
+        0
+      ],
+      "text_b": "painting",
+      "text_c": "video"
+    },
+    "class_type": "StringFunction|pysssss",
+    "_meta": {
+      "title": "String Function 🐍"
+    }
+  },
+  "8": {
+    "inputs": {
+      "action": "replace",
+      "tidy_tags": "no",
+      "text_a": [
+        "9",
+        0
+      ],
+      "text_b": "illustration",
+      "text_c": "video"
+    },
+    "class_type": "StringFunction|pysssss",
+    "_meta": {
+      "title": "String Function 🐍"
+    }
+  },
+  "9": {
+    "inputs": {
+      "action": "replace",
+      "tidy_tags": "no",
+      "text_a": [
+        "7",
+        0
+      ],
+      "text_b": "photo",
+      "text_c": "video"
+    },
+    "class_type": "StringFunction|pysssss",
+    "_meta": {
+      "title": "String Function 🐍"
+    }
+  },
+  "10": {
+    "inputs": {
+      "action": "replace",
+      "tidy_tags": "no",
+      "text_a": [
+        "5",
+        0
+      ],
+      "text_b": "photograph",
+      "text_c": "video"
+    },
+    "class_type": "StringFunction|pysssss",
+    "_meta": {
+      "title": "String Function 🐍"
+    }
+  },
+  "11": {
+    "inputs": {
+      "image": "image.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "12": {
+    "inputs": {
+      "input_text": "The scene appears to be from a movie or TV show."
+    },
+    "class_type": "SimpleText",
+    "_meta": {
+      "title": "Scene suffix"
+    }
+  }
+}

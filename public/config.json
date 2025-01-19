@@ -41,6 +41,61 @@
                 "id": "34",
                 "type": "gifs"
             }
+        },
+        "LTX I2V": {
+            "workflow": "ltx_i2v_wf.json",
+            "api": "ltx_i2v_api.json",
+            "controls": {
+                "prompt": {
+                    "id": "186",
+                    "field": "input_text"
+                },
+                "image": {
+                    "id": "106",
+                    "field": "image"
+                },
+                "seed": {
+                    "id": "193",
+                    "field": "value"
+                },
+                "length": {
+                    "id": "103",
+                    "field": "frames_number"
+                },
+                "compression": {
+                    "id": "103",
+                    "field": "img_compression"
+                },
+                "steps": {
+                    "id": "81",
+                    "field": "steps"
+                },
+                "suffix": {
+                    "id": ""
+                }
+            },
+            "result": {
+                "id": "60",
+                "type": "gifs"
+            }
+        },
+        "Describe image": {
+            "workflow": "describe_image_wf.json",
+            "api": "describe_image_api.json",
+            "controls": {
+                "image": {
+                    "id": "11",
+                    "field": "image"
+                },
+                "suffix": {
+                    "id": "12",
+                    "field": "input_text"
+                }
+            },
+            "result": {
+                "id": "6",
+                "type": "text"
+            }
         }
     },
     "api": "/cui"
