@@ -34,17 +34,7 @@ const Content = () => (
                         ],
                     },
                     {
-                        text: 'FP8 (doesn\'t work well with loras)',
-                        value: 'hyvid/mp_rank_00_model_states_fp8.pt',
-                        alsoSet: [
-                            {
-                                name: 'quantization',
-                                value: 'fp8_scaled',
-                            },
-                        ],
-                    },
-                    {
-                        text: 'Fast (needs >13 flow shift and guidance)',
+                        text: 'Fast (needs >12 flow shift and guidance)',
                         value: 'hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors',
                         alsoSet: [
                             {
@@ -88,7 +78,12 @@ const Content = () => (
                 defaultValue={8}
             />
             <SeedInput name='seed' defaultValue={1024} />
-            <LoraInput name='lora' />
+            <LoraInput
+                name='lora'
+                filter='/hunyuan/'
+                input_node_id='13'
+                output_node_ids={['12', '6']}
+            />
         </GridLeft>
         <GridRight>
             <VideoResult />

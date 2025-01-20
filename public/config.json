@@ -25,8 +25,8 @@
                     "field": "height"
                 },
                 "seed": {
-                    "id": "2",
-                    "field": "noise_seed"
+                    "id": "19",
+                    "field": "value"
                 },
                 "steps": {
                     "id": "12",

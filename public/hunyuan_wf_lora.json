@@ -1,6 +1,6 @@
 {
-  "last_node_id": 16,
-  "last_link_id": 17,
+  "last_node_id": 19,
+  "last_link_id": 22,
   "nodes": [
     {
       "id": 1,
@@ -16,7 +16,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 11,
+      "order": 14,
       "mode": 0,
       "inputs": [
         {
@@ -92,7 +92,7 @@
         150
       ],
       "flags": {},
-      "order": 13,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -140,7 +140,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 12,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -208,7 +208,7 @@
         58
       ],
       "flags": {},
-      "order": 9,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -246,7 +246,7 @@
         58
       ],
       "flags": {},
-      "order": 8,
+      "order": 10,
       "mode": 0,
       "inputs": [
         {
@@ -356,7 +356,7 @@
         106
       ],
       "flags": {},
-      "order": 10,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
@@ -386,154 +386,6 @@
       ]
     },
     {
-      "id": 15,
-      "type": "Reroute",
-      "pos": [
-        28.601699829101562,
-        -141.05044555664062
-      ],
-      "size": [
-        75,
-        26
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "",
-          "type": "*",
-          "link": 17
-        }
-      ],
-      "outputs": [
-        {
-          "name": "",
-          "type": "MODEL",
-          "links": [
-            10,
-            14
-          ]
-        }
-      ],
-      "properties": {
-        "showOutputText": false,
-        "horizontal": false
-      }
-    },
-    {
-      "id": 16,
-      "type": "VHS_VideoCombine",
-      "pos": [
-        433.829345703125,
-        -253.2957305908203
-      ],
-      "size": [
-        507.65264892578125,
-        652.7828979492188
-      ],
-      "flags": {},
-      "order": 14,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "images",
-          "type": "IMAGE",
-          "link": 16
-        },
-        {
-          "name": "audio",
-          "type": "AUDIO",
-          "link": null,
-          "shape": 7
-        },
-        {
-          "name": "meta_batch",
-          "type": "VHS_BatchManager",
-          "link": null,
-          "shape": 7
-        },
-        {
-          "name": "vae",
-          "type": "VAE",
-          "link": null,
-          "shape": 7
-        }
-      ],
-      "outputs": [
-        {
-          "name": "Filenames",
-          "type": "VHS_FILENAMES",
-          "links": null
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "VHS_VideoCombine"
-      },
-      "widgets_values": {
-        "frame_rate": 24,
-        "loop_count": 0,
-        "filename_prefix": "Hunyuan/%date:yyyy_MM_dd%/lowres/vid",
-        "format": "video/h264-mp4",
-        "pix_fmt": "yuv420p",
-        "crf": 6,
-        "save_metadata": true,
-        "trim_to_audio": false,
-        "pingpong": false,
-        "save_output": true,
-        "videopreview": {
-          "hidden": false,
-          "paused": false,
-          "params": {
-            "filename": "vid_00001.mp4",
-            "subfolder": "Hunyuan/2025_01_20/lowres",
-            "type": "output",
-            "format": "video/h264-mp4",
-            "frame_rate": 24,
-            "workflow": "vid_00001.png",
-            "fullpath": "/app/output/Hunyuan/2025_01_20/lowres/vid_00001.mp4"
-          },
-          "muted": false
-        }
-      }
-    },
-    {
-      "id": 13,
-      "type": "UNETLoader",
-      "pos": [
-        -360.74176025390625,
-        -119.32654571533203
-      ],
-      "size": [
-        350,
-        82
-      ],
-      "flags": {},
-      "order": 3,
-      "mode": 0,
-      "inputs": [],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            17
-          ],
-          "slot_index": 0,
-          "shape": 3
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "UNETLoader"
-      },
-      "widgets_values": [
-        "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
-        "fp8_e4m3fn"
-      ],
-      "color": "#223",
-      "bgcolor": "#335"
-    },
-    {
       "id": 14,
       "type": "EmptyHunyuanLatentVideo",
       "pos": [
@@ -545,7 +397,7 @@
         130
       ],
       "flags": {},
-      "order": 4,
+      "order": 3,
       "mode": 0,
       "inputs": [],
       "outputs": [
@@ -621,9 +473,18 @@
         82
       ],
       "flags": {},
-      "order": 5,
+      "order": 9,
       "mode": 0,
-      "inputs": [],
+      "inputs": [
+        {
+          "name": "noise_seed",
+          "type": "INT",
+          "link": 22,
+          "widget": {
+            "name": "noise_seed"
+          }
+        }
+      ],
       "outputs": [
         {
           "name": "NOISE",
@@ -643,6 +504,275 @@
       ],
       "color": "#2a363b",
       "bgcolor": "#3f5159"
+    },
+    {
+      "id": 13,
+      "type": "UNETLoader",
+      "pos": [
+        -435.728515625,
+        -238.56822204589844
+      ],
+      "size": [
+        350,
+        82
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            18
+          ],
+          "slot_index": 0,
+          "shape": 3
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "UNETLoader"
+      },
+      "widgets_values": [
+        "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
+        "fp8_e4m3fn"
+      ],
+      "color": "#223",
+      "bgcolor": "#335"
+    },
+    {
+      "id": 17,
+      "type": "LoraLoaderModelOnly",
+      "pos": [
+        -352.9102478027344,
+        -90.84300994873047
+      ],
+      "size": [
+        315,
+        82
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "model",
+          "type": "MODEL",
+          "link": 18
+        }
+      ],
+      "outputs": [
+        {
+          "name": "MODEL",
+          "type": "MODEL",
+          "links": [
+            19
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoraLoaderModelOnly"
+      },
+      "widgets_values": [
+        "SDXL/characters/Ahsoka_Tano_XL.safetensors",
+        1
+      ]
+    },
+    {
+      "id": 15,
+      "type": "Reroute",
+      "pos": [
+        23.684526443481445,
+        -144.12367248535156
+      ],
+      "size": [
+        75,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "",
+          "type": "*",
+          "link": 19
+        }
+      ],
+      "outputs": [
+        {
+          "name": "",
+          "type": "MODEL",
+          "links": [
+            10,
+            14
+          ]
+        }
+      ],
+      "properties": {
+        "showOutputText": false,
+        "horizontal": false
+      }
+    },
+    {
+      "id": 16,
+      "type": "VHS_VideoCombine",
+      "pos": [
+        677.77099609375,
+        -252.552001953125
+      ],
+      "size": [
+        507.65264892578125,
+        648.7828979492188
+      ],
+      "flags": {},
+      "order": 17,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 16
+        },
+        {
+          "name": "audio",
+          "type": "AUDIO",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "meta_batch",
+          "type": "VHS_BatchManager",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "vae",
+          "type": "VAE",
+          "link": null,
+          "shape": 7
+        },
+        {
+          "name": "filename_prefix",
+          "type": "STRING",
+          "link": 20,
+          "widget": {
+            "name": "filename_prefix"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "name": "Filenames",
+          "type": "VHS_FILENAMES",
+          "links": null
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "VHS_VideoCombine"
+      },
+      "widgets_values": {
+        "frame_rate": 24,
+        "loop_count": 0,
+        "filename_prefix": "Hunyuan/%date:yyyy_MM_dd%/lowres/vid",
+        "format": "video/h264-mp4",
+        "pix_fmt": "yuv420p",
+        "crf": 6,
+        "save_metadata": true,
+        "trim_to_audio": false,
+        "pingpong": false,
+        "save_output": true,
+        "videopreview": {
+          "hidden": false,
+          "paused": false,
+          "params": {
+            "filename": "vid_00001.mp4",
+            "subfolder": "Hunyuan/2025_01_20/lowres",
+            "type": "output",
+            "format": "video/h264-mp4",
+            "frame_rate": 24,
+            "workflow": "vid_00001.png",
+            "fullpath": "/app/output/Hunyuan/2025_01_20/lowres/vid_00001.mp4"
+          },
+          "muted": false
+        }
+      }
+    },
+    {
+      "id": 18,
+      "type": "SomethingToString",
+      "pos": [
+        424.8001403808594,
+        533.3193969726562
+      ],
+      "size": [
+        315,
+        82
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "input",
+          "type": "*",
+          "link": 21
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            20
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SomethingToString"
+      },
+      "widgets_values": [
+        "HunyuanVideo_",
+        ""
+      ]
+    },
+    {
+      "id": 19,
+      "type": "INTConstant",
+      "pos": [
+        -558.4031372070312,
+        523.6513671875
+      ],
+      "size": [
+        200,
+        58
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "value",
+          "type": "INT",
+          "links": [
+            21,
+            22
+          ],
+          "slot_index": 0
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "INTConstant"
+      },
+      "widgets_values": [
+        1024
+      ],
+      "color": "#1b4669",
+      "bgcolor": "#29699c"
     }
   ],
   "links": [
@@ -759,22 +889,54 @@
       "IMAGE"
     ],
     [
-      17,
+      18,
       13,
+      0,
+      17,
+      0,
+      "MODEL"
+    ],
+    [
+      19,
+      17,
       0,
       15,
       0,
       "*"
+    ],
+    [
+      20,
+      18,
+      0,
+      16,
+      4,
+      "STRING"
+    ],
+    [
+      21,
+      19,
+      0,
+      18,
+      0,
+      "*"
+    ],
+    [
+      22,
+      19,
+      0,
+      2,
+      0,
+      "INT"
     ]
   ],
   "groups": [],
   "config": {},
   "extra": {
     "ds": {
-      "scale": 0.6734710092973494,
+      "scale": 0.8963899133747724,
       "offset": [
-        609.4699254841921,
-        405.01241527664115
+        651.740474611979,
+        169.24377772490305
       ]
     }
   },

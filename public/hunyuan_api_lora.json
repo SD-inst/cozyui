@@ -17,7 +17,10 @@
   },
   "2": {
     "inputs": {
-      "noise_seed": 1024
+      "noise_seed": [
+        "19",
+        0
+      ]
     },
     "class_type": "RandomNoise",
     "_meta": {
@@ -85,7 +88,7 @@
     "inputs": {
       "shift": 10,
       "model": [
-        "13",
+        "17",
         0
       ]
     },
@@ -147,7 +150,7 @@
       "steps": 7,
       "denoise": 1,
       "model": [
-        "13",
+        "17",
         0
       ]
     },
@@ -182,7 +185,10 @@
     "inputs": {
       "frame_rate": 24,
       "loop_count": 0,
-      "filename_prefix": "Hunyuan/2025_01_20/lowres/vid",
+      "filename_prefix": [
+        "18",
+        0
+      ],
       "format": "video/h264-mp4",
       "pix_fmt": "yuv420p",
       "crf": 6,
@@ -198,6 +204,43 @@
     "class_type": "VHS_VideoCombine",
     "_meta": {
       "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "17": {
+    "inputs": {
+      "lora_name": "SDXL/characters/Ahsoka_Tano_XL.safetensors",
+      "strength_model": 1,
+      "model": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "LoraLoaderModelOnly",
+    "_meta": {
+      "title": "LoraLoaderModelOnly"
+    }
+  },
+  "18": {
+    "inputs": {
+      "prefix": "HunyuanVideo_",
+      "suffix": "",
+      "input": [
+        "19",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "19": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "INT Constant"
     }
   }
 }
