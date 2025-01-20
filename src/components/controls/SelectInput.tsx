@@ -43,7 +43,7 @@ export const SelectInput = ({
         alsoSet(defaultValue);
     }, [defaultValue]);
     return (
-        <FormControl fullWidth>
+        <FormControl fullWidth sx={{ mt: 1 }}>
             <InputLabel>{props.label || props.name}</InputLabel>
             <Select
                 label={props.label || props.name}

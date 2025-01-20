@@ -13,6 +13,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { useListChoices } from '../../hooks/useListChoices';
 
+type valueType = { id: string; label: string; strength: number };
+
 const LoraChip = ({
     getTagProps,
     index,
@@ -21,12 +23,12 @@ const LoraChip = ({
 }: {
     getTagProps: AutocompleteRenderGetTagProps;
     index: number;
-    value: any;
+    value: valueType;
     onOK: (strength: number) => void;
 }) => {
     const { key, ...tagProps } = getTagProps({ index });
     const [open, setOpen] = useState(false);
-    const [strength, setStrength] = useState(value.strength);
+    const [strength, setStrength] = useState('' + value.strength);
     const ref = useRef<HTMLInputElement>(null);
     const handleOK = () => {
         onOK(parseFloat(strength) || 1);
@@ -36,23 +38,39 @@ const LoraChip = ({
         if (!open) {
             return;
         }
-        setStrength(value.strength);
+        setStrength('' + value.strength);
         setTimeout(() => ref.current?.focus(), 100);
     }, [open]);
+    const slashIdx = value.label.lastIndexOf('/');
+    const sftIdx = value.label.lastIndexOf('.safetensors');
+    const labelTrimmed = value.label.substring(slashIdx + 1, sftIdx);
     return (
         <>
             <Chip
                 variant='outlined'
-                label={`${value.label}:${value.strength}`}
+                label={`${labelTrimmed}:${value.strength}`}
                 key={key}
                 onClick={() => setOpen(true)}
+                sx={{
+                    height: 'auto',
+                    '& .MuiChip-label': {
+                        display: 'block',
+                        whiteSpace: 'normal',
+                        wordBreak: 'break-all',
+                    },
+                }}
                 {...tagProps}
             />
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>Change lora weight</DialogTitle>
                 <DialogContent>
                     <TextField
+                        fullWidth
                         value={strength}
+                        type='number'
+                        slotProps={{
+                            htmlInput: { step: 0.05, min: 0, max: 3 },
+                        }}
                         inputRef={ref}
                         onChange={(e) => setStrength(e.target.value)}
                         onKeyDown={(e) => {
@@ -89,11 +107,7 @@ export const LoraInput = ({
         name: props.name,
         defaultValue: {
             ctl_value: [],
-            handler: (
-                api: any,
-                wf: any,
-                values: { id: string; label: string; strength: number }[]
-            ) => {
+            handler: (api: any, wf: any, values: valueType[]) => {
                 if (!values.length) {
                     return;
                 }
