@@ -30,11 +30,12 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                     return;
                 }
                 const { value, content } = c.props;
-                if (current_tab !== (value || i)) {
-                    return null;
-                }
                 return (
-                    <VerticalBox mt={3} width='100%'>
+                    <VerticalBox
+                        mt={3}
+                        width='100%'
+                        display={current_tab === (value || i) ? 'flex' : 'none'}
+                    >
                         <FormProvider {...form}>{content}</FormProvider>
                     </VerticalBox>
                 );

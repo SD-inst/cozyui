@@ -52,8 +52,14 @@ export const GenerateButton = ({
         })
     );
     const apiUrl = useAppSelector((s) => s.config.api);
-    const { data: apiData, isSuccess: apiSuccess } = useGet(api, !!api);
-    const { data: wfData, isSuccess: wfSuccess } = useGet(workflow, !!workflow);
+    const { data: apiData, isSuccess: apiSuccess } = useGet({
+        url: api,
+        enabled: !!api,
+    });
+    const { data: wfData, isSuccess: wfSuccess } = useGet({
+        url: workflow,
+        enabled: !!workflow,
+    });
     const { mutate } = useMutation({
         mutationKey: ['prompt'],
         mutationFn: () => {

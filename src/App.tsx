@@ -21,41 +21,39 @@ function App() {
         error: errorConfig,
         isError: isErrorConfig,
         isSuccess: isSuccessConfig,
-    } = useGet('config.json');
+    } = useGet({ url: 'config.json', staleTime: Infinity });
     const {
         data: dataObj,
         error: errorObj,
         isError: isErrorObj,
         isSuccess: isSuccessObj,
-    } = useGet(
-        (dataConfig as configType)?.api + '/api/object_info',
-        isSuccessConfig
-    );
+    } = useGet({
+        url: (dataConfig as configType)?.api + '/api/object_info',
+        enabled: isSuccessConfig,
+    });
     const dispatch = useAppDispatch();
     useEffect(() => {
         if (isErrorConfig) {
             toast.error('Error getting config: ' + errorConfig);
         }
-        if (isErrorObj) {
-            toast.error('Error getting object info: ' + errorObj);
-        }
-        if (!isSuccessConfig || !isSuccessObj) {
+        if (!isSuccessConfig) {
             return;
         }
         toast.success('Got config');
-        dispatch(setConfig({ ...dataConfig, object_info: dataObj }));
+        dispatch(setConfig(dataConfig));
         dispatch(setTab(Object.keys(dataConfig.tabs)[0]));
         dispatch(setGenerationDisabled(false));
-    }, [
-        isErrorConfig,
-        errorConfig,
-        isSuccessConfig,
-        dataConfig,
-        isErrorObj,
-        errorObj,
-        isSuccessObj,
-        dataObj,
-    ]);
+    }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig]);
+    useEffect(() => {
+        if (isErrorObj) {
+            toast.error('Error getting object info: ' + errorObj);
+        }
+        if (!isSuccessObj) {
+            return;
+        }
+        toast.success('Objects updated');
+        dispatch(setConfig({ ...dataConfig, object_info: dataObj }));
+    }, [isErrorObj, errorObj, isSuccessObj, dataObj]);
     const theme = createTheme({
         colorSchemes: { dark: true },
         defaultColorScheme: 'dark',
