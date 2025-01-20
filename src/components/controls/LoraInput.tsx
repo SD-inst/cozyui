@@ -9,38 +9,45 @@ export const LoraInput = ({ ...props }: { name: string; label?: string }) => {
             ctl_value: [],
             handler: (
                 api: any,
+                wf: any,
                 values: { id: string; label: string }[]
             ) => {
                 if (!values.length) {
                     return;
                 }
+                const last_node_id = wf.last_node_id + 1;
                 const loraNodes = values.map((v) => ({
                     inputs: {
-                        lora: v.id,
-                        strength: 1,
+                        lora_name: v.id,
+                        strength_model: 1,
+                        model: ['13', 0],
                     },
-                    class_type: 'HyVideoLoraSelect',
+                    class_type: 'LoraLoaderModelOnly',
                     _meta: {
-                        title: 'HunyuanVideo Lora Select',
+                        title: 'LoraLoaderModelOnly',
                     },
                 }));
-                api['1'].inputs.lora = ['1000', 0];
+                api['12'].inputs.model = ['' + last_node_id, 0];
+                api['6'].inputs.model = ['' + last_node_id, 0];
+
                 loraNodes.forEach((n, i) => {
-                    api['' + (1000 + i)] = n;
+                    api['' + (last_node_id + i)] = n;
                     if (i < loraNodes.length - 1) {
-                        (n.inputs as any).prev_lora = ['' + (1001 + i)];
+                        (n.inputs as any).model = [
+                            '' + (last_node_id + i + 1),
+                        ];
                     }
                 });
             },
         },
     });
     const loras = useListChoices({
-        component: 'HyVideoLoraSelect',
-        field: 'lora',
+        component: 'LoraLoaderModelOnly',
+        field: 'lora_name',
         index: 0,
     });
     const opts = loras
-        .filter((l) => l.startsWith('comfy/hunyuan/'))
+        .filter((l) => l.includes('/hunyuan/'))
         .map((l) => ({ label: l, id: l }));
     return (
         <Autocomplete

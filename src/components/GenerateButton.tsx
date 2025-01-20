@@ -92,7 +92,11 @@ export const GenerateButton = ({
                     val.handler !== undefined &&
                     val.ctl_value !== undefined
                 ) {
-                    val.handler(params.prompt, val.ctl_value); // modify api request
+                    val.handler(
+                        params.prompt,
+                        params.extra_data.extra_pnginfo.workflow,
+                        val.ctl_value
+                    ); // modify api request
                     continue;
                 }
                 if (params.prompt[controls[name].id] === undefined) {

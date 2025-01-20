@@ -68,7 +68,7 @@ const Content = () => (
                 min={5}
                 max={257}
                 step={4}
-                fps={16}
+                fps={24}
                 name='length'
                 defaultValue={85}
             />
@@ -78,14 +78,14 @@ const Content = () => (
                 label='flow shift'
                 min={1}
                 max={30}
-                defaultValue={7}
+                defaultValue={10}
             />
             <SliderInput
                 name='guidance'
                 label='guidance scale'
                 min={1}
                 max={20}
-                defaultValue={6}
+                defaultValue={8}
             />
             <SeedInput name='seed' defaultValue={1024} />
             <LoraInput name='lora' />

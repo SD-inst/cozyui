@@ -1,55 +1,55 @@
 {
     "tabs": {
         "Hunyuan T2V": {
-            "workflow": "hunyuan_wf.json",
-            "api": "hunyuan_api.json",
+            "workflow": "hunyuan_wf_lora.json",
+            "api": "hunyuan_api_lora.json",
             "controls": {
                 "prompt": {
-                    "id": "30",
-                    "field": "prompt"
+                    "id": "8",
+                    "field": "text"
                 },
                 "model": {
-                    "id": "1",
-                    "field": "model"
+                    "id": "13",
+                    "field": "unet_name"
                 },
                 "quantization": {
-                    "id": "1",
-                    "field": "quantization"
+                    "id": "13",
+                    "field": "weight_dtype"
                 },
                 "width": {
-                    "id": "3",
+                    "id": "14",
                     "field": "width"
                 },
                 "height": {
-                    "id": "3",
+                    "id": "14",
                     "field": "height"
                 },
                 "seed": {
-                    "id": "52",
-                    "field": "value"
+                    "id": "2",
+                    "field": "noise_seed"
                 },
                 "steps": {
-                    "id": "3",
+                    "id": "12",
                     "field": "steps"
                 },
                 "length": {
-                    "id": "3",
-                    "field": "num_frames"
+                    "id": "14",
+                    "field": "length"
                 },
                 "flow_shift": {
-                    "id": "3",
-                    "field": "flow_shift"
+                    "id": "6",
+                    "field": "shift"
                 },
                 "guidance": {
-                    "id": "3",
-                    "field": "embedded_guidance_scale"
+                    "id": "7",
+                    "field": "guidance"
                 },
                 "lora": {
                     "id": "handle"
                 }
             },
             "result": {
-                "id": "34",
+                "id": "16",
                 "type": "gifs"
             }
         },
