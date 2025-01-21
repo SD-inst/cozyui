@@ -2,10 +2,12 @@ import { Button, Typography } from '@mui/material';
 import { useEffect, useRef } from 'react';
 import { useResult } from '../../hooks/useResult';
 import { VerticalBox } from '../VerticalBox';
+import { useApiURL } from '../../hooks/useApiURL';
 
 export const VideoResult = () => {
     const results = useResult();
     const videoRef = useRef<HTMLVideoElement>(null);
+    const apiUrl = useApiURL();
     useEffect(() => {
         if (results.length && videoRef.current) {
             videoRef.current?.scrollIntoView();
@@ -15,7 +17,7 @@ export const VideoResult = () => {
         <VerticalBox width='100%'>
             <Typography variant='body1'>Video</Typography>
             {results?.map((r: any) => {
-                const url = `/cui/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
+                const url = `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
                 return (
                     <VerticalBox key={r.filename}>
                         <video

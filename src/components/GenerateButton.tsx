@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setGenerationDisabled, setStatus } from '../redux/progress';
 import { setApi } from '../redux/tab';
 import { useCurrentTab } from './WorkflowTabs';
+import { useApiURL } from '../hooks/useApiURL';
 
 type error = {
     controls: string[];
@@ -48,7 +49,7 @@ export const GenerateButton = ({
     const { getValues } = useFormContext();
     const { api, controls } = useConfigTab(tabOverride);
 
-    const apiUrl = useAppSelector((s) => s.config.api);
+    const apiUrl = useApiURL();
     const { data: apiData, isSuccess: apiSuccess } = useGet({
         url: api,
         enabled: !!api,

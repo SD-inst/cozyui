@@ -3,12 +3,12 @@ import { useMutation } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
-import { useAppSelector } from '../../redux/hooks';
+import { useApiURL } from '../../hooks/useApiURL';
 
 export const FileUpload = ({ ...props }: { name: string }) => {
     const { field } = useController(props);
     const [url, setUrl] = useState<string>();
-    const apiUrl = useAppSelector((s) => s.config.api);
+    const apiUrl = useApiURL();
     const { mutate } = useMutation({
         onMutate: (files: File[]) => {
             const formData = new FormData();
