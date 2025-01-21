@@ -1,13 +1,16 @@
 import { Button, FormControl, FormHelperText } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep } from 'lodash';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useConfigTab } from '../hooks/useConfigTab';
 import { useGet } from '../hooks/useGet';
+import { handlerType } from '../redux/api_handlers';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setGenerationDisabled, setStatus } from '../redux/progress';
 import { setApi } from '../redux/tab';
+import { useCurrentTab } from './WorkflowTabs';
 
 type error = {
     controls: string[];
@@ -23,10 +26,7 @@ const noErrors = {
     api: [],
 };
 
-const emptyParams = {
-    api: '',
-    controls: {} as any,
-};
+const emptyHandlers = {};
 
 export const GenerateButton = ({
     tabOverride,
@@ -46,17 +46,19 @@ export const GenerateButton = ({
     );
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
-    const current_tab =
-        tabOverride || useAppSelector((s) => get(s, 'tab.current_tab', ''));
+    const { api, controls } = useConfigTab(tabOverride);
 
-    const { api, controls } = useAppSelector((s) =>
-        get(s, `config.tabs["${current_tab}"]`, emptyParams)
-    );
     const apiUrl = useAppSelector((s) => s.config.api);
     const { data: apiData, isSuccess: apiSuccess } = useGet({
         url: api,
         enabled: !!api,
     });
+    const current_tab = useCurrentTab();
+    const handlers: handlerType = useAppSelector((s) =>
+        typeof current_tab === 'string'
+            ? s.handlers[current_tab]
+            : emptyHandlers
+    );
     const { mutate } = useMutation({
         mutationKey: ['prompt'],
         mutationFn: () => {
@@ -85,11 +87,19 @@ export const GenerateButton = ({
                 }
                 if (
                     controls[name].id === 'handle' &&
-                    typeof val === 'object' &&
-                    val.handler !== undefined &&
-                    val.ctl_value !== undefined
+                    handlers[name] !== undefined
                 ) {
-                    val.handler(params.prompt, val.ctl_value); // modify api request
+                    try {
+                        handlers[name](params.prompt, val); // modify api request
+                    } catch (e) {
+                        console.log(e);
+                        toast.error(
+                            `Error processing handler of ${name}: ${e}`
+                        );
+                        dispatch(setGenerationDisabled(false));
+                        dispatch(setStatus('Error'));
+                        return Promise.reject();
+                    }
                     continue;
                 }
                 if (params.prompt[controls[name].id] === undefined) {
@@ -123,10 +133,10 @@ export const GenerateButton = ({
                     setErrors((e) => ({ ...e, api: [...e.api, k] }));
                 }
             }
+            console.log('Generation params', params);
             if (noexec) {
                 dispatch(setGenerationDisabled(false));
                 toast.success('Execution skipped');
-                console.log(params);
                 return Promise.resolve();
             }
             return fetch(apiUrl + '/api/prompt', {

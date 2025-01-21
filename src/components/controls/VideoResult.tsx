@@ -4,7 +4,7 @@ import { useResult } from '../../hooks/useResult';
 import { VerticalBox } from '../VerticalBox';
 
 export const VideoResult = () => {
-    let results = useResult();
+    const results = useResult();
     const videoRef = useRef<HTMLVideoElement>(null);
     useEffect(() => {
         if (results.length && videoRef.current) {

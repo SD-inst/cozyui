@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import { useAppSelector } from '../redux/hooks';
+import { useCurrentTab } from '../components/WorkflowTabs';
 
 const emptyResult = {
     id: '',
@@ -8,7 +9,7 @@ const emptyResult = {
 
 export const useResult = (tabOverride?: string) => {
     const resultStore = useAppSelector((s) => s.result);
-    const current_tab = tabOverride || useAppSelector((s) => s.tab.current_tab);
+    const current_tab = useCurrentTab(tabOverride);
     const { id, type } = useAppSelector((s) =>
         get(s, `config.tabs["${current_tab}"].result`, emptyResult)
     );

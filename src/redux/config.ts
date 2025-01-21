@@ -14,6 +14,16 @@ export type configType = {
                 id: string;
                 type: string;
             };
+            lora_params: {
+                input_node_id?: string;
+                lora_input_name: string;
+                api_input_name: string;
+                output_idx?: number;
+                output_node_ids: string[];
+                class_name: string;
+                strength_field_name: string;
+                name_field_name: string;
+            };
         };
     };
     object_info: {

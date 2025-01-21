@@ -19,6 +19,7 @@ import { configType, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
 import { setTab } from './redux/tab';
+import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -79,7 +80,7 @@ function App() {
         dispatch(setConfig(dataConfig));
         dispatch(setTab(Object.keys(dataConfig.tabs)[0]));
         dispatch(setGenerationDisabled(false));
-    }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig]);
+    }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig, dispatch]);
     useEffect(() => {
         if (isErrorObj) {
             toast.error('Error getting object info: ' + errorObj);
@@ -89,7 +90,7 @@ function App() {
         }
         toast.success('Objects updated');
         dispatch(setConfig({ ...dataConfig, object_info: dataObj }));
-    }, [isErrorObj, errorObj, isSuccessObj, dataObj]);
+    }, [isErrorObj, errorObj, isSuccessObj, dataObj, dataConfig, dispatch]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -98,6 +99,7 @@ function App() {
                 <WorkflowTabs>
                     {HunyanT2VTab}
                     {LTXI2VTab}
+                    {HunyanT2VTabKJ}
                 </WorkflowTabs>
                 <Progress />
             </VerticalBox>

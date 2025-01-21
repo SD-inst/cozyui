@@ -1,4 +1,11 @@
-import { Box } from '@mui/material';
+import { ExpandMore } from '@mui/icons-material';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary
+} from '@mui/material';
+import { Box } from '@mui/system';
+import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
@@ -10,7 +17,6 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
-import { HYSize } from '../controls/HYSize';
 
 const models = [
     {
@@ -20,6 +26,16 @@ const models = [
             {
                 name: 'quantization',
                 value: 'fp8_e4m3fn',
+            },
+        ],
+    },
+    {
+        text: 'FP8 (no lora support)',
+        value: 'hyvid/mp_rank_00_model_states_fp8.pt',
+        alsoSet: [
+            {
+                name: 'quantization',
+                value: 'fp8_scaled',
             },
         ],
     },
@@ -38,6 +54,17 @@ const models = [
 const Content = () => (
     <Layout>
         <GridLeft>
+            <Accordion sx={{ mb: 1 }}>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                    Kijai's implementation, see notes
+                </AccordionSummary>
+                <AccordionDetails>
+                    Lora support is wonky, it unloads if the model isn't fully
+                    reloaded (which happens if another workflow or service is
+                    executed, or the lora set or weights are changed). Hopefully, it will be fixed. It's
+                    about 15% faster and has more quality improving hacks.
+                </AccordionDetails>
+            </Accordion>
             <TextInput name='prompt' multiline />
             <SelectInput
                 name='model'
@@ -77,6 +104,14 @@ const Content = () => (
                 defaultValue={7}
             />
             <SeedInput name='seed' defaultValue={1024} />
+            <SliderInput
+                name='enhance'
+                label='Enhance-a-Video weight'
+                min={0}
+                max={8}
+                defaultValue={4}
+                step={0.1}
+            />
             <LoraInput name='lora' filter='/hunyuan/' />
         </GridLeft>
         <GridRight>
@@ -88,6 +123,10 @@ const Content = () => (
     </Layout>
 );
 
-export const HunyanT2VTab = (
-    <WFTab label='Hunyuan T2V' value='Hunyuan T2V' content={<Content />} />
+export const HunyanT2VTabKJ = (
+    <WFTab
+        label='Hunyuan T2V Kijai'
+        value='Hunyuan T2V KJ'
+        content={<Content />}
+    />
 );

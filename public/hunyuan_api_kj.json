@@ -4,10 +4,10 @@
       "model": "hyvid/mp_rank_00_model_states_fp8.pt",
       "base_precision": "bf16",
       "quantization": "fp8_scaled",
-      "load_device": "main_device",
+      "load_device": "offload_device",
       "attention_mode": "sageattn_varlen",
       "auto_cpu_offload": false,
-      "upcast_rope": true
+      "upcast_rope": false
     },
     "class_type": "HyVideoModelLoader",
     "_meta": {
@@ -20,8 +20,8 @@
       "height": 320,
       "num_frames": 85,
       "steps": 7,
-      "embedded_guidance_scale": 17,
-      "flow_shift": 17,
+      "embedded_guidance_scale": 7,
+      "flow_shift": 7,
       "seed": [
         "52",
         0
@@ -133,7 +133,7 @@
   },
   "52": {
     "inputs": {
-      "value": 1234
+      "value": 1024
     },
     "class_type": "INTConstant",
     "_meta": {

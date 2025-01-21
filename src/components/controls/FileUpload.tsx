@@ -5,15 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import { useAppSelector } from '../../redux/hooks';
 
-export const FileUpload = ({
-    label = 'Upload file',
-    accept,
-    ...props
-}: {
-    name: string;
-    label?: string;
-    accept?: string;
-}) => {
+export const FileUpload = ({ ...props }: { name: string }) => {
     const { field } = useController(props);
     const [url, setUrl] = useState<string>();
     const apiUrl = useAppSelector((s) => s.config.api);
@@ -43,9 +35,12 @@ export const FileUpload = ({
                 });
         },
     });
-    const onDrop = useCallback((acceptedFiles: any) => {
-        mutate(acceptedFiles);
-    }, []);
+    const onDrop = useCallback(
+        (acceptedFiles: any) => {
+            mutate(acceptedFiles);
+        },
+        [mutate]
+    );
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept: {

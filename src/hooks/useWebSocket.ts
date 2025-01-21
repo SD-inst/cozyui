@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export const useWebSocket = (
     url: string,
@@ -9,7 +9,7 @@ export const useWebSocket = (
     const [socket, setSocket] = useState<WebSocket>();
     const s = useRef<WebSocket>();
     const reconnectTimeout = useRef<number>();
-    const initSocket = (url: string) => {
+    const initSocket = useCallback((url: string) => {
         s.current = new WebSocket(url);
         s.current.onclose = () => {
             reconnectTimeout.current = setTimeout(() => {
@@ -23,7 +23,7 @@ export const useWebSocket = (
             s.current.onopen = onOpen;
         }
         setSocket(s.current);
-    };
+    }, [onMessage, onOpen]);
     useEffect(() => {
         if (!enabled) {
             return;
@@ -40,6 +40,6 @@ export const useWebSocket = (
                 s.current = undefined;
             }
         };
-    }, [url, enabled]);
+    }, [url, enabled, initSocket]);
     return socket;
 };

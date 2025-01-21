@@ -21,7 +21,7 @@ const Content = () => {
         if (results.length) {
             form.setValue('prompt', results[0] as string);
         }
-    }, [results]);
+    }, [results, form]);
     return (
         <Layout>
             <GridLeft>

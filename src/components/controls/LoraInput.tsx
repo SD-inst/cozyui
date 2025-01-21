@@ -9,9 +9,13 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
+import { useAppDispatch } from '../../redux/hooks';
+import { setHandler } from '../../redux/api_handlers';
+import { useCurrentTab } from '../WorkflowTabs';
 
 type valueType = { id: string; label: string; strength: number };
 
@@ -40,15 +44,12 @@ const LoraChip = ({
         }
         setStrength('' + value.strength);
         setTimeout(() => ref.current?.focus(), 100);
-    }, [open]);
-    const slashIdx = value.label.lastIndexOf('/');
-    const sftIdx = value.label.lastIndexOf('.safetensors');
-    const labelTrimmed = value.label.substring(slashIdx + 1, sftIdx);
+    }, [open, value.strength]);
     return (
         <>
             <Chip
                 variant='outlined'
-                label={`${labelTrimmed}:${value.strength}`}
+                label={`${value.label}:${value.strength}`}
                 key={key}
                 onClick={() => setOpen(true)}
                 sx={{
@@ -91,56 +92,100 @@ const LoraChip = ({
 };
 
 export const LoraInput = ({
-    input_node_id,
-    output_node_ids,
     filter,
     ...props
 }: {
     name: string;
     label?: string;
-    input_node_id: string;
-    output_node_ids: string[];
     filter?: string;
 }) => {
+    const dispatch = useAppDispatch();
     const { setValue } = useFormContext();
+    const current_tab = useCurrentTab();
+    const {
+        lora_params: {
+            api_input_name,
+            lora_input_name,
+            input_node_id,
+            output_idx,
+            output_node_ids,
+            class_name,
+            strength_field_name,
+            name_field_name,
+        },
+    } = useConfigTab();
+    const handler = useCallback(
+        (api: any, values: valueType[]) => {
+            console.log(
+                'HANDLER',
+                api_input_name,
+                lora_input_name,
+                input_node_id
+            );
+            if (!values.length) {
+                return;
+            }
+            const last_node_id =
+                Object.keys(api)
+                    .map((k) => parseInt(k))
+                    .reduce((a, k) => Math.max(a, k)) + 1;
+            const loraNodes = values.map((v) => ({
+                inputs: {
+                    [name_field_name]: v.id,
+                    [strength_field_name]: v.strength,
+                    ...(input_node_id
+                        ? { [lora_input_name]: [input_node_id, output_idx] }
+                        : {}),
+                },
+                class_type: class_name,
+                _meta: {
+                    title: 'LoraLoaderModelOnly',
+                },
+            }));
+            output_node_ids.forEach(
+                (id) =>
+                    (api[id].inputs[api_input_name] = [
+                        '' + last_node_id,
+                        output_idx,
+                    ])
+            );
+
+            loraNodes.forEach((n, i) => {
+                api['' + (last_node_id + i)] = n;
+                if (i < loraNodes.length - 1) {
+                    (n.inputs as any)[lora_input_name] = [
+                        '' + (last_node_id + i + 1),
+                        output_idx,
+                    ];
+                }
+            });
+        },
+        [
+            api_input_name,
+            lora_input_name,
+            input_node_id,
+            output_idx,
+            output_node_ids,
+            class_name,
+            name_field_name,
+            strength_field_name,
+        ]
+    );
+    useEffect(() => {
+        if (typeof current_tab !== 'string') {
+            return;
+        }
+        dispatch(
+            setHandler({
+                tab_name: current_tab,
+                control_name: props.name,
+                handler,
+            })
+        );
+    }, [current_tab, handler, props.name, dispatch]);
     const ctl = useController({
         name: props.name,
-        defaultValue: {
-            ctl_value: [],
-            handler: (api: any, values: valueType[]) => {
-                if (!values.length) {
-                    return;
-                }
-                const last_node_id =
-                    Object.keys(api)
-                        .map((k) => parseInt(k))
-                        .reduce((a, k) => Math.max(a, k)) + 1;
-                const loraNodes = values.map((v) => ({
-                    inputs: {
-                        lora_name: v.id,
-                        strength_model: v.strength,
-                        model: [input_node_id, 0],
-                    },
-                    class_type: 'LoraLoaderModelOnly',
-                    _meta: {
-                        title: 'LoraLoaderModelOnly',
-                    },
-                }));
-                output_node_ids.forEach(
-                    (id) => (api[id].inputs.model = ['' + last_node_id, 0])
-                );
-
-                loraNodes.forEach((n, i) => {
-                    api['' + (last_node_id + i)] = n;
-                    if (i < loraNodes.length - 1) {
-                        (n.inputs as any).model = [
-                            '' + (last_node_id + i + 1),
-                            0,
-                        ];
-                    }
-                });
-            },
-        },
+        defaultValue: [],
     });
     const loras = useListChoices({
         component: 'LoraLoaderModelOnly',
@@ -149,7 +194,14 @@ export const LoraInput = ({
     });
     const opts = loras
         .filter((l) => (filter ? l.includes('/hunyuan/') : true))
-        .map((l) => ({ label: l, id: l, strength: 1 }));
+        .map((l) => ({
+            label: l.slice(
+                l.lastIndexOf('/') + 1,
+                l.lastIndexOf('.safetensors')
+            ),
+            id: l,
+            strength: 1,
+        }));
     return (
         <Autocomplete
             options={opts}
@@ -164,24 +216,18 @@ export const LoraInput = ({
                         index={i}
                         value={v}
                         onOK={(strength: number) => {
-                            setValue(props.name, {
-                                ...ctl.field.value,
-                                ctl_value: [
-                                    ...values.slice(0, i),
-                                    { ...values[i], strength },
-                                    ...values.slice(i + 1),
-                                ],
-                            });
+                            setValue(props.name, [
+                                ...values.slice(0, i),
+                                { ...values[i], strength },
+                                ...values.slice(i + 1),
+                            ]);
                         }}
                     />
                 ))
             }
             fullWidth
             {...ctl.field}
-            value={ctl.field.value.ctl_value}
-            onChange={(_, v) => {
-                ctl.field.onChange({ ...ctl.field.value, ctl_value: v });
-            }}
+            onChange={(_, v) => ctl.field.onChange(v)}
             multiple
             {...props}
         />

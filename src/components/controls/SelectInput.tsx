@@ -19,7 +19,7 @@ export const SelectInput = ({
         | {
               text: string;
               value: string;
-              alsoSet?: [{ name: string; value: string }];
+              alsoSet?: { name: string; value: string }[];
           }
     )[];
 } & SelectProps) => {
@@ -37,11 +37,11 @@ export const SelectInput = ({
                 (c as any).alsoSet.map((v: any) => setValue(v.name, v.value));
             }
         },
-        [choices]
+        [choices, setValue]
     );
     useEffect(() => {
         alsoSet(defaultValue);
-    }, [defaultValue]);
+    }, [defaultValue, alsoSet]);
     return (
         <FormControl fullWidth sx={{ mt: 1, wordWrap: 'normal' }}>
             <InputLabel>{props.label || props.name}</InputLabel>
@@ -60,7 +60,7 @@ export const SelectInput = ({
                 {choices.map((c) => (
                     <MenuItem
                         sx={{ whiteSpace: 'normal' }}
-                        key={c.toString()}
+                        key={JSON.stringify(c)}
                         value={typeof c === 'object' ? c.value : c}
                     >
                         {typeof c === 'object' ? c.text : c}

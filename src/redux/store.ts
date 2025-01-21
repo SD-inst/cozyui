@@ -1,12 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { config } from './config';
 import { progress } from './progress';
 import { result } from './result';
-import { config } from './config';
 import { tab } from './tab';
-
-export type CUIState = {
-    execution_state: {};
-};
+import { handlers } from './api_handlers';
 
 export const store = configureStore({
     reducer: {
@@ -14,7 +11,10 @@ export const store = configureStore({
         result,
         config,
         tab,
+        handlers,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ serializableCheck: false }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

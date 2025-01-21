@@ -47,8 +47,83 @@
                     "id": "handle"
                 }
             },
+            "lora_params": {
+                "input_node_id": "13",
+                "lora_input_name": "model",
+                "api_input_name": "model",
+                "output_node_ids": ["12", "6"],
+                "output_idx": 0,
+                "class_name": "LoraLoaderModelOnly",
+                "strength_field_name": "strength_model",
+                "name_field_name": "lora_name"
+            },
             "result": {
                 "id": "16",
+                "type": "gifs"
+            }
+        },
+        "Hunyuan T2V KJ": {
+            "api": "hunyuan_api_kj.json",
+            "controls": {
+                "prompt": {
+                    "id": "30",
+                    "field": "prompt"
+                },
+                "model": {
+                    "id": "1",
+                    "field": "model"
+                },
+                "quantization": {
+                    "id": "1",
+                    "field": "quantization"
+                },
+                "width": {
+                    "id": "3",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "3",
+                    "field": "height"
+                },
+                "seed": {
+                    "id": "52",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "3",
+                    "field": "steps"
+                },
+                "length": {
+                    "id": "3",
+                    "field": "num_frames"
+                },
+                "flow_shift": {
+                    "id": "3",
+                    "field": "flow_shift"
+                },
+                "guidance": {
+                    "id": "3",
+                    "field": "embedded_guidance_scale"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "enhance": {
+                    "id": "54",
+                    "field": "weight"
+                }
+            },
+            "lora_params": {
+                "lora_input_name": "prev_lora",
+                "api_input_name": "lora",
+                "output_node_ids": ["1"],
+                "output_idx": 0,
+                "class_name": "HyVideoLoraSelect",
+                "strength_field_name": "strength",
+                "name_field_name": "lora"
+            },
+            "result": {
+                "id": "34",
                 "type": "gifs"
             }
         },
