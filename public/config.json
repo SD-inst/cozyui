@@ -53,8 +53,8 @@
                 "api_input_name": "model",
                 "output_node_ids": ["12", "6"],
                 "output_idx": 0,
-                "class_name": "LoraLoaderModelOnly",
-                "strength_field_name": "strength_model",
+                "class_name": "HunyuanVideoLoraLoader",
+                "strength_field_name": "strength",
                 "name_field_name": "lora_name"
             },
             "result": {

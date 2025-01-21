@@ -116,12 +116,6 @@ export const LoraInput = ({
     } = useConfigTab();
     const handler = useCallback(
         (api: any, values: valueType[]) => {
-            console.log(
-                'HANDLER',
-                api_input_name,
-                lora_input_name,
-                input_node_id
-            );
             if (!values.length) {
                 return;
             }
@@ -129,17 +123,25 @@ export const LoraInput = ({
                 Object.keys(api)
                     .map((k) => parseInt(k))
                     .reduce((a, k) => Math.max(a, k)) + 1;
+            const additional_fields = {} as any;
+            if (class_name === 'HunyuanVideoLoraLoader') {
+                additional_fields.blocks_type = 'double_blocks';
+            }
+            if (input_node_id) {
+                additional_fields[lora_input_name] = [
+                    input_node_id,
+                    output_idx,
+                ];
+            }
             const loraNodes = values.map((v) => ({
                 inputs: {
                     [name_field_name]: v.id,
                     [strength_field_name]: v.strength,
-                    ...(input_node_id
-                        ? { [lora_input_name]: [input_node_id, output_idx] }
-                        : {}),
+                    ...additional_fields,
                 },
                 class_type: class_name,
                 _meta: {
-                    title: 'LoraLoaderModelOnly',
+                    title: class_name,
                 },
             }));
             output_node_ids.forEach(

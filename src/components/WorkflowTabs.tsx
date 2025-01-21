@@ -18,10 +18,7 @@ export const useCurrentTab = (tabOverride?: string) => {
 const TabContent = ({ ...props }) => {
     const current_tab = useAppSelector((s) => s.tab.current_tab);
     const form = useForm();
-    if (
-        !React.isValidElement(props.children) ||
-        (props.children.type as any).name !== 'WFTab'
-    ) {
+    if (!React.isValidElement(props.children)) {
         return;
     }
     const { value, content } = props.children.props as any;
