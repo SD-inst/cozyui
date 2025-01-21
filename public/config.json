@@ -1,7 +1,6 @@
 {
     "tabs": {
         "Hunyuan T2V": {
-            "workflow": "hunyuan_wf_lora.json",
             "api": "hunyuan_api_lora.json",
             "controls": {
                 "prompt": {
@@ -54,7 +53,6 @@
             }
         },
         "LTX I2V": {
-            "workflow": "ltx_i2v_wf.json",
             "api": "ltx_i2v_api.json",
             "controls": {
                 "prompt": {
@@ -99,7 +97,6 @@
             }
         },
         "Describe image": {
-            "workflow": "describe_image_wf.json",
             "api": "describe_image_api.json",
             "controls": {
                 "image": {

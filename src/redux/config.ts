@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 export type configType = {
     tabs: {
         [tabName: string]: {
-            workflow: string;
             api: string;
             controls: {
                 [control: string]: {

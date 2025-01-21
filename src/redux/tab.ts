@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 type tabType = {
     current_tab: boolean | string;
     api: any;
-    workflow: any;
 };
 
 const slice = createSlice({
@@ -11,7 +10,6 @@ const slice = createSlice({
     initialState: {
         current_tab: false,
         api: {} as any,
-        workflow: {} as any,
     } as tabType,
     reducers: {
         setTab: (s, action: PayloadAction<string | boolean>) => ({
@@ -22,14 +20,10 @@ const slice = createSlice({
             ...s,
             api: action.payload,
         }),
-        setWorkflow: (s, action: PayloadAction<any>) => ({
-            ...s,
-            workflow: action.payload,
-        }),
     },
 });
 
 export const {
     reducer: tab,
-    actions: { setApi, setTab, setWorkflow },
+    actions: { setApi, setTab },
 } = slice;

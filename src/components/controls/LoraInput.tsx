@@ -7,7 +7,7 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    TextField
+    TextField,
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
@@ -107,11 +107,14 @@ export const LoraInput = ({
         name: props.name,
         defaultValue: {
             ctl_value: [],
-            handler: (api: any, wf: any, values: valueType[]) => {
+            handler: (api: any, values: valueType[]) => {
                 if (!values.length) {
                     return;
                 }
-                const last_node_id = wf.last_node_id + 1;
+                const last_node_id =
+                    Object.keys(api)
+                        .map((k) => parseInt(k))
+                        .reduce((a, k) => Math.max(a, k)) + 1;
                 const loraNodes = values.map((v) => ({
                     inputs: {
                         lora_name: v.id,

@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { useGet } from '../hooks/useGet';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setGenerationDisabled, setStatus } from '../redux/progress';
-import { setApi, setWorkflow } from '../redux/tab';
+import { setApi } from '../redux/tab';
 
 type error = {
     controls: string[];
@@ -26,7 +26,6 @@ const noErrors = {
 const emptyParams = {
     api: '',
     controls: {} as any,
-    workflow: '',
 };
 
 export const GenerateButton = ({
@@ -50,7 +49,7 @@ export const GenerateButton = ({
     const current_tab =
         tabOverride || useAppSelector((s) => get(s, 'tab.current_tab', ''));
 
-    const { api, controls, workflow } = useAppSelector((s) =>
+    const { api, controls } = useAppSelector((s) =>
         get(s, `config.tabs["${current_tab}"]`, emptyParams)
     );
     const apiUrl = useAppSelector((s) => s.config.api);
@@ -58,27 +57,17 @@ export const GenerateButton = ({
         url: api,
         enabled: !!api,
     });
-    const { data: wfData, isSuccess: wfSuccess } = useGet({
-        url: workflow,
-        enabled: !!workflow,
-    });
     const { mutate } = useMutation({
         mutationKey: ['prompt'],
         mutationFn: () => {
             dispatch(setGenerationDisabled(true));
             dispatch(setApi(apiData));
-            dispatch(setWorkflow(wfData));
             dispatch(setStatus('Waiting...'));
             setErrors(noErrors);
 
             const params = {
                 client_id,
                 prompt: cloneDeep(apiData),
-                extra_data: {
-                    extra_pnginfo: {
-                        workflow: cloneDeep(wfData),
-                    },
-                },
             };
 
             for (const name in controls) {
@@ -100,11 +89,7 @@ export const GenerateButton = ({
                     val.handler !== undefined &&
                     val.ctl_value !== undefined
                 ) {
-                    val.handler(
-                        params.prompt,
-                        params.extra_data.extra_pnginfo.workflow,
-                        val.ctl_value
-                    ); // modify api request
+                    val.handler(params.prompt, val.ctl_value); // modify api request
                     continue;
                 }
                 if (params.prompt[controls[name].id] === undefined) {
@@ -169,7 +154,7 @@ export const GenerateButton = ({
                     variant='contained'
                     color='warning'
                     onClick={() => mutate()}
-                    disabled={generation_disabled || !apiSuccess || !wfSuccess}
+                    disabled={generation_disabled || !apiSuccess}
                     sx={{ mt: 1, mb: 1 }}
                 >
                     {text}
