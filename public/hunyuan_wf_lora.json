@@ -1,6 +1,6 @@
 {
   "last_node_id": 19,
-  "last_link_id": 22,
+  "last_link_id": 23,
   "nodes": [
     {
       "id": 1,
@@ -16,7 +16,7 @@
       "flags": {
         "collapsed": false
       },
-      "order": 14,
+      "order": 13,
       "mode": 0,
       "inputs": [
         {
@@ -92,7 +92,7 @@
         150
       ],
       "flags": {},
-      "order": 16,
+      "order": 15,
       "mode": 0,
       "inputs": [
         {
@@ -140,7 +140,7 @@
       "flags": {
         "collapsed": true
       },
-      "order": 15,
+      "order": 14,
       "mode": 0,
       "inputs": [
         {
@@ -208,7 +208,7 @@
         58
       ],
       "flags": {},
-      "order": 12,
+      "order": 11,
       "mode": 0,
       "inputs": [
         {
@@ -356,7 +356,7 @@
         106
       ],
       "flags": {},
-      "order": 13,
+      "order": 12,
       "mode": 0,
       "inputs": [
         {
@@ -525,7 +525,7 @@
           "name": "MODEL",
           "type": "MODEL",
           "links": [
-            18
+            23
           ],
           "slot_index": 0,
           "shape": 3
@@ -542,45 +542,6 @@
       "bgcolor": "#335"
     },
     {
-      "id": 17,
-      "type": "LoraLoaderModelOnly",
-      "pos": [
-        -352.9102478027344,
-        -90.84300994873047
-      ],
-      "size": [
-        315,
-        82
-      ],
-      "flags": {},
-      "order": 7,
-      "mode": 0,
-      "inputs": [
-        {
-          "name": "model",
-          "type": "MODEL",
-          "link": 18
-        }
-      ],
-      "outputs": [
-        {
-          "name": "MODEL",
-          "type": "MODEL",
-          "links": [
-            19
-          ],
-          "slot_index": 0
-        }
-      ],
-      "properties": {
-        "Node name for S&R": "LoraLoaderModelOnly"
-      },
-      "widgets_values": [
-        "SDXL/characters/Ahsoka_Tano_XL.safetensors",
-        1
-      ]
-    },
-    {
       "id": 15,
       "type": "Reroute",
       "pos": [
@@ -592,13 +553,13 @@
         26
       ],
       "flags": {},
-      "order": 11,
+      "order": 7,
       "mode": 0,
       "inputs": [
         {
           "name": "",
           "type": "*",
-          "link": 19
+          "link": 23
         }
       ],
       "outputs": [
@@ -625,10 +586,10 @@
       ],
       "size": [
         507.65264892578125,
-        648.7828979492188
+        330
       ],
       "flags": {},
-      "order": 17,
+      "order": 16,
       "mode": 0,
       "inputs": [
         {
@@ -747,7 +708,7 @@
         523.6513671875
       ],
       "size": [
-        200,
+        210,
         58
       ],
       "flags": {},
@@ -889,22 +850,6 @@
       "IMAGE"
     ],
     [
-      18,
-      13,
-      0,
-      17,
-      0,
-      "MODEL"
-    ],
-    [
-      19,
-      17,
-      0,
-      15,
-      0,
-      "*"
-    ],
-    [
       20,
       18,
       0,
@@ -927,6 +872,14 @@
       2,
       0,
       "INT"
+    ],
+    [
+      23,
+      13,
+      0,
+      15,
+      0,
+      "*"
     ]
   ],
   "groups": [],
@@ -935,8 +888,8 @@
     "ds": {
       "scale": 0.8963899133747724,
       "offset": [
-        651.740474611979,
-        169.24377772490305
+        653.2279339039288,
+        476.4017553863131
       ]
     }
   },
