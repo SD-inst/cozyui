@@ -45,6 +45,9 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "upscale": {
+                    "id": "handle"
                 }
             },
             "lora_params": {

@@ -1,0 +1,74 @@
+{
+  "1": {
+    "inputs": {
+      "ckpt_name": "film_net_fp32.pt",
+      "clear_cache_after_n_frames": 20,
+      "multiplier": 2,
+      "frames": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "FILM VFI",
+    "_meta": {
+      "title": "FILM VFI"
+    }
+  },
+  "2": {
+    "inputs": {
+      "model_name": "4x_foolhardy_Remacri.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  },
+  "3": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "crop": "center",
+      "image": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "ImageScale",
+    "_meta": {
+      "title": "Upscale Image"
+    }
+  },
+  "4": {
+    "inputs": {
+      "upscale_model": [
+        "2",
+        0
+      ]
+    },
+    "class_type": "ImageUpscaleWithModel",
+    "_meta": {
+      "title": "Upscale Image (using Model)"
+    }
+  },
+  "5": {
+    "inputs": {
+      "frame_rate": 48,
+      "loop_count": 0,
+      "filename_prefix": "hunyuan_upscaled",
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": false,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": false,
+      "images": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  }
+}

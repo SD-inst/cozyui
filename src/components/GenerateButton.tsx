@@ -4,14 +4,14 @@ import { cloneDeep } from 'lodash';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useApiURL } from '../hooks/useApiURL';
 import { useConfigTab } from '../hooks/useConfigTab';
 import { useGet } from '../hooks/useGet';
 import { handlerType } from '../redux/api_handlers';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setGenerationDisabled, setStatus } from '../redux/progress';
 import { setApi } from '../redux/tab';
-import { useCurrentTab } from './WorkflowTabs';
-import { useApiURL } from '../hooks/useApiURL';
+import { useCurrentTab } from './contexts/TabContext';
 
 type error = {
     controls: string[];
@@ -138,6 +138,7 @@ export const GenerateButton = ({
             if (noexec) {
                 dispatch(setGenerationDisabled(false));
                 toast.success('Execution skipped');
+                dispatch(setStatus('Finished'));
                 return Promise.resolve();
             }
             return fetch(apiUrl + '/api/prompt', {

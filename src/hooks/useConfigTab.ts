@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 import { useAppSelector } from '../redux/hooks';
-import { useCurrentTab } from '../components/WorkflowTabs';
+import { useCurrentTab } from '../components/contexts/TabContext';
 
 const emptyParams = {
     api: '',

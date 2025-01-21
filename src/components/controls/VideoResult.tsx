@@ -4,8 +4,16 @@ import { useResult } from '../../hooks/useResult';
 import { VerticalBox } from '../VerticalBox';
 import { useApiURL } from '../../hooks/useApiURL';
 
-export const VideoResult = () => {
-    const results = useResult();
+export const VideoResult = ({
+    id,
+    type,
+    title,
+}: {
+    id?: string;
+    type?: string;
+    title?: string;
+}) => {
+    const results = useResult({ id, type });
     const videoRef = useRef<HTMLVideoElement>(null);
     const apiUrl = useApiURL();
     useEffect(() => {
@@ -15,7 +23,7 @@ export const VideoResult = () => {
     }, [results]);
     return (
         <VerticalBox width='100%'>
-            <Typography variant='body1'>Video</Typography>
+            <Typography variant='body1'>{title || 'Video'}</Typography>
             {results?.map((r: any) => {
                 const url = `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
                 return (

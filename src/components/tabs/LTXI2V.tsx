@@ -15,7 +15,7 @@ import { Box } from '@mui/system';
 import { SwapButton } from '../controls/SwapButton';
 
 const Content = () => {
-    const results = useResult('Describe image');
+    const results = useResult({ tabOverride: 'Describe image' });
     const form = useFormContext();
     useEffect(() => {
         if (results.length) {

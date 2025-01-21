@@ -13,9 +13,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
-import { useAppDispatch } from '../../redux/hooks';
-import { setHandler } from '../../redux/api_handlers';
-import { useCurrentTab } from '../WorkflowTabs';
+import { useRegisterHandler } from '../../hooks/useRegisterHandler';
+import { getFreeNodeId } from '../../api/utils';
 
 type valueType = { id: string; label: string; strength: number };
 
@@ -99,9 +98,7 @@ export const LoraInput = ({
     label?: string;
     filter?: string;
 }) => {
-    const dispatch = useAppDispatch();
     const { setValue } = useFormContext();
-    const current_tab = useCurrentTab();
     const {
         lora_params: {
             api_input_name,
@@ -119,10 +116,7 @@ export const LoraInput = ({
             if (!values.length) {
                 return;
             }
-            const last_node_id =
-                Object.keys(api)
-                    .map((k) => parseInt(k))
-                    .reduce((a, k) => Math.max(a, k)) + 1;
+            const last_node_id = getFreeNodeId(api);
             const additional_fields = {} as any;
             if (class_name === 'HunyuanVideoLoraLoader') {
                 additional_fields.blocks_type = 'double_blocks';
@@ -173,18 +167,7 @@ export const LoraInput = ({
             strength_field_name,
         ]
     );
-    useEffect(() => {
-        if (typeof current_tab !== 'string') {
-            return;
-        }
-        dispatch(
-            setHandler({
-                tab_name: current_tab,
-                control_name: props.name,
-                handler,
-            })
-        );
-    }, [current_tab, handler, props.name, dispatch]);
+    useRegisterHandler({ name: props.name, handler });
     const ctl = useController({
         name: props.name,
         defaultValue: [],

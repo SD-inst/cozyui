@@ -1,19 +1,11 @@
 import { Tab, Tabs } from '@mui/material';
-import React, { createContext, useContext } from 'react';
+import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
+import { TabContext } from './contexts/TabContext';
 
-const TabContext = createContext('');
-
-export const useCurrentTab = (tabOverride?: string) => {
-    const current_tab = useContext(TabContext);
-    if (tabOverride) {
-        return tabOverride;
-    }
-    return current_tab;
-};
 
 const TabContent = ({ ...props }) => {
     const current_tab = useAppSelector((s) => s.tab.current_tab);
