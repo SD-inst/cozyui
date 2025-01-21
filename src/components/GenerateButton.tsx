@@ -23,6 +23,12 @@ const noErrors = {
     api: [],
 };
 
+const emptyParams = {
+    api: '',
+    controls: {} as any,
+    workflow: '',
+};
+
 export const GenerateButton = ({
     tabOverride,
     text = 'Generate',
@@ -45,11 +51,7 @@ export const GenerateButton = ({
         tabOverride || useAppSelector((s) => get(s, 'tab.current_tab', ''));
 
     const { api, controls, workflow } = useAppSelector((s) =>
-        get(s, `config.tabs["${current_tab}"]`, {
-            api: '',
-            controls: {} as any,
-            workflow: '',
-        })
+        get(s, `config.tabs["${current_tab}"]`, emptyParams)
     );
     const apiUrl = useAppSelector((s) => s.config.api);
     const { data: apiData, isSuccess: apiSuccess } = useGet({
