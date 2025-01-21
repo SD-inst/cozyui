@@ -17,10 +17,9 @@ export const VideoResult = () => {
             {results?.map((r: any) => {
                 const url = `/cui/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
                 return (
-                    <VerticalBox>
+                    <VerticalBox key={r.filename}>
                         <video
                             ref={videoRef}
-                            key={r.filename}
                             style={{ width: '100%' }}
                             src={url}
                             controls
