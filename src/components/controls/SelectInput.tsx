@@ -43,7 +43,7 @@ export const SelectInput = ({
         alsoSet(defaultValue);
     }, [defaultValue]);
     return (
-        <FormControl fullWidth sx={{ mt: 1 }}>
+        <FormControl fullWidth sx={{ mt: 1, wordWrap: 'normal' }}>
             <InputLabel>{props.label || props.name}</InputLabel>
             <Select
                 label={props.label || props.name}
@@ -52,10 +52,14 @@ export const SelectInput = ({
                     ctl.field.onChange(e);
                     alsoSet(e.target.value as string);
                 }}
+                sx={{
+                    '& .MuiSelect-select': { whiteSpace: 'normal !important' },
+                }}
                 {...props}
             >
                 {choices.map((c) => (
                     <MenuItem
+                        sx={{ whiteSpace: 'normal' }}
                         key={c.toString()}
                         value={typeof c === 'object' ? c.value : c}
                     >

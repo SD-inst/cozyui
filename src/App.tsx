@@ -1,5 +1,10 @@
 import '@fontsource/roboto/400.css';
-import { createTheme, ThemeProvider } from '@mui/material';
+import {
+    autocompleteClasses,
+    Box,
+    createTheme,
+    ThemeProvider,
+} from '@mui/material';
 import { useEffect } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import './App.css';
@@ -14,6 +19,37 @@ import { configType, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
 import { setTab } from './redux/tab';
+
+const theme = createTheme({
+    colorSchemes: { dark: true },
+    defaultColorScheme: 'dark',
+    components: {
+        MuiAutocomplete: {
+            defaultProps: {
+                renderOption(props, option, _, ownerState) {
+                    const { key, ...optionProps } = props;
+                    return (
+                        <Box
+                            key={key}
+                            sx={{
+                                borderRadius: '8px',
+                                wordBreak: 'break-all',
+                                margin: '5px',
+                                [`&.${autocompleteClasses.option}`]: {
+                                    padding: '8px',
+                                },
+                            }}
+                            component='li'
+                            {...optionProps}
+                        >
+                            {ownerState.getOptionLabel(option)}
+                        </Box>
+                    );
+                },
+            },
+        },
+    },
+});
 
 function App() {
     const {
@@ -54,10 +90,7 @@ function App() {
         toast.success('Objects updated');
         dispatch(setConfig({ ...dataConfig, object_info: dataObj }));
     }, [isErrorObj, errorObj, isSuccessObj, dataObj]);
-    const theme = createTheme({
-        colorSchemes: { dark: true },
-        defaultColorScheme: 'dark',
-    });
+
     return (
         <ThemeProvider theme={theme}>
             <WSReceiver />
