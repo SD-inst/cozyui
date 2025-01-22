@@ -14,7 +14,7 @@
     "inputs": {
       "text_input": "",
       "task": "more_detailed_caption",
-      "fill_mask": true,
+      "fill_mask": false,
       "keep_model_loaded": false,
       "max_new_tokens": 256,
       "num_beams": 3,

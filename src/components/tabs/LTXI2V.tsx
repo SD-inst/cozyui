@@ -13,6 +13,8 @@ import { LengthInput } from '../controls/LengthSlider';
 import { SliderInput } from '../controls/SliderInput';
 import { Box } from '@mui/system';
 import { SwapButton } from '../controls/SwapButton';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { ExpandMore } from '@mui/icons-material';
 
 const Content = () => {
     const results = useResult({ tabOverride: 'Describe image' });
@@ -85,6 +87,53 @@ const Content = () => {
                     label={`compression (increase if there's no animation)`}
                 />
                 <SliderInput name='steps' defaultValue={25} min={5} max={50} />
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMore />}>
+                        Advanced parameters
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <TextInput
+                            name='neg_prompt'
+                            defaultValue='low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly'
+                            label='negative prompt'
+                            multiline
+                        />
+                        <SliderInput
+                            name='cfg'
+                            label='CFG'
+                            defaultValue={3}
+                            min={1}
+                            max={10}
+                            step={0.1}
+                        />
+                        <SliderInput
+                            name='stg'
+                            label='STG'
+                            defaultValue={1}
+                            min={0}
+                            max={5}
+                            step={0.05}
+                        />
+                        <SliderInput
+                            name='stg_rescale'
+                            label='STG rescale'
+                            defaultValue={0.75}
+                            min={0}
+                            max={3}
+                            step={0.05}
+                        />
+                        <SelectInput
+                            name='sampler'
+                            choices={[
+                                { text: 'Euler', value: 'euler' },
+                                { text: 'Euler a', value: 'euler_ancestral' },
+                                { text: 'DPM++ 2M', value: 'dpmpp_2m' },
+                                { text: 'DPM++ 3M SDE', value: 'dpmpp_3m_sde' },
+                            ]}
+                            defaultValue={'euler'}
+                        />
+                    </AccordionDetails>
+                </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>

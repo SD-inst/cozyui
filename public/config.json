@@ -165,6 +165,26 @@
                     "id": "155",
                     "field": "height"
                 },
+                "neg_prompt": {
+                    "id": "88",
+                    "field": "text"
+                },
+                "cfg": {
+                    "id": "130",
+                    "field": "cfg"
+                },
+                "stg": {
+                    "id": "130",
+                    "field": "stg"
+                },
+                "stg_rescale": {
+                    "id": "130",
+                    "field": "rescale"
+                },
+                "sampler": {
+                    "id": "14",
+                    "field": "sampler_name"
+                },
                 "suffix": {
                     "id": ""
                 }
