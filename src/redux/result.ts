@@ -14,11 +14,13 @@ const slice = createSlice({
             s,
             action: PayloadAction<{ node_id: string; output: any }>
         ) => ({ ...s, [action.payload.node_id]: action.payload.output }),
-        clearResult: () => ({}),
+        delResult: (s, action: PayloadAction<{ node_id: string }>) => {
+            delete s[action.payload.node_id];
+        },
     },
 });
 
 export const {
     reducer: result,
-    actions: { addResult, clearResult },
+    actions: { addResult, delResult },
 } = slice;

@@ -1,29 +1,34 @@
+import { ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { Box } from '@mui/system';
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useResult } from '../../hooks/useResult';
+import { useResult, useResultParam } from '../../hooks/useResult';
+import { useAppDispatch } from '../../redux/hooks';
+import { delResult } from '../../redux/result';
 import { FileUpload } from '../controls/FileUpload';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
+import { LengthInput } from '../controls/LengthSlider';
+import { SeedInput } from '../controls/SeedInput';
+import { SelectInput } from '../controls/SelectInput';
+import { SliderInput } from '../controls/SliderInput';
+import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
-import { SelectInput } from '../controls/SelectInput';
-import { SeedInput } from '../controls/SeedInput';
-import { LengthInput } from '../controls/LengthSlider';
-import { SliderInput } from '../controls/SliderInput';
-import { Box } from '@mui/system';
-import { SwapButton } from '../controls/SwapButton';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
 
 const Content = () => {
     const results = useResult({ tabOverride: 'Describe image' });
+    const { id } = useResultParam('Describe image');
+    const dispatch = useAppDispatch();
     const form = useFormContext();
     useEffect(() => {
         if (results.length) {
             form.setValue('prompt', results[0] as string);
+            dispatch(delResult({ node_id: id }));
         }
-    }, [results, form]);
+    }, [results, form, dispatch, id]);
     return (
         <Layout>
             <GridLeft>

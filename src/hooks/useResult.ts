@@ -7,16 +7,20 @@ const emptyResult = {
     type: '',
 };
 
+export const useResultParam = (tabOverride?: string) => {
+    const current_tab = useCurrentTab(tabOverride);
+    return useAppSelector((s) =>
+        get(s, `config.tabs["${current_tab}"].result`, emptyResult)
+    );
+};
+
 export const useResult = (options?: {
     tabOverride?: string;
     id?: string;
     type?: string;
 }) => {
     const resultStore = useAppSelector((s) => s.result);
-    const current_tab = useCurrentTab(options?.tabOverride);
-    const { id: ids, type: types } = useAppSelector((s) =>
-        get(s, `config.tabs["${current_tab}"].result`, emptyResult)
-    );
+    const { id: ids, type: types } = useResultParam(options?.tabOverride);
     return get(
         resultStore,
         `["${options?.id || ids}"]["${options?.type || types}"]`,
