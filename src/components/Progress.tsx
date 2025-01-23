@@ -2,11 +2,13 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import { useAppSelector } from '../redux/hooks';
 import { VerticalBox } from './VerticalBox';
 import { get } from 'lodash';
+import { useTaskDuration } from '../hooks/useTaskDuration';
 
 export const Progress = () => {
     const { max, min, value, status, current_node, queue } = useAppSelector(
         (s) => s.progress
     );
+    const dur = useTaskDuration();
     const api = useAppSelector((s) => s.tab.api);
     const range = max - min;
     const perc = ((value - min) * 100) / range || 0;
@@ -19,7 +21,7 @@ export const Progress = () => {
         <VerticalBox width='100%'>
             {status && (
                 <Typography variant='body2' color='primary'>
-                    {status}
+                    {status} {dur ? `[${dur}]` : ''}
                 </Typography>
             )}
             {queue > 1 ? (

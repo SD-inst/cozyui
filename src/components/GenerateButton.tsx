@@ -9,7 +9,11 @@ import { useConfigTab } from '../hooks/useConfigTab';
 import { useGet } from '../hooks/useGet';
 import { handlerType } from '../redux/api_handlers';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { setGenerationDisabled, setStatus } from '../redux/progress';
+import {
+    clearGenerationTS,
+    setGenerationDisabled,
+    setStatus,
+} from '../redux/progress';
 import { setApi } from '../redux/tab';
 import { useCurrentTab } from './contexts/TabContext';
 
@@ -141,6 +145,7 @@ export const GenerateButton = ({
                 dispatch(setStatus('Finished'));
                 return Promise.resolve();
             }
+            dispatch(clearGenerationTS());
             return fetch(apiUrl + '/api/prompt', {
                 method: 'POST',
                 body: JSON.stringify(params),

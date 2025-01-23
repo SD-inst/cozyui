@@ -4,6 +4,8 @@ import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
     setCurrentNode,
     setGenerationDisabled,
+    setGenerationEnd,
+    setGenerationStart,
     setProgress,
     setQueue,
     setStatus,
@@ -24,6 +26,7 @@ export const WSReceiver = () => {
         dispatch(setProgress({ max: 0, value: -1 }));
         dispatch(setCurrentNode(''));
         dispatch(setGenerationDisabled(false));
+        dispatch(setGenerationEnd());
     }, [dispatch]);
     const client_id = useAppSelector((s) => s.config.client_id);
     const apiUrl = useAppSelector((s) => s.config.api);
@@ -38,6 +41,7 @@ export const WSReceiver = () => {
                     break;
                 case 'execution_start':
                     dispatch(setStatus('Running'));
+                    dispatch(setGenerationStart());
                     break;
                 case 'executed':
                     dispatch(

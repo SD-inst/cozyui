@@ -10,6 +10,8 @@ const progressSlice = createSlice({
         queue: 0,
         status: '',
         generation_disabled: true,
+        start_ts: 0,
+        end_ts: 0,
     },
     reducers: {
         setMin: (s, action: PayloadAction<number>) => ({
@@ -39,6 +41,20 @@ const progressSlice = createSlice({
             ...s,
             generation_disabled: action.payload,
         }),
+        clearGenerationTS: (s) => ({
+            ...s,
+            start_ts: 0,
+            end_ts: 0,
+        }),
+        setGenerationStart: (s) => ({
+            ...s,
+            start_ts: new Date().getTime(),
+            end_ts: 0,
+        }),
+        setGenerationEnd: (s) => ({
+            ...s,
+            end_ts: new Date().getTime(),
+        }),
     },
 });
 
@@ -51,5 +67,8 @@ export const {
         setQueue,
         setStatus,
         setGenerationDisabled,
+        clearGenerationTS,
+        setGenerationStart,
+        setGenerationEnd,
     },
 } = progressSlice;
