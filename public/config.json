@@ -181,12 +181,19 @@
                     "id": "130",
                     "field": "rescale"
                 },
+                "stg_mode": {
+                    "id": "128",
+                    "field": "stg_mode"
+                },
                 "sampler": {
                     "id": "14",
                     "field": "sampler_name"
                 },
                 "suffix": {
-                    "id": ""
+                    "id": "skip"
+                },
+                "llm": {
+                    "id": "skip"
                 }
             },
             "result": {
@@ -200,6 +207,10 @@
                 "image": {
                     "id": "11",
                     "field": "image"
+                },
+                "llm": {
+                    "id": "1",
+                    "field": "model"
                 },
                 "suffix": {
                     "id": "12",

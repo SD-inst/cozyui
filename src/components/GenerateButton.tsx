@@ -78,7 +78,7 @@ export const GenerateButton = ({
             };
 
             for (const name in controls) {
-                if (!controls[name].id) {
+                if (!controls[name].id || controls[name].id === 'skip') {
                     // way to ignore unrelated controls
                     continue;
                 }

@@ -44,6 +44,21 @@ const Content = () => {
                         ' The scene is computer-generated imagery.',
                     ]}
                 />
+                <SelectInput
+                    name='llm'
+                    choices={[
+                        {
+                            text: 'Florence2-base',
+                            value: 'microsoft/Florence-2-base',
+                        },
+                        {
+                            text: 'CogFlorence 2.2 Large',
+                            value: 'thwri/CogFlorence-2.2-Large',
+                        },
+                    ]}
+                    label='LLM for description'
+                    defaultValue='thwri/CogFlorence-2.2-Large'
+                />
                 <GenerateButton
                     tabOverride='Describe image'
                     text='Describe'
@@ -84,13 +99,6 @@ const Content = () => {
                     defaultValue={129}
                     fps={25}
                 />
-                <SliderInput
-                    name='compression'
-                    defaultValue={29}
-                    min={1}
-                    max={50}
-                    label={`compression (increase if there's no animation)`}
-                />
                 <SliderInput name='steps' defaultValue={25} min={5} max={50} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
@@ -126,6 +134,21 @@ const Content = () => {
                             min={0}
                             max={3}
                             step={0.05}
+                        />
+                        <SelectInput
+                            name='stg_mode'
+                            choices={[
+                                { text: 'Attention', value: 'attention' },
+                                { text: 'Residual', value: 'residual' },
+                            ]}
+                            defaultValue='attention'
+                            label='STG mode'
+                        />
+                        <SliderInput
+                            name='compression'
+                            defaultValue={29}
+                            min={1}
+                            max={50}
                         />
                         <SelectInput
                             name='sampler'
