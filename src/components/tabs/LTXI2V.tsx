@@ -55,6 +55,10 @@ const Content = () => {
                             text: 'CogFlorence 2.2 Large',
                             value: 'thwri/CogFlorence-2.2-Large',
                         },
+                        {
+                            text: 'Florence2-large PromptGen v2.0',
+                            value: 'MiaoshouAI/Florence-2-large-PromptGen-v2.0',
+                        },
                     ]}
                     label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
@@ -132,7 +136,7 @@ const Content = () => {
                             label='STG rescale'
                             defaultValue={0.75}
                             min={0}
-                            max={3}
+                            max={1}
                             step={0.05}
                         />
                         <SelectInput
