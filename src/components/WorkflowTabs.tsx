@@ -35,6 +35,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                 value={current_tab}
                 onChange={(_, v) => dispatch(setTab(v))}
                 variant='scrollable'
+                sx={{ width: '100%' }}
             >
                 {React.Children.map(props.children, (c, i) => {
                     if (!React.isValidElement(c)) {
