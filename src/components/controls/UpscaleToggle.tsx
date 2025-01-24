@@ -3,9 +3,9 @@ import { cloneDeep } from 'lodash';
 import { Dispatch, SetStateAction, useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { getFreeNodeId, shiftIds } from '../../api/utils';
-import { useRegisterHandler } from '../../hooks/useRegisterHandler';
 import { useWatchForm } from '../../hooks/useWatchForm';
 import { VideoResult } from './VideoResult';
+import { useRegisterHandler } from '../contexts/TabContext';
 
 const upscale_api_base = {
     '1': {

@@ -2,7 +2,6 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
-import { useRegisterHandler } from '../../hooks/useRegisterHandler';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -14,9 +13,10 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { useRegisterHandler } from '../contexts/TabContext';
 
 const Content = () => {
-    const handleImageEnd = useCallback((api: any, value: string) => {
+    const handler = useCallback((api: any, value: string) => {
         if (!value) {
             return;
         }
@@ -33,7 +33,7 @@ const Content = () => {
         };
         api['82'].inputs['end_img'] = ['' + id, 0];
     }, []);
-    useRegisterHandler({ name: 'image_end', handler: handleImageEnd });
+    useRegisterHandler({ name: 'image_end', handler });
     return (
         <Layout>
             <GridLeft>

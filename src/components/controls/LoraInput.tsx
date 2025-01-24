@@ -13,8 +13,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
-import { useRegisterHandler } from '../../hooks/useRegisterHandler';
 import { getFreeNodeId } from '../../api/utils';
+import { useRegisterHandler } from '../contexts/TabContext';
 
 type valueType = { id: string; label: string; strength: number };
 

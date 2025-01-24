@@ -3,7 +3,6 @@ import { config } from './config';
 import { progress } from './progress';
 import { result } from './result';
 import { tab } from './tab';
-import { handlers } from './api_handlers';
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +10,6 @@ export const store = configureStore({
         result,
         config,
         tab,
-        handlers,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ serializableCheck: false }),

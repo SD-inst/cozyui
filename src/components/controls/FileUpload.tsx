@@ -48,7 +48,7 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
         },
     });
     return (
-        <Box mt={2} display='flex' flexDirection='column'>
+        <Box mb={2} display='flex' flexDirection='column'>
             <Typography variant='body1'>{props.label || props.name}</Typography>
             <Box
                 flex={1}

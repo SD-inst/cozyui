@@ -4,8 +4,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
-import { TabContext } from './contexts/TabContext';
-
+import { TabContextProvider } from './contexts/TabContextProvider';
 
 const TabContent = ({ ...props }) => {
     const current_tab = useAppSelector((s) => s.tab.current_tab);
@@ -15,7 +14,7 @@ const TabContent = ({ ...props }) => {
     }
     const { value, content } = props.children.props as any;
     return (
-        <TabContext.Provider value={value}>
+        <TabContextProvider value={{ tab_name: value }}>
             <VerticalBox
                 mt={3}
                 width='100%'
@@ -23,7 +22,7 @@ const TabContent = ({ ...props }) => {
             >
                 <FormProvider {...form}>{content}</FormProvider>
             </VerticalBox>
-        </TabContext.Provider>
+        </TabContextProvider>
     );
 };
 
@@ -34,9 +33,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         <>
             <Tabs
                 value={current_tab}
-                onChange={(_, v) => {
-                    dispatch(setTab(v));
-                }}
+                onChange={(_, v) => dispatch(setTab(v))}
                 variant='scrollable'
             >
                 {React.Children.map(props.children, (c, i) => {

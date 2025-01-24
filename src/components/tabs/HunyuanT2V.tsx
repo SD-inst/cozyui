@@ -42,7 +42,7 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <TextInput name='prompt' multiline />
+                <TextInput name='prompt' multiline sx={{ mb: 3 }} />
                 <SelectInput
                     name='model'
                     defaultValue='hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors'
