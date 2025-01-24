@@ -221,6 +221,56 @@
                 "id": "6",
                 "type": "text"
             }
+        },
+        "EasyAnimate I2V": {
+            "api": "easy_animate_api.json",
+            "controls": {
+                "prompt": {
+                    "id": "75",
+                    "field": "prompt"
+                },
+                "image": {
+                    "id": "7",
+                    "field": "image"
+                },
+                "image_end": {
+                    "id": "handle"
+                },
+                "neg_prompt": {
+                    "id": "73",
+                    "field": "prompt"
+                },
+                "length": {
+                    "id": "82",
+                    "field": "video_length"
+                },
+                "steps": {
+                    "id": "82",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "82",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "82",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "87",
+                    "field": "value"
+                },
+                "suffix": {
+                    "id": "skip"
+                },
+                "llm": {
+                    "id": "skip"
+                }
+            },
+            "result": {
+                "id": "17",
+                "type": "gifs"
+            }
         }
     },
     "api": "/cui"

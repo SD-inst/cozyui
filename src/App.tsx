@@ -20,6 +20,7 @@ import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
 import { setTab } from './redux/tab';
 import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
+import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -99,6 +100,7 @@ function App() {
                 <WorkflowTabs>
                     {HunyanT2VTab}
                     {LTXI2VTab}
+                    {EasyAnimateI2VTab}
                     {HunyanT2VTabKJ}
                 </WorkflowTabs>
                 <Progress />

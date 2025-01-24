@@ -6,13 +6,13 @@ import { useWatch } from 'react-hook-form';
 export const LengthInput = ({
     min,
     max,
-    step,
+    step = 1,
     fps,
     ...props
 }: {
     min: number;
     max: number;
-    step: number;
+    step?: number;
     label?: string;
     fps?: number;
 } & SliderProps) => {
@@ -22,8 +22,8 @@ export const LengthInput = ({
     });
     return (
         <SliderInput
-            min={5}
-            max={257}
+            min={min}
+            max={max}
             marks={(() => {
                 const result: Mark[] = [];
                 for (let i = 1; i <= (max - min) / step + 1; i++) {

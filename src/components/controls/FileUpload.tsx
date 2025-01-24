@@ -5,8 +5,8 @@ import { useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import { useApiURL } from '../../hooks/useApiURL';
 
-export const FileUpload = ({ ...props }: { name: string }) => {
-    const { field } = useController(props);
+export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
+    const { field } = useController({...props, defaultValue: ''});
     const [url, setUrl] = useState<string>();
     const apiUrl = useApiURL();
     const { mutate } = useMutation({
@@ -48,8 +48,8 @@ export const FileUpload = ({ ...props }: { name: string }) => {
         },
     });
     return (
-        <Box mt={2} mb={2} display='flex' flexDirection='column'>
-            <Typography variant='body1'>{props.name}</Typography>
+        <Box mt={2} display='flex' flexDirection='column'>
+            <Typography variant='body1'>{props.label || props.name}</Typography>
             <Box
                 flex={1}
                 mt={1}

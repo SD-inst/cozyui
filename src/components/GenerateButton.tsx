@@ -33,17 +33,19 @@ const noErrors = {
 
 const emptyHandlers = {};
 
+export type GenerateButtonProps = {
+    tabOverride?: string;
+    text?: string;
+    hideErrors?: boolean;
+    noexec?: boolean;
+};
+
 export const GenerateButton = ({
     tabOverride,
     text = 'Generate',
     hideErrors,
     noexec,
-}: {
-    tabOverride?: string;
-    text?: string;
-    hideErrors?: boolean;
-    noexec?: boolean;
-}) => {
+}: GenerateButtonProps) => {
     const dispatch = useAppDispatch();
     const client_id = useAppSelector((s) => s.config.client_id);
     const generation_disabled = useAppSelector(

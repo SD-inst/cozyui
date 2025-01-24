@@ -1,11 +1,7 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
-import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
-import { useResult, useResultParam } from '../../hooks/useResult';
-import { useAppDispatch } from '../../redux/hooks';
-import { delResult } from '../../redux/result';
+import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
@@ -19,16 +15,6 @@ import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const results = useResult({ tabOverride: 'Describe image' });
-    const { id } = useResultParam('Describe image');
-    const dispatch = useAppDispatch();
-    const form = useFormContext();
-    useEffect(() => {
-        if (results.length) {
-            form.setValue('prompt', results[0] as string);
-            dispatch(delResult({ node_id: id }));
-        }
-    }, [results, form, dispatch, id]);
     return (
         <Layout>
             <GridLeft>
@@ -63,11 +49,7 @@ const Content = () => {
                     label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
-                <GenerateButton
-                    tabOverride='Describe image'
-                    text='Describe'
-                    hideErrors
-                />
+                <DescribeButton api='Describe image' />
                 <TextInput name='prompt' multiline />
                 <Box display='flex' flexDirection='row' width='100%' mt={2}>
                     <Box display='flex' flexDirection='column' flex={1}>
