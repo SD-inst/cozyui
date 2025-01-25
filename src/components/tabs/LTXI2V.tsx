@@ -13,8 +13,11 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { UpscaleToggle } from '../controls/UpscaleToggle';
+import { useState } from 'react';
 
 const Content = () => {
+    const [upscaledVideo, setUpscaledVideo] = useState<React.JSX.Element>();
     return (
         <Layout>
             <GridLeft>
@@ -149,9 +152,16 @@ const Content = () => {
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
+                <UpscaleToggle
+                    name='upscale'
+                    setUpscaledVideo={setUpscaledVideo}
+                    image_id='8'
+                    fps={48}
+                />
             </GridLeft>
             <GridRight>
                 <VideoResult />
+                {upscaledVideo}
             </GridRight>
             <GridBottom>
                 <GenerateButton />

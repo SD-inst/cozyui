@@ -194,6 +194,9 @@
                 },
                 "llm": {
                     "id": "skip"
+                },
+                "upscale": {
+                    "id": "handle"
                 }
             },
             "result": {
@@ -265,6 +268,9 @@
                 },
                 "llm": {
                     "id": "skip"
+                },
+                "upscale": {
+                    "id": "handle"
                 }
             },
             "result": {

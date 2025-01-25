@@ -61,11 +61,12 @@ const Content = () => (
                 <AccordionDetails>
                     Lora support is wonky, it unloads if the model isn't fully
                     reloaded (which happens if another workflow or service is
-                    executed, or the lora set or weights are changed). Hopefully, it will be fixed. It's
-                    about 15% faster and has more quality improving hacks.
+                    executed, or the lora set or weights are changed).
+                    Hopefully, it will be fixed. It's about 15% faster and has
+                    more quality improving hacks.
                 </AccordionDetails>
             </Accordion>
-            <TextInput name='prompt' multiline />
+            <TextInput name='prompt' multiline sx={{ mb: 3 }} />
             <SelectInput
                 name='model'
                 defaultValue='hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors'

@@ -89,6 +89,7 @@ const Content = () => {
                     name='upscale'
                     setUpscaledVideo={setUpscaledVideo}
                     image_id='4'
+                    fps={48}
                 />
             </GridLeft>
             <GridRight>

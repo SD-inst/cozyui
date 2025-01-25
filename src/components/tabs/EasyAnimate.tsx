@@ -1,6 +1,6 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { getFreeNodeId } from '../../api/utils';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
@@ -14,6 +14,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { UpscaleToggle } from '../controls/UpscaleToggle';
 
 const Content = () => {
     const handler = useCallback((api: any, value: string) => {
@@ -34,6 +35,7 @@ const Content = () => {
         api['82'].inputs['end_img'] = ['' + id, 0];
     }, []);
     useRegisterHandler({ name: 'image_end', handler });
+    const [upscaledVideo, setUpscaledVideo] = useState<React.JSX.Element>();
     return (
         <Layout>
             <GridLeft>
@@ -109,9 +111,17 @@ const Content = () => {
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
+                <UpscaleToggle
+                    name='upscale'
+                    setUpscaledVideo={setUpscaledVideo}
+                    image_id='82'
+                    multiplier={3}
+                    fps={24}
+                />
             </GridLeft>
             <GridRight>
                 <VideoResult />
+                {upscaledVideo}
             </GridRight>
             <GridBottom>
                 <GenerateButton />

@@ -1,20 +1,38 @@
 {
   "1": {
-    "inputs": {
-      "ckpt_name": "film_net_fp32.pt",
-      "clear_cache_after_n_frames": 20,
-      "multiplier": 2,
-      "frames": [
-        "3",
-        0
-      ]
-    },
-    "class_type": "FILM VFI",
+    "inputs": {},
+    "class_type": "GetImageSizeAndCount",
     "_meta": {
-      "title": "FILM VFI"
+      "title": "Get Image Size & Count"
     }
   },
   "2": {
+    "inputs": {
+      "expression": "a*2",
+      "a": [
+        "1",
+        1
+      ]
+    },
+    "class_type": "MathExpression|pysssss",
+    "_meta": {
+      "title": "Math Expression 🐍"
+    }
+  },
+  "3": {
+    "inputs": {
+      "expression": "a*2",
+      "a": [
+        "1",
+        2
+      ]
+    },
+    "class_type": "MathExpression|pysssss",
+    "_meta": {
+      "title": "Math Expression 🐍"
+    }
+  },
+  "4": {
     "inputs": {
       "model_name": "4x_foolhardy_Remacri.pth"
     },
@@ -23,12 +41,20 @@
       "title": "Load Upscale Model"
     }
   },
-  "3": {
+  "5": {
     "inputs": {
       "upscale_method": "lanczos",
+      "width": [
+        "2",
+        0
+      ],
+      "height": [
+        "3",
+        0
+      ],
       "crop": "center",
       "image": [
-        "4",
+        "6",
         0
       ]
     },
@@ -37,10 +63,14 @@
       "title": "Upscale Image"
     }
   },
-  "4": {
+  "6": {
     "inputs": {
       "upscale_model": [
-        "2",
+        "4",
+        0
+      ],
+      "image": [
+        "1",
         0
       ]
     },
@@ -49,20 +79,35 @@
       "title": "Upscale Image (using Model)"
     }
   },
-  "5": {
+  "7": {
+    "inputs": {
+      "ckpt_name": "film_net_fp32.pt",
+      "clear_cache_after_n_frames": 20,
+      "multiplier": 2,
+      "frames": [
+        "5",
+        0
+      ]
+    },
+    "class_type": "FILM VFI",
+    "_meta": {
+      "title": "FILM VFI"
+    }
+  },
+  "8": {
     "inputs": {
       "frame_rate": 48,
       "loop_count": 0,
-      "filename_prefix": "hunyuan_upscaled",
+      "filename_prefix": "Hunyuan/2025_01_25/interpolate/vid",
       "format": "video/h264-mp4",
       "pix_fmt": "yuv420p",
       "crf": 19,
-      "save_metadata": false,
+      "save_metadata": true,
       "trim_to_audio": false,
       "pingpong": false,
-      "save_output": false,
+      "save_output": true,
       "images": [
-        "1",
+        "7",
         0
       ]
     },
