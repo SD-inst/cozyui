@@ -1,9 +1,5 @@
 import { ExpandMore } from '@mui/icons-material';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary
-} from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -66,7 +62,7 @@ const Content = () => (
                     more quality improving hacks.
                 </AccordionDetails>
             </Accordion>
-            <TextInput name='prompt' multiline sx={{ mb: 3 }} />
+            <TextInput name='prompt' multiline />
             <SelectInput
                 name='model'
                 defaultValue='hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors'

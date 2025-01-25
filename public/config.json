@@ -277,6 +277,77 @@
                 "id": "17",
                 "type": "gifs"
             }
+        },
+        "Hunyuan I2V": {
+            "api": "hunyuan_i2v_api.json",
+            "controls": {
+                "image": {
+                    "id": "44",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "30",
+                    "field": "prompt"
+                },
+                "model": {
+                    "id": "1",
+                    "field": "model"
+                },
+                "quantization": {
+                    "id": "1",
+                    "field": "quantization"
+                },
+                "size": {
+                    "id": "2",
+                    "field": "value"
+                },
+                "seed": {
+                    "id": "56",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "3",
+                    "field": "steps"
+                },
+                "length": {
+                    "id": "3",
+                    "field": "num_frames"
+                },
+                "flow_shift": {
+                    "id": "3",
+                    "field": "flow_shift"
+                },
+                "guidance": {
+                    "id": "3",
+                    "field": "embedded_guidance_scale"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "enhance": {
+                    "id": "58",
+                    "field": "weight"
+                },
+                "suffix": {
+                    "id": "skip"
+                },
+                "llm": {
+                    "id": "skip"
+                }
+            },
+            "lora_params": {
+                "lora_input_name": "prev_lora",
+                "api_input_name": "lora",
+                "output_node_ids": ["1"],
+                "output_idx": 0,
+                "class_name": "HyVideoLoraSelect",
+                "strength_field_name": "strength",
+                "name_field_name": "lora"
+            },
+            "result": {
+                "id": "34",
+                "type": "gifs"
+            }
         }
     },
     "api": "/cui"

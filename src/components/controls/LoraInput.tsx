@@ -1,5 +1,6 @@
 import {
     Autocomplete,
+    AutocompleteProps,
     AutocompleteRenderGetTagProps,
     Button,
     Chip,
@@ -92,12 +93,17 @@ const LoraChip = ({
 
 export const LoraInput = ({
     filter,
+    append,
     ...props
 }: {
     name: string;
     label?: string;
     filter?: string;
-}) => {
+    append?: valueType[];
+} & Omit<
+    AutocompleteProps<valueType, true, any, any>,
+    'renderInput' | 'options'
+>) => {
     const { setValue } = useFormContext();
     const {
         lora_params: {
@@ -113,6 +119,9 @@ export const LoraInput = ({
     } = useConfigTab();
     const handler = useCallback(
         (api: any, values: valueType[]) => {
+            if (append) {
+                values = values.concat(append);
+            }
             if (!values.length) {
                 return;
             }
@@ -147,6 +156,13 @@ export const LoraInput = ({
             );
 
             loraNodes.forEach((n, i) => {
+                if (
+                    n.class_type === 'HyVideoLoraSelect' &&
+                    append?.every((an) => an.id !== n.inputs[name_field_name])
+                ) {
+                    (n.inputs as any).blocks = ['1000', 0];
+                }
+
                 api['' + (last_node_id + i)] = n;
                 if (i < loraNodes.length - 1) {
                     (n.inputs as any)[lora_input_name] = [
@@ -155,6 +171,25 @@ export const LoraInput = ({
                     ];
                 }
             });
+
+            if (class_name === 'HyVideoLoraSelect') {
+                const block_edit = {
+                    '1000': {
+                        inputs: {} as any,
+                        class_type: 'HyVideoLoraBlockEdit',
+                        _meta: {
+                            title: 'HunyuanVideo Lora Block Edit',
+                        },
+                    },
+                };
+                Object.assign(api, block_edit);
+                for (let i = 0; i <= 19; i++) {
+                    block_edit['1000'].inputs[`double_blocks.${i}.`] = true;
+                }
+                for (let i = 0; i <= 39; i++) {
+                    block_edit['1000'].inputs[`single_blocks.${i}.`] = false;
+                }
+            }
         },
         [
             api_input_name,
@@ -165,6 +200,7 @@ export const LoraInput = ({
             class_name,
             name_field_name,
             strength_field_name,
+            append,
         ]
     );
     useRegisterHandler({ name: props.name, handler });
@@ -189,10 +225,6 @@ export const LoraInput = ({
         }));
     return (
         <Autocomplete
-            options={opts}
-            renderInput={(params) => (
-                <TextField label={props.label || props.name} {...params} />
-            )}
             renderTags={(values, getTagProps) =>
                 values.map((v, i) => (
                     <LoraChip
@@ -215,6 +247,10 @@ export const LoraInput = ({
             onChange={(_, v) => ctl.field.onChange(v)}
             multiple
             {...props}
+            options={opts}
+            renderInput={(params) => (
+                <TextField label={props.label || props.name} {...params} />
+            )}
         />
     );
 };

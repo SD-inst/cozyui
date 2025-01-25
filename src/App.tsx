@@ -22,6 +22,7 @@ import { setTab } from './redux/tab';
 import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
 import { InterruptButton } from './components/controls/InterruptButton';
+import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -100,6 +101,7 @@ function App() {
             <VerticalBox>
                 <WorkflowTabs>
                     {HunyanT2VTab}
+                    {HunyanI2VTab}
                     {LTXI2VTab}
                     {EasyAnimateI2VTab}
                     {HunyanT2VTabKJ}
