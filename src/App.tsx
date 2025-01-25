@@ -21,6 +21,7 @@ import { setGenerationDisabled } from './redux/progress';
 import { setTab } from './redux/tab';
 import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
+import { InterruptButton } from './components/controls/InterruptButton';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -104,6 +105,7 @@ function App() {
                     {HunyanT2VTabKJ}
                 </WorkflowTabs>
                 <Progress />
+                <InterruptButton />
             </VerticalBox>
             <Toaster
                 position='bottom-center'

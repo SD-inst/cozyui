@@ -12,6 +12,7 @@ import {
 } from '../redux/progress';
 import { addResult } from '../redux/result';
 import { useCallback } from 'react';
+import { setPromptId } from '../redux/tab';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -27,6 +28,7 @@ export const WSReceiver = () => {
         dispatch(setCurrentNode(''));
         dispatch(setGenerationDisabled(false));
         dispatch(setGenerationEnd());
+        dispatch(setPromptId(''))
     }, [dispatch]);
     const client_id = useAppSelector((s) => s.config.client_id);
     const apiUrl = useAppSelector((s) => s.config.api);
