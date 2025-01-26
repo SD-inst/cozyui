@@ -1,7 +1,6 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
 import { HYSize } from '../controls/HYSize';
+import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
@@ -13,7 +12,6 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
-import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 
 const models = [
     {
@@ -51,19 +49,7 @@ const models = [
 const Content = () => (
     <Layout>
         <GridLeft>
-            <Accordion sx={{ mb: 1 }}>
-                <AccordionSummary expandIcon={<ExpandMore />}>
-                    Kijai's implementation, see notes
-                </AccordionSummary>
-                <AccordionDetails>
-                    Lora support is wonky, it unloads if the model isn't fully
-                    reloaded (which happens if another workflow or service is
-                    executed, or the lora set or weights are changed).
-                    Hopefully, it will be fixed. It's about 15% faster and has
-                    more quality improving hacks.
-                </AccordionDetails>
-            </Accordion>
-            <TextInput name='prompt' multiline />
+            <TextInput name='prompt' multiline sx={{ mb: 2 }} />
             <SelectInput
                 name='model'
                 defaultValue='hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors'

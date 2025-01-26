@@ -104,5 +104,5 @@ const Content = () => {
 };
 
 export const HunyanT2VTab = (
-    <WFTab label='Hunyuan T2V' value='Hunyuan T2V' content={<Content />} />
+    <WFTab label='Hunyuan T2V Stock' value='Hunyuan T2V' content={<Content />} />
 );
