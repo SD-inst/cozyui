@@ -3,7 +3,7 @@ import { StaleTime, useQuery } from '@tanstack/react-query';
 export const useGet = ({
     url,
     enabled,
-    staleTime,
+    staleTime = 3600000,
 }: {
     url: string;
     enabled?: boolean;
