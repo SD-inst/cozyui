@@ -2,6 +2,12 @@
 
 This is a yet another frontend for ComfyUI to make it actually not so painful to use. It's designed after AUTOMATIC1111 Web UI and is mobile-friendly. Not "mobile first" really but I check it there often and improve UX.
 
+## Screenshots
+
+<img src=".github/1.jpg" width="500"/>
+<img src=".github/2.jpg" width="500"/>
+<img src=".github/3.jpg" width="500"/>
+
 ## Goals
 
 -   make it simple to use
