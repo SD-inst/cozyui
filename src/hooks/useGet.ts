@@ -14,6 +14,9 @@ export const useGet = ({
         queryKey: [url],
         staleTime,
         queryFn: (ctx) =>
-            fetch(url, { signal: ctx.signal }).then((r) => r.json()),
+            fetch(url, {
+                signal: ctx.signal,
+                headers: { 'Cache-Control': 'no-cache' },
+            }).then((r) => r.json()),
     });
 };
