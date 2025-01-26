@@ -12,17 +12,16 @@ import { Progress } from './components/Progress';
 import { VerticalBox } from './components/VerticalBox';
 import { WSReceiver } from './components/WSReceiver';
 import { WorkflowTabs } from './components/WorkflowTabs';
+import { InterruptButton } from './components/controls/InterruptButton';
+import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
+import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
+import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
 import { useGet } from './hooks/useGet';
 import { configType, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
-import { setTab } from './redux/tab';
-import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
-import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
-import { InterruptButton } from './components/controls/InterruptButton';
-import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -81,7 +80,6 @@ function App() {
         }
         toast.success('Got config');
         dispatch(setConfig(dataConfig));
-        dispatch(setTab(Object.keys(dataConfig.tabs)[0]));
         dispatch(setGenerationDisabled(false));
     }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig, dispatch]);
     useEffect(() => {

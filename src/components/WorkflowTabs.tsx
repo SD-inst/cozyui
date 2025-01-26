@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { setTab } from '../redux/tab';
@@ -29,6 +29,12 @@ const TabContent = ({ ...props }) => {
 export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const { current_tab } = useAppSelector((s) => s.tab);
     const dispatch = useAppDispatch();
+    useEffect(() => {
+        if (!props.children || !(props.children as any).length || current_tab) {
+            return;
+        }
+        dispatch(setTab((props.children as any)[0].props.value));
+    }, [dispatch, props.children, current_tab]);
     return (
         <>
             <Tabs
