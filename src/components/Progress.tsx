@@ -29,7 +29,7 @@ export const Progress = () => {
             ) : null}
             {current_node && (
                 <Typography variant='body2' color='info'>
-                    Executing node: {node_title} [{current_node}]
+                    {node_title} [{current_node}]
                 </Typography>
             )}
             {value >= 0 && (
