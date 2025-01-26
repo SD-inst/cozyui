@@ -69,8 +69,8 @@
   "5": {
     "inputs": {
       "enable_vae_tiling": true,
-      "temporal_tiling_sample_size": 64,
-      "spatial_tile_sample_min_size": 192,
+      "temporal_tiling_sample_size": 32,
+      "spatial_tile_sample_min_size": 256,
       "auto_tile_size": false,
       "vae": [
         "7",
