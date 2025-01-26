@@ -71,7 +71,7 @@
       "enable_vae_tiling": true,
       "temporal_tiling_sample_size": 64,
       "spatial_tile_sample_min_size": 192,
-      "auto_tile_size": true,
+      "auto_tile_size": false,
       "vae": [
         "7",
         0
