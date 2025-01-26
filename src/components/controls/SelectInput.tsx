@@ -8,11 +8,7 @@ import {
 import { useCallback, useEffect } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 
-export const SelectInput = ({
-    defaultValue = '',
-    choices,
-    ...props
-}: {
+export type SelectInputProps = {
     defaultValue?: any;
     choices: (
         | string
@@ -22,7 +18,13 @@ export const SelectInput = ({
               alsoSet?: { name: string; value: string }[];
           }
     )[];
-} & SelectProps) => {
+} & SelectProps;
+
+export const SelectInput = ({
+    defaultValue = '',
+    choices,
+    ...props
+}: SelectInputProps) => {
     const ctl = useController({
         name: props.name!,
         defaultValue: defaultValue,

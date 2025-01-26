@@ -13,6 +13,7 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 
 const models = [
     {
@@ -85,6 +86,7 @@ const Content = () => (
                 name='length'
                 defaultValue={85}
             />
+            <KJSchedulerSelectInput name='sampler' />
             <SliderInput name='steps' defaultValue={7} min={1} max={30} />
             <SliderInput
                 name='flow_shift'

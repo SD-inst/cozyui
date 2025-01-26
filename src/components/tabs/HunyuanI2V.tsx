@@ -1,6 +1,7 @@
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
 import { HYSize } from '../controls/HYSize';
+import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
@@ -81,6 +82,7 @@ const Content = () => {
                     name='length'
                     defaultValue={85}
                 />
+                <KJSchedulerSelectInput name='sampler' />
                 <SliderInput name='steps' defaultValue={15} min={1} max={30} />
                 <SliderInput
                     name='flow_shift'

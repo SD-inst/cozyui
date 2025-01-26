@@ -88,6 +88,10 @@
                     "id": "3",
                     "field": "height"
                 },
+                "sampler": {
+                    "id": "3",
+                    "field": "scheduler"
+                },
                 "seed": {
                     "id": "52",
                     "field": "value"
@@ -300,6 +304,10 @@
                 "size": {
                     "id": "2",
                     "field": "value"
+                },
+                "sampler": {
+                    "id": "3",
+                    "field": "scheduler"
                 },
                 "seed": {
                     "id": "56",
