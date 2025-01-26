@@ -89,14 +89,14 @@ const Content = () => {
                     label='flow shift'
                     min={1}
                     max={30}
-                    defaultValue={9}
+                    defaultValue={10}
                 />
                 <SliderInput
                     name='guidance'
                     label='guidance scale'
                     min={1}
                     max={20}
-                    defaultValue={6}
+                    defaultValue={10}
                 />
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput
