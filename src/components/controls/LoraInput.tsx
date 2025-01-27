@@ -214,7 +214,7 @@ export const LoraInput = ({
         index: 0,
     });
     const opts = loras
-        .filter((l) => (filter ? l.includes('/hunyuan/') : true))
+        .filter((l) => (filter ? l.includes(filter) : true))
         .map((l) => ({
             label: l.slice(
                 l.lastIndexOf('/') + 1,
