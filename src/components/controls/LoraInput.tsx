@@ -1,7 +1,9 @@
+import { Refresh } from '@mui/icons-material';
 import {
     Autocomplete,
     AutocompleteProps,
     AutocompleteRenderGetTagProps,
+    Box,
     Button,
     Chip,
     Dialog,
@@ -10,12 +12,15 @@ import {
     DialogTitle,
     TextField,
 } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+import { getFreeNodeId } from '../../api/utils';
+import { useApiURL } from '../../hooks/useApiURL';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
-import { getFreeNodeId } from '../../api/utils';
 import { useRegisterHandler } from '../contexts/TabContext';
+import toast from 'react-hot-toast';
 
 type valueType = { id: string; label: string; strength: number };
 
@@ -104,6 +109,8 @@ export const LoraInput = ({
     AutocompleteProps<valueType, true, any, any>,
     'renderInput' | 'options'
 >) => {
+    const qc = useQueryClient();
+    const apiUrl = useApiURL();
     const { setValue } = useFormContext();
     const {
         lora_params: {
@@ -224,33 +231,47 @@ export const LoraInput = ({
             strength: 1,
         }));
     return (
-        <Autocomplete
-            renderTags={(values, getTagProps) =>
-                values.map((v, i) => (
-                    <LoraChip
-                        key={getTagProps({ index: i }).key}
-                        getTagProps={getTagProps}
-                        index={i}
-                        value={v}
-                        onOK={(strength: number) => {
-                            setValue(props.name, [
-                                ...values.slice(0, i),
-                                { ...values[i], strength },
-                                ...values.slice(i + 1),
-                            ]);
-                        }}
-                    />
-                ))
-            }
-            fullWidth
-            {...ctl.field}
-            onChange={(_, v) => ctl.field.onChange(v)}
-            multiple
-            {...props}
-            options={opts}
-            renderInput={(params) => (
-                <TextField label={props.label || props.name} {...params} />
-            )}
-        />
+        <Box display='flex' gap={1}>
+            <Autocomplete
+                renderTags={(values, getTagProps) =>
+                    values.map((v, i) => (
+                        <LoraChip
+                            key={getTagProps({ index: i }).key}
+                            getTagProps={getTagProps}
+                            index={i}
+                            value={v}
+                            onOK={(strength: number) => {
+                                setValue(props.name, [
+                                    ...values.slice(0, i),
+                                    { ...values[i], strength },
+                                    ...values.slice(i + 1),
+                                ]);
+                            }}
+                        />
+                    ))
+                }
+                fullWidth
+                {...ctl.field}
+                onChange={(_, v) => ctl.field.onChange(v)}
+                multiple
+                {...props}
+                options={opts}
+                renderInput={(params) => (
+                    <TextField label={props.label || props.name} {...params} />
+                )}
+            />
+            <Button
+                variant='outlined'
+                onClick={() =>
+                    qc
+                        .invalidateQueries({
+                            queryKey: [apiUrl + '/api/object_info'],
+                        })
+                        .then(() => toast.success('Reloaded objects'))
+                }
+            >
+                <Refresh />
+            </Button>
+        </Box>
     );
 };

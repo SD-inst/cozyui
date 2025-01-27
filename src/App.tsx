@@ -18,8 +18,9 @@ import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
 import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
+import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
-import { configType, setConfig } from './redux/config';
+import { setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
 
@@ -61,13 +62,14 @@ function App() {
         isError: isErrorConfig,
         isSuccess: isSuccessConfig,
     } = useGet({ url: 'config.json', staleTime: Infinity });
+    const apiUrl = useApiURL();
     const {
         data: dataObj,
         error: errorObj,
         isError: isErrorObj,
         isSuccess: isSuccessObj,
     } = useGet({
-        url: (dataConfig as configType)?.api + '/api/object_info',
+        url: apiUrl + '/api/object_info',
         enabled: isSuccessConfig,
     });
     const dispatch = useAppDispatch();
