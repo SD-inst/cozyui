@@ -15,12 +15,12 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useRegisterHandler } from '../contexts/TabContext';
-import toast from 'react-hot-toast';
 
 type valueType = { id: string; label: string; strength: number };
 
@@ -99,6 +99,7 @@ const LoraChip = ({
 export const LoraInput = ({
     filter,
     append,
+    sx,
     ...props
 }: {
     name: string;
@@ -114,15 +115,17 @@ export const LoraInput = ({
     const apiUrl = useApiURL();
     const { setValue } = useFormContext();
     const {
-        lora_params: {
-            api_input_name,
-            lora_input_name,
-            input_node_id,
-            output_idx,
-            output_node_ids,
-            class_name,
-            strength_field_name,
-            name_field_name,
+        handler_options: {
+            lora_params: {
+                api_input_name,
+                lora_input_name,
+                input_node_id,
+                output_idx,
+                output_node_ids,
+                class_name,
+                strength_field_name,
+                name_field_name,
+            },
         },
     } = useConfigTab();
     const handler = useCallback(
@@ -234,7 +237,7 @@ export const LoraInput = ({
             strength: 1,
         }));
     return (
-        <Box display='flex' gap={1}>
+        <Box display='flex' gap={1} sx={sx}>
             <Autocomplete
                 renderTags={(values, getTagProps) =>
                     values.map((v, i) => (

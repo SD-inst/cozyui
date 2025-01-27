@@ -136,7 +136,7 @@ export const UpscaleToggle = ({
             );
             Object.assign(api, upscale_api);
         },
-        [setUpscaledVideo, image_id]
+        [image_id, multiplier, fps, setUpscaledVideo]
     );
     useRegisterHandler({ name: props.name, handler });
     return (

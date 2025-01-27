@@ -70,7 +70,7 @@ function App() {
         isSuccess: isSuccessObj,
     } = useGet({
         url: apiUrl + '/api/object_info',
-        enabled: isSuccessConfig,
+        enabled: isSuccessConfig && !!apiUrl,
     });
     const dispatch = useAppDispatch();
     useEffect(() => {

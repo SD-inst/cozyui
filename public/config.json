@@ -50,15 +50,17 @@
                     "id": "handle"
                 }
             },
-            "lora_params": {
-                "input_node_id": "13",
-                "lora_input_name": "model",
-                "api_input_name": "model",
-                "output_node_ids": ["12", "6"],
-                "output_idx": 0,
-                "class_name": "HunyuanVideoLoraLoader",
-                "strength_field_name": "strength",
-                "name_field_name": "lora_name"
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "13",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["12", "6"],
+                    "output_idx": 0,
+                    "class_name": "HunyuanVideoLoraLoader",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora_name"
+                }
             },
             "result": {
                 "id": "16",
@@ -115,19 +117,29 @@
                 "lora": {
                     "id": "handle"
                 },
-                "enhance": {
-                    "id": "54",
-                    "field": "weight"
+                "enhance_video": {
+                    "id": "handle"
+                },
+                "tea_cache": {
+                    "id": "handle"
                 }
             },
-            "lora_params": {
-                "lora_input_name": "prev_lora",
-                "api_input_name": "lora",
-                "output_node_ids": ["1"],
-                "output_idx": 0,
-                "class_name": "HyVideoLoraSelect",
-                "strength_field_name": "strength",
-                "name_field_name": "lora"
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "prev_lora",
+                    "api_input_name": "lora",
+                    "output_node_ids": ["1"],
+                    "output_idx": 0,
+                    "class_name": "HyVideoLoraSelect",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora"
+                },
+                "tea_cache_params": {
+                    "node_id": "3"
+                },
+                "enhance_video_params": {
+                    "node_id": "3"
+                }
             },
             "result": {
                 "id": "34",
@@ -332,25 +344,35 @@
                 "lora": {
                     "id": "handle"
                 },
-                "enhance": {
-                    "id": "58",
-                    "field": "weight"
+                "enhance_video": {
+                    "id": "handle"
                 },
                 "suffix": {
                     "id": "skip"
                 },
                 "llm": {
                     "id": "skip"
+                },
+                "tea_cache": {
+                    "id": "handle"
                 }
             },
-            "lora_params": {
-                "lora_input_name": "prev_lora",
-                "api_input_name": "lora",
-                "output_node_ids": ["1"],
-                "output_idx": 0,
-                "class_name": "HyVideoLoraSelect",
-                "strength_field_name": "strength",
-                "name_field_name": "lora"
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "prev_lora",
+                    "api_input_name": "lora",
+                    "output_node_ids": ["1"],
+                    "output_idx": 0,
+                    "class_name": "HyVideoLoraSelect",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora"
+                },
+                "tea_cache_params": {
+                    "node_id": "3"
+                },
+                "enhance_video_params": {
+                    "node_id": "3"
+                }
             },
             "result": {
                 "id": "34",

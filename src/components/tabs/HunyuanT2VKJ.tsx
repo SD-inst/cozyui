@@ -12,6 +12,10 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
+import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 
 const models = [
     {
@@ -72,31 +76,35 @@ const Content = () => (
                 name='length'
                 defaultValue={85}
             />
-            <KJSchedulerSelectInput name='sampler' />
             <SliderInput name='steps' defaultValue={7} min={1} max={30} />
-            <SliderInput
-                name='flow_shift'
-                label='flow shift'
-                min={1}
-                max={30}
-                defaultValue={7}
-            />
-            <SliderInput
-                name='guidance'
-                label='guidance scale'
-                min={1}
-                max={20}
-                defaultValue={7}
-            />
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMore />}>
+                    Advanced parameters
+                </AccordionSummary>
+                <AccordionDetails>
+                    <KJSchedulerSelectInput name='sampler' />
+                    <SliderInput
+                        name='flow_shift'
+                        label='flow shift'
+                        min={1}
+                        max={30}
+                        defaultValue={7}
+                    />
+                    <SliderInput
+                        name='guidance'
+                        label='guidance scale'
+                        min={1}
+                        max={20}
+                        defaultValue={7}
+                    />
+                    <EnhanceVideoInput
+                        name='enhance_video'
+                        label='Enhance-a-Video weight'
+                    />
+                    <TeaCacheInput name='tea_cache' defaultValue={0} />
+                </AccordionDetails>
+            </Accordion>
             <SeedInput name='seed' defaultValue={1024} />
-            <SliderInput
-                name='enhance'
-                label='Enhance-a-Video weight'
-                min={0}
-                max={8}
-                defaultValue={4}
-                step={0.1}
-            />
             <LoraInput name='lora' filter='/hunyuan/' />
         </GridLeft>
         <GridRight>

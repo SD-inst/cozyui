@@ -1,30 +1,40 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export type tabConfigType = {
+    api: string;
+    controls: {
+        [control: string]: {
+            id: string;
+            field: string;
+        };
+    };
+    result: {
+        id: string;
+        type: string;
+    };
+    handler_options: {
+        lora_params: {
+            input_node_id?: string;
+            lora_input_name: string;
+            api_input_name: string;
+            output_idx?: number;
+            output_node_ids: string[];
+            class_name: string;
+            strength_field_name: string;
+            name_field_name: string;
+        };
+        tea_cache_params: {
+            node_id: string;
+        };
+        enhance_video_params: {
+            node_id: string;
+        };
+    };
+};
+
 export type configType = {
     tabs: {
-        [tabName: string]: {
-            api: string;
-            controls: {
-                [control: string]: {
-                    id: string;
-                    field: string;
-                };
-            };
-            result: {
-                id: string;
-                type: string;
-            };
-            lora_params: {
-                input_node_id?: string;
-                lora_input_name: string;
-                api_input_name: string;
-                output_idx?: number;
-                output_node_ids: string[];
-                class_name: string;
-                strength_field_name: string;
-                name_field_name: string;
-            };
-        };
+        [tabName: string]: tabConfigType;
     };
     object_info: {
         [obj: string]: {

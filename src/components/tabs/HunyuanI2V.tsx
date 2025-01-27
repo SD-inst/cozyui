@@ -1,4 +1,7 @@
+import { ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { DescribeButton } from '../controls/DescribeButton';
+import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FileUpload } from '../controls/FileUpload';
 import { HYSize } from '../controls/HYSize';
 import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
@@ -8,6 +11,7 @@ import { LoraInput } from '../controls/LoraInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
@@ -82,22 +86,34 @@ const Content = () => {
                     name='length'
                     defaultValue={85}
                 />
-                <KJSchedulerSelectInput name='sampler' />
                 <SliderInput name='steps' defaultValue={15} min={1} max={50} />
-                <SliderInput
-                    name='flow_shift'
-                    label='flow shift'
-                    min={1}
-                    max={30}
-                    defaultValue={10}
-                />
-                <SliderInput
-                    name='guidance'
-                    label='guidance scale'
-                    min={1}
-                    max={20}
-                    defaultValue={10}
-                />
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMore />}>
+                        Advanced parameters
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <KJSchedulerSelectInput name='sampler' />
+                        <SliderInput
+                            name='flow_shift'
+                            label='flow shift'
+                            min={1}
+                            max={30}
+                            defaultValue={10}
+                        />
+                        <SliderInput
+                            name='guidance'
+                            label='guidance scale'
+                            min={1}
+                            max={20}
+                            defaultValue={10}
+                        />
+                        <EnhanceVideoInput
+                            name='enhance_video'
+                            label='Enhance-a-Video weight'
+                        />
+                        <TeaCacheInput name='tea_cache' defaultValue={0} />
+                    </AccordionDetails>
+                </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput
                     name='lora'
@@ -110,15 +126,6 @@ const Content = () => {
                             strength: 1,
                         },
                     ]}
-                />
-                <SliderInput
-                    name='enhance'
-                    label='Enhance-a-Video weight'
-                    min={0}
-                    max={8}
-                    defaultValue={4}
-                    step={0.1}
-                    sx={{ mt: 2 }}
                 />
             </GridLeft>
             <GridRight>
