@@ -66,7 +66,7 @@ const Content = () => (
             </Box>
             <LengthInput
                 min={5}
-                max={257}
+                max={201}
                 step={4}
                 fps={24}
                 name='length'

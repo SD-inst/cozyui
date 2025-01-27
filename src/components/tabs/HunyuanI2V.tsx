@@ -76,14 +76,14 @@ const Content = () => {
                 <HYSize name='size' label='max size' defaultValue={512} />
                 <LengthInput
                     min={5}
-                    max={257}
+                    max={201}
                     step={4}
                     fps={24}
                     name='length'
                     defaultValue={85}
                 />
                 <KJSchedulerSelectInput name='sampler' />
-                <SliderInput name='steps' defaultValue={15} min={1} max={30} />
+                <SliderInput name='steps' defaultValue={15} min={1} max={50} />
                 <SliderInput
                     name='flow_shift'
                     label='flow shift'
