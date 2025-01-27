@@ -109,6 +109,7 @@ export const LoraInput = ({
     AutocompleteProps<valueType, true, any, any>,
     'renderInput' | 'options'
 >) => {
+    const disable_lora_filter = localStorage.getItem('disable_lora_filter');
     const qc = useQueryClient();
     const apiUrl = useApiURL();
     const { setValue } = useFormContext();
@@ -221,7 +222,9 @@ export const LoraInput = ({
         index: 0,
     });
     const opts = loras
-        .filter((l) => (filter ? l.includes(filter) : true))
+        .filter((l) =>
+            filter && !disable_lora_filter ? l.includes(filter) : true
+        )
         .map((l) => ({
             label: l.slice(
                 l.lastIndexOf('/') + 1,

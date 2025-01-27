@@ -118,6 +118,7 @@ const Content = () => {
                     max={8}
                     defaultValue={4}
                     step={0.1}
+                    sx={{ mt: 2 }}
                 />
             </GridLeft>
             <GridRight>
