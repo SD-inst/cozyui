@@ -122,6 +122,9 @@
                 },
                 "tea_cache": {
                     "id": "handle"
+                },
+                "neg_prompt": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -139,6 +142,9 @@
                 },
                 "enhance_video_params": {
                     "node_id": "3"
+                },
+                "hycfg_params": {
+                    "node_id": "30"
                 }
             },
             "result": {

@@ -11,6 +11,7 @@ const emptyParams = {
         lora_params: {},
         tea_cache_params: {},
         enhance_video_params: {},
+        hycfg_params: {},
     },
 };
 

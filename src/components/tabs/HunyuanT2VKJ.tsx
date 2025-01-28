@@ -16,6 +16,7 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
+import { KJHYCFG } from '../controls/KJHYCFG';
 
 const models = [
     {
@@ -82,6 +83,7 @@ const Content = () => (
                     Advanced parameters
                 </AccordionSummary>
                 <AccordionDetails>
+                    <KJHYCFG name='neg_prompt' />
                     <KJSchedulerSelectInput name='sampler' />
                     <SliderInput
                         name='flow_shift'

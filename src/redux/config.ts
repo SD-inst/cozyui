@@ -29,6 +29,9 @@ export type tabConfigType = {
         enhance_video_params: {
             node_id: string;
         };
+        hycfg_params: {
+            node_id: string;
+        }
     };
 };
 
