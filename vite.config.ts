@@ -6,7 +6,7 @@ export default defineConfig({
     plugins: [react()],
     base: './',
     server: {
-        host: '172.25.10.35',
+        host: '0.0.0.0',
         proxy: {
             '/cui/ws': {
                 target: 'ws://172.25.10.35:7861',

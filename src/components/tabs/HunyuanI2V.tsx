@@ -1,5 +1,6 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { mergeType } from '../../api/mergeType';
 import { DescribeButton } from '../controls/DescribeButton';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FileUpload } from '../controls/FileUpload';
@@ -124,6 +125,7 @@ const Content = () => {
                             id: 'comfy/img2vid.safetensors',
                             label: 'img2vid',
                             strength: 1,
+                            merge: mergeType.FULL
                         },
                     ]}
                 />

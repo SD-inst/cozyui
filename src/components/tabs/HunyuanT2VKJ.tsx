@@ -57,7 +57,7 @@ const Content = () => (
             <TextInput name='prompt' multiline sx={{ mb: 2 }} />
             <SelectInput
                 name='model'
-                defaultValue='hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors'
+                defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
                 choices={models}
             />
             <Box display='flex' flexDirection='row' width='100%' mt={2}>
@@ -77,7 +77,7 @@ const Content = () => (
                 name='length'
                 defaultValue={85}
             />
-            <SliderInput name='steps' defaultValue={7} min={1} max={30} />
+            <SliderInput name='steps' defaultValue={15} min={1} max={30} />
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     Advanced parameters

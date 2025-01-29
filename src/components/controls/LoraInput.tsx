@@ -10,6 +10,10 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
     TextField,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
@@ -21,8 +25,14 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { mergeType } from '../../api/mergeType';
 
-type valueType = { id: string; label: string; strength: number };
+type valueType = {
+    id: string;
+    label: string;
+    strength: number;
+    merge: mergeType;
+};
 
 const LoraChip = ({
     getTagProps,
@@ -33,14 +43,15 @@ const LoraChip = ({
     getTagProps: AutocompleteRenderGetTagProps;
     index: number;
     value: valueType;
-    onOK: (strength: number) => void;
+    onOK: (strength: number, merge: mergeType) => void;
 }) => {
     const { key, ...tagProps } = getTagProps({ index });
     const [open, setOpen] = useState(false);
     const [strength, setStrength] = useState('' + value.strength);
+    const [merge, setMerge] = useState(value.merge);
     const ref = useRef<HTMLInputElement>(null);
     const handleOK = () => {
-        onOK(parseFloat(strength) || 1);
+        onOK(parseFloat(strength) || 1, merge);
         setOpen(false);
     };
     useEffect(() => {
@@ -48,8 +59,9 @@ const LoraChip = ({
             return;
         }
         setStrength('' + value.strength);
+        setMerge(value.merge);
         setTimeout(() => ref.current?.focus(), 100);
-    }, [open, value.strength]);
+    }, [open, value.merge, value.strength]);
     return (
         <>
             <Chip
@@ -69,7 +81,9 @@ const LoraChip = ({
             />
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>Change lora weight</DialogTitle>
-                <DialogContent>
+                <DialogContent
+                    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                >
                     <TextField
                         fullWidth
                         value={strength}
@@ -86,6 +100,24 @@ const LoraChip = ({
                             e.stopPropagation();
                         }}
                     />
+                    <FormControl fullWidth>
+                        <InputLabel>Merge type</InputLabel>
+                        <Select
+                            label='Merge type'
+                            value={merge}
+                            onChange={(e) =>
+                                setMerge(e.target.value as mergeType)
+                            }
+                        >
+                            <MenuItem value={mergeType.SINGLE}>
+                                Single only
+                            </MenuItem>
+                            <MenuItem value={mergeType.DOUBLE}>
+                                Double only
+                            </MenuItem>
+                            <MenuItem value={mergeType.FULL}>Full</MenuItem>
+                        </Select>
+                    </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleOK}>OK</Button>
@@ -138,9 +170,6 @@ export const LoraInput = ({
             }
             const last_node_id = getFreeNodeId(api);
             const additional_fields = {} as any;
-            if (class_name === 'HunyuanVideoLoraLoader') {
-                additional_fields.blocks_type = 'double_blocks';
-            }
             if (input_node_id) {
                 additional_fields[lora_input_name] = [
                     input_node_id,
@@ -158,6 +187,16 @@ export const LoraInput = ({
                     title: class_name,
                 },
             }));
+            if (class_name === 'HunyuanVideoLoraLoader') {
+                loraNodes.forEach((n, i) => {
+                    n.inputs.blocks_type =
+                        values[i].merge === mergeType.DOUBLE
+                            ? 'double_blocks'
+                            : values[i].merge === mergeType.SINGLE
+                            ? 'single_blocks'
+                            : 'all';
+                });
+            }
             output_node_ids.forEach(
                 (id) =>
                     (api[id].inputs[api_input_name] = [
@@ -167,13 +206,6 @@ export const LoraInput = ({
             );
 
             loraNodes.forEach((n, i) => {
-                if (
-                    n.class_type === 'HyVideoLoraSelect' &&
-                    append?.every((an) => an.id !== n.inputs[name_field_name])
-                ) {
-                    (n.inputs as any).blocks = ['1000', 0];
-                }
-
                 api['' + (last_node_id + i)] = n;
                 if (i < loraNodes.length - 1) {
                     (n.inputs as any)[lora_input_name] = [
@@ -183,23 +215,56 @@ export const LoraInput = ({
                 }
             });
 
+            const block_edit_idx = getFreeNodeId(api);
             if (class_name === 'HyVideoLoraSelect') {
-                const block_edit = {
-                    '1000': {
-                        inputs: {} as any,
-                        class_type: 'HyVideoLoraBlockEdit',
-                        _meta: {
-                            title: 'HunyuanVideo Lora Block Edit',
+                const createBlockEdit = (
+                    block_edit_idx: number,
+                    name: string,
+                    single: boolean,
+                    double: boolean
+                ) => {
+                    const block_edit = {
+                        ['' + block_edit_idx]: {
+                            inputs: {} as any,
+                            class_type: 'HyVideoLoraBlockEdit',
+                            _meta: {
+                                title: name,
+                            },
                         },
-                    },
+                    };
+                    for (let i = 0; i <= 19; i++) {
+                        block_edit['' + block_edit_idx].inputs[
+                            `double_blocks.${i}.`
+                        ] = double;
+                    }
+                    for (let i = 0; i <= 39; i++) {
+                        block_edit['' + block_edit_idx].inputs[
+                            `single_blocks.${i}.`
+                        ] = single;
+                    }
+                    return block_edit;
                 };
-                Object.assign(api, block_edit);
-                for (let i = 0; i <= 19; i++) {
-                    block_edit['1000'].inputs[`double_blocks.${i}.`] = true;
-                }
-                for (let i = 0; i <= 39; i++) {
-                    block_edit['1000'].inputs[`single_blocks.${i}.`] = false;
-                }
+                const single_only = createBlockEdit(
+                    block_edit_idx,
+                    'Single only',
+                    true,
+                    false
+                );
+                const double_only = createBlockEdit(
+                    block_edit_idx + 1,
+                    'Double only',
+                    false,
+                    true
+                );
+                Object.assign(api, single_only, double_only);
+                loraNodes.forEach((n, i) => {
+                    if (values[i].merge < mergeType.FULL) {
+                        (n.inputs as any).blocks = [
+                            '' + (block_edit_idx + values[i].merge),
+                            0,
+                        ];
+                    }
+                });
             }
         },
         [
@@ -235,6 +300,7 @@ export const LoraInput = ({
             ),
             id: l,
             strength: 1,
+            merge: mergeType.DOUBLE,
         }));
     return (
         <Box display='flex' gap={1} sx={sx}>
@@ -246,10 +312,10 @@ export const LoraInput = ({
                             getTagProps={getTagProps}
                             index={i}
                             value={v}
-                            onOK={(strength: number) => {
+                            onOK={(strength: number, merge: mergeType) => {
                                 setValue(props.name, [
                                     ...values.slice(0, i),
-                                    { ...values[i], strength },
+                                    { ...values[i], strength, merge },
                                     ...values.slice(i + 1),
                                 ]);
                             }}
