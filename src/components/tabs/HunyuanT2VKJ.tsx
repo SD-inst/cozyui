@@ -104,7 +104,7 @@ const Content = () => (
                         name='enhance_video'
                         label='Enhance-a-Video weight'
                     />
-                    <TeaCacheInput name='tea_cache' defaultValue={0} />
+                    <TeaCacheInput name='tea_cache' defaultValue={0.2} />
                     <BlockSwapInput name='block_swap' />
                 </AccordionDetails>
             </Accordion>

@@ -24,7 +24,7 @@ export const KJSchedulerSelectInput = ({
                     value: 'UniPCMultistepScheduler',
                 },
             ]}
-            defaultValue='SDE-DPMSolverMultistepScheduler'
+            defaultValue='DPMSolverMultistepScheduler'
         />
     );
 };

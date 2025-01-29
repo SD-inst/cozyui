@@ -7,13 +7,16 @@ import { SliderInput } from './SliderInput';
 
 export const TeaCacheInput = ({ ...props }) => {
     const { handler_options } = useConfigTab();
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const v = useWatch({ name: props.name });
     useEffect(() => {
-        if (v > 0) {
-            setValue('sampler', 'FlowMatchDiscreteScheduler');
+        if (
+            v > 0 &&
+            getValues('sampler') === 'SDE-DPMSolverMultistepScheduler'
+        ) {
+            setValue('sampler', 'DPMSolverMultistepScheduler');
         }
-    }, [setValue, v]);
+    }, [getValues, setValue, v]);
     const handler = useCallback(
         (api: any, value: number) => {
             if (!value) {
@@ -37,5 +40,7 @@ export const TeaCacheInput = ({ ...props }) => {
         [handler_options.node_params.sampler_id]
     );
     useRegisterHandler({ name: props.name, handler });
-    return <SliderInput min={0} max={1} step={0.01} label='Tea Cache' {...props} />;
+    return (
+        <SliderInput min={0} max={1} step={0.01} label='Tea Cache' {...props} />
+    );
 };

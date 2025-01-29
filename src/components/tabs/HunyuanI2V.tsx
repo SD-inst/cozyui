@@ -17,6 +17,7 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { BlockSwapInput } from '../controls/BlockSwapInput';
 
 const models = [
     {
@@ -112,7 +113,8 @@ const Content = () => {
                             name='enhance_video'
                             label='Enhance-a-Video weight'
                         />
-                        <TeaCacheInput name='tea_cache' defaultValue={0} />
+                        <TeaCacheInput name='tea_cache' defaultValue={0.2} />
+                        <BlockSwapInput name='block_swap' />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
@@ -125,7 +127,7 @@ const Content = () => {
                             id: 'comfy/img2vid.safetensors',
                             label: 'img2vid',
                             strength: 1,
-                            merge: mergeType.FULL
+                            merge: mergeType.FULL,
                         },
                     ]}
                 />
