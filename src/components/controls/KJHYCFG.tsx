@@ -36,12 +36,11 @@ export const KJHYCFG = ({
                 },
             };
             api['' + hycfg_node_idx] = hycfg_node;
-            api[handler_options.hycfg_params.node_id].inputs['hyvid_cfg'] = [
-                '' + hycfg_node_idx,
-                0,
-            ];
+            api[handler_options.node_params.text_encode_id].inputs[
+                'hyvid_cfg'
+            ] = ['' + hycfg_node_idx, 0];
         },
-        [handler_options.hycfg_params.node_id]
+        [handler_options.node_params.text_encode_id]
     );
     useRegisterHandler({ name: props.name, handler });
     const ctl = useController({

@@ -17,6 +17,7 @@ import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { KJHYCFG } from '../controls/KJHYCFG';
+import { BlockSwapInput } from '../controls/BlockSwapInput';
 
 const models = [
     {
@@ -104,6 +105,7 @@ const Content = () => (
                         label='Enhance-a-Video weight'
                     />
                     <TeaCacheInput name='tea_cache' defaultValue={0} />
+                    <BlockSwapInput name='block_swap' />
                 </AccordionDetails>
             </Accordion>
             <SeedInput name='seed' defaultValue={1024} />

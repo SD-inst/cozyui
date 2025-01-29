@@ -125,6 +125,9 @@
                 },
                 "neg_prompt": {
                     "id": "handle"
+                },
+                "block_swap": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -137,14 +140,10 @@
                     "strength_field_name": "strength",
                     "name_field_name": "lora"
                 },
-                "tea_cache_params": {
-                    "node_id": "3"
-                },
-                "enhance_video_params": {
-                    "node_id": "3"
-                },
-                "hycfg_params": {
-                    "node_id": "30"
+                "node_params": {
+                    "loader_id": "1",
+                    "sampler_id": "3",
+                    "text_encode_id": "30"
                 }
             },
             "result": {
@@ -373,11 +372,10 @@
                     "strength_field_name": "strength",
                     "name_field_name": "lora"
                 },
-                "tea_cache_params": {
-                    "node_id": "3"
-                },
-                "enhance_video_params": {
-                    "node_id": "3"
+                "node_params": {
+                    "loader_id": "1",
+                    "sampler_id": "3",
+                    "text_encode_id": "30"
                 }
             },
             "result": {

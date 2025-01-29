@@ -30,11 +30,11 @@ export const TeaCacheInput = ({ ...props }) => {
                 },
             };
             api['' + tc_node_idx] = tc_node;
-            api[handler_options.tea_cache_params.node_id].inputs[
+            api[handler_options.node_params.sampler_id].inputs[
                 'teacache_args'
             ] = ['' + tc_node_idx, 0];
         },
-        [handler_options.tea_cache_params.node_id]
+        [handler_options.node_params.sampler_id]
     );
     useRegisterHandler({ name: props.name, handler });
     return <SliderInput min={0} max={1} step={0.01} label='Tea Cache' {...props} />;

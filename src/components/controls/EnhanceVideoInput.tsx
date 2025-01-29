@@ -26,11 +26,12 @@ export const EnhanceVideoInput = ({ ...props }) => {
                 },
             };
             api['' + ev_node_idx] = ev_node;
-            api[handler_options.enhance_video_params.node_id].inputs[
-                'feta_args'
-            ] = ['' + ev_node_idx, 0];
+            api[handler_options.node_params.sampler_id].inputs['feta_args'] = [
+                '' + ev_node_idx,
+                0,
+            ];
         },
-        [handler_options.enhance_video_params.node_id]
+        [handler_options.node_params.sampler_id]
     );
     useRegisterHandler({ name: props.name, handler });
     return (

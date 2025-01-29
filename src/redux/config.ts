@@ -23,15 +23,11 @@ export type tabConfigType = {
             strength_field_name: string;
             name_field_name: string;
         };
-        tea_cache_params: {
-            node_id: string;
+        node_params: {
+            sampler_id: string;
+            text_encode_id: string;
+            loader_id: string;
         };
-        enhance_video_params: {
-            node_id: string;
-        };
-        hycfg_params: {
-            node_id: string;
-        }
     };
 };
 
@@ -76,7 +72,7 @@ const slice = createSlice({
             .join(''),
     } as configType,
     reducers: {
-        setConfig: (s, action: PayloadAction<configType>) => ({
+        setConfig: (s: any, action: PayloadAction<configType>) => ({
             ...s,
             ...action.payload,
         }),

@@ -9,9 +9,7 @@ const emptyParams = {
     result: {},
     handler_options: {
         lora_params: {},
-        tea_cache_params: {},
-        enhance_video_params: {},
-        hycfg_params: {},
+        node_params: {},
     },
 };
 
