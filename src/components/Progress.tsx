@@ -3,6 +3,7 @@ import { useAppSelector } from '../redux/hooks';
 import { VerticalBox } from './VerticalBox';
 import { get } from 'lodash';
 import { useTaskDuration } from '../hooks/useTaskDuration';
+import { useEffect } from 'react';
 
 export const Progress = () => {
     const { max, min, value, status, current_node, queue } = useAppSelector(
@@ -17,6 +18,15 @@ export const Progress = () => {
         `["${current_node}"]._meta.title`,
         get(api, `["${current_node}"].class_type`, current_node)
     );
+    useEffect(() => {
+        const title = document.title;
+        if (perc > 0) {
+            document.title = `[${Math.round(perc)}%] ${title}`;
+        }
+        return () => {
+            document.title = title;
+        };
+    }, [perc]);
     return (
         <VerticalBox width='100%'>
             {status && (
