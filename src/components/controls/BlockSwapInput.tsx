@@ -59,7 +59,7 @@ export const BlockSwapInput = ({ ...props }) => {
             {...props}
         >
             <FormControlLabel
-                label='Enable block switch (saves VRAM, slow)'
+                label='Enable block swap (saves VRAM, slow)'
                 control={
                     <Switch
                         checked={value.enabled}
@@ -69,64 +69,68 @@ export const BlockSwapInput = ({ ...props }) => {
                     />
                 }
             />
-            <Box display='flex' flexDirection='row' gap={2}>
-                <TextField
-                    type='number'
-                    label='single blocks'
-                    slotProps={{ htmlInput: { min: 0, max: 40 } }}
-                    value={value.single_blocks_to_swap}
-                    onChange={(e) =>
-                        onChange({
-                            ...value,
-                            single_blocks_to_swap: e.target.value,
-                        })
-                    }
-                    fullWidth
-                />
-                <TextField
-                    type='number'
-                    label='double blocks'
-                    slotProps={{ htmlInput: { min: 0, max: 20 } }}
-                    value={value.double_blocks_to_swap}
-                    onChange={(e) =>
-                        onChange({
-                            ...value,
-                            double_blocks_to_swap: e.target.value,
-                        })
-                    }
-                    fullWidth
-                />
-            </Box>
-            <Box display='flex' flexDirection='row' gap={2}>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={value.offload_txt_in}
-                            onChange={(_, offload_txt_in) =>
+            {value.enabled && (
+                <>
+                    <Box display='flex' flexDirection='row' gap={2}>
+                        <TextField
+                            type='number'
+                            label='single blocks'
+                            slotProps={{ htmlInput: { min: 0, max: 40 } }}
+                            value={value.single_blocks_to_swap}
+                            onChange={(e) =>
                                 onChange({
                                     ...value,
-                                    offload_txt_in,
+                                    single_blocks_to_swap: e.target.value,
                                 })
                             }
+                            fullWidth
                         />
-                    }
-                    label='Offload txt in'
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={value.offload_img_in}
-                            onChange={(_, offload_img_in) =>
+                        <TextField
+                            type='number'
+                            label='double blocks'
+                            slotProps={{ htmlInput: { min: 0, max: 20 } }}
+                            value={value.double_blocks_to_swap}
+                            onChange={(e) =>
                                 onChange({
                                     ...value,
-                                    offload_img_in,
+                                    double_blocks_to_swap: e.target.value,
                                 })
                             }
+                            fullWidth
                         />
-                    }
-                    label='Offload img in'
-                />
-            </Box>
+                    </Box>
+                    <Box display='flex' flexDirection='row' gap={2}>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={value.offload_txt_in}
+                                    onChange={(_, offload_txt_in) =>
+                                        onChange({
+                                            ...value,
+                                            offload_txt_in,
+                                        })
+                                    }
+                                />
+                            }
+                            label='Offload txt in'
+                        />
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={value.offload_img_in}
+                                    onChange={(_, offload_img_in) =>
+                                        onChange({
+                                            ...value,
+                                            offload_img_in,
+                                        })
+                                    }
+                                />
+                            }
+                            label='Offload img in'
+                        />
+                    </Box>
+                </>
+            )}
         </Box>
     );
 };
