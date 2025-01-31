@@ -71,6 +71,7 @@ function App() {
     } = useGet({
         url: apiUrl + '/api/object_info',
         enabled: isSuccessConfig && !!apiUrl,
+        cache: true,
     });
     const dispatch = useAppDispatch();
     useEffect(() => {
