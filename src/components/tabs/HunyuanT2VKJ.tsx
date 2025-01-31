@@ -78,7 +78,7 @@ const Content = () => (
                 name='length'
                 defaultValue={85}
             />
-            <SliderInput name='steps' defaultValue={15} min={1} max={50} />
+            <SliderInput name='steps' defaultValue={30} min={1} max={50} />
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     Advanced parameters
