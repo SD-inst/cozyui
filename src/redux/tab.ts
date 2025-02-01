@@ -1,9 +1,21 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export enum actionEnum {
+    STORE,
+    RESTORE,
+}
+
+type paramsType = {
+    tab?: string;
+    values?: any;
+    action?: actionEnum;
+};
+
 type tabType = {
     current_tab: boolean | string;
     api: any;
     prompt_id: string;
+    params: paramsType;
 };
 
 const slice = createSlice({
@@ -12,6 +24,10 @@ const slice = createSlice({
         current_tab: false,
         api: {} as any,
         prompt_id: '',
+        params: {
+            tab: '',
+            values: {},
+        },
     } as tabType,
     reducers: {
         setTab: (s, action: PayloadAction<string | boolean>) => ({
@@ -26,10 +42,14 @@ const slice = createSlice({
             ...s,
             prompt_id: action.payload,
         }),
+        setParams: (s, action: PayloadAction<paramsType>) => ({
+            ...s,
+            params: action.payload,
+        }),
     },
 });
 
 export const {
     reducer: tab,
-    actions: { setApi, setTab, setPromptId },
+    actions: { setApi, setTab, setPromptId, setParams },
 } = slice;

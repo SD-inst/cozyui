@@ -11,9 +11,10 @@ import {
     clearGenerationTS,
     setGenerationDisabled,
     setStatus,
+    statusEnum,
 } from '../redux/progress';
-import { setApi, setPromptId } from '../redux/tab';
-import { useHandlers } from './contexts/TabContext';
+import { actionEnum, setApi, setParams, setPromptId } from '../redux/tab';
+import { useCurrentTab, useHandlers } from './contexts/TabContext';
 
 type error = {
     controls: string[];
@@ -49,6 +50,7 @@ export const GenerateButton = ({
     );
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
+    const current_tab = useCurrentTab(tabOverride);
     const { api, controls } = useConfigTab(tabOverride);
 
     const apiUrl = useApiURL();
@@ -59,7 +61,7 @@ export const GenerateButton = ({
     const handlers = useHandlers();
     const sendPrompt = () => {
         dispatch(setGenerationDisabled(true));
-        dispatch(setStatus('Waiting...'));
+        dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
 
         const params = {
@@ -90,7 +92,7 @@ export const GenerateButton = ({
                     console.log(e);
                     toast.error(`Error processing handler of ${name}: ${e}`);
                     dispatch(setGenerationDisabled(false));
-                    dispatch(setStatus('Error'));
+                    dispatch(setStatus(statusEnum.ERROR));
                     return Promise.reject();
                 }
                 continue;
@@ -130,7 +132,7 @@ export const GenerateButton = ({
         if (noexec) {
             dispatch(setGenerationDisabled(false));
             toast.success('Execution skipped');
-            dispatch(setStatus('Finished'));
+            dispatch(setStatus(statusEnum.FINISHED));
             return Promise.resolve();
         }
         dispatch(clearGenerationTS());
@@ -142,6 +144,13 @@ export const GenerateButton = ({
                 if (r.status === 200) {
                     const j = await r.json();
                     dispatch(setPromptId(j.prompt_id));
+                    dispatch(
+                        setParams({
+                            action: actionEnum.STORE,
+                            tab: current_tab,
+                            values: vals,
+                        })
+                    );
                     return;
                 }
                 dispatch(setGenerationDisabled(false));

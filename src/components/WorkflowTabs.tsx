@@ -1,10 +1,26 @@
 import { Tab, Tabs } from '@mui/material';
 import React, { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
-import { setTab } from '../redux/tab';
+import { actionEnum, setParams, setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
 import { TabContextProvider } from './contexts/TabContextProvider';
+import { useCurrentTab } from './contexts/TabContext';
+
+const ValuesRestore = () => {
+    const { action, tab, values } = useAppSelector((s) => s.tab.params);
+    const dispatch = useAppDispatch();
+    const tab_name = useCurrentTab();
+    const { setValue } = useFormContext();
+    useEffect(() => {
+        if (tab !== tab_name || action !== actionEnum.RESTORE) {
+            return;
+        }
+        Object.keys(values).forEach((k) => setValue(k, values[k]));
+        dispatch(setParams({}));
+    }, [action, dispatch, setValue, tab, tab_name, values]);
+    return null;
+};
 
 const TabContent = ({ ...props }) => {
     const current_tab = useAppSelector((s) => s.tab.current_tab);
@@ -20,7 +36,9 @@ const TabContent = ({ ...props }) => {
                 width='100%'
                 display={current_tab === value ? 'flex' : 'none'}
             >
-                <FormProvider {...form}>{content}</FormProvider>
+                <FormProvider {...form}>
+                    <ValuesRestore /> {content}
+                </FormProvider>
             </VerticalBox>
         </TabContextProvider>
     );

@@ -1,8 +1,10 @@
 import { Button, Typography } from '@mui/material';
 import { useEffect, useRef } from 'react';
-import { useResult } from '../../hooks/useResult';
-import { VerticalBox } from '../VerticalBox';
+import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
+import { useResult } from '../../hooks/useResult';
+import { useSaveToHistory } from '../../hooks/useSaveToHistory';
+import { VerticalBox } from '../VerticalBox';
 
 export const VideoResult = ({
     id,
@@ -21,11 +23,12 @@ export const VideoResult = ({
             videoRef.current?.scrollIntoView();
         }
     }, [results]);
+    useSaveToHistory({ id, type });
     return (
         <VerticalBox width='100%'>
             <Typography variant='body1'>{title || 'Video'}</Typography>
             {results?.map((r: any) => {
-                const url = `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
+                const url = makeOutputUrl(apiUrl, r);
                 return (
                     <VerticalBox key={r.filename}>
                         <video

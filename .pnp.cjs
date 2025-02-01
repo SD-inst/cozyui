@@ -41,6 +41,8 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:18.3.18"],\
           ["@types/react-dom", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:18.3.5"],\
           ["@vitejs/plugin-react-swc", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:3.7.2"],\
+          ["dexie", "npm:4.0.11"],\
+          ["dexie-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:1.1.7"],\
           ["eslint", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:9.17.0"],\
           ["eslint-plugin-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:5.1.0"],\
           ["eslint-plugin-react-refresh", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:0.4.16"],\
@@ -2125,6 +2127,8 @@ const RAW_RUNTIME_STATE =
           ["@types/react", "npm:18.3.18"],\
           ["@types/react-dom", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:18.3.5"],\
           ["@vitejs/plugin-react-swc", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:3.7.2"],\
+          ["dexie", "npm:4.0.11"],\
+          ["dexie-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:1.1.7"],\
           ["eslint", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:9.17.0"],\
           ["eslint-plugin-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:5.1.0"],\
           ["eslint-plugin-react-refresh", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:0.4.16"],\
@@ -2192,6 +2196,41 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../../home/rkfg/.yarn/berry/cache/deep-is-npm-0.1.4-88938b5a67-10c0.zip/node_modules/deep-is/",\
         "packageDependencies": [\
           ["deep-is", "npm:0.1.4"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["dexie", [\
+      ["npm:4.0.11", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/dexie-npm-4.0.11-72c857842d-10c0.zip/node_modules/dexie/",\
+        "packageDependencies": [\
+          ["dexie", "npm:4.0.11"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["dexie-react-hooks", [\
+      ["npm:1.1.7", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/dexie-react-hooks-npm-1.1.7-5d4f84f0fc-10c0.zip/node_modules/dexie-react-hooks/",\
+        "packageDependencies": [\
+          ["dexie-react-hooks", "npm:1.1.7"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:1.1.7", {\
+        "packageLocation": "./.yarn/__virtual__/dexie-react-hooks-virtual-164642f08f/4/home/rkfg/.yarn/berry/cache/dexie-react-hooks-npm-1.1.7-5d4f84f0fc-10c0.zip/node_modules/dexie-react-hooks/",\
+        "packageDependencies": [\
+          ["dexie-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:1.1.7"],\
+          ["@types/dexie", null],\
+          ["@types/react", "npm:18.3.18"],\
+          ["dexie", "npm:4.0.11"],\
+          ["react", "npm:18.3.1"]\
+        ],\
+        "packagePeers": [\
+          "@types/dexie",\
+          "@types/react",\
+          "dexie",\
+          "react"\
         ],\
         "linkType": "HARD"\
       }]\

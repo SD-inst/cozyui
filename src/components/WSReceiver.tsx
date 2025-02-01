@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
@@ -9,9 +10,10 @@ import {
     setProgress,
     setQueue,
     setStatus,
+    setStatusMessage,
+    statusEnum,
 } from '../redux/progress';
 import { addResult } from '../redux/result';
-import { useCallback } from 'react';
 import { setPromptId } from '../redux/tab';
 
 export type WSHandlers = {
@@ -28,7 +30,7 @@ export const WSReceiver = () => {
         dispatch(setCurrentNode(''));
         dispatch(setGenerationDisabled(false));
         dispatch(setGenerationEnd());
-        dispatch(setPromptId(''))
+        dispatch(setPromptId(''));
     }, [dispatch]);
     const client_id = useAppSelector((s) => s.config.client_id);
     const apiUrl = useAppSelector((s) => s.config.api);
@@ -38,11 +40,11 @@ export const WSReceiver = () => {
             const j = JSON.parse(ev.data);
             switch (j.type) {
                 case 'execution_success':
-                    dispatch(setStatus('Finished'));
+                    dispatch(setStatus(statusEnum.FINISHED));
                     reset();
                     break;
                 case 'execution_start':
-                    dispatch(setStatus('Running'));
+                    dispatch(setStatus(statusEnum.RUNNING));
                     dispatch(setGenerationStart());
                     break;
                 case 'executed':
@@ -71,11 +73,16 @@ export const WSReceiver = () => {
                     break;
                 case 'execution_error':
                     toast.error(j.data.exception_message);
-                    dispatch(setStatus('Error: ' + j.data.exception_message));
+                    dispatch(
+                        setStatusMessage({
+                            status: statusEnum.ERROR,
+                            message: j.data.exception_message,
+                        })
+                    );
                     reset();
                     break;
                 case 'execution_interrupted':
-                    dispatch(setStatus('Interrupted'));
+                    dispatch(setStatus(statusEnum.INTERRUPTED));
                     reset();
                     break;
             }
@@ -85,8 +92,7 @@ export const WSReceiver = () => {
     const handleOpen = useCallback(() => {
         console.log('Connected to ComfyUI!');
         toast.success('Connected!');
-        dispatch(setStatus('Ready'));
-    }, [dispatch]);
+    }, []);
     useWebSocket(
         apiUrl + '/ws?clientId=' + client_id,
         handleMessage,

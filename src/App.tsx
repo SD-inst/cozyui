@@ -23,6 +23,8 @@ import { useGet } from './hooks/useGet';
 import { setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { setGenerationDisabled } from './redux/progress';
+import { HistoryPanel } from './components/history/HistoryPanel';
+import { HistorySettings } from './components/history/HistorySettings';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -109,6 +111,8 @@ function App() {
                 </WorkflowTabs>
                 <Progress />
                 <InterruptButton />
+                <HistoryPanel />
+                <HistorySettings />
             </VerticalBox>
             <Toaster
                 position='bottom-center'

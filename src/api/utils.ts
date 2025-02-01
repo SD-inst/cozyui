@@ -19,3 +19,6 @@ export const getFreeNodeId = (api: any) =>
     Object.keys(api)
         .map((k) => parseInt(k))
         .reduce((a, k) => Math.max(a, k)) + 1;
+
+export const makeOutputUrl = (apiUrl: string, r: any) =>
+    `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;

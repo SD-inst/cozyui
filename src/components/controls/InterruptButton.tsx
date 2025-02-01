@@ -1,14 +1,18 @@
 import { Button, ButtonProps } from '@mui/material';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { setGenerationDisabled, setStatus } from '../../redux/progress';
+import { setStatus, statusEnum } from '../../redux/progress';
 import { setPromptId } from '../../redux/tab';
 
 export const InterruptButton = ({ ...props }: ButtonProps) => {
     const prompt_id = useAppSelector((s) => s.tab.prompt_id);
+    const status = useAppSelector((s) => s.progress.status);
     const apiUrl = useApiURL();
     const dispatch = useAppDispatch();
-    if (!prompt_id) {
+    if (
+        !prompt_id ||
+        (status !== statusEnum.RUNNING && status !== statusEnum.WAITING)
+    ) {
         return null;
     }
     const handleInterrupt = () => {
@@ -16,9 +20,8 @@ export const InterruptButton = ({ ...props }: ButtonProps) => {
             method: 'POST',
             body: JSON.stringify({ id: prompt_id }),
         }).finally(() => {
-            dispatch(setGenerationDisabled(false));
             dispatch(setPromptId(''));
-            dispatch(setStatus('Cancelled'));
+            dispatch(setStatus(statusEnum.CANCELLED));
         });
     };
     return (

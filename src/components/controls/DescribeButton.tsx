@@ -15,7 +15,7 @@ export const DescribeButton = ({
     api: string;
 } & GenerateButtonProps) => {
     const results = useResult({ tabOverride: api });
-    const { id } = useResultParam(api);
+    const { id } = useResultParam({ tabOverride: api });
     const dispatch = useAppDispatch();
     const form = useFormContext();
     useEffect(() => {

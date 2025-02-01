@@ -1,5 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+export enum statusEnum {
+    WAITING = 'Waiting...',
+    RUNNING = 'Running',
+    FINISHED = 'Finished',
+    ERROR = 'Error',
+    INTERRUPTED = 'Interrupted',
+    CANCELLED = 'Cancelled',
+}
+
 const progressSlice = createSlice({
     name: 'progress',
     initialState: {
@@ -33,9 +42,16 @@ const progressSlice = createSlice({
             ...s,
             current_node: action.payload,
         }),
-        setStatus: (s, action: PayloadAction<string>) => ({
+        setStatus: (s, action: PayloadAction<statusEnum>) => ({
             ...s,
             status: action.payload,
+        }),
+        setStatusMessage: (
+            s,
+            action: PayloadAction<{ status: statusEnum; message: string }>
+        ) => ({
+            ...s,
+            status: `${action.payload.status}: ${action.payload.message}`,
         }),
         setGenerationDisabled: (s, action: PayloadAction<boolean>) => ({
             ...s,
@@ -66,6 +82,7 @@ export const {
         setCurrentNode,
         setQueue,
         setStatus,
+        setStatusMessage,
         setGenerationDisabled,
         clearGenerationTS,
         setGenerationStart,
