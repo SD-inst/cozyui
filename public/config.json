@@ -68,10 +68,10 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "15",
+                    "input_node_id": "13",
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["12", "6"],
+                    "output_node_ids": ["15"],
                     "output_idx": 0,
                     "class_name": "HunyuanVideoLoraLoader",
                     "strength_field_name": "strength",
