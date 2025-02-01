@@ -1,7 +1,7 @@
 {
     "tabs": {
         "Hunyuan T2V": {
-            "api": "hunyuan_api_lora.json",
+            "api": "hunyuan_api_stock.json",
             "controls": {
                 "prompt": {
                     "id": "8",
