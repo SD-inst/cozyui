@@ -18,6 +18,7 @@ const ValuesRestore = () => {
         }
         Object.keys(values).forEach((k) => setValue(k, values[k]));
         dispatch(setParams({}));
+        dispatch(setTab(tab_name));
     }, [action, dispatch, setValue, tab, tab_name, values]);
     return null;
 };
