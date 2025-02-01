@@ -10,6 +10,7 @@ import { VerticalBox } from '../VerticalBox';
 import { DeleteButton } from './DeleteButton';
 import { LoadParamsButton } from './LoadParamsButton';
 import { TaskResult } from './db';
+import { formatDuration } from '../../hooks/useTaskDuration';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const avatar = (type: string) => {
@@ -28,10 +29,17 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
         dlUrl = 'http://127.0.0.1/' + dlUrl; //fake URL, only need it for parsing the filename
     }
     const filename = new URL(dlUrl).searchParams.get('filename');
+    const duration = formatDuration(output.duration / 1000);
+    const params = JSON.parse(output.params || '');
+    const tab = params.tab;
     return (
         <Card variant='outlined' sx={{ mt: 2 }} key={output.timestamp}>
             <CardHeader
-                title={new Date(output.timestamp).toLocaleString()}
+                title={
+                    new Date(output.timestamp).toLocaleString() +
+                    ` [${duration}]`
+                }
+                subheader={tab}
                 avatar={avatar(output.type)}
             />
             <CardContent>

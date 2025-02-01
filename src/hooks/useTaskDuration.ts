@@ -1,18 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
 
+export const formatDuration = (dur: number) => {
+    const minutes = Math.floor(dur / 60);
+    const seconds = Math.floor(dur % 60);
+    return `${minutes.toString().padStart(2, '0')}:${seconds
+        .toString()
+        .padStart(2, '0')}`;
+};
+
 export const useTaskDuration = () => {
     const [duration, setDuration] = useState('');
     const { start_ts, end_ts } = useAppSelector((s) => s.progress);
     const updateDuration = useCallback((start: number, end: number) => {
         const dur = (end - start) / 1000;
-        const minutes = Math.floor(dur / 60);
-        const seconds = Math.floor(dur % 60);
-        setDuration(
-            `${minutes.toString().padStart(2, '0')}:${seconds
-                .toString()
-                .padStart(2, '0')}`
-        );
+        setDuration(formatDuration(dur));
     }, []);
     useEffect(() => {
         if (!start_ts) {
