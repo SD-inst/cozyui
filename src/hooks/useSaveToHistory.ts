@@ -37,48 +37,55 @@ export const useSaveToHistory = ({
         ) {
             return;
         }
+        // mark all as saved locally to prevent duplicates from other tabs later
+        const saved_results = results
+            .filter((r) => !r.saved_locally)
+            .map((r) => ({
+                ...r,
+                saved_locally: true,
+            }));
+        if (saved_results.length) {
+            dispatch(
+                addResult({
+                    node_id: id_r,
+                    output: { [type_r]: saved_results },
+                })
+            );
+        } else {
+            return;
+        }
         (async () => {
             const task_results = await Promise.all(
-                results
-                    .filter((r) => !r.saved_locally)
-                    .map(async (r: any) => {
-                        const url = makeOutputUrl(apiUrl, r);
-                        let data = undefined;
-                        if (save_locally) {
-                            const result = await fetch(url);
-                            data = await result.blob();
-                        }
-                        return {
-                            timestamp: end_ts,
-                            duration: end_ts - start_ts,
-                            type: type_r,
-                            node_id: id_r,
-                            params: JSON.stringify({ tab, values }),
-                            url,
-                            data,
-                        } as TaskResult;
-                    })
+                saved_results.map(async (r: any) => {
+                    const url = makeOutputUrl(apiUrl, r);
+                    let data = undefined;
+                    if (save_locally) {
+                        const result = await fetch(url);
+                        data = await result.blob();
+                    }
+                    return {
+                        timestamp: end_ts,
+                        duration: end_ts - start_ts,
+                        type: type_r,
+                        node_id: id_r,
+                        params: JSON.stringify({ tab, values }),
+                        url,
+                        data,
+                    } as TaskResult;
+                })
             );
             if (!task_results.length) {
                 return;
             }
-            return db
-                .transaction('rw', db.taskResults, async (tx) =>
-                    tx.taskResults.bulkAdd(task_results)
-                )
-                .then(() => {
-                    // mark all as saved locally to prevent duplicates
-                    const saved_results = results.map((r) => ({
-                        ...r,
-                        saved_locally: true,
-                    }));
-                    dispatch(
-                        addResult({
-                            node_id: id_r,
-                            output: { [type_r]: saved_results },
-                        })
-                    );
-                });
+            return db.transaction('rw', db.taskResults, async (tx) => {
+                const exists = await tx.taskResults
+                    .where({ timestamp: end_ts, node_id: id_r })
+                    .count();
+                if (exists > 0) {
+                    return;
+                }
+                return tx.taskResults.bulkAdd(task_results);
+            });
         })()
             .then(() => {
                 console.log('History updated');
@@ -98,7 +105,6 @@ export const useSaveToHistory = ({
         start_ts,
         status,
         tab,
-        type,
         type_r,
         values,
     ]);
