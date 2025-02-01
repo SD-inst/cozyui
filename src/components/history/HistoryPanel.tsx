@@ -5,16 +5,47 @@ import {
     AccordionSummary,
     List,
     ListProps,
+    Pagination,
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
 import { HistoryCard } from './HistoryCard';
+import { Dispatch, SetStateAction, useState } from 'react';
+
+const page_size = 10;
+
+const HistoryPagination = ({
+    page,
+    setPage,
+}: {
+    page: number;
+    setPage: Dispatch<SetStateAction<number>>;
+}) => {
+    const count = useLiveQuery(() => db.taskResults.count()) ?? 0;
+    return (
+        <Pagination
+            count={Math.ceil(count / page_size)}
+            page={page}
+            onChange={(_, p) => setPage(p)}
+            showFirstButton
+            showLastButton
+        />
+    );
+};
 
 export const HistoryPanel = ({ ...props }: ListProps) => {
-    const results = useLiveQuery(() =>
-        db.taskResults.orderBy('timestamp').reverse().toArray()
+    const [page, setPage] = useState(1);
+    const results = useLiveQuery(
+        () =>
+            db.taskResults
+                .orderBy('timestamp')
+                .reverse()
+                .offset((page - 1) * page_size)
+                .limit(page_size)
+                .toArray(),
+        [page, page_size]
     );
     return (
         <Accordion sx={{ width: '100%' }}>
@@ -29,6 +60,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             </AccordionSummary>
             <AccordionDetails>
                 <VerticalBox>
+                    <HistoryPagination page={page} setPage={setPage} />
                     <List {...props}>
                         {!results?.length && (
                             <Typography variant='body1'>Nothing yet</Typography>
@@ -40,6 +72,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                             />
                         ))}
                     </List>
+                    <HistoryPagination page={page} setPage={setPage} />
                 </VerticalBox>
             </AccordionDetails>
         </Accordion>

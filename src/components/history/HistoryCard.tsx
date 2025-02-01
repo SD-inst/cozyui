@@ -44,7 +44,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
             />
             <CardContent>
                 <VerticalBox>
-                    <video style={{ width: '100%' }} src={url} controls loop />
+                    <video src={url} controls loop />
                 </VerticalBox>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
