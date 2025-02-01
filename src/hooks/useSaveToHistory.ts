@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { makeOutputUrl } from '../api/utils';
 import { db, TaskResult } from '../components/history/db';
-import { useAppSelector } from '../redux/hooks';
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { statusEnum } from '../redux/progress';
 import { actionEnum } from '../redux/tab';
 import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
 import { useSaveOutputsLocally } from './useSaveOutputsLocally';
+import { addResult } from '../redux/result';
 
 export const useSaveToHistory = ({
     id,
@@ -22,6 +23,7 @@ export const useSaveToHistory = ({
     const { start_ts, end_ts, status } = useAppSelector((s) => s.progress);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const save_locally = useSaveOutputsLocally();
+    const dispatch = useAppDispatch();
     useEffect(() => {
         // store result to IndexedDB history
         if (
@@ -37,33 +39,46 @@ export const useSaveToHistory = ({
         }
         (async () => {
             const task_results = await Promise.all(
-                results.map(async (r: any) => {
-                    const url = makeOutputUrl(apiUrl, r);
-                    let data = undefined;
-                    if (save_locally) {
-                        const result = await fetch(url);
-                        data = await result.blob();
-                    }
-                    return {
-                        timestamp: end_ts,
-                        duration: end_ts - start_ts,
-                        type: type_r,
-                        node_id: id_r,
-                        params: JSON.stringify({ tab, values }),
-                        url,
-                        data,
-                    } as TaskResult;
-                })
+                results
+                    .filter((r) => !r.saved_locally)
+                    .map(async (r: any) => {
+                        const url = makeOutputUrl(apiUrl, r);
+                        let data = undefined;
+                        if (save_locally) {
+                            const result = await fetch(url);
+                            data = await result.blob();
+                        }
+                        return {
+                            timestamp: end_ts,
+                            duration: end_ts - start_ts,
+                            type: type_r,
+                            node_id: id_r,
+                            params: JSON.stringify({ tab, values }),
+                            url,
+                            data,
+                        } as TaskResult;
+                    })
             );
-            return db.transaction('rw', db.taskResults, async (tx) => {
-                const exists = await tx.taskResults
-                    .where({ timestamp: end_ts, node_id: id_r })
-                    .count();
-                if (exists > 0) {
-                    return;
-                }
-                return tx.taskResults.bulkAdd(task_results);
-            });
+            if (!task_results.length) {
+                return;
+            }
+            return db
+                .transaction('rw', db.taskResults, async (tx) =>
+                    tx.taskResults.bulkAdd(task_results)
+                )
+                .then(() => {
+                    // mark all as saved locally to prevent duplicates
+                    const saved_results = results.map((r) => ({
+                        ...r,
+                        saved_locally: true,
+                    }));
+                    dispatch(
+                        addResult({
+                            node_id: id_r,
+                            output: { [type_r]: saved_results },
+                        })
+                    );
+                });
         })()
             .then(() => {
                 console.log('History updated');
@@ -75,6 +90,7 @@ export const useSaveToHistory = ({
     }, [
         action,
         apiUrl,
+        dispatch,
         end_ts,
         id_r,
         results,
