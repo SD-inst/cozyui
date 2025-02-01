@@ -7,6 +7,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+import { Optional } from './optional';
 
 export type SelectInputProps = {
     defaultValue?: any;
@@ -19,6 +20,11 @@ export type SelectInputProps = {
           }
     )[];
 } & SelectProps;
+
+export type CustomSelectInputProps = Optional<
+    SelectInputProps,
+    'choices' | 'defaultValue'
+>;
 
 export const SelectInput = ({
     defaultValue = '',

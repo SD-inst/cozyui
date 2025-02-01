@@ -7,7 +7,7 @@
             "load_device": "offload_device",
             "attention_mode": "sageattn_varlen",
             "auto_cpu_offload": false,
-            "upcast_rope": false
+            "upcast_rope": true
         },
         "class_type": "HyVideoModelLoader",
         "_meta": {

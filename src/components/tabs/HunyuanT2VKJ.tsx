@@ -18,6 +18,7 @@ import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { KJHYCFG } from '../controls/KJHYCFG';
 import { BlockSwapInput } from '../controls/BlockSwapInput';
+import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
 
 const models = [
     {
@@ -56,12 +57,7 @@ const Content = () => (
     <Layout>
         <GridLeft>
             <TextInput name='prompt' multiline sx={{ mb: 2 }} />
-            <SelectInput
-                name='model'
-                defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                choices={models}
-            />
-            <Box display='flex' flexDirection='row' width='100%' mt={2}>
+            <Box display='flex' flexDirection='row' width='100%'>
                 <Box display='flex' flexDirection='column' flex={1}>
                     <HYSize name='width' defaultValue={512} />
                     <HYSize name='height' defaultValue={320} />
@@ -84,8 +80,14 @@ const Content = () => (
                     Advanced parameters
                 </AccordionSummary>
                 <AccordionDetails>
+                    <SelectInput
+                        name='model'
+                        defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
+                        choices={models}
+                    />
                     <KJHYCFG name='neg_prompt' />
                     <KJSchedulerSelectInput name='sampler' />
+                    <KJAttentionSelectInput name='attention' />
                     <SliderInput
                         name='flow_shift'
                         label='flow shift'

@@ -48,6 +48,14 @@
                 },
                 "upscale": {
                     "id": "handle"
+                },
+                "sampler": {
+                    "id": "3",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "12",
+                    "field": "scheduler"
                 }
             },
             "handler_options": {
@@ -128,6 +136,10 @@
                 },
                 "block_swap": {
                     "id": "handle"
+                },
+                "attention": {
+                    "id": "1",
+                    "field": "attention_mode"
                 }
             },
             "handler_options": {

@@ -1,11 +1,13 @@
-import { SelectInput, SelectInputProps } from './SelectInput';
+import {
+    CustomSelectInputProps,
+    SelectInput
+} from './SelectInput';
 
 export const KJSchedulerSelectInput = ({
     ...props
-}: Omit<SelectInputProps, 'choices'>) => {
+}: CustomSelectInputProps) => {
     return (
         <SelectInput
-            {...props}
             choices={[
                 {
                     text: 'Flow Match Discrete Scheduler',
@@ -25,6 +27,7 @@ export const KJSchedulerSelectInput = ({
                 },
             ]}
             defaultValue='DPMSolverMultistepScheduler'
+            {...props}
         />
     );
 };

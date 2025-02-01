@@ -1,4 +1,9 @@
-import { Box } from '@mui/material';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+} from '@mui/material';
 import { useState } from 'react';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -13,6 +18,9 @@ import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
+import { ExpandMore } from '@mui/icons-material';
+import { SamplerSelectInput } from '../controls/SamplerSelectInput';
+import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 
 const models = [
     {
@@ -42,13 +50,8 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <TextInput name='prompt' multiline sx={{ mb: 3 }} />
-                <SelectInput
-                    name='model'
-                    defaultValue='hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors'
-                    choices={models}
-                />
-                <Box display='flex' flexDirection='row' width='100%' mt={2}>
+                <TextInput name='prompt' multiline sx={{ mb: 2 }} />
+                <Box display='flex' flexDirection='row' width='100%'>
                     <Box display='flex' flexDirection='column' flex={1}>
                         <HYSize name='width' defaultValue={512} />
                         <HYSize name='height' defaultValue={320} />
@@ -68,21 +71,35 @@ const Content = () => {
                     name='length'
                     defaultValue={85}
                 />
-                <SliderInput name='steps' defaultValue={7} min={1} max={30} />
-                <SliderInput
-                    name='flow_shift'
-                    label='flow shift'
-                    min={1}
-                    max={30}
-                    defaultValue={7}
-                />
-                <SliderInput
-                    name='guidance'
-                    label='guidance scale'
-                    min={1}
-                    max={20}
-                    defaultValue={7}
-                />
+                <SliderInput name='steps' defaultValue={15} min={1} max={30} />
+                <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMore />}>
+                        Advanced parameters
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        <SelectInput
+                            name='model'
+                            defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
+                            choices={models}
+                        />
+                        <SamplerSelectInput name='sampler' />
+                        <SchedulerSelectInput name='scheduler' />
+                        <SliderInput
+                            name='flow_shift'
+                            label='flow shift'
+                            min={1}
+                            max={30}
+                            defaultValue={7}
+                        />
+                        <SliderInput
+                            name='guidance'
+                            label='guidance scale'
+                            min={1}
+                            max={20}
+                            defaultValue={7}
+                        />
+                    </AccordionDetails>
+                </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' filter='/hunyuan/' />
                 <UpscaleToggle
@@ -104,5 +121,9 @@ const Content = () => {
 };
 
 export const HunyanT2VTab = (
-    <WFTab label='Hunyuan T2V Stock' value='Hunyuan T2V' content={<Content />} />
+    <WFTab
+        label='Hunyuan T2V Stock'
+        value='Hunyuan T2V'
+        content={<Content />}
+    />
 );
