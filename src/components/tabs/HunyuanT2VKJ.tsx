@@ -92,7 +92,7 @@ const Content = () => (
                         name='flow_shift'
                         label='flow shift'
                         min={1}
-                        max={30}
+                        max={20}
                         defaultValue={7}
                     />
                     <SliderInput

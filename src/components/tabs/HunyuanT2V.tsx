@@ -71,7 +71,7 @@ const Content = () => {
                     name='length'
                     defaultValue={85}
                 />
-                <SliderInput name='steps' defaultValue={15} min={1} max={30} />
+                <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         Advanced parameters
@@ -88,7 +88,7 @@ const Content = () => {
                             name='flow_shift'
                             label='flow shift'
                             min={1}
-                            max={30}
+                            max={20}
                             defaultValue={7}
                         />
                         <SliderInput
@@ -97,6 +97,22 @@ const Content = () => {
                             min={1}
                             max={20}
                             defaultValue={7}
+                        />
+                        <SliderInput
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            defaultValue={0.1}
+                            name='wave_speed'
+                            label='WaveSpeed cache'
+                        />
+                        <SliderInput
+                            min={-1}
+                            max={10}
+                            step={1}
+                            defaultValue={2}
+                            name='wave_speed_maxhit'
+                            label='WaveSpeed max hits'
                         />
                     </AccordionDetails>
                 </Accordion>

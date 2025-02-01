@@ -88,7 +88,7 @@
     "inputs": {
       "shift": 10,
       "model": [
-        "13",
+        "15",
         0
       ]
     },
@@ -150,7 +150,7 @@
       "steps": 7,
       "denoise": 1,
       "model": [
-        "13",
+        "15",
         0
       ]
     },
@@ -179,6 +179,23 @@
     "class_type": "EmptyHunyuanLatentVideo",
     "_meta": {
       "title": "EmptyHunyuanLatentVideo"
+    }
+  },
+  "15": {
+    "inputs": {
+      "object_to_patch": "diffusion_model",
+      "residual_diff_threshold": 0.1,
+      "start": 0,
+      "end": 1,
+      "max_consecutive_cache_hits": -1,
+      "model": [
+        "13",
+        0
+      ]
+    },
+    "class_type": "ApplyFBCacheOnModel",
+    "_meta": {
+      "title": "Apply First Block Cache"
     }
   },
   "16": {

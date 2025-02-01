@@ -56,11 +56,19 @@
                 "scheduler": {
                     "id": "12",
                     "field": "scheduler"
+                },
+                "wave_speed": {
+                    "id": "15",
+                    "field": "residual_diff_threshold"
+                },
+                "wave_speed_maxhit": {
+                    "id": "15",
+                    "field": "max_consecutive_cache_hits"
                 }
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "13",
+                    "input_node_id": "15",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["12", "6"],

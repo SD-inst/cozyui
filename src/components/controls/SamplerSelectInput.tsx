@@ -8,7 +8,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'Euler A', value: 'euler_ancestral' },
                 { text: 'DPM++ 2M', value: 'dpmpp_2m' },
             ]}
-            defaultValue='euler'
+            defaultValue='dpmpp_2m'
             {...props}
         />
     );
