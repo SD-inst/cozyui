@@ -103,11 +103,11 @@ function App() {
             <WSReceiver />
             <VerticalBox>
                 <WorkflowTabs>
-                    {HunyanT2VTabKJ}
+                    {HunyanT2VTab}
                     {HunyanI2VTab}
+                    {HunyanT2VTabKJ}
                     {LTXI2VTab}
                     {EasyAnimateI2VTab}
-                    {HunyanT2VTab}
                 </WorkflowTabs>
                 <Progress />
                 <InterruptButton />
