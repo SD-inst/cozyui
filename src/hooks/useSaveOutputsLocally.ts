@@ -1,17 +1,16 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../components/history/db';
 
-export const save_outputs_locally = 'save_outputs_locally';
+export enum settings {
+    save_outputs_locally = 'save_outputs_locally',
+    save_history = 'save_history',
+}
 
-export const useSaveOutputsLocally = () => {
+export const useBooleanSetting = (name: settings) => {
     return (
         useLiveQuery(async () => {
             return (
-                (
-                    await db.settings
-                        .where({ name: save_outputs_locally })
-                        .first()
-                )?.value === 'true'
+                (await db.settings.where({ name }).first())?.value === 'true'
             );
         }) ?? false
     );

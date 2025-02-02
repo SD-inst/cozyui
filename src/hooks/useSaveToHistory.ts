@@ -7,7 +7,7 @@ import { statusEnum } from '../redux/progress';
 import { actionEnum } from '../redux/tab';
 import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
-import { useSaveOutputsLocally } from './useSaveOutputsLocally';
+import { settings, useBooleanSetting } from './useSaveOutputsLocally';
 import { addResult } from '../redux/result';
 
 export const useSaveToHistory = ({
@@ -22,11 +22,13 @@ export const useSaveToHistory = ({
     const { id: id_r, type: type_r } = useResultParam({ id, type });
     const { start_ts, end_ts, status } = useAppSelector((s) => s.progress);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
-    const save_locally = useSaveOutputsLocally();
+    const save_locally = useBooleanSetting(settings.save_outputs_locally);
+    const save_history = useBooleanSetting(settings.save_history);
     const dispatch = useAppDispatch();
     useEffect(() => {
         // store result to IndexedDB history
         if (
+            !save_history ||
             !start_ts ||
             !end_ts ||
             !results.length ||
