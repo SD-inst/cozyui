@@ -124,7 +124,7 @@ const Content = () => {
                     sx={{ mb: 2 }}
                     append={[
                         {
-                            id: 'comfy/img2vid.safetensors',
+                            id: 'comfy/img2vid544p.safetensors',
                             label: 'img2vid',
                             strength: 1,
                             merge: mergeType.FULL,

@@ -58,6 +58,18 @@
             "title": "HunyuanVideo Decode"
         }
     },
+    "6": {
+        "inputs": {
+            "method": "mkl",
+            "strength": 1,
+            "image_ref": ["44", 0],
+            "image_target": ["5", 0]
+        },
+        "class_type": "ColorMatch",
+        "_meta": {
+            "title": "Color Match"
+        }
+    },
     "7": {
         "inputs": {
             "model_name": "hyvid/hunyuan_video_vae_bf16.safetensors",
@@ -106,7 +118,7 @@
             "trim_to_audio": false,
             "pingpong": false,
             "save_output": true,
-            "images": ["5", 0]
+            "images": ["6", 0]
         },
         "class_type": "VHS_VideoCombine",
         "_meta": {
