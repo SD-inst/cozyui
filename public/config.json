@@ -383,6 +383,14 @@
                 },
                 "block_swap": {
                     "id": "handle"
+                },
+                "aug_strength": {
+                    "id": "43",
+                    "field": "noise_aug_strength"
+                },
+                "latent_strength": {
+                    "id": "43",
+                    "field": "latent_strength"
                 }
             },
             "handler_options": {

@@ -62,7 +62,7 @@
         "inputs": {
             "method": "mkl",
             "strength": 1,
-            "image_ref": ["44", 0],
+            "image_ref": ["45", 0],
             "image_target": ["5", 0]
         },
         "class_type": "ColorMatch",
@@ -131,6 +131,8 @@
             "temporal_tiling_sample_size": 64,
             "spatial_tile_sample_min_size": 256,
             "auto_tile_size": true,
+            "noise_aug_strength": 0,
+            "latent_strength": 1,
             "vae": ["7", 0],
             "image": ["45", 0]
         },

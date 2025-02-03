@@ -79,7 +79,7 @@ const Content = () => {
                     defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
                     choices={models}
                 />
-                <HYSize name='size' label='max size' defaultValue={512} />
+                <HYSize name='size' label='max size' defaultValue={544} />
                 <LengthInput
                     min={5}
                     max={201}
@@ -109,11 +109,27 @@ const Content = () => {
                             max={20}
                             defaultValue={10}
                         />
+                        <SliderInput
+                            name='aug_strength'
+                            label='Noise augmentation'
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            defaultValue={0}
+                        />
+                        <SliderInput
+                            name='latent_strength'
+                            label='Latent strength'
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            defaultValue={1}
+                        />
                         <EnhanceVideoInput
                             name='enhance_video'
                             label='Enhance-a-Video weight'
                         />
-                        <TeaCacheInput name='tea_cache' defaultValue={0.2} />
+                        <TeaCacheInput name='tea_cache' defaultValue={0.15} />
                         <BlockSwapInput name='block_swap' />
                     </AccordionDetails>
                 </Accordion>
