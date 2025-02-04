@@ -1,26 +1,24 @@
+import { ExpandMore } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Box,
 } from '@mui/material';
-import { useState } from 'react';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
+import { SamplerSelectInput } from '../controls/SamplerSelectInput';
+import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
-import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../GenerateButton';
 import { WFTab } from '../WFTab';
-import { ExpandMore } from '@mui/icons-material';
-import { SamplerSelectInput } from '../controls/SamplerSelectInput';
-import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 
 const models = [
     {
@@ -46,7 +44,6 @@ const models = [
 ];
 
 const Content = () => {
-    const [upscaledVideo, setUpscaledVideo] = useState<React.JSX.Element>();
     return (
         <Layout>
             <GridLeft>
@@ -118,16 +115,9 @@ const Content = () => {
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' filter='/hunyuan/' />
-                <UpscaleToggle
-                    name='upscale'
-                    setUpscaledVideo={setUpscaledVideo}
-                    image_id='4'
-                    fps={48}
-                />
             </GridLeft>
             <GridRight>
                 <VideoResult />
-                {upscaledVideo}
             </GridRight>
             <GridBottom>
                 <GenerateButton />

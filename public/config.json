@@ -46,9 +46,6 @@
                 "lora": {
                     "id": "handle"
                 },
-                "upscale": {
-                    "id": "handle"
-                },
                 "sampler": {
                     "id": "3",
                     "field": "sampler_name"
@@ -235,9 +232,6 @@
                 },
                 "llm": {
                     "id": "skip"
-                },
-                "upscale": {
-                    "id": "handle"
                 }
             },
             "result": {
@@ -309,9 +303,6 @@
                 },
                 "llm": {
                     "id": "skip"
-                },
-                "upscale": {
-                    "id": "handle"
                 }
             },
             "result": {
