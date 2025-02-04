@@ -24,6 +24,9 @@ const HistoryPagination = ({
     setPage: Dispatch<SetStateAction<number>>;
 }) => {
     const count = useLiveQuery(() => db.taskResults.count()) ?? 0;
+    if (count <= page_size) {
+        return null;
+    }
     return (
         <Pagination
             count={Math.ceil(count / page_size)}
