@@ -51,7 +51,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
         [page, page_size]
     );
     return (
-        <Accordion sx={{ width: '100%' }}>
+        <Accordion sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}>
             <AccordionSummary
                 expandIcon={<ExpandMore />}
                 sx={{
@@ -61,10 +61,16 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 <History sx={{ mr: 1 }} />
                 History
             </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails sx={{ p: { xs: 0, md: 2 } }}>
                 <VerticalBox>
                     <HistoryPagination page={page} setPage={setPage} />
-                    <List {...props}>
+                    <List
+                        sx={{
+                            width: '100%',
+                            p: 0,
+                        }}
+                        {...props}
+                    >
                         {!results?.length && (
                             <Typography variant='body1'>Nothing yet</Typography>
                         )}

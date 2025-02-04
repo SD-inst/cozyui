@@ -1,16 +1,17 @@
 import { Download, Image, TextSnippet, VideoFile } from '@mui/icons-material';
 import {
-    Card,
-    CardHeader,
-    CardContent,
-    CardActions,
     Button,
+    Card,
+    CardActions,
+    CardContent,
+    CardHeader,
 } from '@mui/material';
+import { useIsPhone } from '../../hooks/useIsPhone';
+import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
 import { DeleteButton } from './DeleteButton';
 import { LoadParamsButton } from './LoadParamsButton';
 import { TaskResult } from './db';
-import { formatDuration } from '../../hooks/useTaskDuration';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const avatar = (type: string) => {
@@ -32,8 +33,15 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const duration = formatDuration(output.duration / 1000);
     const params = JSON.parse(output.params || '');
     const tab = params.tab;
+    const phone = useIsPhone();
     return (
-        <Card variant='outlined' sx={{ mt: 2 }} key={output.timestamp}>
+        <Card
+            variant='outlined'
+            sx={{
+                mt: 2,
+            }}
+            key={output.timestamp}
+        >
             <CardHeader
                 title={
                     new Date(output.timestamp).toLocaleString() +
@@ -42,9 +50,14 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 subheader={tab}
                 avatar={avatar(output.type)}
             />
-            <CardContent>
+            <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
-                    <video src={url} controls loop />
+                    <video
+                        style={{ width: phone ? '100%' : undefined }}
+                        src={url}
+                        controls
+                        loop
+                    />
                 </VerticalBox>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
