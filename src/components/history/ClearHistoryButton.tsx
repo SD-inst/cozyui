@@ -3,11 +3,13 @@ import {
     Box,
     BoxProps,
     Button,
+    Checkbox,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
     FormControl,
+    FormControlLabel,
     InputLabel,
     MenuItem,
     Select,
@@ -21,6 +23,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
     const [openNothing, setOpenNothing] = useState(false);
     const [number, setNumber] = useState('0');
     const [unit, setUnit] = useState('seconds');
+    const [newer, setNewer] = useState(false);
     const [toDelete, setToDelete] = useState(0);
     const seconds =
         new Date().getTime() -
@@ -45,10 +48,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 }
             })();
     const handleDelete = async () => {
-        const cnt = await db.taskResults
-            .where('timestamp')
-            .below(seconds)
-            .count();
+        const wc = db.taskResults.where('timestamp');
+        let cnt = 0;
+        if (newer) {
+            cnt = await wc.above(seconds).count();
+        } else {
+            cnt = await wc.below(seconds).count();
+        }
         if (!cnt) {
             setOpenNothing(true);
         } else {
@@ -57,26 +63,35 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
         }
     };
     const handleOK = async () => {
-        db.taskResults.where('timestamp').below(seconds).delete();
+        const wc = db.taskResults.where('timestamp');
+        if (newer) {
+            wc.above(seconds).delete();
+        } else {
+            wc.below(seconds).delete();
+        }
         setOpen(false);
     };
+    const cmp = newer ? 'newer' : 'older';
     return (
         <Box
             display='flex'
+            flexWrap='wrap'
             justifyContent='center'
             width='100%'
             gap={1}
             {...props}
         >
-            <TextField
-                sx={{ flex: 1 }}
-                size='small'
-                type='number'
-                slotProps={{ htmlInput: { min: 0 } }}
-                value={number}
-                onChange={(e) => setNumber(e.target.value)}
-            />
-            <FormControl sx={{ flex: 2 }}>
+            <FormControl>
+                <TextField
+                    sx={{ width: 70 }}
+                    size='small'
+                    type='number'
+                    slotProps={{ htmlInput: { min: 0 } }}
+                    value={number}
+                    onChange={(e) => setNumber(e.target.value)}
+                />
+            </FormControl>
+            <FormControl sx={{ minWidth: 120 }}>
                 <InputLabel>Unit</InputLabel>
                 <Select
                     size='small'
@@ -93,13 +108,23 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                     <MenuItem value='years'>years</MenuItem>
                 </Select>
             </FormControl>
+            <FormControlLabel
+                sx={{ minWidth: 100 }}
+                label='Newer'
+                control={
+                    <Checkbox
+                        checked={newer}
+                        onChange={(_, c) => setNewer(c)}
+                    />
+                }
+            />
             <Button
                 startIcon={<Delete />}
                 color='error'
                 variant='outlined'
                 onClick={handleDelete}
             >
-                Clear older than
+                Clear {cmp} than
             </Button>
             <Dialog
                 open={open}
@@ -108,7 +133,9 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             >
                 <DialogTitle>Clear history</DialogTitle>
                 <DialogContent>
-                    {`Are you sure you want to delete history older than ${number} ${unit}? ${toDelete} results will be deleted.`}
+                    Are you sure you want to delete history
+                    {cmp} than {number} {unit}? {toDelete}
+                    results will be deleted.
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleOK}>OK</Button>
@@ -122,7 +149,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             >
                 <DialogTitle>Nothing to delete</DialogTitle>
                 <DialogContent>
-                    {`There are no results older than ${number} ${unit}`}
+                    There are no results {cmp} than {number} {unit}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenNothing(false)}>OK</Button>
