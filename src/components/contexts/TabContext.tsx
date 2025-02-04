@@ -2,7 +2,10 @@ import { cloneDeep } from 'lodash';
 import {
     createContext,
     Dispatch,
+    KeyboardEvent,
+    KeyboardEventHandler,
     SetStateAction,
+    useCallback,
     useContext,
     useEffect,
 } from 'react';
@@ -11,13 +14,33 @@ export type handlerType = {
     [control_name: string]: (api: any, value: any[]) => void;
 };
 
-export const tabContextdefaultValue = {
+export type TabContextValueType = {
+    tab_name: string;
+    handlers: handlerType;
+    setValue: Dispatch<SetStateAction<TabContextValueType>>;
+    handleCtrlEnter: KeyboardEventHandler;
+};
+
+export const tabContextdefaultValue: TabContextValueType = {
     tab_name: '',
-    handlers: {} as handlerType,
-    setValue: (() => {}) as Dispatch<SetStateAction<any>>,
+    handlers: {},
+    setValue: () => {},
+    handleCtrlEnter: () => {},
 };
 
 export const TabContext = createContext(tabContextdefaultValue);
+
+export const useCtrlEnter = () => {
+    const ctx = useContext(TabContext);
+    return useCallback(
+        (e: KeyboardEvent) => {
+            if (ctx.handleCtrlEnter) {
+                ctx.handleCtrlEnter(e);
+            }
+        },
+        [ctx]
+    );
+};
 
 export const useCurrentTab = (tabOverride?: string) => {
     const { tab_name } = useContext(TabContext);

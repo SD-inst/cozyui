@@ -1,6 +1,12 @@
 import { Button, FormControl, FormHelperText } from '@mui/material';
 import { cloneDeep } from 'lodash';
-import { useState } from 'react';
+import {
+    KeyboardEvent,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useApiURL } from '../hooks/useApiURL';
@@ -14,7 +20,7 @@ import {
     statusEnum,
 } from '../redux/progress';
 import { actionEnum, setApi, setParams, setPromptId } from '../redux/tab';
-import { useCurrentTab, useHandlers } from './contexts/TabContext';
+import { TabContext, useCurrentTab, useHandlers } from './contexts/TabContext';
 
 type error = {
     controls: string[];
@@ -51,6 +57,7 @@ export const GenerateButton = ({
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
     const current_tab = useCurrentTab(tabOverride);
+    const { setValue } = useContext(TabContext);
     const { api, controls } = useConfigTab(tabOverride);
 
     const apiUrl = useApiURL();
@@ -59,7 +66,7 @@ export const GenerateButton = ({
         enabled: !!api,
     });
     const handlers = useHandlers();
-    const sendPrompt = () => {
+    const sendPrompt = useCallback(() => {
         dispatch(setGenerationDisabled(true));
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
@@ -161,7 +168,31 @@ export const GenerateButton = ({
                     toast.error(j.error.message);
                 }
             });
-    };
+    }, [
+        apiData,
+        apiUrl,
+        client_id,
+        controls,
+        current_tab,
+        dispatch,
+        getValues,
+        handlers,
+        noexec,
+    ]);
+    const handleCtrlEnter = useCallback(
+        (e: KeyboardEvent) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                sendPrompt();
+            }
+        },
+        [sendPrompt]
+    );
+    useEffect(() => {
+        setValue((s) => ({
+            ...s,
+            handleCtrlEnter,
+        }));
+    }, [handleCtrlEnter, setValue]);
     return (
         <>
             <FormControl>

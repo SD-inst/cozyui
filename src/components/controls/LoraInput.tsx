@@ -24,7 +24,7 @@ import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
-import { useRegisterHandler } from '../contexts/TabContext';
+import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { mergeType } from '../../api/mergeType';
 
 type valueType = {
@@ -146,6 +146,7 @@ export const LoraInput = ({
     const qc = useQueryClient();
     const apiUrl = useApiURL();
     const { setValue } = useFormContext();
+    const ceHanler = useCtrlEnter();
     const {
         handler_options: {
             lora_params: {
@@ -305,6 +306,7 @@ export const LoraInput = ({
     return (
         <Box display='flex' gap={1} sx={sx}>
             <Autocomplete
+                onKeyUp={ceHanler}
                 renderTags={(values, getTagProps) =>
                     values.map((v, i) => (
                         <LoraChip

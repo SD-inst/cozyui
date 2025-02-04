@@ -1,5 +1,6 @@
 import { TextField, TextFieldProps } from '@mui/material';
 import { useController } from 'react-hook-form';
+import { useCtrlEnter } from '../contexts/TabContext';
 
 export const TextInput = ({
     defaultValue = '',
@@ -11,6 +12,7 @@ export const TextInput = ({
         name: props.name!,
         defaultValue: defaultValue,
     });
+    const ceHanler = useCtrlEnter();
     return (
         <TextField
             sx={{
@@ -19,6 +21,7 @@ export const TextInput = ({
             label={props.name}
             variant='filled'
             fullWidth
+            onKeyUp={ceHanler}
             {...ctl.field}
             {...props}
         />
