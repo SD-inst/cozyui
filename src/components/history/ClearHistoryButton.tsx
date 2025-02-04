@@ -124,7 +124,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 variant='outlined'
                 onClick={handleDelete}
             >
-                Clear {cmp} than
+                Clear {cmp}
             </Button>
             <Dialog
                 open={open}
@@ -133,9 +133,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             >
                 <DialogTitle>Clear history</DialogTitle>
                 <DialogContent>
-                    Are you sure you want to delete history
-                    {cmp} than {number} {unit}? {toDelete}
-                    results will be deleted.
+                    Are you sure you want to delete history {cmp} than {number} {unit}?<br /><b>{toDelete} results</b> will be deleted.
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleOK}>OK</Button>
