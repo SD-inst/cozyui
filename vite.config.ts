@@ -17,4 +17,21 @@ export default defineConfig({
             },
         },
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    react: ['react', 'react-dom'],
+                    mui: [
+                        '@mui/material',
+                        '@mui/system',
+                        '@mui/icons-material',
+                        '@emotion/styled',
+                        '@emotion/react',
+                    ],
+                    dexie: ['dexie', 'dexie-react-hooks'],
+                },
+            },
+        },
+    },
 });
