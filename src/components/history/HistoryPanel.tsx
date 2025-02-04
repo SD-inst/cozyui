@@ -74,12 +74,9 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                         {!results?.length && (
                             <Typography variant='body1'>Nothing yet</Typography>
                         )}
-                        {results?.map((r) => (
-                            <HistoryCard
-                                output={r}
-                                key={r.url + r.timestamp + r.duration}
-                            />
-                        ))}
+                        {results?.map((r) => {
+                            return <HistoryCard output={r} key={r.id} />;
+                        })}
                     </List>
                     <HistoryPagination page={page} setPage={setPage} />
                 </VerticalBox>

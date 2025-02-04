@@ -6,6 +6,7 @@ import {
     CardContent,
     CardHeader,
 } from '@mui/material';
+import { useRef } from 'react';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
@@ -14,6 +15,7 @@ import { LoadParamsButton } from './LoadParamsButton';
 import { TaskResult } from './db';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
+    const cache = useRef('');
     const avatar = (type: string) => {
         switch (type) {
             case 'gifs':
@@ -24,7 +26,10 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 return <Image />;
         }
     };
-    const url = output.data ? URL.createObjectURL(output.data) : output.url;
+    const url =
+        cache.current ||
+        (output.data ? URL.createObjectURL(output.data) : output.url);
+    cache.current = url;
     let dlUrl = output.url;
     if (!dlUrl.startsWith('http')) {
         dlUrl = 'http://127.0.0.1/' + dlUrl; //fake URL, only need it for parsing the filename
