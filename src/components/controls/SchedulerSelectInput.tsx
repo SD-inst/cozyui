@@ -9,7 +9,7 @@ export const SchedulerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'Beta', value: 'beta' },
                 { text: 'Exponential', value: 'exponential' },
             ]}
-            defaultValue='simple'
+            defaultValue='normal'
             {...props}
         />
     );
