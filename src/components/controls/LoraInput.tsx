@@ -304,7 +304,11 @@ export const LoraInput = ({
             merge: mergeType.DOUBLE,
         }));
     return (
-        <Box display='flex' gap={1} sx={sx}>
+        <Box
+            display={import.meta.env.VITE_HIDE_LORAS ? 'none' : 'flex'}
+            gap={1}
+            sx={sx}
+        >
             <Autocomplete
                 onKeyUp={ceHanler}
                 renderTags={(values, getTagProps) =>
