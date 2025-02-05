@@ -16,7 +16,7 @@ export const InterruptButton = ({ ...props }: ButtonProps) => {
         return null;
     }
     const handleInterrupt = () => {
-        fetch(apiUrl + '/api/interrupt_id', {
+        fetch(apiUrl + '/api/interrupt', {
             method: 'POST',
             body: JSON.stringify({ id: prompt_id }),
         }).finally(() => {
