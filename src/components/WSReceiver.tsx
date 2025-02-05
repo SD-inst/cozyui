@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { useWebSocket } from '../hooks/useWebSocket';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
+    setConnected,
     setCurrentNode,
     setGenerationEnd,
     setGenerationStart,
@@ -88,13 +89,20 @@ export const WSReceiver = () => {
         [dispatch, reset]
     );
     const handleOpen = useCallback(() => {
+        dispatch(setConnected(true));
         console.log('Connected to ComfyUI!');
         toast.success('Connected!');
-    }, []);
+    }, [dispatch]);
+    const handleClose = useCallback(() => {
+        dispatch(setConnected(false));
+        console.log('Disconnected from ComfyUI');
+        toast.error('Disconnected');
+    }, [dispatch]);
     useWebSocket(
         apiUrl + '/ws?clientId=' + client_id,
         handleMessage,
         handleOpen,
+        handleClose,
         !!apiUrl
     );
     return null;

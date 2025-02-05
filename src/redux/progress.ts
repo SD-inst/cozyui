@@ -18,9 +18,9 @@ const progressSlice = createSlice({
         current_node: '',
         queue: 0,
         status: '',
-        generation_disabled: true,
         start_ts: 0,
         end_ts: 0,
+        connected: false,
     },
     reducers: {
         setMin: (s, action: PayloadAction<number>) => ({
@@ -67,6 +67,10 @@ const progressSlice = createSlice({
             ...s,
             end_ts: new Date().getTime(),
         }),
+        setConnected: (s, action: PayloadAction<boolean>) => ({
+            ...s,
+            connected: action.payload,
+        }),
     },
 });
 
@@ -82,5 +86,6 @@ export const {
         clearGenerationTS,
         setGenerationStart,
         setGenerationEnd,
+        setConnected,
     },
 } = progressSlice;

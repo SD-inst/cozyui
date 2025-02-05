@@ -4,26 +4,38 @@ export const useWebSocket = (
     url: string,
     onMessage?: (ev: MessageEvent) => any,
     onOpen?: (ev: Event) => any,
+    onClose?: () => any,
     enabled?: boolean
 ) => {
     const [socket, setSocket] = useState<WebSocket>();
     const s = useRef<WebSocket>();
+    const last_state = useRef(false);
     const reconnectTimeout = useRef<number>();
-    const initSocket = useCallback((url: string) => {
-        s.current = new WebSocket(url);
-        s.current.onclose = () => {
-            reconnectTimeout.current = setTimeout(() => {
-                initSocket(url);
-            }, 1000);
-        };
-        if (onMessage) {
-            s.current.onmessage = onMessage;
-        }
-        if (onOpen) {
-            s.current.onopen = onOpen;
-        }
-        setSocket(s.current);
-    }, [onMessage, onOpen]);
+    const initSocket = useCallback(
+        (url: string) => {
+            s.current = new WebSocket(url);
+            s.current.onclose = () => {
+                if (onClose && last_state.current) { // only call onClose once until we reconnect
+                    onClose();
+                }
+                last_state.current = false;
+                reconnectTimeout.current = setTimeout(() => {
+                    initSocket(url);
+                }, 1000);
+            };
+            if (onMessage) {
+                s.current.onmessage = onMessage;
+            }
+            s.current.onopen = (e) => {
+                last_state.current = true;
+                if (onOpen) {
+                    onOpen(e);
+                }
+            };
+            setSocket(s.current);
+        },
+        [onClose, onMessage, onOpen]
+    );
     useEffect(() => {
         if (!enabled) {
             return;

@@ -13,11 +13,7 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useGet } from '../../hooks/useGet';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import {
-    clearGenerationTS,
-    setStatus,
-    statusEnum
-} from '../../redux/progress';
+import { clearGenerationTS, setStatus, statusEnum } from '../../redux/progress';
 import { actionEnum, setApi, setParams, setPromptId } from '../../redux/tab';
 import { TabContext, useCurrentTab, useHandlers } from '../contexts/TabContext';
 
@@ -50,9 +46,14 @@ export const GenerateButton = ({
 }: GenerateButtonProps) => {
     const dispatch = useAppDispatch();
     const client_id = useAppSelector((s) => s.config.client_id);
-    const generation_disabled = useAppSelector(
-        (s) => s.progress.generation_disabled
-    );
+    const status = useAppSelector((s) => s.progress.status);
+    const tabs = useAppSelector((s) => s.config.tabs);
+    const connected = useAppSelector((s) => s.progress.connected);
+    const generation_disabled =
+        (status &&
+            (status === statusEnum.WAITING || status === statusEnum.RUNNING)) ||
+        tabs === undefined ||
+        !connected;
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
     const current_tab = useCurrentTab(tabOverride);
