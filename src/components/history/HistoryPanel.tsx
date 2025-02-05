@@ -72,7 +72,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                         {...props}
                     >
                         {!results?.length && (
-                            <Typography variant='body1'>Nothing yet</Typography>
+                            <Typography variant='body1' align='center'>Nothing yet</Typography>
                         )}
                         {results?.map((r) => {
                             return <HistoryCard output={r} key={r.id} />;
