@@ -53,10 +53,6 @@ const progressSlice = createSlice({
             ...s,
             status: `${action.payload.status}: ${action.payload.message}`,
         }),
-        setGenerationDisabled: (s, action: PayloadAction<boolean>) => ({
-            ...s,
-            generation_disabled: action.payload,
-        }),
         clearGenerationTS: (s) => ({
             ...s,
             start_ts: 0,
@@ -83,7 +79,6 @@ export const {
         setQueue,
         setStatus,
         setStatusMessage,
-        setGenerationDisabled,
         clearGenerationTS,
         setGenerationStart,
         setGenerationEnd,

@@ -12,7 +12,7 @@ import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
-import { GenerateButton } from '../GenerateButton';
+import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
 
 const Content = () => {

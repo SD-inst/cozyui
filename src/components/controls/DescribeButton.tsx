@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { useResult, useResultParam } from '../../hooks/useResult';
 import { useAppDispatch } from '../../redux/hooks';
 import { delResult } from '../../redux/result';
-import { GenerateButton, GenerateButtonProps } from '../GenerateButton';
+import { GenerateButton, GenerateButtonProps } from './GenerateButton';
 
 export const DescribeButton = ({
     field = 'prompt',

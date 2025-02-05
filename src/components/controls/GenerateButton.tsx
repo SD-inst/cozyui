@@ -9,18 +9,17 @@ import {
 } from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useApiURL } from '../hooks/useApiURL';
-import { useConfigTab } from '../hooks/useConfigTab';
-import { useGet } from '../hooks/useGet';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
+import { useApiURL } from '../../hooks/useApiURL';
+import { useConfigTab } from '../../hooks/useConfigTab';
+import { useGet } from '../../hooks/useGet';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
     clearGenerationTS,
-    setGenerationDisabled,
     setStatus,
-    statusEnum,
-} from '../redux/progress';
-import { actionEnum, setApi, setParams, setPromptId } from '../redux/tab';
-import { TabContext, useCurrentTab, useHandlers } from './contexts/TabContext';
+    statusEnum
+} from '../../redux/progress';
+import { actionEnum, setApi, setParams, setPromptId } from '../../redux/tab';
+import { TabContext, useCurrentTab, useHandlers } from '../contexts/TabContext';
 
 type error = {
     controls: string[];
@@ -67,7 +66,6 @@ export const GenerateButton = ({
     });
     const handlers = useHandlers();
     const sendPrompt = useCallback(() => {
-        dispatch(setGenerationDisabled(true));
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
 
@@ -98,7 +96,6 @@ export const GenerateButton = ({
                 } catch (e) {
                     console.log(e);
                     toast.error(`Error processing handler of ${name}: ${e}`);
-                    dispatch(setGenerationDisabled(false));
                     dispatch(setStatus(statusEnum.ERROR));
                     return Promise.reject();
                 }
@@ -137,7 +134,6 @@ export const GenerateButton = ({
         console.log('Generation params', params);
         dispatch(setApi(params.prompt));
         if (noexec) {
-            dispatch(setGenerationDisabled(false));
             toast.success('Execution skipped');
             dispatch(setStatus(statusEnum.FINISHED));
             return Promise.resolve();
@@ -160,7 +156,6 @@ export const GenerateButton = ({
                     );
                     return;
                 }
-                dispatch(setGenerationDisabled(false));
                 return r.json();
             })
             .then((j) => {

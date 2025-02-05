@@ -15,7 +15,7 @@ import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
-import { GenerateButton } from '../GenerateButton';
+import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
 import { BlockSwapInput } from '../controls/BlockSwapInput';
 

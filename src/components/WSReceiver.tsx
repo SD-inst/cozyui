@@ -4,7 +4,6 @@ import { useWebSocket } from '../hooks/useWebSocket';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import {
     setCurrentNode,
-    setGenerationDisabled,
     setGenerationEnd,
     setGenerationStart,
     setProgress,
@@ -28,7 +27,6 @@ export const WSReceiver = () => {
     const reset = useCallback(() => {
         dispatch(setProgress({ max: 0, value: -1 }));
         dispatch(setCurrentNode(''));
-        dispatch(setGenerationDisabled(false));
         dispatch(setGenerationEnd());
         dispatch(setPromptId(''));
     }, [dispatch]);

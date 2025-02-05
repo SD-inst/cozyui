@@ -13,6 +13,8 @@ import { VerticalBox } from './components/VerticalBox';
 import { WSReceiver } from './components/WSReceiver';
 import { WorkflowTabs } from './components/WorkflowTabs';
 import { InterruptButton } from './components/controls/InterruptButton';
+import { HistoryPanel } from './components/history/HistoryPanel';
+import { HistorySettings } from './components/history/HistorySettings';
 import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
 import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
@@ -22,9 +24,6 @@ import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
 import { setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
-import { setGenerationDisabled } from './redux/progress';
-import { HistoryPanel } from './components/history/HistoryPanel';
-import { HistorySettings } from './components/history/HistorySettings';
 
 const theme = createTheme({
     colorSchemes: { dark: true },
@@ -85,7 +84,6 @@ function App() {
         }
         toast.success('Got config');
         dispatch(setConfig(dataConfig));
-        dispatch(setGenerationDisabled(false));
     }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig, dispatch]);
     useEffect(() => {
         if (isErrorObj) {
