@@ -26,8 +26,9 @@ import { setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 
 const theme = createTheme({
-    colorSchemes: { dark: true },
+    colorSchemes: { dark: true, light: true },
     defaultColorScheme: 'dark',
+    cssVariables: true,
     components: {
         MuiAutocomplete: {
             defaultProps: {
@@ -97,7 +98,7 @@ function App() {
     }, [isErrorObj, errorObj, isSuccessObj, dataObj, dataConfig, dispatch]);
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={theme} noSsr>
             <WSReceiver />
             <VerticalBox>
                 <WorkflowTabs>
