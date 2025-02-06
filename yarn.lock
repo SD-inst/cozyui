@@ -141,6 +141,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/css@npm:^11.13.5":
+  version: 11.13.5
+  resolution: "@emotion/css@npm:11.13.5"
+  dependencies:
+    "@emotion/babel-plugin": "npm:^11.13.5"
+    "@emotion/cache": "npm:^11.13.5"
+    "@emotion/serialize": "npm:^1.3.3"
+    "@emotion/sheet": "npm:^1.4.0"
+    "@emotion/utils": "npm:^1.4.2"
+  checksum: 10c0/45d444b08c1a9776046786f1ad8b93297d9e0fb79e6a40b73e9f9c5c20a071f83bae2408e7b98fe526fc123774a18b12ae3c8dc5b5883b8169685ee7b8df9463
+  languageName: node
+  linkType: hard
+
 "@emotion/hash@npm:^0.9.2":
   version: 0.9.2
   resolution: "@emotion/hash@npm:0.9.2"
@@ -1143,6 +1156,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/diff@npm:^5.1.0":
+  version: 5.2.3
+  resolution: "@types/diff@npm:5.2.3"
+  checksum: 10c0/dd2e99e272a7023f3e5c71099599553c7d6c9a6b9d67f202b593b8d59b0528361eba39a8674ab18eba76217b6bad8f1a09417a9a571daaf7c0f49d67d4f305e2
+  languageName: node
+  linkType: hard
+
 "@types/estree@npm:1.0.6, @types/estree@npm:^1.0.6":
   version: 1.0.6
   resolution: "@types/estree@npm:1.0.6"
@@ -1514,6 +1534,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"classnames@npm:^2.5.1":
+  version: 2.5.1
+  resolution: "classnames@npm:2.5.1"
+  checksum: 10c0/afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
+  languageName: node
+  linkType: hard
+
 "clsx@npm:^2.1.1":
   version: 2.1.1
   resolution: "clsx@npm:2.1.1"
@@ -1578,18 +1605,21 @@ __metadata:
     "@mui/system": "npm:^6.3.1"
     "@reduxjs/toolkit": "npm:^2.5.0"
     "@tanstack/react-query": "npm:^5.64.0"
+    "@types/diff": "npm:^5.1.0"
     "@types/lodash": "npm:^4"
     "@types/react": "npm:^18.3.18"
     "@types/react-dom": "npm:^18.3.5"
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     dexie: "npm:^4.0.11"
     dexie-react-hooks: "npm:^1.1.7"
+    diff: "npm:^5.1.0"
     eslint: "npm:^9.17.0"
     eslint-plugin-react-hooks: "npm:^5.0.0"
     eslint-plugin-react-refresh: "npm:^0.4.16"
     globals: "npm:^15.14.0"
     lodash: "npm:^4.17.21"
     react: "npm:^18.3.1"
+    react-diff-viewer-continued: "npm:^4.0.0"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.5"
     react-hook-form: "npm:^7.54.2"
@@ -1653,6 +1683,13 @@ __metadata:
   version: 4.0.11
   resolution: "dexie@npm:4.0.11"
   checksum: 10c0/f8f18e17fe99fd3d4bd80a4ff76c0a543be128bb65a11b6b34297c6ab2d7426989567a8eac09b0de6b483bfb776cbbb32bebe3eedcd5c572ddda80224aac1fa1
+  languageName: node
+  linkType: hard
+
+"diff@npm:^5.1.0, diff@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "diff@npm:5.2.0"
+  checksum: 10c0/aed0941f206fe261ecb258dc8d0ceea8abbde3ace5827518ff8d302f0fc9cc81ce116c4d8f379151171336caf0516b79e01abdc1ed1201b6440d895a66689eb4
   languageName: node
   linkType: hard
 
@@ -2503,6 +2540,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"memoize-one@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "memoize-one@npm:6.0.0"
+  checksum: 10c0/45c88e064fd715166619af72e8cf8a7a17224d6edf61f7a8633d740ed8c8c0558a4373876c9b8ffc5518c2b65a960266adf403cc215cb1e90f7e262b58991f54
+  languageName: node
+  linkType: hard
+
 "merge2@npm:^1.3.0":
   version: 1.4.1
   resolution: "merge2@npm:1.4.1"
@@ -2868,6 +2912,22 @@ __metadata:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: 10c0/900a93d3cdae3acd7d16f642c29a642aea32c2026446151f0778c62ac089d4b8e6c986811076e1ae180a694cedf077d453a11b58ff0a865629a4f82ab558e102
+  languageName: node
+  linkType: hard
+
+"react-diff-viewer-continued@npm:^4.0.0":
+  version: 4.0.5
+  resolution: "react-diff-viewer-continued@npm:4.0.5"
+  dependencies:
+    "@emotion/css": "npm:^11.13.5"
+    "@emotion/react": "npm:^11.14.0"
+    classnames: "npm:^2.5.1"
+    diff: "npm:^5.2.0"
+    memoize-one: "npm:^6.0.0"
+  peerDependencies:
+    react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/57b3280fb21a730f10c07373353b7854657e37952fac4b70c5cc5c59391465d044a6a2531ded06ecb9237c235b86620957580e2dd7511515965073846ee7c084
   languageName: node
   linkType: hard
 

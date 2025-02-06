@@ -10,9 +10,10 @@ import { useRef } from 'react';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
-import { DeleteButton } from './DeleteButton';
-import { LoadParamsButton } from './LoadParamsButton';
 import { TaskResult } from './db';
+import { DeleteButton } from './DeleteButton';
+import { HistoryCardMenu } from './HistoryCardMenu';
+import { LoadParamsButton } from './LoadParamsButton';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const cache = useRef('');
@@ -54,6 +55,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 }
                 subheader={tab}
                 avatar={avatar(output.type)}
+                action={<HistoryCardMenu id={output.id} />}
             />
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>

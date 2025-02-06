@@ -9,10 +9,12 @@ import {
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
+import { DiffViewer } from './DiffViewer';
 import { HistoryCard } from './HistoryCard';
-import { Dispatch, SetStateAction, useState } from 'react';
 
 const page_size = 10;
 
@@ -62,24 +64,29 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 History
             </AccordionSummary>
             <AccordionDetails sx={{ p: { xs: 0, md: 2 } }}>
-                <VerticalBox>
-                    <HistoryPagination page={page} setPage={setPage} />
-                    <List
-                        sx={{
-                            width: '100%',
-                            p: 0,
-                        }}
-                        {...props}
-                    >
-                        {!results?.length && (
-                            <Typography variant='body1' align='center'>Nothing yet</Typography>
-                        )}
-                        {results?.map((r) => {
-                            return <HistoryCard output={r} key={r.id} />;
-                        })}
-                    </List>
-                    <HistoryPagination page={page} setPage={setPage} />
-                </VerticalBox>
+                <CompareContextProvider>
+                    <VerticalBox>
+                        <HistoryPagination page={page} setPage={setPage} />
+                        <List
+                            sx={{
+                                width: '100%',
+                                p: 0,
+                            }}
+                            {...props}
+                        >
+                            {!results?.length && (
+                                <Typography variant='body1' align='center'>
+                                    Nothing yet
+                                </Typography>
+                            )}
+                            {results?.map((r) => {
+                                return <HistoryCard output={r} key={r.id} />;
+                            })}
+                        </List>
+                        <HistoryPagination page={page} setPage={setPage} />
+                        <DiffViewer />
+                    </VerticalBox>
+                </CompareContextProvider>
             </AccordionDetails>
         </Accordion>
     );
