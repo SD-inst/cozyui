@@ -13,7 +13,12 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useConfigTab } from '../../hooks/useConfigTab';
 import { useGet } from '../../hooks/useGet';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
-import { clearGenerationTS, setStatus, statusEnum } from '../../redux/progress';
+import {
+    clearGenerationTS,
+    setStatus,
+    setStatusMessage,
+    statusEnum,
+} from '../../redux/progress';
 import { actionEnum, setApi, setParams, setPromptId } from '../../redux/tab';
 import { TabContext, useCurrentTab, useHandlers } from '../contexts/TabContext';
 
@@ -162,6 +167,13 @@ export const GenerateButton = ({
             .then((j) => {
                 if (j?.error?.message) {
                     toast.error(j.error.message);
+                    dispatch(setPromptId(''));
+                    dispatch(
+                        setStatusMessage({
+                            status: statusEnum.ERROR,
+                            message: j.error.message,
+                        })
+                    );
                 }
             });
     }, [
