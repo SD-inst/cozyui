@@ -25,3 +25,4 @@ dist-ssr
 .yarn/unplugged
 .yarn/install-state.gz
 scripts/*.local.sh
+public/*.local.*

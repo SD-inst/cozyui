@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { merge } from 'lodash';
 
 export type tabConfigType = {
     api: string;
@@ -12,6 +13,7 @@ export type tabConfigType = {
         id: string;
         type: string;
     };
+    defaults?: Record<string, any>;
     handler_options: {
         lora_params: {
             input_node_id?: string;
@@ -76,10 +78,12 @@ const slice = createSlice({
             ...s,
             ...action.payload,
         }),
+        mergeConfig: (s: any, action: PayloadAction<Partial<configType>>) =>
+            merge({}, s, action.payload),
     },
 });
 
 export const {
     reducer: config,
-    actions: { setConfig },
+    actions: { setConfig, mergeConfig },
 } = slice;

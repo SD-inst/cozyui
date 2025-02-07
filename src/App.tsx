@@ -22,7 +22,7 @@ import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
 import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
-import { setConfig } from './redux/config';
+import { mergeConfig, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 
 const theme = createTheme({
@@ -64,6 +64,16 @@ function App() {
         isError: isErrorConfig,
         isSuccess: isSuccessConfig,
     } = useGet({ url: 'config.json', staleTime: Infinity });
+    const {
+        data: dataLocalConfig,
+        error: errorLocalConfig,
+        isError: isErrorLocalConfig,
+        isSuccess: isSuccessLocalConfig,
+    } = useGet({
+        url: 'config.local.json',
+        staleTime: Infinity,
+        enabled: isSuccessConfig,
+    });
     const apiUrl = useApiURL();
     const {
         data: dataObj,
@@ -87,6 +97,22 @@ function App() {
         dispatch(setConfig(dataConfig));
     }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig, dispatch]);
     useEffect(() => {
+        if (isErrorLocalConfig) {
+            console.error('Error getting local config: ' + errorLocalConfig);
+        }
+        if (!isSuccessLocalConfig) {
+            return;
+        }
+        toast.success('Got local config');
+        dispatch(mergeConfig(dataLocalConfig));
+    }, [
+        isErrorLocalConfig,
+        errorLocalConfig,
+        isSuccessLocalConfig,
+        dataLocalConfig,
+        dispatch,
+    ]);
+    useEffect(() => {
         if (isErrorObj) {
             toast.error('Error getting object info: ' + errorObj);
         }
@@ -94,7 +120,7 @@ function App() {
             return;
         }
         toast.success('Objects updated');
-        dispatch(setConfig({ ...dataConfig, object_info: dataObj }));
+        dispatch(mergeConfig({ object_info: dataObj }));
     }, [isErrorObj, errorObj, isSuccessObj, dataObj, dataConfig, dispatch]);
 
     return (

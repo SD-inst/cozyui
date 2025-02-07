@@ -1,16 +1,20 @@
 import { Tab, Tabs } from '@mui/material';
+import { get } from 'lodash';
 import React, { useEffect } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
-import { TabContextProvider } from './contexts/TabContextProvider';
 import { useCurrentTab } from './contexts/TabContext';
+import { TabContextProvider } from './contexts/TabContextProvider';
 
 const ValuesRestore = () => {
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const dispatch = useAppDispatch();
     const tab_name = useCurrentTab();
+    const defaults = useAppSelector((s) =>
+        get(s, ['config', 'tabs', tab_name, 'defaults'], null)
+    );
     const { setValue } = useFormContext();
     useEffect(() => {
         if (tab !== tab_name || action !== actionEnum.RESTORE) {
@@ -20,6 +24,14 @@ const ValuesRestore = () => {
         dispatch(setParams({}));
         dispatch(setTab(tab_name));
     }, [action, dispatch, setValue, tab, tab_name, values]);
+    useEffect(() => {
+        if (!defaults) {
+            return;
+        }
+        Object.keys(defaults).forEach((c) => {
+            setValue(c, defaults[c]);
+        });
+    }, [defaults, setValue]);
     return null;
 };
 
