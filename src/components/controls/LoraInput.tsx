@@ -142,6 +142,7 @@ export const LoraInput = ({
     AutocompleteProps<valueType, true, any, any>,
     'renderInput' | 'options'
 >) => {
+    const final_filter = import.meta.env.VITE_FILTER_LORAS || filter || '';
     const disable_lora_filter = localStorage.getItem('disable_lora_filter');
     const qc = useQueryClient();
     const apiUrl = useApiURL();
@@ -292,7 +293,9 @@ export const LoraInput = ({
     });
     const opts = loras
         .filter((l) =>
-            filter && !disable_lora_filter ? l.includes(filter) : true
+            final_filter && !disable_lora_filter
+                ? l.includes(final_filter)
+                : true
         )
         .map((l) => ({
             label: l.slice(
@@ -304,11 +307,7 @@ export const LoraInput = ({
             merge: mergeType.DOUBLE,
         }));
     return (
-        <Box
-            display={import.meta.env.VITE_HIDE_LORAS ? 'none' : 'flex'}
-            gap={1}
-            sx={sx}
-        >
+        <Box display='flex' gap={1} sx={sx}>
             <Autocomplete
                 onKeyUp={ceHanler}
                 renderTags={(values, getTagProps) =>
