@@ -15,9 +15,7 @@ export const useListChoices = ({
     const obj = useAppSelector((s) => s.config.object_info);
     return get(
         obj,
-        `["${component}"].input[${
-            optional ? 'optional' : 'required'
-        }]["${field}"][${index}]`,
+        [component, 'input', optional ? 'optional' : 'required', field, index],
         []
     ) as string[];
 };

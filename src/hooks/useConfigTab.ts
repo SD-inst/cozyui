@@ -16,6 +16,6 @@ const emptyParams = {
 export const useConfigTab = (tabOverride?: string) => {
     const current_tab = useCurrentTab(tabOverride);
     return useAppSelector((s) =>
-        get(s, `config.tabs["${current_tab}"]`, emptyParams)
+        get(s, ['config', 'tabs', current_tab], emptyParams)
     ) as tabConfigType;
 };

@@ -15,8 +15,8 @@ export const Progress = () => {
     const perc = ((value - min) * 100) / range || 0;
     const node_title = get(
         api,
-        `["${current_node}"]._meta.title`,
-        get(api, `["${current_node}"].class_type`, current_node)
+        [current_node, '_meta.title'],
+        get(api, [current_node, 'class_type'], current_node)
     );
     useEffect(() => {
         const title = document.title;

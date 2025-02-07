@@ -15,7 +15,7 @@ export const useResultParam = (options?: {
     const { tabOverride, ...rest } = options || {};
     const current_tab = useCurrentTab(tabOverride);
     const result = useAppSelector((s) =>
-        get(s, `config.tabs["${current_tab}"].result`, emptyResult)
+        get(s, ['config', 'tabs', current_tab, 'result'], emptyResult)
     );
     return merge({}, result, rest);
 };
@@ -27,5 +27,5 @@ export const useResult = (options?: {
 }) => {
     const resultStore = useAppSelector((s) => s.result);
     const { id, type } = useResultParam(options);
-    return get(resultStore, `["${id}"]["${type}"]`, []) as any[];
+    return get(resultStore, [id, type], []) as any[];
 };
