@@ -42,10 +42,19 @@ const progressSlice = createSlice({
             ...s,
             current_node: action.payload,
         }),
-        setStatus: (s, action: PayloadAction<statusEnum>) => ({
-            ...s,
-            status: action.payload,
-        }),
+        setStatus: (s, action: PayloadAction<statusEnum>) => {
+            if (
+                action.payload === statusEnum.INTERRUPTED &&
+                s.status !== statusEnum.CANCELLED
+            ) {
+                // Only show interrupted status if it's currently cancelled, otherwise ignore. if execution was interrupted but user started another generation, don't change the status as it would cause a race condition and bad GB/IB behavior.
+                return s;
+            }
+            return {
+                ...s,
+                status: action.payload,
+            };
+        },
         setStatusMessage: (
             s,
             action: PayloadAction<{ status: statusEnum; message: string }>

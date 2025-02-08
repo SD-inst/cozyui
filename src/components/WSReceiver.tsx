@@ -25,12 +25,17 @@ export type WSHandlers = {
 
 export const WSReceiver = () => {
     const dispatch = useAppDispatch();
-    const reset = useCallback(() => {
-        dispatch(setProgress({ max: 0, value: -1 }));
-        dispatch(setCurrentNode(''));
-        dispatch(setGenerationEnd());
-        dispatch(setPromptId(''));
-    }, [dispatch]);
+    const reset = useCallback(
+        (noPromptReset?: boolean) => {
+            dispatch(setProgress({ max: 0, value: -1 }));
+            dispatch(setCurrentNode(''));
+            dispatch(setGenerationEnd());
+            if (!noPromptReset) {
+                dispatch(setPromptId(''));
+            }
+        },
+        [dispatch]
+    );
     const client_id = useAppSelector((s) => s.config.client_id);
     const apiUrl = useAppSelector((s) => s.config.api);
     const handleMessage = useCallback(
@@ -82,7 +87,7 @@ export const WSReceiver = () => {
                     break;
                 case 'execution_interrupted':
                     dispatch(setStatus(statusEnum.INTERRUPTED));
-                    reset();
+                    reset(true); // don't reset promptId, it should've been done by InterruptButton (IB) already; if we reset here the user could've started another generation between pressing IB and GB and we'd cause a state race condition (GB enabled, IB missing, but generation is going on). Happens with long step duration.
                     break;
             }
         },
