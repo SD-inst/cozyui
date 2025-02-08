@@ -50,6 +50,16 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
             open: true,
         }));
     };
+    const handleShowParams = async () => {
+        setAnchor(null);
+        const task = await db.taskResults.get(id);
+        setCompare((v) => ({
+            ...v,
+            jsonA: undefined,
+            jsonB: JSON.parse(task?.params || '{}'),
+            open: true,
+        }));
+    };
     return (
         <>
             <Button
@@ -81,6 +91,7 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
                         Reset comparison
                     </MenuItem>
                 ) : null}
+                <MenuItem onClick={handleShowParams}>Show params</MenuItem>
             </Menu>
         </>
     );

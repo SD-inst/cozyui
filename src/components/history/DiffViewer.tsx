@@ -21,6 +21,7 @@ export const DiffViewer = () => {
         palette: { mode },
     } = useTheme();
     const phone = useIsPhone();
+    const singleJson = !jsonA;
     return (
         <Dialog
             open={open}
@@ -30,17 +31,35 @@ export const DiffViewer = () => {
             }
             maxWidth='lg'
         >
-            <DialogTitle>Difference</DialogTitle>
+            <DialogTitle>
+                {singleJson ? 'Generation params' : 'Difference'}
+            </DialogTitle>
             <DialogContent>
-                <ReactDiffViewer
-                    oldValue={jsonA}
-                    newValue={jsonB}
-                    useDarkTheme={mode === 'dark'}
-                    splitView={!phone}
-                    compareMethod={diffJsonWords}
-                    hideLineNumbers
-                    styles={{ diffContainer: { minWidth: 200 } }}
-                />
+                {singleJson ? (
+                    <ReactDiffViewer
+                        newValue={jsonB}
+                        useDarkTheme={mode === 'dark'}
+                        splitView={false}
+                        compareMethod={diffJsonWords}
+                        hideLineNumbers
+                        styles={{
+                            diffContainer: { minWidth: 200 },
+                            marker: { visibility: 'hidden' },
+                            summary: { display: 'none' },
+                            diffAdded: { backgroundColor: 'transparent' },
+                        } as any} // TODO: fix temporary "as any"
+                    />
+                ) : (
+                    <ReactDiffViewer
+                        oldValue={jsonA}
+                        newValue={jsonB}
+                        useDarkTheme={mode === 'dark'}
+                        splitView={!phone}
+                        compareMethod={diffJsonWords}
+                        hideLineNumbers
+                        styles={{ diffContainer: { minWidth: 200 } }}
+                    />
+                )}
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Close</Button>

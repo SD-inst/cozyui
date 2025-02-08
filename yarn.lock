@@ -1619,7 +1619,7 @@ __metadata:
     globals: "npm:^15.14.0"
     lodash: "npm:^4.17.21"
     react: "npm:^18.3.1"
-    react-diff-viewer-continued: "npm:^4.0.0"
+    react-diff-viewer-continued: "npm:^4.0.5"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.5"
     react-hook-form: "npm:^7.54.2"
@@ -2915,7 +2915,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-diff-viewer-continued@npm:^4.0.0":
+"react-diff-viewer-continued@npm:^4.0.5":
   version: 4.0.5
   resolution: "react-diff-viewer-continued@npm:4.0.5"
   dependencies:
