@@ -1,4 +1,4 @@
 #!/bin/sh -e
 
 cd "$(dirname "$0")/.."
-yarn && yarn build
+yarn && yarn lint && yarn build
