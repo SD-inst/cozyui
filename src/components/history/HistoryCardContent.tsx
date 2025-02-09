@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useIsPhone } from '../../hooks/useIsPhone';
 
 export const HistoryCardContent = ({
@@ -22,7 +22,19 @@ export const HistoryCardContent = ({
                 />
             );
         case 'audio':
-            return <audio style={{ width: '100%' }} src={url} controls loop />;
+            return (
+                <Box sx={{ display: 'flex', width: '100%' }}>
+                    <audio
+                        style={{
+                            width: '100%',
+                            padding: 8,
+                        }}
+                        src={url}
+                        controls
+                        loop
+                    />
+                </Box>
+            );
         default:
             return <Typography variant='h6'>Unknown media</Typography>;
     }
