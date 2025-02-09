@@ -1,4 +1,4 @@
-import { Download, Image, TextSnippet, VideoFile } from '@mui/icons-material';
+import { AudioFile, Download, Image, TextSnippet, VideoFile } from '@mui/icons-material';
 import {
     Button,
     Card,
@@ -23,6 +23,8 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 return <VideoFile />;
             case 'text':
                 return <TextSnippet />;
+            case 'audio':
+                return <AudioFile />;
             default:
                 return <Image />;
         }

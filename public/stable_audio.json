@@ -1,0 +1,116 @@
+{
+  "3": {
+    "inputs": {
+      "text": "",
+      "clip": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "5": {
+    "inputs": {
+      "audio": [
+        "6",
+        0
+      ]
+    },
+    "class_type": "PreviewAudio",
+    "_meta": {
+      "title": "PreviewAudio"
+    }
+  },
+  "6": {
+    "inputs": {
+      "samples": [
+        "13",
+        0
+      ],
+      "vae": [
+        "12",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "7": {
+    "inputs": {
+      "seconds": 60,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentAudio",
+    "_meta": {
+      "title": "EmptyLatentAudio"
+    }
+  },
+  "8": {
+    "inputs": {
+      "text": "low quality",
+      "clip": [
+        "11",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Prompt)"
+    }
+  },
+  "11": {
+    "inputs": {
+      "clip_name": "t5_base.safetensors",
+      "type": "stable_audio",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "12": {
+    "inputs": {
+      "ckpt_name": "audio/stable_audio.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "13": {
+    "inputs": {
+      "seed": 1024,
+      "steps": 200,
+      "cfg": 7,
+      "sampler_name": "dpmpp_3m_sde",
+      "scheduler": "normal",
+      "denoise": 1,
+      "model": [
+        "12",
+        0
+      ],
+      "positive": [
+        "3",
+        0
+      ],
+      "negative": [
+        "8",
+        0
+      ],
+      "latent_image": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  }
+}

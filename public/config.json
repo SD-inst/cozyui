@@ -404,6 +404,47 @@
                 "id": "35",
                 "type": "gifs"
             }
+        },
+        "Stable audio": {
+            "api": "stable_audio.json",
+            "controls": {
+                "prompt": {
+                    "id": "3",
+                    "field": "text"
+                },
+                "length": {
+                    "id": "7",
+                    "field": "seconds"
+                },
+                "steps": {
+                    "id": "13",
+                    "field": "steps"
+                },
+                "neg_prompt": {
+                    "id": "8",
+                    "field": "text"
+                },
+                "sampler": {
+                    "id": "13",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "13",
+                    "field": "scheduler"
+                },
+                "cfg": {
+                    "id": "13",
+                    "field": "cfg"
+                },
+                "seed": {
+                    "id": "13",
+                    "field": "seed"
+                }
+            },
+            "result": {
+                "id": "5",
+                "type": "audio"
+            }
         }
     },
     "api": "/cui"
