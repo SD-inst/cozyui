@@ -40,8 +40,10 @@ export const WSReceiver = () => {
     const apiUrl = useAppSelector((s) => s.config.api);
     const handleMessage = useCallback(
         (ev: MessageEvent) => {
-            console.log(ev.data);
             const j = JSON.parse(ev.data);
+            if (j.type !== 'progress') { // less spam
+                console.log(ev.data);
+            }
             switch (j.type) {
                 case 'execution_success':
                     dispatch(setStatus(statusEnum.FINISHED));

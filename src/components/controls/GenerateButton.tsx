@@ -137,7 +137,7 @@ export const GenerateButton = ({
                 setErrors((e) => ({ ...e, api: [...e.api, k] }));
             }
         }
-        console.log('Generation params', params);
+        console.log('%cGeneration params: %O', 'color: green; font-weight: bold; font-size: 1.5em', params);
         dispatch(setApi(params.prompt));
         if (noexec) {
             toast.success('Execution skipped');
