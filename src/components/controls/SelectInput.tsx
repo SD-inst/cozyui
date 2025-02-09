@@ -3,11 +3,12 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectProps,
+    SelectProps
 } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { Optional } from './optional';
+import { HelpButton } from './HelpButton';
 
 export type SelectInputProps = {
     defaultValue?: any;
@@ -19,6 +20,7 @@ export type SelectInputProps = {
               alsoSet?: { name: string; value: string }[];
           }
     )[];
+    tooltip?: string;
 } & SelectProps;
 
 export type CustomSelectInputProps = Optional<
@@ -29,6 +31,7 @@ export type CustomSelectInputProps = Optional<
 export const SelectInput = ({
     defaultValue = '',
     choices,
+    tooltip,
     ...props
 }: SelectInputProps) => {
     const ctl = useController({
@@ -51,7 +54,15 @@ export const SelectInput = ({
         alsoSet(defaultValue);
     }, [defaultValue, alsoSet]);
     return (
-        <FormControl fullWidth sx={{ mb: 2, wordWrap: 'normal' }}>
+        <FormControl
+            fullWidth
+            sx={{
+                mb: 2,
+                wordWrap: 'normal',
+                display: 'flex',
+                flexDirection: 'row',
+            }}
+        >
             <InputLabel>{props.label || props.name}</InputLabel>
             <Select
                 label={props.label || props.name}
@@ -61,7 +72,10 @@ export const SelectInput = ({
                     alsoSet(e.target.value as string);
                 }}
                 sx={{
-                    '& .MuiSelect-select': { whiteSpace: 'normal !important' },
+                    '& .MuiSelect-select': {
+                        whiteSpace: 'normal !important',
+                    },
+                    flex: 1,
                 }}
                 {...props}
             >
@@ -75,6 +89,12 @@ export const SelectInput = ({
                     </MenuItem>
                 ))}
             </Select>
+            {tooltip && (
+                <HelpButton
+                    title={tooltip}
+                    sx={{ position: 'relative', top: 15 }}
+                />
+            )}
         </FormControl>
     );
 };

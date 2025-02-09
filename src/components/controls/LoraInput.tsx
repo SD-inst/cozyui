@@ -15,6 +15,7 @@ import {
     MenuItem,
     Select,
     TextField,
+    Tooltip,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -337,18 +338,20 @@ export const LoraInput = ({
                     <TextField label={props.label || props.name} {...params} />
                 )}
             />
-            <Button
-                variant='outlined'
-                onClick={() =>
-                    qc
-                        .invalidateQueries({
-                            queryKey: [apiUrl + '/api/object_info'],
-                        })
-                        .then(() => toast.success('Reloaded objects'))
-                }
-            >
-                <Refresh />
-            </Button>
+            <Tooltip arrow title='Reload lora list'>
+                <Button
+                    variant='outlined'
+                    onClick={() =>
+                        qc
+                            .invalidateQueries({
+                                queryKey: [apiUrl + '/api/object_info'],
+                            })
+                            .then(() => toast.success('Reloaded objects'))
+                    }
+                >
+                    <Refresh />
+                </Button>
+            </Tooltip>
         </Box>
     );
 };

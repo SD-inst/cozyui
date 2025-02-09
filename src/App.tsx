@@ -1,62 +1,26 @@
 import '@fontsource/roboto/400.css';
-import {
-    autocompleteClasses,
-    Box,
-    createTheme,
-    ThemeProvider,
-} from '@mui/material';
 import { useEffect } from 'react';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import './App.css';
 import { Progress } from './components/Progress';
 import { VerticalBox } from './components/VerticalBox';
 import { WSReceiver } from './components/WSReceiver';
 import { WorkflowTabs } from './components/WorkflowTabs';
+import { ThemeContext } from './components/contexts/ThemeContext';
 import { InterruptButton } from './components/controls/InterruptButton';
+import { ThemedToaster } from './components/controls/ThemedToaster';
 import { HistoryPanel } from './components/history/HistoryPanel';
-import { HistorySettings } from './components/history/HistorySettings';
+import { AppSettings } from './components/controls/AppSettings';
 import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
 import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
 import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
+import { StableAudioTab } from './components/tabs/StableAudio';
 import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
 import { mergeConfig, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
-import { StableAudioTab } from './components/tabs/StableAudio';
-
-const theme = createTheme({
-    colorSchemes: { dark: true, light: true },
-    defaultColorScheme: 'dark',
-    cssVariables: true,
-    components: {
-        MuiAutocomplete: {
-            defaultProps: {
-                renderOption(props, option, _, ownerState) {
-                    const { key, ...optionProps } = props;
-                    return (
-                        <Box
-                            key={key}
-                            sx={{
-                                borderRadius: '8px',
-                                wordBreak: 'break-all',
-                                margin: '5px',
-                                [`&.${autocompleteClasses.option}`]: {
-                                    padding: '8px',
-                                },
-                            }}
-                            component='li'
-                            {...optionProps}
-                        >
-                            {ownerState.getOptionLabel(option)}
-                        </Box>
-                    );
-                },
-            },
-        },
-    },
-});
 
 function App() {
     const {
@@ -125,7 +89,7 @@ function App() {
     }, [isErrorObj, errorObj, isSuccessObj, dataObj, dataConfig, dispatch]);
 
     return (
-        <ThemeProvider theme={theme} noSsr>
+        <ThemeContext>
             <WSReceiver />
             <VerticalBox>
                 <WorkflowTabs>
@@ -139,18 +103,10 @@ function App() {
                 <Progress />
                 <InterruptButton />
                 <HistoryPanel />
-                <HistorySettings />
+                <AppSettings />
             </VerticalBox>
-            <Toaster
-                position='bottom-center'
-                toastOptions={{
-                    style: {
-                        background: theme.palette.background.default,
-                        color: theme.palette.text.primary,
-                    },
-                }}
-            />
-        </ThemeProvider>
+            <ThemedToaster />
+        </ThemeContext>
     );
 }
 

@@ -1,6 +1,6 @@
 import { Tab, Tabs } from '@mui/material';
 import { get } from 'lodash';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
@@ -9,6 +9,7 @@ import { useCurrentTab } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 
 const ValuesRestore = () => {
+    const ref = useRef<HTMLDivElement>(null);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const dispatch = useAppDispatch();
     const tab_name = useCurrentTab();
@@ -23,6 +24,10 @@ const ValuesRestore = () => {
         Object.keys(values).forEach((k) => setValue(k, values[k]));
         dispatch(setParams({}));
         dispatch(setTab(tab_name));
+        setTimeout(
+            () => ref.current?.scrollIntoView({ behavior: 'smooth' }),
+            0
+        );
     }, [action, dispatch, setValue, tab, tab_name, values]);
     useEffect(() => {
         if (!defaults) {
@@ -32,7 +37,7 @@ const ValuesRestore = () => {
             setValue(c, defaults[c]);
         });
     }, [defaults, setValue]);
-    return null;
+    return <div ref={ref} style={{ height: 0 }} />;
 };
 
 const TabContent = ({ ...props }) => {

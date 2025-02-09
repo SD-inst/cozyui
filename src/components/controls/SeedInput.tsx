@@ -1,5 +1,5 @@
 import { Casino } from '@mui/icons-material';
-import { Box, Button, TextFieldProps } from '@mui/material';
+import { Box, Button, TextFieldProps, Tooltip } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { TextInput } from './TextInput';
 
@@ -19,14 +19,16 @@ export const SeedInput = ({
     return (
         <Box display='flex' gap={1} mt={1} mb={1}>
             <TextInput type='number' fullWidth {...props} />
-            <Button
-                variant='outlined'
-                onClick={randomize}
-                size='large'
-                sx={{ height: 55 }}
-            >
-                <Casino />
-            </Button>
+            <Tooltip arrow title='Randomize seed'>
+                <Button
+                    variant='outlined'
+                    onClick={randomize}
+                    size='large'
+                    sx={{ height: 55 }}
+                >
+                    <Casino />
+                </Button>
+            </Tooltip>
         </Box>
     );
 };

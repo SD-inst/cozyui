@@ -19,6 +19,8 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
+import { GuidanceInput } from '../controls/GuidanceInput';
 
 const models = [
     {
@@ -81,20 +83,8 @@ const Content = () => {
                         />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
-                        <SliderInput
-                            name='flow_shift'
-                            label='flow shift'
-                            min={1}
-                            max={20}
-                            defaultValue={7}
-                        />
-                        <SliderInput
-                            name='guidance'
-                            label='guidance scale'
-                            min={1}
-                            max={20}
-                            defaultValue={7}
-                        />
+                        <FlowShiftInput />
+                        <GuidanceInput />
                         <SliderInput
                             min={0}
                             max={1}
@@ -102,6 +92,7 @@ const Content = () => {
                             defaultValue={0.1}
                             name='wave_speed'
                             label='WaveSpeed cache'
+                            tooltip={`Defines whether to reuse the previous step results, if the first layer's output changed by less than N compared to the previous step (0.1 or 10% by default), the last layer's output is reused instead of doing a full calculation. If you get floaty background that follows other movements, try reducing this.`}
                         />
                         <SliderInput
                             min={-1}
@@ -110,6 +101,7 @@ const Content = () => {
                             defaultValue={2}
                             name='wave_speed_maxhit'
                             label='WaveSpeed max hits'
+                            tooltip={`This many consecutive steps can use the caching trick, after which a full calculation will be forced. 0 disables caching (every step will be fully calculated), -1 allows unlimited consecutive steps being cached. If you get floaty background that follows other movements, try reducing this. If you want to accelerate render, set to a higher value or -1.`}
                         />
                     </AccordionDetails>
                 </Accordion>

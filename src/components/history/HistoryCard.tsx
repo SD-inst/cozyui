@@ -1,4 +1,10 @@
-import { AudioFile, Download, Image, TextSnippet, VideoFile } from '@mui/icons-material';
+import {
+    AudioFile,
+    Download,
+    Image,
+    TextSnippet,
+    VideoFile,
+} from '@mui/icons-material';
 import {
     Button,
     Card,
@@ -7,11 +13,11 @@ import {
     CardHeader,
 } from '@mui/material';
 import { useRef } from 'react';
-import { useIsPhone } from '../../hooks/useIsPhone';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
 import { TaskResult } from './db';
 import { DeleteButton } from './DeleteButton';
+import { HistoryCardContent } from './HistoryCardContent';
 import { HistoryCardMenu } from './HistoryCardMenu';
 import { LoadParamsButton } from './LoadParamsButton';
 
@@ -41,7 +47,6 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const duration = formatDuration(output.duration / 1000);
     const params = JSON.parse(output.params || '');
     const tab = params.tab;
-    const phone = useIsPhone();
     return (
         <Card
             variant='outlined'
@@ -61,12 +66,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
             />
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
-                    <video
-                        style={{ width: phone ? '100%' : undefined }}
-                        src={url}
-                        controls
-                        loop
-                    />
+                    <HistoryCardContent type={output.type} url={url} />
                 </VerticalBox>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>

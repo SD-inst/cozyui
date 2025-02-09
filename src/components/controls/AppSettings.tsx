@@ -1,22 +1,26 @@
 import { ExpandMore, Settings } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { ClearHistoryButton } from './ClearHistoryButton';
-import { SettingCheckbox } from './SettingCheckbox';
+import { useRef } from 'react';
 import { settings, useBooleanSetting } from '../../hooks/useSaveOutputsLocally';
+import { ClearHistoryButton } from '../history/ClearHistoryButton';
+import { SettingCheckbox } from '../history/SettingCheckbox';
+import { autoscrollSlotProps } from './utils';
 
-export const HistorySettings = () => {
+export const AppSettings = () => {
     const save_history = useBooleanSetting(settings.save_history);
+    const ref = useRef<HTMLElement>(null);
     return (
-        <Accordion>
+        <Accordion slotProps={autoscrollSlotProps(ref)}>
             <AccordionSummary
                 sx={{
                     '& .MuiAccordionSummary-content': { alignItems: 'center' },
                 }}
                 expandIcon={<ExpandMore />}
             >
-                <Settings sx={{ mr: 1 }} /> History settings
+                <Settings sx={{ mr: 1 }} />
+                Settings
             </AccordionSummary>
-            <AccordionDetails>
+            <AccordionDetails ref={ref}>
                 <SettingCheckbox
                     name={settings.save_history}
                     label='Save history locally'
@@ -25,6 +29,10 @@ export const HistorySettings = () => {
                     name={settings.save_outputs_locally}
                     label='Save generation results locally'
                     disabled={!save_history}
+                />
+                <SettingCheckbox
+                    name={settings.disable_help}
+                    label='Disable tooltips'
                 />
                 <ClearHistoryButton sx={{ mt: 5 }} />
             </AccordionDetails>

@@ -18,6 +18,8 @@ import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
 import { BlockSwapInput } from '../controls/BlockSwapInput';
+import { GuidanceInput } from '../controls/GuidanceInput';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
 
 const models = [
     {
@@ -95,20 +97,8 @@ const Content = () => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <KJSchedulerSelectInput name='sampler' />
-                        <SliderInput
-                            name='flow_shift'
-                            label='flow shift'
-                            min={1}
-                            max={30}
-                            defaultValue={10}
-                        />
-                        <SliderInput
-                            name='guidance'
-                            label='guidance scale'
-                            min={1}
-                            max={20}
-                            defaultValue={10}
-                        />
+                        <FlowShiftInput defaultValue={10} />
+                        <GuidanceInput defaultValue={10} />
                         <SliderInput
                             name='aug_strength'
                             label='Noise augmentation'

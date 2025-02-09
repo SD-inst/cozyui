@@ -9,12 +9,13 @@ import {
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
 import { DiffViewer } from './DiffViewer';
 import { HistoryCard } from './HistoryCard';
+import { autoscrollSlotProps } from '../controls/utils';
 
 const page_size = 10;
 
@@ -52,8 +53,12 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 .toArray(),
         [page, page_size]
     );
+    const ref = useRef<HTMLElement>(null);
     return (
-        <Accordion sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}>
+        <Accordion
+            slotProps={autoscrollSlotProps(ref)}
+            sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
+        >
             <AccordionSummary
                 expandIcon={<ExpandMore />}
                 sx={{
@@ -63,7 +68,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 <History sx={{ mr: 1 }} />
                 History
             </AccordionSummary>
-            <AccordionDetails sx={{ p: { xs: 0, md: 2 } }}>
+            <AccordionDetails ref={ref} sx={{ p: { xs: 0, md: 2 } }}>
                 <CompareContextProvider>
                     <VerticalBox>
                         <HistoryPagination page={page} setPage={setPage} />
