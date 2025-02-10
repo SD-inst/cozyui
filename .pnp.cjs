@@ -44,6 +44,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-dom", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:18.3.5"],\
           ["@vitejs/plugin-react-swc", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:3.7.2"],\
           ["dexie", "npm:4.0.11"],\
+          ["dexie-export-import", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4"],\
           ["dexie-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:1.1.7"],\
           ["diff", "npm:5.2.0"],\
           ["eslint", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:9.17.0"],\
@@ -2200,6 +2201,7 @@ const RAW_RUNTIME_STATE =
           ["@types/react-dom", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:18.3.5"],\
           ["@vitejs/plugin-react-swc", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:3.7.2"],\
           ["dexie", "npm:4.0.11"],\
+          ["dexie-export-import", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4"],\
           ["dexie-react-hooks", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:1.1.7"],\
           ["diff", "npm:5.2.0"],\
           ["eslint", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:9.17.0"],\
@@ -2304,6 +2306,28 @@ const RAW_RUNTIME_STATE =
         "packageLocation": "../../../home/rkfg/.yarn/berry/cache/dexie-npm-4.0.11-72c857842d-10c0.zip/node_modules/dexie/",\
         "packageDependencies": [\
           ["dexie", "npm:4.0.11"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["dexie-export-import", [\
+      ["npm:4.1.4", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/dexie-export-import-npm-4.1.4-a785e2f7b6-10c0.zip/node_modules/dexie-export-import/",\
+        "packageDependencies": [\
+          ["dexie-export-import", "npm:4.1.4"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4", {\
+        "packageLocation": "./.yarn/__virtual__/dexie-export-import-virtual-ee08462a8f/4/home/rkfg/.yarn/berry/cache/dexie-export-import-npm-4.1.4-a785e2f7b6-10c0.zip/node_modules/dexie-export-import/",\
+        "packageDependencies": [\
+          ["dexie-export-import", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4"],\
+          ["@types/dexie", null],\
+          ["dexie", "npm:4.0.11"]\
+        ],\
+        "packagePeers": [\
+          "@types/dexie",\
+          "dexie"\
         ],\
         "linkType": "HARD"\
       }]\

@@ -31,6 +31,7 @@
         "@types/react-dom": "^18.3.5",
         "@vitejs/plugin-react-swc": "^3.5.0",
         "dexie": "^4.0.11",
+        "dexie-export-import": "^4.1.4",
         "dexie-react-hooks": "^1.1.7",
         "diff": "^5.1.0",
         "eslint": "^9.17.0",
