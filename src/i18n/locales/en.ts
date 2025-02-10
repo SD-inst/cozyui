@@ -85,6 +85,9 @@ const translation = {
         confirm_reset: 'Confirm reset',
         confirm_reset_content:
             'Are you sure you want to reset the fields in this tab to their default values?',
+        import_history: 'Import history',
+        export_history: 'Export history',
+        please_wait: 'Please wait...',
     },
     settings: {
         select_language: 'Select language',
@@ -143,6 +146,7 @@ const translation = {
         no_params: 'No generation parameters stored',
         params_restored: 'Generation parameters restored',
         error_saving_history: 'Error saving history: %{err}',
+        error_importing_database: 'Error importing history: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',
@@ -157,6 +161,7 @@ const translation = {
         missing_bindings: 'Missing API bindings (present controls): %{list}',
         missing_ids: 'Missing API ids: %{list}',
         missing_fields: 'Missing API fields: %{list}',
+        interrupted: 'interrupted',
     },
 };
 

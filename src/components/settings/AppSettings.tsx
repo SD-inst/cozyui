@@ -14,6 +14,7 @@ import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { LanguageSelect } from './LanguageSelect';
 import { NotificationSetting } from './NotificationSetting';
 import { SettingCheckbox } from './SettingCheckbox';
+import { ImportExport } from '../history/ImportExport';
 
 export const AppSettings = () => {
     const tr = useTranslate();
@@ -45,6 +46,7 @@ export const AppSettings = () => {
                 <NotificationSetting />
                 <LanguageSelect />
                 <ClearHistoryButton sx={{ mt: 5 }} />
+                <ImportExport />
             </AccordionDetails>
         </Accordion>
     );

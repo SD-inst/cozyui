@@ -36,6 +36,7 @@ const RAW_RUNTIME_STATE =
           ["@mui/styled-engine", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:6.3.1"],\
           ["@mui/system", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:6.3.1"],\
           ["@reduxjs/toolkit", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:2.5.0"],\
+          ["@rkfg/dexie-export-import", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4-c"],\
           ["@tanstack/react-query", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:5.64.0"],\
           ["@types/diff", "npm:5.2.3"],\
           ["@types/lodash", "npm:4.17.14"],\
@@ -1189,6 +1190,28 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["@rkfg/dexie-export-import", [\
+      ["npm:4.1.4-c", {\
+        "packageLocation": "../../../home/rkfg/.yarn/berry/cache/@rkfg-dexie-export-import-npm-4.1.4-c-dfb80c1ad3-10c0.zip/node_modules/@rkfg/dexie-export-import/",\
+        "packageDependencies": [\
+          ["@rkfg/dexie-export-import", "npm:4.1.4-c"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4-c", {\
+        "packageLocation": "./.yarn/__virtual__/@rkfg-dexie-export-import-virtual-429712047b/4/home/rkfg/.yarn/berry/cache/@rkfg-dexie-export-import-npm-4.1.4-c-dfb80c1ad3-10c0.zip/node_modules/@rkfg/dexie-export-import/",\
+        "packageDependencies": [\
+          ["@rkfg/dexie-export-import", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4-c"],\
+          ["@types/dexie", null],\
+          ["dexie", "npm:4.0.11"]\
+        ],\
+        "packagePeers": [\
+          "@types/dexie",\
+          "dexie"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["@rollup/rollup-android-arm-eabi", [\
       ["npm:4.30.1", {\
         "packageLocation": "./.yarn/unplugged/@rollup-rollup-android-arm-eabi-npm-4.30.1-7f859e01db/node_modules/@rollup/rollup-android-arm-eabi/",\
@@ -2192,6 +2215,7 @@ const RAW_RUNTIME_STATE =
           ["@mui/styled-engine", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:6.3.1"],\
           ["@mui/system", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:6.3.1"],\
           ["@reduxjs/toolkit", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:2.5.0"],\
+          ["@rkfg/dexie-export-import", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:4.1.4-c"],\
           ["@tanstack/react-query", "virtual:064db758f49edfdd2e8b01e41bac92813d8219fd4d1f12a5465b9a0ccc0f66e1f109a0d587fdb38e675c24e684350aac7c772c1b926031b614e9a1bbac103ac9#npm:5.64.0"],\
           ["@types/diff", "npm:5.2.3"],\
           ["@types/lodash", "npm:4.17.14"],\

@@ -84,6 +84,9 @@ const translation = {
         confirm_reset: 'Подтвердите сброс',
         confirm_reset_content:
             'Вы уверены, что хотите сбросить поля на этой вкладке на значения по умолчанию?',
+        import_history: 'Импорт истории',
+        export_history: 'Экспорт истории',
+        please_wait: 'Пожалуйста, подождите...',
     },
     settings: {
         select_language: 'Выбор языка',
@@ -144,6 +147,7 @@ const translation = {
         no_params: 'Параметры генерации не сохранены',
         params_restored: 'Параметры генерации восстановлены',
         error_saving_history: 'Ошибка сохранения истории: %{err}',
+        error_importing_database: 'Ошибка при импорте истории: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',
@@ -159,6 +163,7 @@ const translation = {
             'Отсутствующие привязки к API (есть контролы): %{list}',
         missing_ids: 'Отсутствующие id узлов в API: %{list}',
         missing_fields: 'Отсутствующие поля в API: %{list}',
+        interrupted: 'прервано',
     },
 };
 

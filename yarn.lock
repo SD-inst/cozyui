@@ -873,6 +873,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@rkfg/dexie-export-import@npm:4.1.4-c":
+  version: 4.1.4-c
+  resolution: "@rkfg/dexie-export-import@npm:4.1.4-c"
+  peerDependencies:
+    dexie: ^2.0.4 || ^3.0.0 || ^4.0.1
+  checksum: 10c0/5b91dec2dc1e797361b59a99a6b689a9414d221dc5e4219ab38b05fd2c7313f559ef153c059031bdb7beec76c42579a268367c81fd38574ca379a43818302219
+  languageName: node
+  linkType: hard
+
 "@rollup/rollup-android-arm-eabi@npm:4.30.1":
   version: 4.30.1
   resolution: "@rollup/rollup-android-arm-eabi@npm:4.30.1"
@@ -1633,6 +1642,7 @@ __metadata:
     "@mui/styled-engine": "npm:^6.3.1"
     "@mui/system": "npm:^6.3.1"
     "@reduxjs/toolkit": "npm:^2.5.0"
+    "@rkfg/dexie-export-import": "npm:4.1.4-c"
     "@tanstack/react-query": "npm:^5.64.0"
     "@types/diff": "npm:^5.1.0"
     "@types/lodash": "npm:^4"
