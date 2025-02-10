@@ -5,6 +5,7 @@ import { settings, useBooleanSetting } from '../../hooks/useSaveOutputsLocally';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { SettingCheckbox } from './SettingCheckbox';
 import { autoscrollSlotProps } from './utils';
+import { ImportExport } from '../history/ImportExport';
 
 export const AppSettings = () => {
     const save_history = useBooleanSetting(settings.save_history);
@@ -35,6 +36,7 @@ export const AppSettings = () => {
                     label='Disable tooltips'
                 />
                 <ClearHistoryButton sx={{ mt: 5 }} />
+                <ImportExport />
             </AccordionDetails>
         </Accordion>
     );

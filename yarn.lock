@@ -1611,6 +1611,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.5"
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     dexie: "npm:^4.0.11"
+    dexie-export-import: "npm:^4.1.4"
     dexie-react-hooks: "npm:^1.1.7"
     diff: "npm:^5.1.0"
     eslint: "npm:^9.17.0"
@@ -1665,6 +1666,15 @@ __metadata:
   version: 0.1.4
   resolution: "deep-is@npm:0.1.4"
   checksum: 10c0/7f0ee496e0dff14a573dc6127f14c95061b448b87b995fc96c017ce0a1e66af1675e73f1d6064407975bc4ea6ab679497a29fff7b5b9c4e99cb10797c1ad0b4c
+  languageName: node
+  linkType: hard
+
+"dexie-export-import@npm:^4.1.4":
+  version: 4.1.4
+  resolution: "dexie-export-import@npm:4.1.4"
+  peerDependencies:
+    dexie: ^2.0.4 || ^3.0.0 || ^4.0.1
+  checksum: 10c0/530ca5644d75f72d20cc8fce2d4872926dd30b477645a34bcafc1a1a2c8dedac2fd5e72019142de2687f0349c7d010810d9743f8e7579eade5d9609803017c5c
   languageName: node
   linkType: hard
 
