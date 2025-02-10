@@ -3,7 +3,7 @@ import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useRef } from 'react';
 import { settings, useBooleanSetting } from '../../hooks/useSaveOutputsLocally';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
-import { SettingCheckbox } from '../history/SettingCheckbox';
+import { SettingCheckbox } from './SettingCheckbox';
 import { autoscrollSlotProps } from './utils';
 
 export const AppSettings = () => {
