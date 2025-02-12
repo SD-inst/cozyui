@@ -95,5 +95,19 @@ export const useSaveToHistory = ({
                 toast.error('Error saving history: ' + e);
                 console.log(e);
             });
-    }, [action, apiUrl, dispatch, end_ts, id_r, results, save_history, save_locally, start_ts, status, tab, type_r, values]);
+    }, [
+        action,
+        apiUrl,
+        dispatch,
+        end_ts,
+        id_r,
+        results,
+        save_history,
+        save_locally,
+        start_ts,
+        status,
+        tab,
+        type_r,
+        values,
+    ]);
 };

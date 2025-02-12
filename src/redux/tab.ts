@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { merge, unset } from 'lodash';
+import { setWith, unset } from 'lodash';
 
 export enum actionEnum {
     STORE,
@@ -73,13 +73,12 @@ const slice = createSlice({
                 );
                 return s;
             }
-            return merge({}, s, {
-                result: {
-                    [s.prompt_origin_tab]: {
-                        [action.payload.node_id]: action.payload.output,
-                    },
-                },
-            });
+            setWith(
+                s,
+                ['result', s.prompt_origin_tab, action.payload.node_id],
+                action.payload.output,
+                Object
+            );
         },
         delResult: (
             s,
