@@ -2,12 +2,17 @@ import { Box, Slider, SliderProps, Typography } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { HelpButton } from './HelpButton';
 
+export type SliderInputProps = {
+    label?: string;
+    tooltip?: string;
+} & SliderProps;
+
 export const SliderInput = ({
     defaultValue,
     sx,
     tooltip,
     ...props
-}: { label?: string; tooltip?: string } & SliderProps) => {
+}: SliderInputProps) => {
     const ctl = useController({
         name: props.name!,
         defaultValue: defaultValue,

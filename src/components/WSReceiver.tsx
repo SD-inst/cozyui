@@ -13,8 +13,7 @@ import {
     setStatusMessage,
     statusEnum,
 } from '../redux/progress';
-import { addResult } from '../redux/result';
-import { setPromptId } from '../redux/tab';
+import { addResult, setPromptId } from '../redux/tab';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;

@@ -5,14 +5,14 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
-import { useCurrentTab } from './contexts/TabContext';
+import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 
 const ValuesRestore = () => {
     const ref = useRef<HTMLDivElement>(null);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const dispatch = useAppDispatch();
-    const tab_name = useCurrentTab();
+    const tab_name = useTabName();
     const defaults = useAppSelector((s) =>
         get(s, ['config', 'tabs', tab_name, 'defaults'], null)
     );

@@ -19,8 +19,14 @@ import {
     setStatusMessage,
     statusEnum,
 } from '../../redux/progress';
-import { actionEnum, setApi, setParams, setPromptId } from '../../redux/tab';
-import { TabContext, useCurrentTab, useHandlers } from '../contexts/TabContext';
+import {
+    actionEnum,
+    setApi,
+    setOriginTab,
+    setParams,
+    setPromptId,
+} from '../../redux/tab';
+import { TabContext, useTabName, useHandlers } from '../contexts/TabContext';
 
 type error = {
     controls: string[];
@@ -61,7 +67,8 @@ export const GenerateButton = ({
         !connected;
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
-    const current_tab = useCurrentTab(tabOverride);
+    const current_tab = useTabName(tabOverride);
+    const origin_tab = useTabName();
     const { setValue } = useContext(TabContext);
     const { api, controls } = useConfigTab(tabOverride);
 
@@ -137,7 +144,11 @@ export const GenerateButton = ({
                 setErrors((e) => ({ ...e, api: [...e.api, k] }));
             }
         }
-        console.log('%cGeneration params: %O', 'color: green; font-weight: bold; font-size: 1.5em', params);
+        console.log(
+            '%cGeneration params: %O',
+            'color: green; font-weight: bold; font-size: 1.5em',
+            params
+        );
         dispatch(setApi(params.prompt));
         if (noexec) {
             toast.success('Execution skipped');
@@ -145,6 +156,7 @@ export const GenerateButton = ({
             return Promise.resolve();
         }
         dispatch(clearGenerationTS());
+        dispatch(setOriginTab(origin_tab));
         return fetch(apiUrl + '/api/prompt', {
             method: 'POST',
             body: JSON.stringify(params),
@@ -176,17 +188,7 @@ export const GenerateButton = ({
                     );
                 }
             });
-    }, [
-        apiData,
-        apiUrl,
-        client_id,
-        controls,
-        current_tab,
-        dispatch,
-        getValues,
-        handlers,
-        noexec,
-    ]);
+    }, [apiData, apiUrl, client_id, controls, current_tab, dispatch, getValues, handlers, noexec, origin_tab]);
     const handleCtrlEnter = useCallback(
         (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === 'Enter') {

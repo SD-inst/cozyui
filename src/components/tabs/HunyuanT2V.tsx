@@ -71,6 +71,7 @@ const Content = () => {
                     defaultValue={85}
                 />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
+                <GuidanceInput />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         Advanced parameters
@@ -84,7 +85,6 @@ const Content = () => {
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput />
-                        <GuidanceInput />
                         <SliderInput
                             min={0}
                             max={1}

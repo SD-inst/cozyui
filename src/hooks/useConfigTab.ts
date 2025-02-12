@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import { useCurrentTab } from '../components/contexts/TabContext';
+import { useTabName } from '../components/contexts/TabContext';
 import { useAppSelector } from '../redux/hooks';
 import { tabConfigType } from '../redux/config';
 
@@ -14,7 +14,7 @@ const emptyParams = {
 };
 
 export const useConfigTab = (tabOverride?: string) => {
-    const current_tab = useCurrentTab(tabOverride);
+    const current_tab = useTabName(tabOverride);
     return useAppSelector((s) =>
         get(s, ['config', 'tabs', current_tab], emptyParams)
     ) as tabConfigType;

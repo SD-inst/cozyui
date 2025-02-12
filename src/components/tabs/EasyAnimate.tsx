@@ -14,6 +14,7 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
+import { CFGInput } from '../controls/CFGInput';
 
 const Content = () => {
     const handler = useCallback((api: any, value: string) => {
@@ -69,14 +70,11 @@ const Content = () => {
                     label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
-                <DescribeButton
-                    api='Describe image'
-                    text='Describe'
-                    hideErrors
-                />
+                <DescribeButton />
                 <TextInput name='prompt' multiline />
                 <LengthInput name='length' min={1} max={49} defaultValue={49} />
                 <SliderInput name='steps' defaultValue={25} min={5} max={50} />
+                <CFGInput defaultValue={3} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         Advanced parameters
@@ -87,14 +85,6 @@ const Content = () => {
                             defaultValue='Blurring, mutation, deformation, distortion, dark and solid, comics.'
                             label='negative prompt'
                             multiline
-                        />
-                        <SliderInput
-                            name='cfg'
-                            label='CFG'
-                            defaultValue={3}
-                            min={1}
-                            max={10}
-                            step={0.1}
                         />
                         <SelectInput
                             name='sampler'

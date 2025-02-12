@@ -1,5 +1,5 @@
 import { get, merge } from 'lodash';
-import { useCurrentTab } from '../components/contexts/TabContext';
+import { useTabName } from '../components/contexts/TabContext';
 import { useAppSelector } from '../redux/hooks';
 
 const emptyResult = {
@@ -7,25 +7,24 @@ const emptyResult = {
     type: '',
 };
 
-export const useResultParam = (options?: {
-    tabOverride?: string;
+type resultOptions = {
+    tab_override?: string;
     id?: string;
     type?: string;
-}) => {
-    const { tabOverride, ...rest } = options || {};
-    const current_tab = useCurrentTab(tabOverride);
+};
+
+export const useResultParam = (options?: resultOptions) => {
+    const { tab_override, ...rest } = options || {};
+    const tab_name = useTabName(tab_override);
     const result = useAppSelector((s) =>
-        get(s, ['config', 'tabs', current_tab, 'result'], emptyResult)
+        get(s, ['config', 'tabs', tab_name, 'result'], emptyResult)
     );
     return merge({}, result, rest);
 };
 
-export const useResult = (options?: {
-    tabOverride?: string;
-    id?: string;
-    type?: string;
-}) => {
-    const resultStore = useAppSelector((s) => s.result);
+export const useResult = (options?: resultOptions) => {
+    const tab_name = useTabName();
+    const result = useAppSelector((s) => s.tab.result);
     const { id, type } = useResultParam(options);
-    return get(resultStore, [id, type], []) as any[];
+    return get(result, [tab_name, id, type], []) as any[];
 };

@@ -13,6 +13,7 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
+import { CFGInput } from '../controls/CFGInput';
 
 const Content = () => {
     return (
@@ -49,7 +50,7 @@ const Content = () => {
                     label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
-                <DescribeButton api='Describe image' />
+                <DescribeButton />
                 <TextInput name='prompt' multiline />
                 <Box display='flex' flexDirection='row' width='100%' mt={2}>
                     <Box display='flex' flexDirection='column' flex={1}>
@@ -86,6 +87,7 @@ const Content = () => {
                     fps={25}
                 />
                 <SliderInput name='steps' defaultValue={25} min={5} max={50} />
+                <CFGInput defaultValue={3} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         Advanced parameters
@@ -96,14 +98,6 @@ const Content = () => {
                             defaultValue='low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly'
                             label='negative prompt'
                             multiline
-                        />
-                        <SliderInput
-                            name='cfg'
-                            label='CFG'
-                            defaultValue={3}
-                            min={1}
-                            max={10}
-                            step={0.1}
                         />
                         <SliderInput
                             name='stg'

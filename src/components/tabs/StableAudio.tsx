@@ -9,6 +9,7 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
 import { WFTab } from '../WFTab';
+import { CFGInput } from '../controls/CFGInput';
 
 const Content = () => {
     return (
@@ -28,6 +29,7 @@ const Content = () => {
                     min={1}
                     max={300}
                 />
+                <CFGInput />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         Advanced parameters
@@ -45,14 +47,6 @@ const Content = () => {
                             defaultValue='dpmpp_3m_sde'
                         />
                         <SchedulerSelectInput name='scheduler' />
-                        <SliderInput
-                            name='cfg'
-                            label='CFG'
-                            min={1}
-                            max={20}
-                            step={0.1}
-                            defaultValue={7}
-                        />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />

@@ -42,7 +42,7 @@ export const useCtrlEnter = () => {
     );
 };
 
-export const useCurrentTab = (tabOverride?: string) => {
+export const useTabName = (tabOverride?: string) => {
     const { tab_name } = useContext(TabContext);
     if (tabOverride) {
         return tabOverride;

@@ -19,6 +19,7 @@ import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { KJHYCFG } from '../controls/KJHYCFG';
 import { BlockSwapInput } from '../controls/BlockSwapInput';
 import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
+import { GuidanceInput } from '../controls/GuidanceInput';
 
 const models = [
     {
@@ -75,6 +76,7 @@ const Content = () => (
                 defaultValue={85}
             />
             <SliderInput name='steps' defaultValue={30} min={1} max={50} />
+            <GuidanceInput />
             <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />}>
                     Advanced parameters
@@ -91,13 +93,6 @@ const Content = () => (
                     <SliderInput
                         name='flow_shift'
                         label='flow shift'
-                        min={1}
-                        max={20}
-                        defaultValue={7}
-                    />
-                    <SliderInput
-                        name='guidance'
-                        label='guidance scale'
                         min={1}
                         max={20}
                         defaultValue={7}

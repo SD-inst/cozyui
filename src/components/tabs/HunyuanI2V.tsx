@@ -74,7 +74,7 @@ const Content = () => {
                     label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
-                <DescribeButton api='Describe image' />
+                <DescribeButton />
                 <TextInput name='prompt' multiline sx={{ mb: 3 }} />
                 <SelectInput
                     name='model'
@@ -91,6 +91,7 @@ const Content = () => {
                     defaultValue={85}
                 />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
+                <GuidanceInput defaultValue={10} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         Advanced parameters
@@ -98,7 +99,6 @@ const Content = () => {
                     <AccordionDetails>
                         <KJSchedulerSelectInput name='sampler' />
                         <FlowShiftInput defaultValue={10} />
-                        <GuidanceInput defaultValue={10} />
                         <SliderInput
                             name='aug_strength'
                             label='Noise augmentation'

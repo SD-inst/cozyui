@@ -4,11 +4,10 @@ import { makeOutputUrl } from '../api/utils';
 import { db, TaskResult } from '../components/history/db';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { statusEnum } from '../redux/progress';
-import { actionEnum } from '../redux/tab';
+import { actionEnum, addResult } from '../redux/tab';
 import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
 import { settings, useBooleanSetting } from './useSaveOutputsLocally';
-import { addResult } from '../redux/result';
 
 export const useSaveToHistory = ({
     id,
