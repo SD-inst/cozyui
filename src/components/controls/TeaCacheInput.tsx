@@ -1,12 +1,12 @@
 import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
-import { useConfigTab } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useConfigTab';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput } from './SliderInput';
 
 export const TeaCacheInput = ({ ...props }) => {
-    const { handler_options } = useConfigTab();
+    const { handler_options } = useAPI();
     const { setValue, getValues } = useFormContext();
     const v = useWatch({ name: props.name });
     useEffect(() => {

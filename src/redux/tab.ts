@@ -63,10 +63,7 @@ const slice = createSlice({
             ...s,
             params: action.payload,
         }),
-        addResult: (
-            s,
-            action: PayloadAction<{ node_id: string; output: any }>
-        ) => {
+        addResult: (s, action: PayloadAction<{ id: string; output: any }>) => {
             if (!s.prompt_origin_tab) {
                 console.log(
                     'Prompt origin tab is not defined, discarding result'
@@ -75,20 +72,16 @@ const slice = createSlice({
             }
             setWith(
                 s,
-                ['result', s.prompt_origin_tab, action.payload.node_id],
+                ['result', s.prompt_origin_tab, action.payload.id],
                 action.payload.output,
                 Object
             );
         },
         delResult: (
             s,
-            action: PayloadAction<{ tab_name: string; node_id: string }>
+            action: PayloadAction<{ tab_name: string; id: string }>
         ) => {
-            unset(s, [
-                'result',
-                action.payload.tab_name,
-                action.payload.node_id,
-            ]);
+            unset(s, ['result', action.payload.tab_name, action.payload.id]);
         },
     },
 });

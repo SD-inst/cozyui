@@ -55,7 +55,7 @@ export const WSReceiver = () => {
                 case 'executed':
                     dispatch(
                         addResult({
-                            node_id: j.data.node,
+                            id: j.data.node,
                             output: j.data.output,
                         })
                     );

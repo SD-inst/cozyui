@@ -3,7 +3,7 @@ import { useController } from 'react-hook-form';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
-import { useConfigTab } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useConfigTab';
 
 type valueType = {
     enabled: boolean;
@@ -14,7 +14,7 @@ type valueType = {
 };
 
 export const BlockSwapInput = ({ ...props }) => {
-    const { handler_options } = useConfigTab();
+    const { handler_options } = useAPI();
     const handler = useCallback(
         (api: any, value: valueType) => {
             const { enabled, ...inputs } = value;

@@ -1,7 +1,8 @@
 import { get } from 'lodash';
-import { useTabName } from '../components/contexts/TabContext';
-import { useAppSelector } from '../redux/hooks';
+import { useContext } from 'react';
+import { TabContext } from '../components/contexts/TabContext';
 import { tabConfigType } from '../redux/config';
+import { useAppSelector } from '../redux/hooks';
 
 const emptyParams = {
     api: '',
@@ -13,9 +14,9 @@ const emptyParams = {
     },
 };
 
-export const useConfigTab = (tabOverride?: string) => {
-    const current_tab = useTabName(tabOverride);
+export const useAPI = () => {
+    const { api, tab_name } = useContext(TabContext);
     return useAppSelector((s) =>
-        get(s, ['config', 'tabs', current_tab], emptyParams)
+        get(s, ['config', 'tabs', api || tab_name], emptyParams)
     ) as tabConfigType;
 };

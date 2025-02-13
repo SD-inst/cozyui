@@ -10,7 +10,7 @@ import {
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useConfigTab } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useConfigTab';
 import { useGet } from '../../hooks/useGet';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -26,7 +26,7 @@ import {
     setParams,
     setPromptId,
 } from '../../redux/tab';
-import { TabContext, useTabName, useHandlers } from '../contexts/TabContext';
+import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 
 type error = {
     controls: string[];
@@ -43,14 +43,12 @@ const noErrors = {
 };
 
 export type GenerateButtonProps = {
-    tabOverride?: string;
     text?: string;
     hideErrors?: boolean;
     noexec?: boolean;
 };
 
 export const GenerateButton = ({
-    tabOverride,
     text = 'Generate',
     hideErrors,
     noexec,
@@ -67,10 +65,9 @@ export const GenerateButton = ({
         !connected;
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
-    const current_tab = useTabName(tabOverride);
-    const origin_tab = useTabName();
+    const tab_name = useTabName();
     const { setValue } = useContext(TabContext);
-    const { api, controls } = useConfigTab(tabOverride);
+    const { api, controls } = useAPI();
 
     const apiUrl = useApiURL();
     const { data: apiData, isSuccess: apiSuccess } = useGet({
@@ -156,7 +153,7 @@ export const GenerateButton = ({
             return Promise.resolve();
         }
         dispatch(clearGenerationTS());
-        dispatch(setOriginTab(origin_tab));
+        dispatch(setOriginTab(tab_name));
         return fetch(apiUrl + '/api/prompt', {
             method: 'POST',
             body: JSON.stringify(params),
@@ -168,7 +165,7 @@ export const GenerateButton = ({
                     dispatch(
                         setParams({
                             action: actionEnum.STORE,
-                            tab: current_tab,
+                            tab: tab_name,
                             values: vals,
                         })
                     );
@@ -188,7 +185,17 @@ export const GenerateButton = ({
                     );
                 }
             });
-    }, [apiData, apiUrl, client_id, controls, current_tab, dispatch, getValues, handlers, noexec, origin_tab]);
+    }, [
+        apiData,
+        apiUrl,
+        client_id,
+        controls,
+        tab_name,
+        dispatch,
+        getValues,
+        handlers,
+        noexec,
+    ]);
     const handleCtrlEnter = useCallback(
         (e: KeyboardEvent) => {
             if (e.ctrlKey && e.key === 'Enter') {

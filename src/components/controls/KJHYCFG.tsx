@@ -2,7 +2,7 @@ import { Box, TextField, TextFieldProps } from '@mui/material';
 import { useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
-import { useConfigTab } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useConfigTab';
 import { useRegisterHandler } from '../contexts/TabContext';
 
 type negType = { neg_prompt: string; cfg: number };
@@ -15,7 +15,7 @@ export const KJHYCFG = ({
     defaultValue?: negType;
     name: string;
 } & TextFieldProps) => {
-    const { handler_options } = useConfigTab();
+    const { handler_options } = useAPI();
     const handler = useCallback(
         (api: any, value: { neg_prompt: string; cfg: string }) => {
             const cfg = parseFloat(value.cfg);

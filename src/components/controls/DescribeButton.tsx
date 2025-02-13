@@ -1,10 +1,29 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useResult, useResultParam } from '../../hooks/useResult';
 import { useAppDispatch } from '../../redux/hooks';
-import { useTabName } from '../contexts/TabContext';
-import { GenerateButton, GenerateButtonProps } from './GenerateButton';
 import { delResult } from '../../redux/tab';
+import { TabContext, useTabName } from '../contexts/TabContext';
+import { TabContextProvider } from '../contexts/TabContextProvider';
+import { GenerateButton, GenerateButtonProps } from './GenerateButton';
+
+const SetResults = ({ field }: { field: string }) => {
+    const results = useResult();
+    const tab_name = useTabName();
+    const { id } = useResultParam();
+    const dispatch = useAppDispatch();
+    const form = useFormContext();
+    useEffect(() => {
+        if (results.length) {
+            form.setValue(field, results[0] as string);
+            if (!id) {
+                return;
+            }
+            dispatch(delResult({ tab_name, id }));
+        }
+    }, [results, form, dispatch, id, field, tab_name]);
+    return null;
+};
 
 export const DescribeButton = ({
     field = 'prompt',
@@ -15,19 +34,11 @@ export const DescribeButton = ({
     field?: string;
     api?: string;
 } & GenerateButtonProps) => {
-    const results = useResult({ tab_override: api });
-    const tab = useTabName();
-    const { id } = useResultParam({ tab_override: api });
-    const dispatch = useAppDispatch();
-    const form = useFormContext();
-    useEffect(() => {
-        if (results.length) {
-            form.setValue(field, results[0] as string);
-            dispatch(delResult({ tab_name: tab, node_id: id }));
-        }
-    }, [results, form, dispatch, id, field, tab]);
-
+    const tab_ctx = useContext(TabContext);
     return (
-        <GenerateButton tabOverride={api} text={text} hideErrors {...props} />
+        <TabContextProvider value={{ ...tab_ctx, api }}>
+            <GenerateButton text={text} hideErrors {...props} />
+            <SetResults field={field} />
+        </TabContextProvider>
     );
 };

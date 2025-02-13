@@ -23,7 +23,7 @@ import { useController, useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useConfigTab } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { mergeType } from '../../api/mergeType';
@@ -162,7 +162,7 @@ export const LoraInput = ({
                 name_field_name,
             },
         },
-    } = useConfigTab();
+    } = useAPI();
     const handler = useCallback(
         (api: any, values: valueType[]) => {
             if (append) {

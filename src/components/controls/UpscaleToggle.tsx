@@ -5,6 +5,7 @@ import { useController } from 'react-hook-form';
 import { getFreeNodeId, shiftIds } from '../../api/utils';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { VideoResult } from './VideoResult';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 
 const upscale_api_base = {
     '1': {
@@ -128,11 +129,11 @@ export const UpscaleToggle = ({
             upscale_api[`${base_id + 7}`].inputs.multiplier = multiplier;
             upscale_api[`${base_id + 8}`].inputs.frame_rate = fps;
             setUpscaledVideo(
-                <VideoResult
-                    title='Upscaled video'
-                    id={`${base_id + 8}`}
-                    type='gifs'
-                />
+                <ResultOverrideContextProvider
+                    value={{ id: `${base_id + 8}`, type: 'gifs' }}
+                >
+                    <VideoResult title='Upscaled video' />
+                </ResultOverrideContextProvider>
             );
             Object.assign(api, upscale_api);
         },

@@ -55,7 +55,8 @@ const TabContent = ({ ...props }) => {
                 display={current_tab === value ? 'flex' : 'none'}
             >
                 <FormProvider {...form}>
-                    <ValuesRestore /> {content}
+                    <ValuesRestore />
+                    {content}
                 </FormProvider>
             </VerticalBox>
         </TabContextProvider>

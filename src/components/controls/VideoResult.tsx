@@ -6,16 +6,8 @@ import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { VerticalBox } from '../VerticalBox';
 
-export const VideoResult = ({
-    id,
-    type,
-    title,
-}: {
-    id?: string;
-    type?: string;
-    title?: string;
-}) => {
-    const results = useResult({ id, type });
+export const VideoResult = ({ title }: { title?: string }) => {
+    const results = useResult();
     const videoRef = useRef<HTMLVideoElement>(null);
     const apiUrl = useApiURL();
     useEffect(() => {
@@ -23,7 +15,7 @@ export const VideoResult = ({
             videoRef.current?.scrollIntoView();
         }
     }, [results]);
-    useSaveToHistory({ id, type });
+    useSaveToHistory();
     return (
         <VerticalBox width='100%'>
             <Typography variant='body1'>{title || 'Video'}</Typography>

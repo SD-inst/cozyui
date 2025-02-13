@@ -21,6 +21,7 @@ import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
 import { mergeConfig, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
+import { ResultOverrideContextProvider } from './components/contexts/ResultOverrideContextProvider';
 
 function App() {
     const {
@@ -90,22 +91,24 @@ function App() {
 
     return (
         <ThemeContext>
-            <WSReceiver />
-            <VerticalBox>
-                <WorkflowTabs>
-                    {HunyanT2VTab}
-                    {HunyanI2VTab}
-                    {HunyanT2VTabKJ}
-                    {LTXI2VTab}
-                    {EasyAnimateI2VTab}
-                    {StableAudioTab}
-                </WorkflowTabs>
-                <Progress />
-                <InterruptButton />
-                <HistoryPanel />
-                <AppSettings />
-            </VerticalBox>
-            <ThemedToaster />
+            <ResultOverrideContextProvider>
+                <WSReceiver />
+                <VerticalBox>
+                    <WorkflowTabs>
+                        {HunyanT2VTab}
+                        {HunyanI2VTab}
+                        {HunyanT2VTabKJ}
+                        {LTXI2VTab}
+                        {EasyAnimateI2VTab}
+                        {StableAudioTab}
+                    </WorkflowTabs>
+                    <Progress />
+                    <InterruptButton />
+                    <HistoryPanel />
+                    <AppSettings />
+                </VerticalBox>
+                <ThemedToaster />
+            </ResultOverrideContextProvider>
         </ThemeContext>
     );
 }

@@ -9,16 +9,10 @@ import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
 import { settings, useBooleanSetting } from './useSaveOutputsLocally';
 
-export const useSaveToHistory = ({
-    id,
-    type,
-}: {
-    id?: string;
-    type?: string;
-}) => {
+export const useSaveToHistory = () => {
     const apiUrl = useApiURL();
-    const results = useResult({ id, type });
-    const { id: id_r, type: type_r } = useResultParam({ id, type });
+    const results = useResult();
+    const { id, type } = useResultParam();
     const { start_ts, end_ts, status } = useAppSelector((s) => s.progress);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const save_locally = useBooleanSetting(settings.save_outputs_locally);
@@ -32,8 +26,8 @@ export const useSaveToHistory = ({
             !end_ts ||
             !results.length ||
             status !== statusEnum.FINISHED ||
-            !type_r ||
-            !id_r ||
+            !type ||
+            !id ||
             action !== actionEnum.STORE
         ) {
             return;
@@ -48,8 +42,8 @@ export const useSaveToHistory = ({
         if (saved_results.length) {
             dispatch(
                 addResult({
-                    node_id: id_r,
-                    output: { [type_r]: saved_results },
+                    id: id,
+                    output: { [type]: saved_results },
                 })
             );
         } else {
@@ -67,8 +61,8 @@ export const useSaveToHistory = ({
                     return {
                         timestamp: end_ts,
                         duration: end_ts - start_ts,
-                        type: type_r,
-                        node_id: id_r,
+                        type,
+                        node_id: id,
                         params: JSON.stringify({ tab, values }),
                         url,
                         data,
@@ -80,7 +74,7 @@ export const useSaveToHistory = ({
             }
             return db.transaction('rw', db.taskResults, async (tx) => {
                 const exists = await tx.taskResults
-                    .where({ timestamp: end_ts, node_id: id_r })
+                    .where({ timestamp: end_ts, node_id: id })
                     .count();
                 if (exists > 0) {
                     return;
@@ -100,14 +94,14 @@ export const useSaveToHistory = ({
         apiUrl,
         dispatch,
         end_ts,
-        id_r,
+        id,
         results,
         save_history,
         save_locally,
         start_ts,
         status,
         tab,
-        type_r,
+        type,
         values,
     ]);
 };

@@ -16,6 +16,7 @@ export type handlerType = {
 
 export type TabContextValueType = {
     tab_name: string;
+    api: string;
     handlers: handlerType;
     setValue: Dispatch<SetStateAction<TabContextValueType>>;
     handleCtrlEnter: KeyboardEventHandler;
@@ -23,6 +24,7 @@ export type TabContextValueType = {
 
 export const tabContextdefaultValue: TabContextValueType = {
     tab_name: '',
+    api: '',
     handlers: {},
     setValue: () => {},
     handleCtrlEnter: () => {},
@@ -42,11 +44,8 @@ export const useCtrlEnter = () => {
     );
 };
 
-export const useTabName = (tabOverride?: string) => {
+export const useTabName = () => {
     const { tab_name } = useContext(TabContext);
-    if (tabOverride) {
-        return tabOverride;
-    }
     return tab_name;
 };
 
