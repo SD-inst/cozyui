@@ -14,6 +14,11 @@ export type handlerType = {
     [control_name: string]: (api: any, value: any[]) => void;
 };
 
+/**
+ * Sets execution and result parameters for a tab (workflow), also allows overriding these parameters for special cases
+ * @param tab_name the result branch to store the output
+ * @param api which API graph to use, if empty then @see tab_name is used for this
+ */
 export type TabContextValueType = {
     tab_name: string;
     api: string;

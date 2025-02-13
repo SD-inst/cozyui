@@ -1,8 +1,14 @@
+import { get } from 'lodash';
 import { useContext, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useResult, useResultParam } from '../../hooks/useResult';
-import { useAppDispatch } from '../../redux/hooks';
+import {
+    emptyResultParam,
+    useResult,
+    useResultParam,
+} from '../../hooks/useResult';
+import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { delResult } from '../../redux/tab';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { TabContext, useTabName } from '../contexts/TabContext';
 import { TabContextProvider } from '../contexts/TabContextProvider';
 import { GenerateButton, GenerateButtonProps } from './GenerateButton';
@@ -35,10 +41,15 @@ export const DescribeButton = ({
     api?: string;
 } & GenerateButtonProps) => {
     const tab_ctx = useContext(TabContext);
+    const describeResultParams = useAppSelector((s) =>
+        get(s, ['config', 'tabs', api, 'result'], emptyResultParam)
+    );
     return (
         <TabContextProvider value={{ ...tab_ctx, api }}>
-            <GenerateButton text={text} hideErrors {...props} />
-            <SetResults field={field} />
+            <ResultOverrideContextProvider value={describeResultParams}>
+                <GenerateButton text={text} hideErrors {...props} />
+                <SetResults field={field} />
+            </ResultOverrideContextProvider>
         </TabContextProvider>
     );
 };

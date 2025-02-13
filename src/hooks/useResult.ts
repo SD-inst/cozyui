@@ -6,7 +6,7 @@ import {
 import { useTabName } from '../components/contexts/TabContext';
 import { useAppSelector } from '../redux/hooks';
 
-const emptyResultParam: resultOptionsType = {
+export const emptyResultParam: resultOptionsType = {
     id: '',
     type: '',
 };
