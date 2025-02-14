@@ -13,7 +13,7 @@ import {
     setStatusMessage,
     statusEnum,
 } from '../redux/progress';
-import { addResult, setPromptId } from '../redux/tab';
+import { addResult, clearPrompt } from '../redux/tab';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -30,7 +30,7 @@ export const WSReceiver = () => {
             dispatch(setCurrentNode(''));
             dispatch(setGenerationEnd());
             if (!noPromptReset) {
-                dispatch(setPromptId(''));
+                dispatch(clearPrompt());
             }
         },
         [dispatch]
@@ -40,7 +40,8 @@ export const WSReceiver = () => {
     const handleMessage = useCallback(
         (ev: MessageEvent) => {
             const j = JSON.parse(ev.data);
-            if (j.type !== 'progress') { // less spam
+            if (j.type !== 'progress') {
+                // less spam
                 console.log(ev.data);
             }
             switch (j.type) {
@@ -55,7 +56,8 @@ export const WSReceiver = () => {
                 case 'executed':
                     dispatch(
                         addResult({
-                            id: j.data.node,
+                            prompt_id: j.data.prompt_id,
+                            node_id: j.data.node,
                             output: j.data.output,
                         })
                     );

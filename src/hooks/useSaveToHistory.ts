@@ -8,11 +8,13 @@ import { actionEnum, addResult } from '../redux/tab';
 import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
 import { settings, useBooleanSetting } from './useSaveOutputsLocally';
+import { useTabName } from '../components/contexts/TabContext';
 
 export const useSaveToHistory = () => {
     const apiUrl = useApiURL();
     const results = useResult();
     const { id, type } = useResultParam();
+    const tab_name = useTabName();
     const { start_ts, end_ts, status } = useAppSelector((s) => s.progress);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const save_locally = useBooleanSetting(settings.save_outputs_locally);
@@ -42,7 +44,8 @@ export const useSaveToHistory = () => {
         if (saved_results.length) {
             dispatch(
                 addResult({
-                    id: id,
+                    tab_name,
+                    node_id: id,
                     output: { [type]: saved_results },
                 })
             );

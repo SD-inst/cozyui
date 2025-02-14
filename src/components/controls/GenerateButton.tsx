@@ -21,10 +21,10 @@ import {
 } from '../../redux/progress';
 import {
     actionEnum,
+    clearPrompt,
     setApi,
-    setOriginTab,
     setParams,
-    setPromptId,
+    setPrompt,
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 
@@ -153,38 +153,34 @@ export const GenerateButton = ({
             return Promise.resolve();
         }
         dispatch(clearGenerationTS());
-        dispatch(setOriginTab(tab_name));
         return fetch(apiUrl + '/api/prompt', {
             method: 'POST',
             body: JSON.stringify(params),
-        })
-            .then(async (r) => {
-                if (r.status === 200) {
-                    const j = await r.json();
-                    dispatch(setPromptId(j.prompt_id));
-                    dispatch(
-                        setParams({
-                            action: actionEnum.STORE,
-                            tab: tab_name,
-                            values: vals,
-                        })
-                    );
-                    return;
-                }
-                return r.json();
-            })
-            .then((j) => {
-                if (j?.error?.message) {
-                    toast.error(j.error.message);
-                    dispatch(setPromptId(''));
-                    dispatch(
-                        setStatusMessage({
-                            status: statusEnum.ERROR,
-                            message: j.error.message,
-                        })
-                    );
-                }
-            });
+        }).then(async (r) => {
+            if (r.status === 200) {
+                const j = await r.json();
+                dispatch(setPrompt({ prompt_id: j.prompt_id, tab_name }));
+                dispatch(
+                    setParams({
+                        action: actionEnum.STORE,
+                        tab: tab_name,
+                        values: vals,
+                    })
+                );
+                return;
+            }
+            const j = await r.json();
+            if (j?.error?.message) {
+                toast.error(j.error.message);
+                dispatch(clearPrompt());
+                dispatch(
+                    setStatusMessage({
+                        status: statusEnum.ERROR,
+                        message: j.error.message,
+                    })
+                );
+            }
+        });
     }, [
         apiData,
         apiUrl,

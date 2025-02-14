@@ -23,8 +23,11 @@ type resultType = {
 type tabType = {
     current_tab: boolean | string;
     api: any;
-    prompt_id: string;
-    prompt_origin_tab: string;
+    prompt: {
+        [id: string]: {
+            tab_name: string;
+        };
+    };
     params: paramsType;
     result: resultType;
 };
@@ -34,8 +37,7 @@ const slice = createSlice({
     initialState: {
         current_tab: false,
         api: {} as any,
-        prompt_id: '',
-        prompt_origin_tab: '',
+        prompt: {},
         params: {
             tab: '',
             values: {},
@@ -51,28 +53,54 @@ const slice = createSlice({
             ...s,
             api: action.payload,
         }),
-        setPromptId: (s, action: PayloadAction<string>) => ({
-            ...s,
-            prompt_id: action.payload,
-        }),
-        setOriginTab: (s, action: PayloadAction<string>) => ({
-            ...s,
-            prompt_origin_tab: action.payload,
-        }),
+        setPrompt: (
+            s,
+            action: PayloadAction<{ prompt_id: string; tab_name: string }>
+        ) => {
+            setWith(
+                s,
+                ['prompt', action.payload.prompt_id],
+                { tab_name: action.payload.tab_name },
+                Object
+            );
+        },
+        clearPrompt: (s) => ({ ...s, prompt: {} }),
         setParams: (s, action: PayloadAction<paramsType>) => ({
             ...s,
             params: action.payload,
         }),
-        addResult: (s, action: PayloadAction<{ id: string; output: any }>) => {
-            if (!s.prompt_origin_tab) {
-                console.log(
+        /**
+         * Either action.prompt_id (for WS receiver which works outside of tabs) or action.tab_name (inside tabs) should be specified
+         * @param action.prompt_id UUID of the prompt returned, the result tab is then picked from the s.prompt branch
+         * @param action.tab_name explicitly specify the result tab
+         */
+        addResult: (
+            s,
+            action: PayloadAction<{
+                prompt_id?: string;
+                tab_name?: string;
+                node_id: string;
+                output: any;
+            }>
+        ) => {
+            if (!action.payload.tab_name && !action.payload.prompt_id) {
+                console.error(
+                    'addResult action should provide either tab_name or prompt_id to have any effect! Discarding result.'
+                );
+                return s;
+            }
+            const tab_name =
+                action.payload.tab_name ||
+                s.prompt[action.payload.prompt_id!].tab_name;
+            if (!tab_name) {
+                console.warn(
                     'Prompt origin tab is not defined, discarding result'
                 );
                 return s;
             }
             setWith(
                 s,
-                ['result', s.prompt_origin_tab, action.payload.id],
+                ['result', tab_name, action.payload.node_id],
                 action.payload.output,
                 Object
             );
@@ -91,8 +119,8 @@ export const {
     actions: {
         setApi,
         setTab,
-        setPromptId,
-        setOriginTab,
+        setPrompt,
+        clearPrompt,
         setParams,
         addResult,
         delResult,
