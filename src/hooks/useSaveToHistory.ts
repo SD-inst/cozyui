@@ -104,6 +104,7 @@ export const useSaveToHistory = () => {
         start_ts,
         status,
         tab,
+        tab_name,
         type,
         values,
     ]);

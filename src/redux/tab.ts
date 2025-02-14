@@ -57,6 +57,23 @@ const slice = createSlice({
             s,
             action: PayloadAction<{ prompt_id: string; tab_name: string }>
         ) => {
+            const temp_result = s.result[action.payload.prompt_id];
+            if (temp_result) {
+                // found temporary result, must be a race condition when
+                // /api/prompt returned *after* the results arrived via
+                // the websocket; don't set prompt and move the result instead
+                setWith(
+                    s,
+                    ['result', action.payload.tab_name],
+                    temp_result,
+                    Object
+                );
+                unset(s, ['result', action.payload.prompt_id]);
+                console.warn(
+                    `Found temporary prompt results for ${action.payload.prompt_id}, moving to tab ${action.payload.tab_name}`
+                );
+                return;
+            }
             setWith(
                 s,
                 ['prompt', action.payload.prompt_id],
@@ -91,8 +108,24 @@ const slice = createSlice({
             }
             const tab_name =
                 action.payload.tab_name ||
-                s.prompt[action.payload.prompt_id!].tab_name;
+                s.prompt[action.payload.prompt_id!]?.tab_name;
             if (!tab_name) {
+                if (action.payload.prompt_id) {
+                    setWith(
+                        s,
+                        [
+                            'result',
+                            action.payload.prompt_id,
+                            action.payload.node_id,
+                        ],
+                        action.payload.output,
+                        Object
+                    );
+                    console.warn(
+                        `Prompt origin tab is not defined, storing prompt result under id ${action.payload.prompt_id} for later.`
+                    );
+                    return;
+                }
                 console.warn(
                     'Prompt origin tab is not defined, discarding result'
                 );
