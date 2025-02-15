@@ -3,30 +3,55 @@ import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
+    Box,
     List,
     ListProps,
     Pagination,
+    TextField,
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Dispatch, SetStateAction, useRef, useState } from 'react';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
+import { autoscrollSlotProps } from '../controls/utils';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
 import { DiffViewer } from './DiffViewer';
 import { HistoryCard } from './HistoryCard';
-import { autoscrollSlotProps } from '../controls/utils';
 
 const page_size = 10;
+
+const pkFromFilter = async (filter: string) => {
+    const filter_words = filter.split(' ').map((w) => w.toLowerCase());
+    const pks = await Promise.all(
+        filter_words.map((w) =>
+            db.taskResults.where('words').startsWith(w).primaryKeys()
+        )
+    );
+    const pk_x = pks.reduce((a, b) => {
+        const set = new Set(b);
+        return a.filter((pk) => set.has(pk));
+    });
+    return pk_x;
+};
 
 const HistoryPagination = ({
     page,
     setPage,
+    filter,
 }: {
     page: number;
     setPage: Dispatch<SetStateAction<number>>;
+    filter: string;
 }) => {
-    const count = useLiveQuery(() => db.taskResults.count()) ?? 0;
+    const count =
+        useLiveQuery(async () => {
+            if (!filter) {
+                return db.taskResults.count();
+            }
+            const pk_x = await pkFromFilter(filter);
+            return db.taskResults.where(':id').anyOf(pk_x).count();
+        }, [filter]) ?? 0;
     if (count <= page_size) {
         return null;
     }
@@ -43,16 +68,26 @@ const HistoryPagination = ({
 
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const [page, setPage] = useState(1);
-    const results = useLiveQuery(
-        () =>
-            db.taskResults
+    const [filter, setFilter] = useState('');
+    const results = useLiveQuery(async () => {
+        if (!filter) {
+            // return everything
+            return db.taskResults
                 .orderBy('timestamp')
                 .reverse()
                 .offset((page - 1) * page_size)
                 .limit(page_size)
-                .toArray(),
-        [page, page_size]
-    );
+                .toArray();
+        }
+        const pk_x = await pkFromFilter(filter);
+        return db.taskResults
+            .where(':id')
+            .anyOf(pk_x)
+            .offset((page - 1) * page_size)
+            .limit(page_size)
+            .reverse()
+            .sortBy('timestamp');
+    }, [page, page_size, filter]);
     const ref = useRef<HTMLElement>(null);
     return (
         <Accordion
@@ -71,7 +106,21 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             <AccordionDetails ref={ref} sx={{ p: { xs: 0, md: 2 } }}>
                 <CompareContextProvider>
                     <VerticalBox>
-                        <HistoryPagination page={page} setPage={setPage} />
+                        <Box width='100%' display='flex'>
+                            <TextField
+                                placeholder='Filter'
+                                size='small'
+                                value={filter}
+                                onChange={(e) => setFilter(e.target.value)}
+                                sx={{ pl: 1, pr: 1 }}
+                                fullWidth
+                            />
+                        </Box>
+                        <HistoryPagination
+                            page={page}
+                            setPage={setPage}
+                            filter={filter}
+                        />
                         <List
                             sx={{
                                 width: '100%',
@@ -80,7 +129,11 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                             {...props}
                         >
                             {!results?.length && (
-                                <Typography variant='body1' align='center'>
+                                <Typography
+                                    variant='body1'
+                                    align='center'
+                                    sx={{ mb: 2 }}
+                                >
                                     Nothing yet
                                 </Typography>
                             )}
@@ -88,7 +141,11 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                 return <HistoryCard output={r} key={r.id} />;
                             })}
                         </List>
-                        <HistoryPagination page={page} setPage={setPage} />
+                        <HistoryPagination
+                            page={page}
+                            setPage={setPage}
+                            filter={filter}
+                        />
                         <DiffViewer />
                     </VerticalBox>
                 </CompareContextProvider>
