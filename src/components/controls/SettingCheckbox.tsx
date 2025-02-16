@@ -3,7 +3,8 @@ import {
     FormControlLabel,
     FormControlLabelProps,
 } from '@mui/material';
-import { settings, useBooleanSetting } from '../../hooks/useSaveOutputsLocally';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { settings } from '../../hooks/settings';
 import { db } from '../history/db';
 
 export const SettingCheckbox = ({

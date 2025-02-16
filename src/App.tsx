@@ -22,6 +22,7 @@ import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
 import { mergeConfig, setConfig } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
+import { NotificationSound } from './components/controls/NotificationSound';
 
 function App() {
     const {
@@ -108,6 +109,7 @@ function App() {
                     <AppSettings />
                 </VerticalBox>
                 <ThemedToaster />
+                <NotificationSound />
             </ResultOverrideContextProvider>
         </ThemeContext>
     );

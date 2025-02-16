@@ -4,7 +4,8 @@ import {
     createTheme,
     ThemeProvider,
 } from '@mui/material';
-import { settings, useBooleanSetting } from '../../hooks/useSaveOutputsLocally';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { settings } from '../../hooks/settings';
 
 export const ThemeContext = ({ ...props }) => {
     const disable_help = useBooleanSetting(settings.disable_help);

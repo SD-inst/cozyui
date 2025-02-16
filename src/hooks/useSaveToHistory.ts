@@ -7,7 +7,8 @@ import { statusEnum } from '../redux/progress';
 import { actionEnum, addResult } from '../redux/tab';
 import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
-import { settings, useBooleanSetting } from './useSaveOutputsLocally';
+import { useBooleanSetting } from './useBooleanSetting';
+import { settings } from './settings';
 import { useTabName } from '../components/contexts/TabContext';
 
 export const useSaveToHistory = () => {

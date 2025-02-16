@@ -1,6 +1,7 @@
 import { Help } from '@mui/icons-material';
 import { Tooltip, TooltipProps } from '@mui/material';
-import { useBooleanSetting, settings } from '../../hooks/useSaveOutputsLocally';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { settings } from '../../hooks/settings';
 
 export const HelpButton = ({ ...props }: Omit<TooltipProps, 'children'>) => {
     const disable_help = useBooleanSetting(settings.disable_help);

@@ -1,10 +1,12 @@
 import { ExpandMore, Settings } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useRef } from 'react';
-import { settings, useBooleanSetting } from '../../hooks/useSaveOutputsLocally';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { settings } from '../../hooks/settings';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { SettingCheckbox } from './SettingCheckbox';
 import { autoscrollSlotProps } from './utils';
+import { NotificationSetting } from './NotificationSetting';
 
 export const AppSettings = () => {
     const save_history = useBooleanSetting(settings.save_history);
@@ -34,6 +36,7 @@ export const AppSettings = () => {
                     name={settings.disable_help}
                     label='Disable tooltips'
                 />
+                <NotificationSetting />
                 <ClearHistoryButton sx={{ mt: 5 }} />
             </AccordionDetails>
         </Accordion>
