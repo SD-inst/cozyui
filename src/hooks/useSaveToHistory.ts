@@ -10,8 +10,10 @@ import { useApiURL } from './useApiURL';
 import { useBooleanSetting } from './useBooleanSetting';
 import { settings } from './settings';
 import { useTabName } from '../components/contexts/TabContext';
+import { useTranslate } from '../i18n/I18nContext';
 
 export const useSaveToHistory = () => {
+    const tr = useTranslate();
     const apiUrl = useApiURL();
     const results = useResult();
     const { id, type } = useResultParam();
@@ -90,7 +92,7 @@ export const useSaveToHistory = () => {
                 console.log('History updated');
             })
             .catch((e) => {
-                toast.error('Error saving history: ' + e);
+                toast.error(tr('toasts.error_saving_history', { err: e }));
                 console.log(e);
             });
     }, [
@@ -106,6 +108,7 @@ export const useSaveToHistory = () => {
         status,
         tab,
         tab_name,
+        tr,
         type,
         values,
     ]);

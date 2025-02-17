@@ -27,6 +27,8 @@ import { useAPI } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { mergeType } from '../../api/mergeType';
+import { useTranslate } from '../../i18n/I18nContext';
+import { HelpButton } from './HelpButton';
 
 type valueType = {
     id: string;
@@ -46,6 +48,7 @@ const LoraChip = ({
     value: valueType;
     onOK: (strength: number, merge: mergeType) => void;
 }) => {
+    const tr = useTranslate();
     const { key, ...tagProps } = getTagProps({ index });
     const [open, setOpen] = useState(false);
     const [strength, setStrength] = useState('' + value.strength);
@@ -81,12 +84,16 @@ const LoraChip = ({
                 {...tagProps}
             />
             <Dialog open={open} onClose={() => setOpen(false)}>
-                <DialogTitle>Change lora weight</DialogTitle>
+                <DialogTitle>
+                    {tr('controls.change_lora_merge_params')}
+                </DialogTitle>
                 <DialogContent
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
                 >
                     <TextField
                         fullWidth
+                        sx={{ mt: 1 }}
+                        label={tr('controls.weight')}
                         value={strength}
                         type='number'
                         slotProps={{
@@ -102,27 +109,31 @@ const LoraChip = ({
                         }}
                     />
                     <FormControl fullWidth>
-                        <InputLabel>Merge type</InputLabel>
+                        <InputLabel>{tr('controls.merge_type')}</InputLabel>
                         <Select
-                            label='Merge type'
+                            label={tr('controls.merge_type')}
                             value={merge}
                             onChange={(e) =>
                                 setMerge(e.target.value as mergeType)
                             }
                         >
                             <MenuItem value={mergeType.SINGLE}>
-                                Single only
+                                {tr('controls.merge_type_single')}
                             </MenuItem>
                             <MenuItem value={mergeType.DOUBLE}>
-                                Double only
+                                {tr('controls.merge_type_double')}
                             </MenuItem>
-                            <MenuItem value={mergeType.FULL}>Full</MenuItem>
+                            <MenuItem value={mergeType.FULL}>
+                                {tr('controls.merge_type_full')}
+                            </MenuItem>
                         </Select>
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleOK}>OK</Button>
-                    <Button onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button onClick={handleOK}>{tr('controls.ok')}</Button>
+                    <Button onClick={() => setOpen(false)}>
+                        {tr('controls.cancel')}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>
@@ -144,6 +155,7 @@ export const LoraInput = ({
     'renderInput' | 'options'
 >) => {
     const final_filter = import.meta.env.VITE_FILTER_LORAS || filter || '';
+    const tr = useTranslate();
     const disable_lora_filter = localStorage.getItem('disable_lora_filter');
     const qc = useQueryClient();
     const apiUrl = useApiURL();
@@ -308,7 +320,7 @@ export const LoraInput = ({
             merge: mergeType.DOUBLE,
         }));
     return (
-        <Box display='flex' gap={1} sx={sx}>
+        <Box display='flex' position='relative' gap={1} sx={sx}>
             <Autocomplete
                 onKeyUp={ceHanler}
                 renderTags={(values, getTagProps) =>
@@ -335,10 +347,16 @@ export const LoraInput = ({
                 {...props}
                 options={opts}
                 renderInput={(params) => (
-                    <TextField label={props.label || props.name} {...params} />
+                    <>
+                        <TextField
+                            label={tr(`controls.${props.name}`)}
+                            {...params}
+                        />
+                        <HelpButton title='lora' sx={{ right: 80, mt: -1 }} />
+                    </>
                 )}
             />
-            <Tooltip arrow title='Reload lora list'>
+            <Tooltip arrow title={tr('controls.lora_reload')}>
                 <Button
                     variant='outlined'
                     onClick={() =>
@@ -346,7 +364,9 @@ export const LoraInput = ({
                             .invalidateQueries({
                                 queryKey: [apiUrl + '/api/object_info'],
                             })
-                            .then(() => toast.success('Reloaded objects'))
+                            .then(() =>
+                                toast.success(tr('toasts.reloaded_objects'))
+                            )
                     }
                 >
                     <Refresh />

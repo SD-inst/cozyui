@@ -7,8 +7,10 @@ import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { VerticalBox } from '../VerticalBox';
 import { useStringSetting } from '../../hooks/useStringSetting';
 import { settings } from '../../hooks/settings';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const AudioResult = ({ title }: { title?: string }) => {
+    const tr = useTranslate();
     const results = useResult();
     const audioRef = useRef<HTMLAudioElement>(null);
     const apiUrl = useApiURL();
@@ -35,7 +37,9 @@ export const AudioResult = ({ title }: { title?: string }) => {
     useSaveToHistory();
     return (
         <VerticalBox width='100%'>
-            <Typography variant='body1'>{title || 'Audio'}</Typography>
+            <Typography variant='body1'>
+                {title || tr('controls.audio')}
+            </Typography>
             {results?.map((r: any) => {
                 const url = makeOutputUrl(apiUrl, r);
                 return (
@@ -49,7 +53,7 @@ export const AudioResult = ({ title }: { title?: string }) => {
                         />
                         <a download href={url}>
                             <Button variant='contained' color='success'>
-                                Download
+                                {tr('controls.download')}
                             </Button>
                         </a>
                     </VerticalBox>

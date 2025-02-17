@@ -15,8 +15,10 @@ import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
 import { CFGInput } from '../controls/CFGInput';
+import { useTranslate } from '../../i18n/I18nContext';
 
 const Content = () => {
+    const tr = useTranslate();
     const handler = useCallback((api: any, value: string) => {
         if (!value) {
             return;
@@ -38,11 +40,10 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' label='start image' />
-                <FileUpload name='image_end' label='end image (optional)' />
+                <FileUpload name='image' />
+                <FileUpload name='image_end' />
                 <SelectInput
                     name='suffix'
-                    label='Description suffix (optional)'
                     defaultValue=''
                     choices={[
                         { text: '<None>', value: '' },
@@ -67,7 +68,6 @@ const Content = () => {
                             value: 'MiaoshouAI/Florence-2-large-PromptGen-v2.0',
                         },
                     ]}
-                    label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
                 <DescribeButton />
@@ -77,13 +77,12 @@ const Content = () => {
                 <CFGInput defaultValue={3} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
-                        Advanced parameters
+                        {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
                         <TextInput
                             name='neg_prompt'
                             defaultValue='Blurring, mutation, deformation, distortion, dark and solid, comics.'
-                            label='negative prompt'
                             multiline
                         />
                         <SelectInput

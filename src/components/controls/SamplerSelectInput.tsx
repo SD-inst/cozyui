@@ -1,7 +1,5 @@
 import { CustomSelectInputProps, SelectInput } from './SelectInput';
 
-export const sampler_tooltip = `Samplers guide denoising using different algorithms. Some are more correct and produce more details, but they're slower. Experiment and see for yourself.`;
-
 export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
     return (
         <SelectInput
@@ -14,7 +12,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'IPNDM', value: 'ipndm' },
             ]}
             defaultValue='dpmpp_2m'
-            tooltip={sampler_tooltip}
+            tooltip='sampler'
             {...props}
         />
     );

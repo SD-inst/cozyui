@@ -27,6 +27,7 @@ import {
     setPrompt,
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
+import { useTranslate } from '../../i18n/I18nContext';
 
 type error = {
     controls: string[];
@@ -49,11 +50,12 @@ export type GenerateButtonProps = {
 };
 
 export const GenerateButton = ({
-    text = 'Generate',
+    text = 'generate',
     hideErrors,
     noexec,
 }: GenerateButtonProps) => {
     const dispatch = useAppDispatch();
+    const tr = useTranslate();
     const client_id = useAppSelector((s) => s.config.client_id);
     const status = useAppSelector((s) => s.progress.status);
     const tabs = useAppSelector((s) => s.config.tabs);
@@ -105,7 +107,9 @@ export const GenerateButton = ({
                     handlers[name](params.prompt, val); // modify api request
                 } catch (e) {
                     console.log(e);
-                    toast.error(`Error processing handler of ${name}: ${e}`);
+                    toast.error(
+                        tr('toasts.error_processing_handler', { name, err: e })
+                    );
                     dispatch(setStatus(statusEnum.ERROR));
                     return Promise.reject();
                 }
@@ -148,7 +152,7 @@ export const GenerateButton = ({
         );
         dispatch(setApi(params.prompt));
         if (noexec) {
-            toast.success('Execution skipped');
+            toast.success(tr('toasts.execution_skipped'));
             dispatch(setStatus(statusEnum.FINISHED));
             return Promise.resolve();
         }
@@ -182,15 +186,16 @@ export const GenerateButton = ({
             }
         });
     }, [
-        apiData,
-        apiUrl,
-        client_id,
-        controls,
-        tab_name,
         dispatch,
+        client_id,
+        apiData,
         getValues,
-        handlers,
         noexec,
+        apiUrl,
+        controls,
+        handlers,
+        tr,
+        tab_name,
     ]);
     const handleCtrlEnter = useCallback(
         (e: KeyboardEvent) => {
@@ -216,7 +221,7 @@ export const GenerateButton = ({
                     disabled={generation_disabled || !apiSuccess}
                     sx={{ mt: 1, mb: 1 }}
                 >
-                    {text}
+                    {tr(`controls.${text}`)}
                 </Button>
                 {!hideErrors && errors.controls.length ? (
                     <FormHelperText error>

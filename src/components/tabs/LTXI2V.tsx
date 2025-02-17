@@ -14,15 +14,16 @@ import { VideoResult } from '../controls/VideoResult';
 import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
 import { CFGInput } from '../controls/CFGInput';
+import { useTranslate } from '../../i18n/I18nContext';
 
 const Content = () => {
+    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
                 <SelectInput
                     name='suffix'
-                    label='Description suffix'
                     defaultValue=' The scene is captured in real-life footage.'
                     choices={[
                         { text: '<None>', value: '' },
@@ -47,7 +48,6 @@ const Content = () => {
                             value: 'MiaoshouAI/Florence-2-large-PromptGen-v2.0',
                         },
                     ]}
-                    label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
                 <DescribeButton />
@@ -55,16 +55,14 @@ const Content = () => {
                 <Box display='flex' flexDirection='row' width='100%' mt={2}>
                     <Box display='flex' flexDirection='column' flex={1}>
                         <SliderInput
-                            name='width'
-                            label='max width'
+                            name='max_width'
                             defaultValue={800}
                             min={128}
                             max={1280}
                             step={32}
                         />
                         <SliderInput
-                            name='height'
-                            label='max height'
+                            name='max_height'
                             defaultValue={800}
                             min={128}
                             max={1280}
@@ -90,18 +88,16 @@ const Content = () => {
                 <CFGInput defaultValue={3} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
-                        Advanced parameters
+                        {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
                         <TextInput
                             name='neg_prompt'
                             defaultValue='low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly'
-                            label='negative prompt'
                             multiline
                         />
                         <SliderInput
                             name='stg'
-                            label='STG'
                             defaultValue={1}
                             min={0}
                             max={5}
@@ -109,7 +105,6 @@ const Content = () => {
                         />
                         <SliderInput
                             name='stg_rescale'
-                            label='STG rescale'
                             defaultValue={0.75}
                             min={0}
                             max={1}
@@ -122,7 +117,6 @@ const Content = () => {
                                 { text: 'Residual', value: 'residual' },
                             ]}
                             defaultValue='attention'
-                            label='STG mode'
                         />
                         <SliderInput
                             name='compression'

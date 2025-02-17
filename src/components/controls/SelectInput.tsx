@@ -3,12 +3,13 @@ import {
     InputLabel,
     MenuItem,
     Select,
-    SelectProps
+    SelectProps,
 } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { Optional } from './optional';
 import { HelpButton } from './HelpButton';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export type SelectInputProps = {
     defaultValue?: any;
@@ -21,6 +22,7 @@ export type SelectInputProps = {
           }
     )[];
     tooltip?: string;
+    name: string;
 } & SelectProps;
 
 export type CustomSelectInputProps = Optional<
@@ -39,6 +41,8 @@ export const SelectInput = ({
         defaultValue: defaultValue,
     });
     const { setValue } = useFormContext();
+    const tr = useTranslate();
+    const tr_key = `controls.${props.name}`;
     const alsoSet = useCallback(
         (value: string) => {
             const c = choices.find(
@@ -63,9 +67,9 @@ export const SelectInput = ({
                 flexDirection: 'row',
             }}
         >
-            <InputLabel>{props.label || props.name}</InputLabel>
+            <InputLabel>{tr(tr_key)}</InputLabel>
             <Select
-                label={props.label || props.name}
+                label={tr(tr_key)}
                 {...ctl.field}
                 onChange={(e) => {
                     ctl.field.onChange(e);

@@ -1,4 +1,3 @@
-import { sampler_tooltip } from './SamplerSelectInput';
 import { CustomSelectInputProps, SelectInput } from './SelectInput';
 
 export const KJSchedulerSelectInput = ({
@@ -25,7 +24,7 @@ export const KJSchedulerSelectInput = ({
                 },
             ]}
             defaultValue='DPMSolverMultistepScheduler'
-            tooltip={sampler_tooltip}
+            tooltip='sampler'
             {...props}
         />
     );

@@ -4,6 +4,7 @@ import { useRegisterHandler } from '../contexts/TabContext';
 import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useConfigTab';
+import { useTranslate } from '../../i18n/I18nContext';
 
 type valueType = {
     enabled: boolean;
@@ -15,6 +16,7 @@ type valueType = {
 
 export const BlockSwapInput = ({ ...props }) => {
     const { handler_options } = useAPI();
+    const tr = useTranslate();
     const handler = useCallback(
         (api: any, value: valueType) => {
             const { enabled, ...inputs } = value;
@@ -59,7 +61,7 @@ export const BlockSwapInput = ({ ...props }) => {
             {...props}
         >
             <FormControlLabel
-                label='Enable block swap (saves VRAM, slow)'
+                label={tr(`controls.${props.name}`)}
                 control={
                     <Switch
                         checked={value.enabled}
@@ -74,7 +76,7 @@ export const BlockSwapInput = ({ ...props }) => {
                     <Box display='flex' flexDirection='row' gap={2}>
                         <TextField
                             type='number'
-                            label='single blocks'
+                            label={tr('controls.single_blocks')}
                             slotProps={{ htmlInput: { min: 0, max: 40 } }}
                             value={value.single_blocks_to_swap}
                             onChange={(e) =>
@@ -87,7 +89,7 @@ export const BlockSwapInput = ({ ...props }) => {
                         />
                         <TextField
                             type='number'
-                            label='double blocks'
+                            label={tr('controls.double_blocks')}
                             slotProps={{ htmlInput: { min: 0, max: 20 } }}
                             value={value.double_blocks_to_swap}
                             onChange={(e) =>
@@ -99,7 +101,12 @@ export const BlockSwapInput = ({ ...props }) => {
                             fullWidth
                         />
                     </Box>
-                    <Box display='flex' flexDirection='row' gap={2}>
+                    <Box
+                        display='flex'
+                        flexDirection='row'
+                        flexWrap='wrap'
+                        gap={2}
+                    >
                         <FormControlLabel
                             control={
                                 <Switch
@@ -112,7 +119,7 @@ export const BlockSwapInput = ({ ...props }) => {
                                     }
                                 />
                             }
-                            label='Offload txt in'
+                            label={tr('controls.offload_txt_in')}
                         />
                         <FormControlLabel
                             control={
@@ -126,7 +133,7 @@ export const BlockSwapInput = ({ ...props }) => {
                                     }
                                 />
                             }
-                            label='Offload img in'
+                            label={tr('controls.offload_img_in')}
                         />
                     </Box>
                 </>

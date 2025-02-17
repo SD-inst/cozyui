@@ -18,6 +18,7 @@ import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
 import { DiffViewer } from './DiffViewer';
 import { HistoryCard } from './HistoryCard';
+import { useTranslate } from '../../i18n/I18nContext';
 
 const page_size = 10;
 
@@ -67,6 +68,7 @@ const HistoryPagination = ({
 };
 
 export const HistoryPanel = ({ ...props }: ListProps) => {
+    const tr = useTranslate();
     const [page, setPage] = useState(1);
     const [filter, setFilter] = useState('');
     const results = useLiveQuery(async () => {
@@ -101,14 +103,14 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 }}
             >
                 <History sx={{ mr: 1 }} />
-                History
+                {tr('controls.history')}
             </AccordionSummary>
             <AccordionDetails ref={ref} sx={{ p: { xs: 0, md: 2 } }}>
                 <CompareContextProvider>
                     <VerticalBox>
                         <Box width='100%' display='flex'>
                             <TextField
-                                placeholder='Filter'
+                                placeholder={tr('controls.filter')}
                                 size='small'
                                 value={filter}
                                 onChange={(e) => setFilter(e.target.value)}
@@ -134,7 +136,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                     align='center'
                                     sx={{ mb: 2 }}
                                 >
-                                    Nothing yet
+                                    {tr('controls.history_empty')}
                                 </Typography>
                             )}
                             {results?.map((r) => {

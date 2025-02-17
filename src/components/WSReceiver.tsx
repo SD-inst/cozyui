@@ -14,6 +14,7 @@ import {
     statusEnum,
 } from '../redux/progress';
 import { addResult, clearPrompt } from '../redux/tab';
+import { useTranslate, useTranslateReady } from '../i18n/I18nContext';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -23,6 +24,8 @@ export type WSHandlers = {
 };
 
 export const WSReceiver = () => {
+    const tr = useTranslate();
+    const tr_ready = useTranslateReady();
     const dispatch = useAppDispatch();
     const reset = useCallback(
         (noPromptReset?: boolean) => {
@@ -99,19 +102,19 @@ export const WSReceiver = () => {
     const handleOpen = useCallback(() => {
         dispatch(setConnected(true));
         console.log('Connected to ComfyUI!');
-        toast.success('Connected!');
-    }, [dispatch]);
+        toast.success(tr('toasts.connected'));
+    }, [dispatch, tr]);
     const handleClose = useCallback(() => {
         dispatch(setConnected(false));
         console.log('Disconnected from ComfyUI');
-        toast.error('Disconnected');
-    }, [dispatch]);
+        toast.error(tr('toasts.disconnected'));
+    }, [dispatch, tr]);
     useWebSocket(
         apiUrl + '/ws?clientId=' + client_id,
         handleMessage,
         handleOpen,
         handleClose,
-        !!apiUrl
+        !!apiUrl && tr_ready
     );
     return null;
 };

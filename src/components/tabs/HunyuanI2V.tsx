@@ -21,15 +21,16 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { hyv_models } from './hyv_models';
+import { useTranslate } from '../../i18n/I18nContext';
 
 const Content = () => {
+    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
                 <TextInput
                     name='suffix'
-                    label='Description suffix'
                     defaultValue=''
                     sx={{ display: 'none' }}
                 />
@@ -49,7 +50,6 @@ const Content = () => {
                             value: 'MiaoshouAI/Florence-2-large-PromptGen-v2.0',
                         },
                     ]}
-                    label='LLM for description'
                     defaultValue='thwri/CogFlorence-2.2-Large'
                 />
                 <DescribeButton />
@@ -72,14 +72,13 @@ const Content = () => {
                 <GuidanceInput defaultValue={10} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
-                        Advanced parameters
+                        {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
                         <KJSchedulerSelectInput name='sampler' />
                         <FlowShiftInput defaultValue={10} />
                         <SliderInput
                             name='aug_strength'
-                            label='Noise augmentation'
                             min={0}
                             max={1}
                             step={0.01}
@@ -87,7 +86,6 @@ const Content = () => {
                         />
                         <SliderInput
                             name='latent_strength'
-                            label='Latent strength'
                             min={0}
                             max={1}
                             step={0.01}
@@ -95,7 +93,6 @@ const Content = () => {
                         />
                         <EnhanceVideoInput
                             name='enhance_video'
-                            label='Enhance-a-Video weight'
                         />
                         <TeaCacheInput name='tea_cache' defaultValue={0.15} />
                         <BlockSwapInput name='block_swap' />

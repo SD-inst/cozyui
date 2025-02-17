@@ -8,8 +8,10 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { db } from './db';
+import { useTranslate } from '../../i18n/I18nContext';
 
-export const DeleteButton = ({ id }: { id: number; }) => {
+export const DeleteButton = ({ id }: { id: number }) => {
+    const tr = useTranslate();
     const [open, setOpen] = useState(false);
     const handleOK = () => {
         db.taskResults.delete(id);
@@ -30,13 +32,15 @@ export const DeleteButton = ({ id }: { id: number; }) => {
                 onClose={() => setOpen(false)}
                 onKeyUp={(e) => e.key === 'Enter' && handleOK()}
             >
-                <DialogTitle>Delete result</DialogTitle>
+                <DialogTitle>{tr('controls.delete_result')}</DialogTitle>
                 <DialogContent>
-                    Are you sure you want to delete this result?
+                    {tr('controls.confirm_delete_result')}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleOK}>OK</Button>
-                    <Button onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button onClick={handleOK}>{tr('controls.ok')}</Button>
+                    <Button onClick={() => setOpen(false)}>
+                        {tr('controls.cancel')}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </>

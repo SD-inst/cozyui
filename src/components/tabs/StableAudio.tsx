@@ -10,8 +10,10 @@ import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
 import { WFTab } from '../WFTab';
 import { CFGInput } from '../controls/CFGInput';
+import { useTranslate } from '../../i18n/I18nContext';
 
 const Content = () => {
+    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -32,12 +34,11 @@ const Content = () => {
                 <CFGInput />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
-                        Advanced parameters
+                        {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
                         <TextInput
                             name='neg_prompt'
-                            label='negative prompt'
                             defaultValue='low quality'
                             multiline
                             sx={{ mb: 2 }}

@@ -2,6 +2,7 @@ import { SliderProps } from '@mui/material';
 import { Mark } from '@mui/material/Slider/useSlider.types';
 import { SliderInput } from './SliderInput';
 import { useWatch } from 'react-hook-form';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const LengthInput = ({
     min,
@@ -10,12 +11,13 @@ export const LengthInput = ({
     fps,
     ...props
 }: {
+    name: string;
     min: number;
     max: number;
     step?: number;
-    label?: string;
     fps?: number;
 } & SliderProps) => {
+    const tr = useTranslate();
     const value = useWatch({
         name: props.name!,
         defaultValue: props.defaultValue,
@@ -33,12 +35,10 @@ export const LengthInput = ({
             })()}
             step={null}
             track={false}
-            label={
+            suffix={
                 fps
-                    ? `${props.label || props.name} [${(value / fps).toFixed(
-                          1
-                      )} s]`
-                    : props.label
+                    ? tr('controls.duration', { sec: (value / fps).toFixed(1) })
+                    : ''
             }
             {...props}
         />

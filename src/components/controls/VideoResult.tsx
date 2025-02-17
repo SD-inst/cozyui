@@ -5,9 +5,11 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { VerticalBox } from '../VerticalBox';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const VideoResult = ({ title }: { title?: string }) => {
     const results = useResult();
+    const tr = useTranslate();
     const videoRef = useRef<HTMLVideoElement>(null);
     const apiUrl = useApiURL();
     useEffect(() => {
@@ -18,7 +20,9 @@ export const VideoResult = ({ title }: { title?: string }) => {
     useSaveToHistory();
     return (
         <VerticalBox width='100%'>
-            <Typography variant='body1'>{title || 'Video'}</Typography>
+            <Typography variant='body1'>
+                {title || tr('controls.video')}
+            </Typography>
             {results?.map((r: any) => {
                 const url = makeOutputUrl(apiUrl, r);
                 return (
@@ -33,7 +37,7 @@ export const VideoResult = ({ title }: { title?: string }) => {
                         />
                         <a download href={url}>
                             <Button variant='contained' color='success'>
-                                Download
+                                {tr('controls.download')}
                             </Button>
                         </a>
                     </VerticalBox>

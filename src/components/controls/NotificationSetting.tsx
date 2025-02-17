@@ -9,8 +9,10 @@ import { settings } from '../../hooks/settings';
 import { useStringSetting } from '../../hooks/useStringSetting';
 import { db } from '../history/db';
 import { useRef } from 'react';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const NotificationSetting = () => {
+    const tr = useTranslate();
     const sound = useStringSetting(settings.notification_sound, 'None');
     const audio = useRef<HTMLAudioElement>(null);
     const handleChange = (e: SelectChangeEvent<string>): void => {
@@ -28,18 +30,22 @@ export const NotificationSetting = () => {
 
     return (
         <>
-            <FormControl sx={{ width: 200 }}>
-                <InputLabel>Notification</InputLabel>
+            <FormControl sx={{ width: 220 }}>
+                <InputLabel>{tr('settings.notification')}</InputLabel>
                 <Select
-                    label='Notification'
+                    label={tr('settings.notification')}
                     size='small'
                     value={sound}
                     onChange={handleChange}
                 >
-                    <MenuItem value='None'>None</MenuItem>
+                    <MenuItem value='None'>
+                        {tr('settings.notification_none')}
+                    </MenuItem>
                     {new Array(5).fill(undefined).map((_, i) => (
                         <MenuItem key={i} value={`${i + 1}.mp3`}>
-                            Sound effect #{i + 1}
+                            {tr('settings.notification_name', {
+                                number: i + 1,
+                            })}
                         </MenuItem>
                     ))}
                 </Select>

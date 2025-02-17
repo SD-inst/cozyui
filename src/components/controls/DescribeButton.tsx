@@ -33,7 +33,7 @@ const SetResults = ({ field }: { field: string }) => {
 
 export const DescribeButton = ({
     field = 'prompt',
-    text = 'Describe',
+    text = 'describe',
     api = 'Describe image',
     ...props
 }: {

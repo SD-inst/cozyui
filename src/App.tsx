@@ -1,7 +1,6 @@
 import '@fontsource/roboto/400.css';
-import { useEffect } from 'react';
-import toast from 'react-hot-toast';
 import './App.css';
+import { ConfigLoader } from './ConfigLoader';
 import { Progress } from './components/Progress';
 import { VerticalBox } from './components/VerticalBox';
 import { WSReceiver } from './components/WSReceiver';
@@ -10,6 +9,7 @@ import { ResultOverrideContextProvider } from './components/contexts/ResultOverr
 import { ThemeContext } from './components/contexts/ThemeContext';
 import { AppSettings } from './components/controls/AppSettings';
 import { InterruptButton } from './components/controls/InterruptButton';
+import { NotificationSound } from './components/controls/NotificationSound';
 import { ThemedToaster } from './components/controls/ThemedToaster';
 import { HistoryPanel } from './components/history/HistoryPanel';
 import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
@@ -18,99 +18,33 @@ import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
 import { HunyanT2VTabKJ } from './components/tabs/HunyuanT2VKJ';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
 import { StableAudioTab } from './components/tabs/StableAudio';
-import { useApiURL } from './hooks/useApiURL';
-import { useGet } from './hooks/useGet';
-import { mergeConfig, setConfig } from './redux/config';
-import { useAppDispatch } from './redux/hooks';
-import { NotificationSound } from './components/controls/NotificationSound';
+import { I18nContextProvider } from './i18n/I18nContextProvider';
 
 function App() {
-    const {
-        data: dataConfig,
-        error: errorConfig,
-        isError: isErrorConfig,
-        isSuccess: isSuccessConfig,
-    } = useGet({ url: 'config.json', staleTime: Infinity });
-    const {
-        data: dataLocalConfig,
-        error: errorLocalConfig,
-        isError: isErrorLocalConfig,
-        isSuccess: isSuccessLocalConfig,
-    } = useGet({
-        url: 'config.local.json',
-        staleTime: Infinity,
-        enabled: isSuccessConfig,
-    });
-    const apiUrl = useApiURL();
-    const {
-        data: dataObj,
-        error: errorObj,
-        isError: isErrorObj,
-        isSuccess: isSuccessObj,
-    } = useGet({
-        url: apiUrl + '/api/object_info',
-        enabled: isSuccessConfig && !!apiUrl,
-        cache: true,
-    });
-    const dispatch = useAppDispatch();
-    useEffect(() => {
-        if (isErrorConfig) {
-            toast.error('Error getting config: ' + errorConfig);
-        }
-        if (!isSuccessConfig) {
-            return;
-        }
-        toast.success('Got config');
-        dispatch(setConfig(dataConfig));
-    }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig, dispatch]);
-    useEffect(() => {
-        if (isErrorLocalConfig) {
-            console.error('Error getting local config: ' + errorLocalConfig);
-        }
-        if (!isSuccessLocalConfig) {
-            return;
-        }
-        toast.success('Got local config');
-        dispatch(mergeConfig(dataLocalConfig));
-    }, [
-        isErrorLocalConfig,
-        errorLocalConfig,
-        isSuccessLocalConfig,
-        dataLocalConfig,
-        dispatch,
-    ]);
-    useEffect(() => {
-        if (isErrorObj) {
-            toast.error('Error getting object info: ' + errorObj);
-        }
-        if (!isSuccessObj) {
-            return;
-        }
-        toast.success('Objects updated');
-        dispatch(mergeConfig({ object_info: dataObj }));
-    }, [isErrorObj, errorObj, isSuccessObj, dataObj, dataConfig, dispatch]);
-
     return (
         <ThemeContext>
-            <ResultOverrideContextProvider>
-                <WSReceiver />
-                <VerticalBox>
-                    <WorkflowTabs>
-                        {HunyanT2VTab}
-                        {HunyanI2VTab}
-                        {HunyanT2VTabKJ}
-                        {LTXI2VTab}
-                        {EasyAnimateI2VTab}
-                        {StableAudioTab}
-                    </WorkflowTabs>
-                    <Progress />
-                    <InterruptButton />
-                    <HistoryPanel />
-                    <AppSettings />
-                </VerticalBox>
-                <ThemedToaster />
-                <NotificationSound />
-            </ResultOverrideContextProvider>
+            <I18nContextProvider>
+                <ConfigLoader />
+                <ResultOverrideContextProvider>
+                    <WSReceiver />
+                    <VerticalBox>
+                        <WorkflowTabs>
+                            {HunyanT2VTab}
+                            {HunyanI2VTab}
+                            {HunyanT2VTabKJ}
+                            {LTXI2VTab}
+                            {EasyAnimateI2VTab}
+                            {StableAudioTab}
+                        </WorkflowTabs>
+                        <Progress />
+                        <InterruptButton />
+                        <HistoryPanel />
+                        <AppSettings />
+                    </VerticalBox>
+                    <ThemedToaster />
+                    <NotificationSound />
+                </ResultOverrideContextProvider>
+            </I18nContextProvider>
         </ThemeContext>
     );
 }

@@ -195,11 +195,11 @@
                     "id": "81",
                     "field": "steps"
                 },
-                "width": {
+                "max_width": {
                     "id": "155",
                     "field": "width"
                 },
-                "height": {
+                "max_height": {
                     "id": "155",
                     "field": "height"
                 },

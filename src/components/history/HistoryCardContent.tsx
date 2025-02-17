@@ -1,5 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { useIsPhone } from '../../hooks/useIsPhone';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const HistoryCardContent = ({
     url,
@@ -9,6 +10,7 @@ export const HistoryCardContent = ({
     type: string;
 }) => {
     const phone = useIsPhone();
+    const tr = useTranslate();
     switch (type) {
         case 'gifs':
             return (
@@ -36,6 +38,10 @@ export const HistoryCardContent = ({
                 </Box>
             );
         default:
-            return <Typography variant='h6'>Unknown media</Typography>;
+            return (
+                <Typography variant='h6'>
+                    {tr('controls.unknown_media')}
+                </Typography>
+            );
     }
 };

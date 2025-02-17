@@ -6,15 +6,15 @@ import {
 import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 import { settings } from '../../hooks/settings';
 import { db } from '../history/db';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const SettingCheckbox = ({
     name,
-    label,
     ...props
 }: {
     name: settings;
-    label: string;
-} & Omit<FormControlLabelProps, 'control'>) => {
+} & Omit<FormControlLabelProps, 'control' | 'label'>) => {
+    const tr = useTranslate();
     const value = useBooleanSetting(name);
     const updateSetting = (c: boolean) => {
         db.settings.put({ name, value: '' + c });
@@ -27,7 +27,7 @@ export const SettingCheckbox = ({
                     onChange={(_, c) => updateSetting(c)}
                 />
             }
-            label={label}
+            label={tr(`settings.${name}`)}
             {...props}
         />
     );

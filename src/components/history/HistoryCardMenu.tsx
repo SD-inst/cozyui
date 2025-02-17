@@ -4,8 +4,10 @@ import { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CompareContext } from '../contexts/CompareContext';
 import { db } from './db';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const HistoryCardMenu = ({ id }: { id: number }) => {
+    const tr = useTranslate();
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const { setCompare, selected_id } = useContext(CompareContext);
     const handleCompareWithPrev = async () => {
@@ -17,7 +19,7 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
             .limit(2)
             .toArray();
         if (tasks.length != 2) {
-            toast.error('Previous result was not found');
+            toast.error(tr('toasts.no_prev_result'));
             return;
         }
         setCompare((v) => ({
@@ -38,7 +40,7 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
     const handleCompareWithThis = async () => {
         setAnchor(null);
         if (!selected_id) {
-            toast.error('No base result chosen for comparison');
+            toast.error(tr('toasts.no_base'));
             return;
         }
         const taskA = await db.taskResults.get(selected_id);
@@ -76,22 +78,33 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
             >
                 {selected_id ? (
                     <MenuItem onClick={handleCompareWithThis}>
-                        Compare <CompareArrows sx={{ ml: 1, mr: 1 }} /> with
-                        this
+                        {(() => {
+                            const translated = tr(
+                                'controls.compare_arr_with_this'
+                            );
+                            const parts = translated.split('<-->');
+                            return [
+                                parts[0],
+                                <CompareArrows sx={{ ml: 1, mr: 1 }} />,
+                                parts.length > 1 ? parts[1] : null,
+                            ];
+                        })()}
                     </MenuItem>
                 ) : null}
                 <MenuItem onClick={handleCompareWithPrev}>
-                    Compare with previous
+                    {tr('controls.compare_prev')}
                 </MenuItem>
                 <MenuItem onClick={handleSetCompare}>
-                    Compare this with...
+                    {tr('controls.compare_this_with')}
                 </MenuItem>
                 {selected_id ? (
                     <MenuItem onClick={handleResetComparison}>
-                        Reset comparison
+                        {tr('controls.reset_comparison')}
                     </MenuItem>
                 ) : null}
-                <MenuItem onClick={handleShowParams}>Show params</MenuItem>
+                <MenuItem onClick={handleShowParams}>
+                    {tr('controls.show_params')}
+                </MenuItem>
             </Menu>
         </>
     );

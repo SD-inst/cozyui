@@ -3,18 +3,19 @@ import { useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useConfigTab';
+import { useTranslate } from '../../i18n/I18nContext';
 import { useRegisterHandler } from '../contexts/TabContext';
 
 type negType = { neg_prompt: string; cfg: number };
 
 export const KJHYCFG = ({
     defaultValue = { cfg: 0, neg_prompt: '' },
-    label = 'Negative prompt (halves speed)',
     ...props
 }: {
     defaultValue?: negType;
     name: string;
 } & TextFieldProps) => {
+    const tr = useTranslate();
     const { handler_options } = useAPI();
     const handler = useCallback(
         (api: any, value: { neg_prompt: string; cfg: string }) => {
@@ -52,7 +53,7 @@ export const KJHYCFG = ({
             <TextField
                 multiline
                 fullWidth
-                label={label || props.name}
+                label={tr(`controls.${props.name}`)}
                 value={ctl.field.value.neg_prompt}
                 onChange={(e) => {
                     ctl.field.onChange({
@@ -64,7 +65,7 @@ export const KJHYCFG = ({
             />
             <TextField
                 type='number'
-                label='CFG'
+                label={tr('controls.cfg')}
                 name={props.name + '_cfg'}
                 value={ctl.field.value.cfg}
                 slotProps={{ htmlInput: { min: 0, max: 8, step: 0.1 } }}

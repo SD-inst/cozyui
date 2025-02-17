@@ -17,8 +17,10 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import { db } from './db';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const ClearHistoryButton = ({ ...props }: BoxProps) => {
+    const tr = useTranslate();
     const [open, setOpen] = useState(false);
     const [openNothing, setOpenNothing] = useState(false);
     const [number, setNumber] = useState('0');
@@ -71,7 +73,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
         }
         setOpen(false);
     };
-    const cmp = newer ? 'newer' : 'older';
+    const cmp = tr(newer ? 'settings.newer' : 'settings.older');
     return (
         <Box
             display='flex'
@@ -92,25 +94,33 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 />
             </FormControl>
             <FormControl sx={{ minWidth: 120 }}>
-                <InputLabel>Unit</InputLabel>
+                <InputLabel>{tr('settings.unit')}</InputLabel>
                 <Select
                     size='small'
-                    label='Unit'
+                    label={tr('settings.unit')}
                     value={unit}
                     onChange={(e) => setUnit(e.target.value)}
                 >
-                    <MenuItem value='seconds'>seconds</MenuItem>
-                    <MenuItem value='minutes'>minutes</MenuItem>
-                    <MenuItem value='hours'>hours</MenuItem>
-                    <MenuItem value='days'>days</MenuItem>
-                    <MenuItem value='weeks'>weeks</MenuItem>
-                    <MenuItem value='months'>months</MenuItem>
-                    <MenuItem value='years'>years</MenuItem>
+                    {[
+                        'seconds',
+                        'minutes',
+                        'hours',
+                        'days',
+                        'weeks',
+                        'months',
+                        'years',
+                    ].map((v) => (
+                        <MenuItem key={v} value={v}>
+                            {tr(`settings.${v}`, {
+                                smart_count: parseInt(number) || 0,
+                            })}
+                        </MenuItem>
+                    ))}
                 </Select>
             </FormControl>
             <FormControlLabel
                 sx={{ minWidth: 100 }}
-                label='Newer'
+                label={tr('settings.newer')}
                 control={
                     <Checkbox
                         checked={newer}
@@ -124,22 +134,33 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 variant='outlined'
                 onClick={handleDelete}
             >
-                Clear {cmp}
+                {tr('settings.clear', { cmp })}
             </Button>
             <Dialog
                 open={open}
                 onClose={() => setOpen(false)}
                 onKeyUp={(e) => e.key === 'Esc' && setOpen(false)}
             >
-                <DialogTitle>Clear history</DialogTitle>
-                <DialogContent>
-                    Are you sure you want to delete history {cmp} than {number}{' '}
-                    {unit}?<br />
-                    <b>{toDelete} results</b> will be deleted.
-                </DialogContent>
+                <DialogTitle>{tr('settings.clear_history')}</DialogTitle>
+                <DialogContent
+                    dangerouslySetInnerHTML={{
+                        __html: tr('settings.clear_history_text', {
+                            cmp: cmp.toLowerCase(),
+                            number,
+                            unit: tr(`settings.${unit}`, {
+                                smart_count: number,
+                            }),
+                            toDelete: tr('settings.to_delete', {
+                                smart_count: toDelete,
+                            }),
+                        }),
+                    }}
+                ></DialogContent>
                 <DialogActions>
-                    <Button onClick={handleOK}>OK</Button>
-                    <Button onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button onClick={handleOK}>{tr('controls.ok')}</Button>
+                    <Button onClick={() => setOpen(false)}>
+                        {tr('controls.cancel')}
+                    </Button>
                 </DialogActions>
             </Dialog>
             <Dialog
@@ -147,9 +168,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 onClose={() => setOpenNothing(false)}
                 onKeyUp={(e) => e.key === 'Esc' && setOpenNothing(false)}
             >
-                <DialogTitle>Nothing to delete</DialogTitle>
+                <DialogTitle>{tr('settings.nothing_to_delete')}</DialogTitle>
                 <DialogContent>
-                    There are no results {cmp} than {number} {unit}
+                    {tr('settings.nothing_to_delete_text', {
+                        cmp: cmp.toLowerCase(),
+                        number,
+                        unit: tr(`settings.${unit}`, { smart_count: number }),
+                    })}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={() => setOpenNothing(false)}>OK</Button>

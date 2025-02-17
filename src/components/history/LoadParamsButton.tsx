@@ -3,17 +3,19 @@ import { Button } from '@mui/material';
 import { useAppDispatch } from '../../redux/hooks';
 import { actionEnum, setParams } from '../../redux/tab';
 import toast from 'react-hot-toast';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const LoadParamsButton = ({ params }: { params?: string }) => {
+    const tr = useTranslate();
     const dispatch = useAppDispatch();
     const handle = () => {
         if (!params) {
-            toast.error('No generation parameters stored');
+            toast.error(tr('toasts.no_params'));
             return;
         }
         const values = JSON.parse(params);
         dispatch(setParams({ action: actionEnum.RESTORE, ...values }));
-        toast.success('Generation parameters restored');
+        toast.success(tr('toasts.params_restored'));
     };
     return (
         <Button

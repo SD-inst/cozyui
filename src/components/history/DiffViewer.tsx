@@ -11,8 +11,10 @@ import ReactDiffViewer from 'react-diff-viewer-continued';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { CompareContext } from '../contexts/CompareContext';
 import { diffJsonWords } from './diffJsonWords';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const DiffViewer = () => {
+    const tr = useTranslate();
     const { setCompare, jsonA, jsonB, open } = useContext(CompareContext);
     const handleClose = () => {
         setCompare((v) => ({ ...v, open: false }));
@@ -32,7 +34,9 @@ export const DiffViewer = () => {
             maxWidth='lg'
         >
             <DialogTitle>
-                {singleJson ? 'Generation params' : 'Difference'}
+                {singleJson
+                    ? tr('controls.generation_params')
+                    : tr('controls.difference')}
             </DialogTitle>
             <DialogContent>
                 {singleJson ? (
@@ -42,12 +46,14 @@ export const DiffViewer = () => {
                         splitView={false}
                         compareMethod={diffJsonWords}
                         hideLineNumbers
-                        styles={{
-                            diffContainer: { minWidth: 200 },
-                            marker: { visibility: 'hidden' },
-                            summary: { display: 'none' },
-                            diffAdded: { backgroundColor: 'transparent' },
-                        } as any} // TODO: fix temporary "as any"
+                        styles={
+                            {
+                                diffContainer: { minWidth: 200 },
+                                marker: { visibility: 'hidden' },
+                                summary: { display: 'none' },
+                                diffAdded: { backgroundColor: 'transparent' },
+                            } as any
+                        } // TODO: fix temporary "as any"
                     />
                 ) : (
                     <ReactDiffViewer
@@ -62,7 +68,7 @@ export const DiffViewer = () => {
                 )}
             </DialogContent>
             <DialogActions>
-                <Button onClick={handleClose}>Close</Button>
+                <Button onClick={handleClose}>{tr('controls.close')}</Button>
             </DialogActions>
         </Dialog>
     );

@@ -41,6 +41,6 @@ export const TeaCacheInput = ({ ...props }) => {
     );
     useRegisterHandler({ name: props.name, handler });
     return (
-        <SliderInput min={0} max={1} step={0.01} label='Tea Cache' {...props} />
+        <SliderInput min={0} max={1} step={0.01} {...props} />
     );
 };

@@ -4,11 +4,13 @@ import { VerticalBox } from './VerticalBox';
 import { get } from 'lodash';
 import { useTaskDuration } from '../hooks/useTaskDuration';
 import { useEffect } from 'react';
+import { useTranslate } from '../i18n/I18nContext';
 
 export const Progress = () => {
     const { max, min, value, status, current_node, queue } = useAppSelector(
         (s) => s.progress
     );
+    const tr = useTranslate();
     const dur = useTaskDuration();
     const api = useAppSelector((s) => s.tab.api);
     const range = max - min;
@@ -31,11 +33,13 @@ export const Progress = () => {
         <VerticalBox width='100%'>
             {status && (
                 <Typography variant='body2' color='primary'>
-                    {status} {dur ? `[${dur}]` : ''}
+                    {tr(`status.${status}`)} {dur ? `[${dur}]` : ''}
                 </Typography>
             )}
             {queue > 1 ? (
-                <Typography variant='body1'>Queued: {queue - 1}</Typography>
+                <Typography variant='body1'>
+                    {tr('controls.queued', { queue: queue - 1 })}
+                </Typography>
             ) : null}
             {current_node && (
                 <Typography variant='body2' color='info'>

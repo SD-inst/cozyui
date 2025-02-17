@@ -4,9 +4,11 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import { useApiURL } from '../../hooks/useApiURL';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
-    const { field } = useController({...props, defaultValue: ''});
+    const tr = useTranslate();
+    const { field } = useController({ ...props, defaultValue: '' });
     const [url, setUrl] = useState<string>();
     const apiUrl = useApiURL();
     const { mutate } = useMutation({
@@ -49,7 +51,9 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
     });
     return (
         <Box mb={2} display='flex' flexDirection='column'>
-            <Typography variant='body1'>{props.label || props.name}</Typography>
+            <Typography variant='body1'>
+                {tr(`controls.${props.name}`)}
+            </Typography>
             <Box
                 flex={1}
                 mt={1}
@@ -63,7 +67,7 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
                 <Box display='flex' alignItems='center' flexDirection='column'>
                     {isDragActive ? (
                         <p style={{ alignSelf: 'center' }}>
-                            Drop the files here ...
+                            {tr('controls.drop_files_here')}
                         </p>
                     ) : (
                         <Link
@@ -71,8 +75,7 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
                                 cursor: 'pointer',
                             }}
                         >
-                            Drag 'n' drop some files here, or click to select
-                            files
+                            {tr('controls.drop_files_desc')}
                         </Link>
                     )}
                     {field.value && (
