@@ -1,9 +1,13 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { mergeType } from '../../api/mergeType';
+import { BlockSwapInput } from '../controls/BlockSwapInput';
 import { DescribeButton } from '../controls/DescribeButton';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FileUpload } from '../controls/FileUpload';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
+import { GenerateButton } from '../controls/GenerateButton';
+import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYSize } from '../controls/HYSize';
 import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -15,34 +19,8 @@ import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
-import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
-import { BlockSwapInput } from '../controls/BlockSwapInput';
-import { GuidanceInput } from '../controls/GuidanceInput';
-import { FlowShiftInput } from '../controls/FlowShiftInput';
-
-const models = [
-    {
-        text: 'Original',
-        value: 'hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-    {
-        text: 'Fast (lower quality, fewer steps)',
-        value: 'hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-];
+import { hyv_models } from './hyv_models';
 
 const Content = () => {
     return (
@@ -79,7 +57,7 @@ const Content = () => {
                 <SelectInput
                     name='model'
                     defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                    choices={models}
+                    choices={hyv_models}
                 />
                 <HYSize name='size' label='max size' defaultValue={544} />
                 <LengthInput

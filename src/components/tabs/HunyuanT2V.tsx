@@ -5,6 +5,9 @@ import {
     AccordionSummary,
     Box,
 } from '@mui/material';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
+import { GenerateButton } from '../controls/GenerateButton';
+import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
@@ -17,33 +20,8 @@ import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
-import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
-import { FlowShiftInput } from '../controls/FlowShiftInput';
-import { GuidanceInput } from '../controls/GuidanceInput';
-
-const models = [
-    {
-        text: 'Original',
-        value: 'hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-    {
-        text: 'Fast (lower quality, fewer steps)',
-        value: 'hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-];
+import { hyv_models } from './hyv_models';
 
 const Content = () => {
     return (
@@ -80,7 +58,7 @@ const Content = () => {
                         <SelectInput
                             name='model'
                             defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                            choices={models}
+                            choices={hyv_models}
                         />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />

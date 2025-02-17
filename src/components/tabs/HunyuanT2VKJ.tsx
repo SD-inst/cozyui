@@ -1,5 +1,13 @@
+import { ExpandMore } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
+import { BlockSwapInput } from '../controls/BlockSwapInput';
+import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
+import { GenerateButton } from '../controls/GenerateButton';
+import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYSize } from '../controls/HYSize';
+import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
+import { KJHYCFG } from '../controls/KJHYCFG';
 import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
@@ -8,51 +16,11 @@ import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
-import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { TeaCacheInput } from '../controls/TeaCacheInput';
-import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
-import { KJHYCFG } from '../controls/KJHYCFG';
-import { BlockSwapInput } from '../controls/BlockSwapInput';
-import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
-import { GuidanceInput } from '../controls/GuidanceInput';
-
-const models = [
-    {
-        text: 'Original',
-        value: 'hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-    {
-        text: 'FP8 (no lora support)',
-        value: 'hyvid/mp_rank_00_model_states_fp8.pt',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_scaled',
-            },
-        ],
-    },
-    {
-        text: 'Fast (lower quality, fewer steps)',
-        value: 'hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-];
+import { hyv_models } from './hyv_models';
 
 const Content = () => (
     <Layout>
@@ -85,7 +53,7 @@ const Content = () => (
                     <SelectInput
                         name='model'
                         defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                        choices={models}
+                        choices={hyv_models}
                     />
                     <KJHYCFG name='neg_prompt' />
                     <KJSchedulerSelectInput name='sampler' />
