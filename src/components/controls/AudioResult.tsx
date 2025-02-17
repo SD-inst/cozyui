@@ -5,6 +5,8 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { VerticalBox } from '../VerticalBox';
+import { useStringSetting } from '../../hooks/useStringSetting';
+import { settings } from '../../hooks/settings';
 
 export const AudioResult = ({ title }: { title?: string }) => {
     const results = useResult();
@@ -15,6 +17,21 @@ export const AudioResult = ({ title }: { title?: string }) => {
             audioRef.current?.scrollIntoView();
         }
     }, [results]);
+    const notification_sound = useStringSetting(
+        settings.notification_sound,
+        'None'
+    );
+    useEffect(() => {
+        if (!results.length) {
+            return;
+        }
+        if (notification_sound !== 'None') {
+            audioRef.current?.pause();
+            setTimeout(() => audioRef.current?.play(), 5000);
+        } else {
+            audioRef.current?.play();
+        }
+    }, [notification_sound, results]);
     useSaveToHistory();
     return (
         <VerticalBox width='100%'>
@@ -28,7 +45,6 @@ export const AudioResult = ({ title }: { title?: string }) => {
                             style={{ width: '100%' }}
                             src={url}
                             controls
-                            autoPlay
                             loop
                         />
                         <a download href={url}>
