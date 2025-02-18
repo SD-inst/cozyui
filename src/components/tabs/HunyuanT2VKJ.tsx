@@ -1,6 +1,7 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
+import { useTranslate } from '../../i18n/I18nContext';
 import { BlockSwapInput } from '../controls/BlockSwapInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -20,11 +21,11 @@ import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { hyv_models } from './hyv_models';
-import { useTranslate } from '../../i18n/I18nContext';
+import { useHyvModelChoices } from './hyv_models';
 
 const Content = () => {
     const tr = useTranslate();
+    const hyv_models = useHyvModelChoices();
     return (
         <Layout>
             <GridLeft>
@@ -70,9 +71,7 @@ const Content = () => {
                             max={20}
                             defaultValue={7}
                         />
-                        <EnhanceVideoInput
-                            name='enhance_video'
-                        />
+                        <EnhanceVideoInput name='enhance_video' />
                         <TeaCacheInput name='tea_cache' defaultValue={0.2} />
                         <BlockSwapInput name='block_swap' />
                     </AccordionDetails>

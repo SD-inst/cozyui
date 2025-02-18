@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { merge } from 'lodash';
+import { isArray, mergeWith } from 'lodash';
 
 export type tabConfigType = {
     api: string;
@@ -62,6 +62,13 @@ export type configType = {
             python_module: string;
         };
     };
+    models: {
+        [name: string]: {
+            name: string;
+            path: string;
+            quantization?: string;
+        }[];
+    };
     api: string;
     client_id: string;
 };
@@ -72,6 +79,7 @@ const slice = createSlice({
         client_id: [...Array(32)]
             .map(() => Math.floor(Math.random() * 16).toString(16))
             .join(''),
+        models: {},
     } as configType,
     reducers: {
         setConfig: (s: any, action: PayloadAction<configType>) => ({
@@ -79,7 +87,11 @@ const slice = createSlice({
             ...action.payload,
         }),
         mergeConfig: (s: any, action: PayloadAction<Partial<configType>>) =>
-            merge({}, s, action.payload),
+            mergeWith({}, s, action.payload, (objValue, srcValue) => {
+                if (isArray(objValue)) {
+                    return objValue.concat(srcValue);
+                }
+            }),
     },
 });
 

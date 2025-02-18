@@ -5,6 +5,7 @@ import {
     AccordionSummary,
     Box,
 } from '@mui/material';
+import { useTranslate } from '../../i18n/I18nContext';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
@@ -21,11 +22,11 @@ import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { hyv_models } from './hyv_models';
-import { useTranslate } from '../../i18n/I18nContext';
+import { useHyvModelChoices } from './hyv_models';
 
 const Content = () => {
     const tr = useTranslate();
+    const hyv_models = useHyvModelChoices();
     return (
         <Layout>
             <GridLeft>

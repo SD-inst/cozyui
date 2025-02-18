@@ -1,33 +1,18 @@
+import { useAppSelector } from '../../redux/hooks';
 
-export const hyv_models = [
-    {
-        text: 'Original',
-        value: 'hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors',
+export const useHyvModelChoices = () => {
+    const models = useAppSelector((s) => s.config.models['hunyuan']);
+    if (!models) {
+        return [];
+    }
+    return models.map((m) => ({
+        text: m.name,
+        value: m.path,
         alsoSet: [
             {
                 name: 'quantization',
-                value: 'fp8_e4m3fn',
+                value: m.quantization || 'fp8_e4m3fn',
             },
         ],
-    },
-    {
-        text: 'HunCusVid',
-        value: 'hyvid/huncusvid_v10.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-    {
-        text: 'Fast (lower quality, fewer steps)',
-        value: 'hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors',
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: 'fp8_e4m3fn',
-            },
-        ],
-    },
-];
+    }));
+};

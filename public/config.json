@@ -447,5 +447,17 @@
             }
         }
     },
+    "models": {
+        "hunyuan": [
+            {
+                "name": "Original",
+                "path": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors"
+            },
+            {
+                "name": "Fast (lower quality, fewer steps)",
+                "path": "hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors"
+            }
+        ]
+    },
     "api": "/cui"
 }
