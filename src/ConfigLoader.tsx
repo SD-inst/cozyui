@@ -62,6 +62,7 @@ export const ConfigLoader = () => {
         isSuccessLocalConfig,
         dataLocalConfig,
         dispatch,
+        tr,
     ]);
     useEffect(() => {
         if (isErrorObj) {
@@ -72,6 +73,6 @@ export const ConfigLoader = () => {
         }
         toast.success(tr('toasts.objects_updated'));
         dispatch(mergeConfig({ object_info: dataObj }));
-    }, [isErrorObj, errorObj, isSuccessObj, dataObj, dataConfig, dispatch, tr]);
+    }, [isErrorObj, errorObj, isSuccessObj, dataObj, dispatch, tr]);
     return null;
 };
