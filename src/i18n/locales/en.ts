@@ -75,7 +75,12 @@ const translation = {
         delete_result: 'Delete result',
         confirm_delete_result: 'Are you sure you want to delete this result?',
         unknown_media: 'Unknown media type',
-        duration: '[%{sec} s]'
+        duration: '[%{sec} s]',
+        pin: 'Pin',
+        unpin: 'Unpin',
+        unpin_title: 'Unpinning result',
+        unpin_confirm:
+            'Are you sure you want to unpin this result? It would become possible to delete it using clear history.',
     },
     settings: {
         select_language: 'Select language',

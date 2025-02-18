@@ -1,20 +1,29 @@
 import { CompareArrows, MoreVert } from '@mui/icons-material';
-import { Button, Menu, MenuItem } from '@mui/material';
+import {
+    Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Menu,
+    MenuItem,
+} from '@mui/material';
 import { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CompareContext } from '../contexts/CompareContext';
-import { db } from './db';
+import { db, markEnum, TaskResult } from './db';
 import { useTranslate } from '../../i18n/I18nContext';
 
-export const HistoryCardMenu = ({ id }: { id: number }) => {
+export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
     const tr = useTranslate();
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const { setCompare, selected_id } = useContext(CompareContext);
+    const [open, setOpen] = useState(false);
     const handleCompareWithPrev = async () => {
         setAnchor(null);
         const tasks = await db.taskResults
             .where('id')
-            .belowOrEqual(id)
+            .belowOrEqual(output.id)
             .reverse()
             .limit(2)
             .toArray();
@@ -31,7 +40,7 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
     };
     const handleSetCompare = () => {
         setAnchor(null);
-        setCompare((v) => ({ ...v, selected_id: id }));
+        setCompare((v) => ({ ...v, selected_id: output.id }));
     };
     const handleResetComparison = () => {
         setAnchor(null);
@@ -44,30 +53,35 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
             return;
         }
         const taskA = await db.taskResults.get(selected_id);
-        const taskB = await db.taskResults.get(id);
         setCompare((v) => ({
             ...v,
             jsonA: JSON.parse(taskA?.params || '{}'),
-            jsonB: JSON.parse(taskB?.params || '{}'),
+            jsonB: JSON.parse(output.params || '{}'),
             open: true,
         }));
     };
     const handleShowParams = async () => {
         setAnchor(null);
-        const task = await db.taskResults.get(id);
         setCompare((v) => ({
             ...v,
             jsonA: undefined,
-            jsonB: JSON.parse(task?.params || '{}'),
+            jsonB: JSON.parse(output.params || '{}'),
             open: true,
         }));
+    };
+    const handlePin = () => {
+        db.taskResults.put({ ...output, mark: markEnum.PINNED });
+    };
+    const handleUnpin = () => {
+        db.taskResults.put({ ...output, mark: markEnum.NONE });
+        setOpen(false);
     };
     return (
         <>
             <Button
                 size='small'
                 onClick={(e) => setAnchor(e.currentTarget)}
-                startIcon={selected_id === id ? <CompareArrows /> : null}
+                startIcon={selected_id === output.id ? <CompareArrows /> : null}
             >
                 <MoreVert />
             </Button>
@@ -105,7 +119,31 @@ export const HistoryCardMenu = ({ id }: { id: number }) => {
                 <MenuItem onClick={handleShowParams}>
                     {tr('controls.show_params')}
                 </MenuItem>
+                <MenuItem
+                    onClick={() => {
+                        setAnchor(null);
+                        if (output.mark !== markEnum.PINNED) {
+                            handlePin();
+                        } else {
+                            setOpen(true);
+                        }
+                    }}
+                >
+                    {output.mark !== markEnum.PINNED
+                        ? tr('controls.pin')
+                        : tr('controls.unpin')}
+                </MenuItem>
             </Menu>
+            <Dialog open={open} onClose={() => setOpen(false)}>
+                <DialogTitle>{tr('controls.unpin_title')}</DialogTitle>
+                <DialogContent>{tr('controls.unpin_confirm')}</DialogContent>
+                <DialogActions>
+                    <Button onClick={handleUnpin}>{tr('controls.ok')}</Button>
+                    <Button onClick={() => setOpen(false)}>
+                        {tr('controls.cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 };

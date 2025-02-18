@@ -16,8 +16,10 @@ import {
     TextField,
 } from '@mui/material';
 import { useState } from 'react';
-import { db } from './db';
+import { db, markEnum, TaskResult } from './db';
 import { useTranslate } from '../../i18n/I18nContext';
+
+const clear_filter = (c: TaskResult) => c.mark === markEnum.NONE;
 
 export const ClearHistoryButton = ({ ...props }: BoxProps) => {
     const tr = useTranslate();
@@ -51,12 +53,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             })();
     const handleDelete = async () => {
         const wc = db.taskResults.where('timestamp');
-        let cnt = 0;
+        let coll = null;
         if (newer) {
-            cnt = await wc.above(seconds).count();
+            coll = wc.above(seconds);
         } else {
-            cnt = await wc.below(seconds).count();
+            coll = wc.below(seconds);
         }
+        const cnt = await coll.filter(clear_filter).count();
         if (!cnt) {
             setOpenNothing(true);
         } else {
@@ -66,11 +69,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
     };
     const handleOK = async () => {
         const wc = db.taskResults.where('timestamp');
+        let coll = null;
         if (newer) {
-            wc.above(seconds).delete();
+            coll = wc.above(seconds);
         } else {
-            wc.below(seconds).delete();
+            coll = wc.below(seconds);
         }
+        coll.filter(clear_filter).delete();
         setOpen(false);
     };
     const cmp = tr(newer ? 'settings.newer' : 'settings.older');

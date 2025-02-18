@@ -74,6 +74,12 @@ const translation = {
         delete_result: 'Удалить результат',
         confirm_delete_result: 'Вы уверены, что хотите удалить этот результат?',
         unknown_media: 'Неизвестный тип медии',
+        duration: '[%{sec} с]',
+        pin: 'Закрепить',
+        unpin: 'Открепить',
+        unpin_title: 'Открепить результат',
+        unpin_confirm:
+            'Вы уверены, что хотите открепить этот результат? Его станет возможно удалить через очистку истории.',
     },
     settings: {
         select_language: 'Выбор языка',

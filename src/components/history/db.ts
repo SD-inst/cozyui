@@ -1,5 +1,9 @@
 import Dexie, { EntityTable, Table } from 'dexie';
 
+export enum markEnum {
+    NONE,
+    PINNED,
+}
 export interface TaskResult {
     id: number;
     timestamp: number;
@@ -9,6 +13,7 @@ export interface TaskResult {
     node_id: string;
     type: string;
     params?: string;
+    mark: markEnum;
     words?: string[];
 }
 
@@ -43,6 +48,14 @@ db.version(2)
             }
         });
     });
+
+db.version(3).upgrade((tx) => {
+    const subtx = tx.table('taskResults');
+    subtx.each((t) => {
+        t.mark = markEnum.NONE;
+        subtx.put(t);
+    });
+});
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

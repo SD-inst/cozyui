@@ -2,6 +2,7 @@ import {
     AudioFile,
     Download,
     Image,
+    PushPin,
     TextSnippet,
     VideoFile,
 } from '@mui/icons-material';
@@ -15,7 +16,7 @@ import {
 import { useRef } from 'react';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
-import { TaskResult } from './db';
+import { markEnum, TaskResult } from './db';
 import { DeleteButton } from './DeleteButton';
 import { HistoryCardContent } from './HistoryCardContent';
 import { HistoryCardMenu } from './HistoryCardMenu';
@@ -57,12 +58,22 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
         >
             <CardHeader
                 title={
-                    new Date(output.timestamp).toLocaleString() +
-                    ` [${duration}]`
+                    <span>
+                        {new Date(output.timestamp).toLocaleString() +
+                            ` [${duration}]`}
+                        {output.mark === markEnum.PINNED ? (
+                            <PushPin
+                                fontSize='small'
+                                sx={{ mt: -1, ml: 1, rotate: '30deg' }}
+                            />
+                        ) : (
+                            ''
+                        )}
+                    </span>
                 }
                 subheader={tab}
                 avatar={avatar(output.type)}
-                action={<HistoryCardMenu id={output.id} />}
+                action={<HistoryCardMenu output={output} />}
             />
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
