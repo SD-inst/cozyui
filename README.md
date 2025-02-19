@@ -55,3 +55,39 @@ If you forgot to bind some controls, or entered invalid node ids or field names 
 ## Config overrides
 
 You can create a file named `config.local.json` in `public` directory in the source or in the root of the deployed app (next to `config.json`). This file is loaded and merged on top of `config.json` so you can provide local defaults, overrides, and additional parameters. The arrays are concatenated, you can append models like this. There's now one `defaults` section in `config.json` which defines the default VAE parameters but it also works with all controls you see in the UI. The keys in that section are control names and the values are, well, their desired values. Controls don't *have* to have a UI representation as long as they're bound to the workflow (API) in the config, see the `controls` section. VAE settings are an example of such invisible controls. However, if you add more controls make sure to provide the default values too, otherwise an error during generation would be shown: `Missing controls (present in API)` with a list of controls that don't have values. If you provided the defaults but forgot to make controls for them, the error would be `Missing API bindings (present controls)`. Invalid control definitions that have a non-existent node id are reported as `Missing API ids`, those without a field are reported as `Missing API fields`. Normally you shouldn't see any such errors if you only use the stock config and no overrides.
+
+## Nodes to install
+
+I have plenty of nodes already installed but try not to overuse them. Currently, I have these:
+
+```
+ComfyUI_bitsandbytes_NF4
+ComfyUI-CogVideoXWrapper
+ComfyUI-Custom-Scripts
+ComfyUI-DynamiCrafterWrapper
+ComfyUI-Florence2
+ComfyUI-Fluxpromptenhancer
+ComfyUI-Frame-Interpolation
+ComfyUI-GGUF
+ComfyUI-HunyuanLoom
+ComfyUI-HunyuanVideoMultiLora
+ComfyUI-HunyuanVideoWrapper
+ComfyUI-KJNodes
+ComfyUI_LLM_Node
+ComfyUI-LTXTricks
+ComfyUI-LTXVideo
+ComfyUI-MMAudio
+ComfyUI-MochiWrapper
+ComfyUI-PyramidFlowWrapper
+ComfyUI-TeaCache
+ComfyUI_UltimateSDUpscale
+ComfyUI-VideoHelperSuite
+ComfyUI_VLM_nodes
+Comfy-WaveSpeed
+EasyAnimate
+OmniGen-ComfyUI
+rgthree-comfy
+sd-dynamic-thresholding
+```
+
+Most probably you wouldn't need all of them. `ComfyUI-KJNodes` and `ComfyUI-Custom-Scripts` are essential and used in almost every workflow, `ComfyUI-Florence2` is needed for the describe button to work. The rest depend on your needs. Open the API files (.json) from `public` in ComfyUI and see what nodes you're missing. If you don't plan to use certain workflows you don't need to install anything they require. In the future maybe there would be a Dockerfile to spin up a ComfyUI instance with all required extensions to use with CozyUI. But not today, sorry.
