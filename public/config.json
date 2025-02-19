@@ -61,6 +61,22 @@
                 "wave_speed_maxhit": {
                     "id": "15",
                     "field": "max_consecutive_cache_hits"
+                },
+                "tile_size": {
+                    "id": "4",
+                    "field": "tile_size"
+                },
+                "overlap": {
+                    "id": "4",
+                    "field": "overlap"
+                },
+                "temporal_size": {
+                    "id": "4",
+                    "field": "temporal_size"
+                },
+                "temporal_overlap": {
+                    "id": "4",
+                    "field": "temporal_overlap"
                 }
             },
             "handler_options": {
@@ -78,6 +94,12 @@
             "result": {
                 "id": "16",
                 "type": "gifs"
+            },
+            "defaults": {
+                "tile_size": 256,
+                "overlap": 64,
+                "temporal_size": 64,
+                "temporal_overlap": 4
             }
         },
         "Hunyuan T2V KJ": {
