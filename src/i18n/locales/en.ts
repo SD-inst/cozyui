@@ -148,6 +148,12 @@ const translation = {
         [statusEnum.INTERRUPTED]: 'Interrupted',
         [statusEnum.CANCELLED]: 'Cancelled',
     },
+    errors: {
+        missing_controls: 'Missing controls (present in API): %{list}',
+        missing_bindings: 'Missing API bindings (present controls): %{list}',
+        missing_ids: 'Missing API ids: %{list}',
+        missing_fields: 'Missing API fields: %{list}',
+    },
 };
 
 export default translation;

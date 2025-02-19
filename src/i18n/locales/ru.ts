@@ -149,6 +149,13 @@ const translation = {
         [statusEnum.INTERRUPTED]: 'Прервано',
         [statusEnum.CANCELLED]: 'Отменено',
     },
+    errors: {
+        missing_controls: 'Отсутствующие контролы (есть в API): %{list}',
+        missing_bindings:
+            'Отсутствующие привязки к API (есть контролы): %{list}',
+        missing_ids: 'Отсутствующие id узлов в API: %{list}',
+        missing_fields: 'Отсутствующие поля в API: %{list}',
+    },
 };
 
 export default translation;

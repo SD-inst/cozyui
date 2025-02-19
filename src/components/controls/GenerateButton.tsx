@@ -129,10 +129,7 @@ export const GenerateButton = ({
             ) {
                 setErrors((e) => ({
                     ...e,
-                    fields: [
-                        ...e.fields,
-                        controls[name].id + ' / ' + controls[name].field,
-                    ],
+                    fields: [...e.fields, name + ' / ' + controls[name].id],
                 }));
                 continue;
             }
@@ -225,24 +222,30 @@ export const GenerateButton = ({
                 </Button>
                 {!hideErrors && errors.controls.length ? (
                     <FormHelperText error>
-                        Missing controls (present in API):{' '}
-                        {errors.controls.join(', ')}
+                        {tr('errors.missing_controls', {
+                            list: errors.controls.join(', '),
+                        })}
                     </FormHelperText>
                 ) : null}
                 {!hideErrors && errors.api.length ? (
                     <FormHelperText error>
-                        Missing API bindings (present controls):{' '}
-                        {errors.api.join(', ')}
+                        {tr('errors.missing_bindings', {
+                            list: errors.api.join(', '),
+                        })}
                     </FormHelperText>
                 ) : null}
                 {!hideErrors && errors.ids.length ? (
                     <FormHelperText error>
-                        Missing API ids: {errors.ids.join(', ')}
+                        {tr('errors.missing_ids', {
+                            list: errors.ids.join(', '),
+                        })}
                     </FormHelperText>
                 ) : null}
                 {!hideErrors && errors.fields.length ? (
                     <FormHelperText error>
-                        Missing API fields: {errors.fields.join(', ')}
+                        {tr('errors.missing_fields', {
+                            list: errors.fields.join(', '),
+                        })}
                     </FormHelperText>
                 ) : null}
             </FormControl>
