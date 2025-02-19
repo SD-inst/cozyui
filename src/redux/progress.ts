@@ -18,6 +18,7 @@ const progressSlice = createSlice({
         current_node: '',
         queue: 0,
         status: '',
+        status_message: '',
         start_ts: 0,
         end_ts: 0,
         connected: false,
@@ -60,7 +61,8 @@ const progressSlice = createSlice({
             action: PayloadAction<{ status: statusEnum; message: string }>
         ) => ({
             ...s,
-            status: `${action.payload.status}: ${action.payload.message}`,
+            status: action.payload.status,
+            status_message: action.payload.message,
         }),
         clearGenerationTS: (s) => ({
             ...s,

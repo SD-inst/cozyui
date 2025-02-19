@@ -5,11 +5,11 @@ import { get } from 'lodash';
 import { useTaskDuration } from '../hooks/useTaskDuration';
 import { useEffect } from 'react';
 import { useTranslate } from '../i18n/I18nContext';
+import { statusEnum } from '../redux/progress';
 
 export const Progress = () => {
-    const { max, min, value, status, current_node, queue } = useAppSelector(
-        (s) => s.progress
-    );
+    const { max, min, value, status, status_message, current_node, queue } =
+        useAppSelector((s) => s.progress);
     const tr = useTranslate();
     const dur = useTaskDuration();
     const api = useAppSelector((s) => s.tab.api);
@@ -33,7 +33,11 @@ export const Progress = () => {
         <VerticalBox width='100%'>
             {status && (
                 <Typography variant='body2' color='primary'>
-                    {tr(`status.${status}`)} {dur ? `[${dur}]` : ''}
+                    {tr(`status.${status}`)}
+                    {status === statusEnum.ERROR && status_message
+                        ? ': ' + status_message
+                        : ''}{' '}
+                    {dur ? `[${dur}]` : ''}
                 </Typography>
             )}
             {queue > 1 ? (
