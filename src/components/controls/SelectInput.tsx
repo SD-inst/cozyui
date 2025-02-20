@@ -48,11 +48,13 @@ export const SelectInput = ({
     useEffect(() => {
         alsoSet(defaultValue);
     }, [defaultValue, alsoSet]);
+    const { ref, ...field } = ctl.field;
     return (
         <SelectControl
             tooltip={tooltip}
             label={`controls.${props.name}`}
-            {...ctl.field}
+            selectRef={ref}
+            {...field}
             onChange={(e) => {
                 ctl.field.onChange(e);
                 alsoSet(e.target.value as string);

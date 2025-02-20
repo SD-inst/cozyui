@@ -1,15 +1,19 @@
 import { FormControl, InputLabel, Select, SelectProps } from '@mui/material';
+import { Ref } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { HelpButton } from './HelpButton';
+
+export type SelectControlProps<T> = {
+    label: string;
+    tooltip?: string;
+} & SelectProps<T>;
 
 export const SelectControl = <T,>({
     label,
     tooltip,
+    selectRef,
     ...props
-}: {
-    label: string;
-    tooltip?: string;
-} & SelectProps<T>) => {
+}: { selectRef?: Ref<any> } & SelectControlProps<T>) => {
     const tr = useTranslate();
     return (
         <FormControl
@@ -30,6 +34,7 @@ export const SelectControl = <T,>({
                     },
                     flex: 1,
                 }}
+                ref={selectRef}
                 {...props}
             >
                 {props.children}

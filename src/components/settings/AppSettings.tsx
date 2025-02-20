@@ -6,14 +6,14 @@ import {
     Box,
 } from '@mui/material';
 import { useRef } from 'react';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 import { settings } from '../../hooks/settings';
-import { ClearHistoryButton } from '../history/ClearHistoryButton';
-import { SettingCheckbox } from './SettingCheckbox';
-import { autoscrollSlotProps } from '../controls/utils';
-import { NotificationSetting } from './NotificationSetting';
-import { LanguageSelect } from './LanguageSelect';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 import { useTranslate } from '../../i18n/I18nContext';
+import { autoscrollSlotProps } from '../controls/utils';
+import { ClearHistoryButton } from '../history/ClearHistoryButton';
+import { LanguageSelect } from './LanguageSelect';
+import { NotificationSetting } from './NotificationSetting';
+import { SettingCheckbox } from './SettingCheckbox';
 
 export const AppSettings = () => {
     const tr = useTranslate();
