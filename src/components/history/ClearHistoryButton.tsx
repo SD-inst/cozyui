@@ -98,7 +98,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 />
             </FormControl>
             <SelectControl
-                sx={{ minWidth: 120, width: 0 }}
+                sx={{ minWidth: 120, width: 0, mb: 0 }}
                 label='settings.unit'
                 size='small'
                 value={unit}

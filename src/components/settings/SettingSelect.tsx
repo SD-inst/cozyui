@@ -12,7 +12,7 @@ export const SettingSelect = ({
     const { onChange, ...rest } = props;
     return (
         <SelectControl
-            sx={{ mt: 1, width: 220 }}
+            sx={{ width: 220 }}
             value={value}
             size='small'
             onChange={(e, c) => {

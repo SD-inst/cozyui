@@ -22,6 +22,7 @@ export const SelectControl = <T,>({
                 wordWrap: 'normal',
                 display: 'flex',
                 flexDirection: 'row',
+                mb: 2,
                 ...props.sx,
             }}
         >
