@@ -10,7 +10,7 @@ import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 import { settings } from '../../hooks/settings';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { SettingCheckbox } from './SettingCheckbox';
-import { autoscrollSlotProps } from './utils';
+import { autoscrollSlotProps } from '../controls/utils';
 import { NotificationSetting } from './NotificationSetting';
 import { LanguageSelect } from './LanguageSelect';
 import { useTranslate } from '../../i18n/I18nContext';

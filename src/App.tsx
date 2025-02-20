@@ -7,7 +7,7 @@ import { WSReceiver } from './components/WSReceiver';
 import { WorkflowTabs } from './components/WorkflowTabs';
 import { ResultOverrideContextProvider } from './components/contexts/ResultOverrideContextProvider';
 import { ThemeContext } from './components/contexts/ThemeContext';
-import { AppSettings } from './components/controls/AppSettings';
+import { AppSettings } from './components/settings/AppSettings';
 import { InterruptButton } from './components/controls/InterruptButton';
 import { NotificationSound } from './components/controls/NotificationSound';
 import { ThemedToaster } from './components/controls/ThemedToaster';
