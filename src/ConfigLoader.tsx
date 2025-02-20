@@ -63,7 +63,7 @@ export const ConfigLoader = () => {
         if (!isSuccessLocalConfig || !tr_ready) {
             return;
         }
-        dispatch(mergeConfig(dataLocalConfig));
+        dispatch(mergeConfig({ config: dataLocalConfig, concatArrays: true }));
     }, [
         isErrorLocalConfig,
         errorLocalConfig,
@@ -80,7 +80,12 @@ export const ConfigLoader = () => {
             return;
         }
         toast.success(tr('toasts.objects_updated'));
-        dispatch(mergeConfig({ object_info: dataObj }));
+        dispatch(
+            mergeConfig({
+                config: { object_info: dataObj },
+                concatArrays: false,
+            })
+        );
     }, [isErrorObj, errorObj, isSuccessObj, dataObj, dispatch, tr, tr_ready]);
     return null;
 };

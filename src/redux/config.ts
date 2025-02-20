@@ -86,10 +86,20 @@ const slice = createSlice({
             ...s,
             ...action.payload,
         }),
-        mergeConfig: (s: any, action: PayloadAction<Partial<configType>>) =>
-            mergeWith({}, s, action.payload, (objValue, srcValue) => {
+        mergeConfig: (
+            s: any,
+            action: PayloadAction<{
+                config: Partial<configType>;
+                concatArrays: boolean;
+            }>
+        ) =>
+            mergeWith({}, s, action.payload.config, (objValue, srcValue) => {
                 if (isArray(objValue)) {
-                    return objValue.concat(srcValue);
+                    if (action.payload.concatArrays) {
+                        return objValue.concat(srcValue);
+                    } else {
+                        return srcValue;
+                    }
                 }
             }),
     },
