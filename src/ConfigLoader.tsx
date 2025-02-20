@@ -14,7 +14,7 @@ export const ConfigLoader = () => {
         error: errorConfig,
         isError: isErrorConfig,
         isSuccess: isSuccessConfig,
-    } = useGet({ url: 'config.json', staleTime: Infinity, enabled: tr_ready });
+    } = useGet({ url: 'config.json', staleTime: Infinity });
     const {
         data: dataLocalConfig,
         error: errorLocalConfig,
@@ -23,7 +23,7 @@ export const ConfigLoader = () => {
     } = useGet({
         url: 'config.local.json',
         staleTime: Infinity,
-        enabled: isSuccessConfig && tr_ready,
+        enabled: isSuccessConfig,
     });
     const apiUrl = useApiURL();
     const {
@@ -33,7 +33,7 @@ export const ConfigLoader = () => {
         isSuccess: isSuccessObj,
     } = useGet({
         url: apiUrl + '/api/object_info',
-        enabled: isSuccessConfig && !!apiUrl && tr_ready,
+        enabled: isSuccessConfig && !!apiUrl,
         cache: true,
     });
     const dispatch = useAppDispatch();
@@ -43,16 +43,24 @@ export const ConfigLoader = () => {
                 tr('toasts.error_getting_config', { err: errorConfig })
             );
         }
-        if (!isSuccessConfig) {
+        if (!isSuccessConfig || !tr_ready) {
             return;
         }
         dispatch(setConfig(dataConfig));
-    }, [isErrorConfig, errorConfig, isSuccessConfig, dataConfig, dispatch, tr]);
+    }, [
+        isErrorConfig,
+        errorConfig,
+        isSuccessConfig,
+        dataConfig,
+        dispatch,
+        tr,
+        tr_ready,
+    ]);
     useEffect(() => {
         if (isErrorLocalConfig) {
             console.error('Error getting local config: ' + errorLocalConfig);
         }
-        if (!isSuccessLocalConfig) {
+        if (!isSuccessLocalConfig || !tr_ready) {
             return;
         }
         dispatch(mergeConfig(dataLocalConfig));
@@ -62,17 +70,17 @@ export const ConfigLoader = () => {
         isSuccessLocalConfig,
         dataLocalConfig,
         dispatch,
-        tr,
+        tr_ready,
     ]);
     useEffect(() => {
         if (isErrorObj) {
             toast.error(tr('toasts.error_obj_info', { err: errorObj }));
         }
-        if (!isSuccessObj) {
+        if (!isSuccessObj || !tr_ready) {
             return;
         }
         toast.success(tr('toasts.objects_updated'));
         dispatch(mergeConfig({ object_info: dataObj }));
-    }, [isErrorObj, errorObj, isSuccessObj, dataObj, dispatch, tr]);
+    }, [isErrorObj, errorObj, isSuccessObj, dataObj, dispatch, tr, tr_ready]);
     return null;
 };

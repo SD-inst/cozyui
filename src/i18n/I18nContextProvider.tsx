@@ -8,6 +8,7 @@ export const I18nContextProvider = ({ ...props }: PropsWithChildren) => {
     const language = useStringSetting(settings.language);
     const polyglot = useMemo(() => {
         // language is '' until dexie promise resolves, not setting locale but creating a temporary polyglot instance with English locale to show something
+        setLocale('');
         return createPolyglot(language || 'en', () => {
             if (!language) {
                 return;
