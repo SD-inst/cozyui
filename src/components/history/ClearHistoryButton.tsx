@@ -10,14 +10,13 @@ import {
     DialogTitle,
     FormControl,
     FormControlLabel,
-    InputLabel,
     MenuItem,
-    Select,
     TextField,
 } from '@mui/material';
 import { useState } from 'react';
-import { db, markEnum, TaskResult } from './db';
 import { useTranslate } from '../../i18n/I18nContext';
+import { SelectControl } from '../controls/SelectControl';
+import { db, markEnum, TaskResult } from './db';
 
 const clear_filter = (c: TaskResult) => c.mark === markEnum.NONE;
 
@@ -98,31 +97,29 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                     onChange={(e) => setNumber(e.target.value)}
                 />
             </FormControl>
-            <FormControl sx={{ minWidth: 120 }}>
-                <InputLabel>{tr('settings.unit')}</InputLabel>
-                <Select
-                    size='small'
-                    label={tr('settings.unit')}
-                    value={unit}
-                    onChange={(e) => setUnit(e.target.value)}
-                >
-                    {[
-                        'seconds',
-                        'minutes',
-                        'hours',
-                        'days',
-                        'weeks',
-                        'months',
-                        'years',
-                    ].map((v) => (
-                        <MenuItem key={v} value={v}>
-                            {tr(`settings.${v}`, {
-                                smart_count: parseInt(number) || 0,
-                            })}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+            <SelectControl
+                sx={{ minWidth: 120, width: 0 }}
+                label='settings.unit'
+                size='small'
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+            >
+                {[
+                    'seconds',
+                    'minutes',
+                    'hours',
+                    'days',
+                    'weeks',
+                    'months',
+                    'years',
+                ].map((v) => (
+                    <MenuItem key={v} value={v}>
+                        {tr(`settings.${v}`, {
+                            smart_count: parseInt(number) || 0,
+                        })}
+                    </MenuItem>
+                ))}
+            </SelectControl>
             <FormControlLabel
                 sx={{ minWidth: 100 }}
                 label={tr('settings.newer')}

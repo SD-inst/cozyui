@@ -1,15 +1,8 @@
-import {
-    FormControl,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectProps,
-} from '@mui/material';
+import { MenuItem, SelectProps } from '@mui/material';
 import { useCallback, useEffect } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { Optional } from './optional';
-import { HelpButton } from './HelpButton';
-import { useTranslate } from '../../i18n/I18nContext';
+import { SelectControl } from './SelectControl';
 
 export type SelectInputProps = {
     defaultValue?: any;
@@ -41,8 +34,6 @@ export const SelectInput = ({
         defaultValue: defaultValue,
     });
     const { setValue } = useFormContext();
-    const tr = useTranslate();
-    const tr_key = `controls.${props.name}`;
     const alsoSet = useCallback(
         (value: string) => {
             const c = choices.find(
@@ -58,47 +49,24 @@ export const SelectInput = ({
         alsoSet(defaultValue);
     }, [defaultValue, alsoSet]);
     return (
-        <FormControl
-            fullWidth
-            sx={{
-                mb: 2,
-                wordWrap: 'normal',
-                display: 'flex',
-                flexDirection: 'row',
+        <SelectControl
+            tooltip={tooltip}
+            label={`controls.${props.name}`}
+            {...ctl.field}
+            onChange={(e) => {
+                ctl.field.onChange(e);
+                alsoSet(e.target.value as string);
             }}
         >
-            <InputLabel>{tr(tr_key)}</InputLabel>
-            <Select
-                label={tr(tr_key)}
-                {...ctl.field}
-                onChange={(e) => {
-                    ctl.field.onChange(e);
-                    alsoSet(e.target.value as string);
-                }}
-                sx={{
-                    '& .MuiSelect-select': {
-                        whiteSpace: 'normal !important',
-                    },
-                    flex: 1,
-                }}
-                {...props}
-            >
-                {choices.map((c) => (
-                    <MenuItem
-                        sx={{ whiteSpace: 'normal' }}
-                        key={JSON.stringify(c)}
-                        value={typeof c === 'object' ? c.value : c}
-                    >
-                        {typeof c === 'object' ? c.text : c}
-                    </MenuItem>
-                ))}
-            </Select>
-            {tooltip && (
-                <HelpButton
-                    title={tooltip}
-                    sx={{ position: 'relative', top: 15 }}
-                />
-            )}
-        </FormControl>
+            {choices.map((c) => (
+                <MenuItem
+                    sx={{ whiteSpace: 'normal' }}
+                    key={JSON.stringify(c)}
+                    value={typeof c === 'object' ? c.value : c}
+                >
+                    {typeof c === 'object' ? c.text : c}
+                </MenuItem>
+            ))}
+        </SelectControl>
     );
 };

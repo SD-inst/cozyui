@@ -10,25 +10,23 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
-    FormControl,
-    InputLabel,
     MenuItem,
-    Select,
     TextField,
-    Tooltip,
+    Tooltip
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { mergeType } from '../../api/mergeType';
 import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useAPI } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
-import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
-import { mergeType } from '../../api/mergeType';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { HelpButton } from './HelpButton';
+import { SelectControl } from './SelectControl';
 
 type valueType = {
     id: string;
@@ -108,26 +106,21 @@ const LoraChip = ({
                             e.stopPropagation();
                         }}
                     />
-                    <FormControl fullWidth>
-                        <InputLabel>{tr('controls.merge_type')}</InputLabel>
-                        <Select
-                            label={tr('controls.merge_type')}
-                            value={merge}
-                            onChange={(e) =>
-                                setMerge(e.target.value as mergeType)
-                            }
-                        >
-                            <MenuItem value={mergeType.SINGLE}>
-                                {tr('controls.merge_type_single')}
-                            </MenuItem>
-                            <MenuItem value={mergeType.DOUBLE}>
-                                {tr('controls.merge_type_double')}
-                            </MenuItem>
-                            <MenuItem value={mergeType.FULL}>
-                                {tr('controls.merge_type_full')}
-                            </MenuItem>
-                        </Select>
-                    </FormControl>
+                    <SelectControl
+                        label={'controls.merge_type'}
+                        value={merge}
+                        onChange={(e) => setMerge(e.target.value as mergeType)}
+                    >
+                        <MenuItem value={mergeType.SINGLE}>
+                            {tr('controls.merge_type_single')}
+                        </MenuItem>
+                        <MenuItem value={mergeType.DOUBLE}>
+                            {tr('controls.merge_type_double')}
+                        </MenuItem>
+                        <MenuItem value={mergeType.FULL}>
+                            {tr('controls.merge_type_full')}
+                        </MenuItem>
+                    </SelectControl>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleOK}>{tr('controls.ok')}</Button>
