@@ -6,14 +6,27 @@ import {
     DialogTitle,
     useTheme,
 } from '@mui/material';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { useIsPhone } from '../../hooks/useIsPhone';
-import { CompareContext } from '../contexts/CompareContext';
-import { diffJsonWords } from './diffJsonWords';
 import { useTranslate } from '../../i18n/I18nContext';
+import { CompareContext } from '../contexts/CompareContext';
 
 export const DiffViewer = () => {
+    const [diffJsonWords, setDiffJsonWords] = useState();
+    useEffect(() => {
+        // https://github.com/kpdecker/jsdiff/issues/579#issuecomment-2671520352
+        Promise.all([
+            // @ts-expect-error I know what I'm doing
+            import('diff/lib/diff/json.js'),
+            // @ts-expect-error I know what I'm doing
+            import('diff/lib/diff/word.js'),
+        ]).then((p) => {
+            p[0].jsonDiff.tokenize = p[1].wordDiff.tokenize;
+            // have to wrap it in a function, otherwise React tries to call p[0].diffJson and crashes
+            setDiffJsonWords(() => p[0].diffJson);
+        });
+    }, []);
     const tr = useTranslate();
     const { setCompare, jsonA, jsonB, open } = useContext(CompareContext);
     const handleClose = () => {
