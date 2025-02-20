@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { makeOutputUrl } from '../api/utils';
-import { db, TaskResult } from '../components/history/db';
+import { db, markEnum, TaskResult } from '../components/history/db';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { statusEnum } from '../redux/progress';
 import { actionEnum, addResult } from '../redux/tab';
@@ -72,6 +72,7 @@ export const useSaveToHistory = () => {
                         params: JSON.stringify({ tab, values }),
                         url,
                         data,
+                        mark: markEnum.NONE,
                     } as TaskResult;
                 })
             );

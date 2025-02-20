@@ -18,7 +18,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { SelectControl } from '../controls/SelectControl';
 import { db, markEnum, TaskResult } from './db';
 
-const clear_filter = (c: TaskResult) => c.mark === markEnum.NONE;
+const clear_filter = (c: TaskResult) => c.mark !== markEnum.PINNED;
 
 export const ClearHistoryButton = ({ ...props }: BoxProps) => {
     const tr = useTranslate();
