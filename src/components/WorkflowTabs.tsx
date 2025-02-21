@@ -8,6 +8,7 @@ import {
     useFormContext,
     useWatch,
 } from 'react-hook-form';
+import { useSetDefaults } from '../hooks/useSetDefaults';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
@@ -23,6 +24,7 @@ const ValuesRestore = () => {
     const defaults = useAppSelector((s) =>
         get(s, ['config', 'tabs', tab_name, 'defaults'], null)
     );
+    const { isLoaded, setDefaults } = useSetDefaults();
     const idb_state_applied = useRef(false);
     const [idb, setIdb] = useState<string | null>(null);
     useLiveQuery(async () => {
@@ -47,18 +49,14 @@ const ValuesRestore = () => {
         );
     }, [action, dispatch, setValue, tab, tab_name, values]);
     useEffect(() => {
-        if (defaults) {
-            Object.keys(defaults).forEach((c) => {
-                setValue(c, defaults[c]);
-            });
-        }
-        if (idb === '') {
-            // no state in database
-            idb_state_applied.current = true;
+        if (idb === undefined || idb_state_applied.current || !isLoaded) {
+            // not loaded yet or already applied
             return;
         }
+        setDefaults();
         if (!idb) {
-            // not loaded yet
+            // no state in database
+            idb_state_applied.current = true;
             return;
         }
         const vals = JSON.parse(idb);
@@ -68,7 +66,7 @@ const ValuesRestore = () => {
             });
         }
         idb_state_applied.current = true;
-    }, [defaults, setValue, idb]);
+    }, [defaults, setValue, idb, isLoaded, setDefaults]);
     const vals = useWatch();
     useEffect(() => {
         if (!idb_state_applied.current) {

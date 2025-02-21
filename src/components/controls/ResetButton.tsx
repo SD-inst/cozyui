@@ -1,22 +1,25 @@
 import {
     Button,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogActions,
     ButtonProps,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
 } from '@mui/material';
 import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useSetDefaults } from '../../hooks/useSetDefaults';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export const ResetButton = ({ ...props }: ButtonProps) => {
     const { reset } = useFormContext();
     const tr = useTranslate();
     const [open, setOpen] = useState(false);
+    const { isLoaded, setDefaults } = useSetDefaults();
     const handleOK = () => {
         setOpen(false);
         reset();
+        setDefaults();
     };
     return (
         <>
@@ -25,6 +28,7 @@ export const ResetButton = ({ ...props }: ButtonProps) => {
                 variant='outlined'
                 color='error'
                 onClick={() => setOpen(true)}
+                disabled={!isLoaded}
                 {...props}
             >
                 {tr('controls.reset_form')}
