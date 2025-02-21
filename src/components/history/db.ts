@@ -29,9 +29,15 @@ export interface Tags {
     age: number;
 }
 
+export interface FormState {
+    tab: string;
+    state: string;
+}
+
 export const db = new Dexie('task_results') as Dexie & {
     taskResults: EntityTable<TaskResult, 'id'>;
-    settings: Table<Settings>;
+    settings: Table<Settings, string>;
+    formState: Table<FormState, string>;
 };
 
 db.version(2)
@@ -49,13 +55,15 @@ db.version(2)
         });
     });
 
-db.version(3).upgrade((tx) => {
-    const subtx = tx.table('taskResults');
-    subtx.each((t) => {
-        t.mark = markEnum.NONE;
-        subtx.put(t);
+db.version(3)
+    .stores({ formState: '&tab' })
+    .upgrade((tx) => {
+        const subtx = tx.table('taskResults');
+        subtx.each((t) => {
+            t.mark = markEnum.NONE;
+            subtx.put(t);
+        });
     });
-});
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

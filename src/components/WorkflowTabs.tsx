@@ -1,12 +1,19 @@
 import { Tab, Tabs } from '@mui/material';
+import { useLiveQuery } from 'dexie-react-hooks';
 import { get } from 'lodash';
-import React, { useEffect, useRef } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+    FormProvider,
+    useForm,
+    useFormContext,
+    useWatch,
+} from 'react-hook-form';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
+import { db } from './history/db';
 
 const ValuesRestore = () => {
     const ref = useRef<HTMLDivElement>(null);
@@ -16,6 +23,16 @@ const ValuesRestore = () => {
     const defaults = useAppSelector((s) =>
         get(s, ['config', 'tabs', tab_name, 'defaults'], null)
     );
+    const idb_state_applied = useRef(false);
+    const [idb, setIdb] = useState<string | null>(null);
+    useLiveQuery(async () => {
+        const s = await db.formState.get(tab_name);
+        if (!s) {
+            setIdb('');
+        } else {
+            setIdb(s.state);
+        }
+    }, [tab]);
     const { setValue } = useFormContext();
     useEffect(() => {
         if (tab !== tab_name || action !== actionEnum.RESTORE) {
@@ -30,13 +47,35 @@ const ValuesRestore = () => {
         );
     }, [action, dispatch, setValue, tab, tab_name, values]);
     useEffect(() => {
-        if (!defaults) {
+        if (defaults) {
+            Object.keys(defaults).forEach((c) => {
+                setValue(c, defaults[c]);
+            });
+        }
+        if (idb === '') {
+            // no state in database
+            idb_state_applied.current = true;
             return;
         }
-        Object.keys(defaults).forEach((c) => {
-            setValue(c, defaults[c]);
-        });
-    }, [defaults, setValue]);
+        if (!idb) {
+            // not loaded yet
+            return;
+        }
+        const vals = JSON.parse(idb);
+        if (vals) {
+            Object.keys(vals).forEach((c) => {
+                setValue(c, vals[c]);
+            });
+        }
+        idb_state_applied.current = true;
+    }, [defaults, setValue, idb]);
+    const vals = useWatch();
+    useEffect(() => {
+        if (!idb_state_applied.current) {
+            return;
+        }
+        db.formState.put({ tab: tab_name, state: JSON.stringify(vals) });
+    }, [vals, tab_name]);
     return <div ref={ref} style={{ height: 0 }} />;
 };
 

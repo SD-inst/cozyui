@@ -81,6 +81,10 @@ const translation = {
         unpin_title: 'Unpinning result',
         unpin_confirm:
             'Are you sure you want to unpin this result? It would become possible to delete it using clear history.',
+        reset_form: 'Reset form',
+        confirm_reset: 'Confirm reset',
+        confirm_reset_content:
+            'Are you sure you want to reset the fields in this tab to their default values?',
     },
     settings: {
         select_language: 'Select language',

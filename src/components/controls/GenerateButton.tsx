@@ -12,6 +12,7 @@ import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useAPI } from '../../hooks/useConfigTab';
 import { useGet } from '../../hooks/useGet';
+import { useTranslate } from '../../i18n/I18nContext';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
     clearGenerationTS,
@@ -27,7 +28,7 @@ import {
     setPrompt,
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
-import { useTranslate } from '../../i18n/I18nContext';
+import { ResetButton } from './ResetButton';
 
 type error = {
     controls: string[];
@@ -47,12 +48,14 @@ export type GenerateButtonProps = {
     text?: string;
     hideErrors?: boolean;
     noexec?: boolean;
+    noreset?: boolean;
 };
 
 export const GenerateButton = ({
     text = 'generate',
     hideErrors,
     noexec,
+    noreset,
 }: GenerateButtonProps) => {
     const dispatch = useAppDispatch();
     const tr = useTranslate();
@@ -209,46 +212,45 @@ export const GenerateButton = ({
         }));
     }, [handleCtrlEnter, setValue]);
     return (
-        <>
-            <FormControl>
-                <Button
-                    variant='contained'
-                    color='warning'
-                    onClick={() => sendPrompt()}
-                    disabled={generation_disabled || !apiSuccess}
-                    sx={{ mt: 1, mb: 1 }}
-                >
-                    {tr(`controls.${text}`)}
-                </Button>
-                {!hideErrors && errors.controls.length ? (
-                    <FormHelperText error>
-                        {tr('errors.missing_controls', {
-                            list: errors.controls.join(', '),
-                        })}
-                    </FormHelperText>
-                ) : null}
-                {!hideErrors && errors.api.length ? (
-                    <FormHelperText error>
-                        {tr('errors.missing_bindings', {
-                            list: errors.api.join(', '),
-                        })}
-                    </FormHelperText>
-                ) : null}
-                {!hideErrors && errors.ids.length ? (
-                    <FormHelperText error>
-                        {tr('errors.missing_ids', {
-                            list: errors.ids.join(', '),
-                        })}
-                    </FormHelperText>
-                ) : null}
-                {!hideErrors && errors.fields.length ? (
-                    <FormHelperText error>
-                        {tr('errors.missing_fields', {
-                            list: errors.fields.join(', '),
-                        })}
-                    </FormHelperText>
-                ) : null}
-            </FormControl>
-        </>
+        <FormControl>
+            <Button
+                variant='contained'
+                color='warning'
+                onClick={() => sendPrompt()}
+                disabled={generation_disabled || !apiSuccess}
+                sx={{ mt: 1, mb: 1 }}
+            >
+                {tr(`controls.${text}`)}
+            </Button>
+            {!hideErrors && errors.controls.length ? (
+                <FormHelperText error>
+                    {tr('errors.missing_controls', {
+                        list: errors.controls.join(', '),
+                    })}
+                </FormHelperText>
+            ) : null}
+            {!hideErrors && errors.api.length ? (
+                <FormHelperText error>
+                    {tr('errors.missing_bindings', {
+                        list: errors.api.join(', '),
+                    })}
+                </FormHelperText>
+            ) : null}
+            {!hideErrors && errors.ids.length ? (
+                <FormHelperText error>
+                    {tr('errors.missing_ids', {
+                        list: errors.ids.join(', '),
+                    })}
+                </FormHelperText>
+            ) : null}
+            {!hideErrors && errors.fields.length ? (
+                <FormHelperText error>
+                    {tr('errors.missing_fields', {
+                        list: errors.fields.join(', '),
+                    })}
+                </FormHelperText>
+            ) : null}
+            {!noreset && <ResetButton sx={{ mt: 2 }} />}
+        </FormControl>
     );
 };
