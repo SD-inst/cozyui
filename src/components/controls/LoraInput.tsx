@@ -12,7 +12,7 @@ import {
     DialogTitle,
     MenuItem,
     TextField,
-    Tooltip
+    Tooltip,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -228,8 +228,7 @@ export const LoraInput = ({
                 const createBlockEdit = (
                     block_edit_idx: number,
                     name: string,
-                    single: boolean,
-                    double: boolean
+                    single: boolean
                 ) => {
                     const block_edit = {
                         ['' + block_edit_idx]: {
@@ -243,7 +242,7 @@ export const LoraInput = ({
                     for (let i = 0; i <= 19; i++) {
                         block_edit['' + block_edit_idx].inputs[
                             `double_blocks.${i}.`
-                        ] = double;
+                        ] = !single;
                     }
                     for (let i = 0; i <= 39; i++) {
                         block_edit['' + block_edit_idx].inputs[
@@ -255,14 +254,12 @@ export const LoraInput = ({
                 const single_only = createBlockEdit(
                     block_edit_idx,
                     'Single only',
-                    true,
-                    false
+                    true
                 );
                 const double_only = createBlockEdit(
                     block_edit_idx + 1,
                     'Double only',
-                    false,
-                    true
+                    false
                 );
                 Object.assign(api, single_only, double_only);
                 loraNodes.forEach((n, i) => {
