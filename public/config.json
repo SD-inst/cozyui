@@ -473,11 +473,13 @@
         "hunyuan": [
             {
                 "name": "Original",
-                "path": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors"
+                "path": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
+                "quantization": "fp8_e4m3fn"
             },
             {
                 "name": "Fast (lower quality, fewer steps)",
-                "path": "hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors"
+                "path": "hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors",
+                "quantization": "fp8_e4m3fn"
             }
         ]
     },
