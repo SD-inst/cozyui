@@ -20,6 +20,7 @@ export const NotificationSetting = () => {
         <>
             <SettingSelect
                 setting={settings.notification_sound}
+                defaultValue='None'
                 label='settings.notification'
                 size='small'
                 onChange={handleChange}

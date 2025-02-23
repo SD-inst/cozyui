@@ -8,6 +8,7 @@ export const LanguageSelect = () => {
         <SettingSelect
             label='settings.select_language'
             setting={settings.language}
+            defaultValue='en'
         >
             {locales.map((v) => (
                 <MenuItem key={v.name} value={v.name}>
