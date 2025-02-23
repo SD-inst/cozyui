@@ -1,7 +1,7 @@
 {
     "tabs": {
         "Hunyuan T2V": {
-            "api": "hunyuan_api_stock.json",
+            "api": "api/hunyuan_api_stock.json",
             "controls": {
                 "prompt": {
                     "id": "8",
@@ -103,7 +103,7 @@
             }
         },
         "Hunyuan T2V KJ": {
-            "api": "hunyuan_api_kj.json",
+            "api": "api/hunyuan_api_kj.json",
             "controls": {
                 "prompt": {
                     "id": "30",
@@ -191,7 +191,7 @@
             }
         },
         "LTX I2V": {
-            "api": "ltx_i2v_api.json",
+            "api": "api/ltx_i2v_api.json",
             "controls": {
                 "prompt": {
                     "id": "186",
@@ -262,7 +262,7 @@
             }
         },
         "Describe image": {
-            "api": "describe_image_api.json",
+            "api": "api/describe_image_api.json",
             "controls": {
                 "image": {
                     "id": "11",
@@ -283,7 +283,7 @@
             }
         },
         "EasyAnimate I2V": {
-            "api": "easy_animate_api.json",
+            "api": "api/easy_animate_api.json",
             "controls": {
                 "prompt": {
                     "id": "75",
@@ -333,7 +333,7 @@
             }
         },
         "Hunyuan I2V": {
-            "api": "hunyuan_i2v_api.json",
+            "api": "api/hunyuan_i2v_api.json",
             "controls": {
                 "image": {
                     "id": "44",
@@ -428,7 +428,7 @@
             }
         },
         "Stable audio": {
-            "api": "stable_audio.json",
+            "api": "api/stable_audio.json",
             "controls": {
                 "prompt": {
                     "id": "3",

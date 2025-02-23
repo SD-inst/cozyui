@@ -14,14 +14,14 @@ export const ConfigLoader = () => {
         error: errorConfig,
         isError: isErrorConfig,
         isSuccess: isSuccessConfig,
-    } = useGet({ url: 'config.json', staleTime: Infinity });
+    } = useGet({ url: 'conf/config.json', staleTime: Infinity });
     const {
         data: dataLocalConfig,
         error: errorLocalConfig,
         isError: isErrorLocalConfig,
         isSuccess: isSuccessLocalConfig,
     } = useGet({
-        url: 'config.local.json',
+        url: 'conf/config.local.json',
         staleTime: Infinity,
         enabled: isSuccessConfig,
     });
