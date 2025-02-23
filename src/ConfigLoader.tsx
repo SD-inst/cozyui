@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
-import { setConfig, mergeConfig } from './redux/config';
+import { setConfig, mergeConfig, setLoaded } from './redux/config';
 import { useAppDispatch } from './redux/hooks';
 import { useTranslate, useTranslateReady } from './i18n/I18nContext';
 
@@ -18,6 +18,7 @@ export const ConfigLoader = () => {
     const {
         data: dataLocalConfig,
         error: errorLocalConfig,
+        failureCount: failureCountLocalConfig,
         isError: isErrorLocalConfig,
         isSuccess: isSuccessLocalConfig,
     } = useGet({
@@ -47,6 +48,7 @@ export const ConfigLoader = () => {
             return;
         }
         dispatch(setConfig(dataConfig));
+        dispatch(setLoaded(0));
     }, [
         isErrorConfig,
         errorConfig,
@@ -57,6 +59,9 @@ export const ConfigLoader = () => {
         tr_ready,
     ]);
     useEffect(() => {
+        if (failureCountLocalConfig > 0) {
+            dispatch(setLoaded(1)); // mark as loaded early on error
+        }
         if (isErrorLocalConfig) {
             console.error('Error getting local config: ' + errorLocalConfig);
         }
@@ -64,6 +69,7 @@ export const ConfigLoader = () => {
             return;
         }
         dispatch(mergeConfig({ config: dataLocalConfig, concatArrays: true }));
+        dispatch(setLoaded(1));
     }, [
         isErrorLocalConfig,
         errorLocalConfig,
@@ -71,6 +77,7 @@ export const ConfigLoader = () => {
         dataLocalConfig,
         dispatch,
         tr_ready,
+        failureCountLocalConfig,
     ]);
     useEffect(() => {
         if (isErrorObj) {

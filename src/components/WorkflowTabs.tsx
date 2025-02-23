@@ -25,16 +25,11 @@ const ValuesRestore = () => {
         get(s, ['config', 'tabs', tab_name, 'defaults'], null)
     );
     const { isLoaded, setDefaults } = useSetDefaults();
-    const idb_state_applied = useRef(false);
-    const [idb, setIdb] = useState<string | null>(null);
-    useLiveQuery(async () => {
-        const s = await db.formState.get(tab_name);
-        if (!s) {
-            setIdb('');
-        } else {
-            setIdb(s.state);
-        }
-    }, [tab]);
+    const [initialized, setInitialized] = useState(false);
+    const idb = useLiveQuery(
+        async () => (await db.formState.get(tab_name)) ?? null,
+        [tab]
+    );
     const { setValue } = useFormContext();
     useEffect(() => {
         if (tab !== tab_name || action !== actionEnum.RESTORE) {
@@ -49,31 +44,31 @@ const ValuesRestore = () => {
         );
     }, [action, dispatch, setValue, tab, tab_name, values]);
     useEffect(() => {
-        if (idb === undefined || idb_state_applied.current || !isLoaded) {
+        if (initialized || idb === undefined || !isLoaded) {
             // not loaded yet or already applied
             return;
         }
         setDefaults();
-        if (!idb) {
+        if (idb === null) {
             // no state in database
-            idb_state_applied.current = true;
+            setInitialized(true);
             return;
         }
-        const vals = JSON.parse(idb);
+        const vals = JSON.parse(idb.state);
         if (vals) {
             Object.keys(vals).forEach((c) => {
-                setValue(c, vals[c]);
+                setValue(c, vals[c], { shouldDirty: false });
             });
         }
-        idb_state_applied.current = true;
-    }, [defaults, setValue, idb, isLoaded, setDefaults]);
+        setInitialized(true);
+    }, [defaults, setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
     const vals = useWatch();
     useEffect(() => {
-        if (!idb_state_applied.current) {
+        if (!initialized) {
             return;
         }
         db.formState.put({ tab: tab_name, state: JSON.stringify(vals) });
-    }, [vals, tab_name]);
+    }, [vals, tab_name, initialized]);
     return <div ref={ref} style={{ height: 0 }} />;
 };
 

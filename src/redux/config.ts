@@ -76,6 +76,7 @@ export type configType = {
     };
     api: string;
     client_id: string;
+    loaded: boolean[];
 };
 
 const slice = createSlice({
@@ -86,14 +87,18 @@ const slice = createSlice({
             .join(''),
         models: {},
         loras: {},
+        loaded: [false, false],
     } as configType,
     reducers: {
-        setConfig: (s: any, action: PayloadAction<configType>) => ({
+        setConfig: (s: configType, action: PayloadAction<configType>) => ({
             ...s,
             ...action.payload,
         }),
+        setLoaded: (s: configType, action: PayloadAction<number>) => {
+            s.loaded[action.payload] = true;
+        },
         mergeConfig: (
-            s: any,
+            s: configType,
             action: PayloadAction<{
                 config: Partial<configType>;
                 concatArrays: boolean;
@@ -113,5 +118,5 @@ const slice = createSlice({
 
 export const {
     reducer: config,
-    actions: { setConfig, mergeConfig },
+    actions: { setConfig, setLoaded, mergeConfig },
 } = slice;
