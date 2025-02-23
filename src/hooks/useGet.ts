@@ -15,15 +15,19 @@ export const useGet = ({
         enabled,
         queryKey: [url],
         staleTime,
-        queryFn: (ctx) => {
+        queryFn: async (ctx) => {
             const headers: HeadersInit = {};
             if (!cache) {
                 headers['Cache-Control'] = 'no-cache';
             }
-            return fetch(url, {
+            const r = await fetch(url, {
                 signal: ctx.signal,
                 headers,
-            }).then((r) => r.json());
+            });
+            if (!r.ok) {
+                throw new Error(r.statusText);
+            }
+            return r.json();
         },
     });
 };
