@@ -100,7 +100,7 @@ const Content = () => {
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput
                     name='lora'
-                    filter='/hunyuan/'
+                    type='hunyuan'
                     sx={{ mb: 2 }}
                     append={[
                         {

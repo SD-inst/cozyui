@@ -77,7 +77,7 @@ const Content = () => {
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
-                <LoraInput name='lora' filter='/hunyuan/' />
+                <LoraInput name='lora' type='hunyuan' />
             </GridLeft>
             <GridRight>
                 <VideoResult />

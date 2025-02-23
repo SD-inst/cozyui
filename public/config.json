@@ -483,5 +483,10 @@
             }
         ]
     },
+    "loras": {
+        "hunyuan": {
+            "filter": "hyvid/"
+        }
+    },
     "api": "/cui"
 }

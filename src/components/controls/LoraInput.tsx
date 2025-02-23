@@ -27,6 +27,8 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { HelpButton } from './HelpButton';
 import { SelectControl } from './SelectControl';
+import { useAppSelector } from '../../redux/hooks';
+import { get } from 'lodash';
 
 type valueType = {
     id: string;
@@ -134,20 +136,23 @@ const LoraChip = ({
 };
 
 export const LoraInput = ({
-    filter,
     append,
     sx,
+    type,
     ...props
 }: {
     name: string;
+    type: string;
     label?: string;
-    filter?: string;
     append?: valueType[];
 } & Omit<
     AutocompleteProps<valueType, true, any, any>,
     'renderInput' | 'options'
 >) => {
-    const final_filter = import.meta.env.VITE_FILTER_LORAS || filter || '';
+    const filter = useAppSelector((s) =>
+        get(s, ['config', 'loras', type, 'filter'], '')
+    );
+    const final_filter = import.meta.env.VITE_FILTER_LORAS || filter;
     const tr = useTranslate();
     const disable_lora_filter = localStorage.getItem('disable_lora_filter');
     const qc = useQueryClient();

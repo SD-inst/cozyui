@@ -69,6 +69,11 @@ export type configType = {
             quantization?: string;
         }[];
     };
+    loras: {
+        [name: string]: {
+            filter: string;
+        };
+    };
     api: string;
     client_id: string;
 };
@@ -80,6 +85,7 @@ const slice = createSlice({
             .map(() => Math.floor(Math.random() * 16).toString(16))
             .join(''),
         models: {},
+        loras: {},
     } as configType,
     reducers: {
         setConfig: (s: any, action: PayloadAction<configType>) => ({
