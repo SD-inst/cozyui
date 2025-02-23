@@ -32,6 +32,43 @@ TypeScript/React/Redux/MaterialUI/react-hook-form/react-query/yarn and some smal
 
 Make sure you have Yarn 4 installed (not classic). Change `conf/config.json`, find the `api` parameter at the very end and change it from `/cui` to the URL where your ComfyUI is located, for example: `"http://127.0.0.1:8188"`. You **have** to run ComfyUI with `--enable-cors-header "*"` to allow connections from a different address/port. Run `yarn && yarn build`, then deploy the `dist` directory somewhere on a web server. Yes, you need an actual HTTP server, you can't just open `index.html` in browser because HTTP requests will not work this way. You should already have Python installed for ComfyUI, an easy way to serve the content is to `cd dist` and then do `python -m http.server` there. It will serve CozyUI at `http://127.0.0.1:8000`. If you want something more performant use Caddy and run `caddy file-server --listen 127.0.0.1:8000`.
 
+## Model location
+
+Models are expected to be placed in certain directories relative to ComfyUI root:
+
+### Hunyuan
+
+- Path: `models/diffusion_models/hyvid/`
+
+- Filenames:
+    - regular FP8-quantized model: `hunyuan_video_720_fp8_e4m3fn.safetensors`
+    - FastVideo: `hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors`
+VAE: `models/vae/hyvid/hunyuan_video_vae_bf16.safetensors`
+
+#### Hunyuan loras
+
+- Path: `models/loras/`
+
+They're additionally filtered by path component `hyvid/` which can be overridden in `conf/config.local.json` as `loras.hunyuan.filter` (see `conf/config.json`). It's a simple string filter, only files that have this string in the full path will be shown.
+
+### LTX Video
+
+- Filename: `models/checkpoints/video/ltx-video-2b-v0.9.1.safetensors`
+
+### EasyAnimate
+
+- Path: `models/EasyAnimate/EasyAnimateV5.1-12b-zh-InP`
+
+Should download automatically if absent
+
+### Stable Audio
+
+- Filename: `models/checkpoints/audio/stable_audio.safetensors`
+
+### LLM
+
+For Hunyuan and descriptions, they will download automatically on first use. Path: `models/LLM`
+
 ## Developing
 
 This project uses Yarn PnP. If you use VS Code you'll need to change the TypeScript SDK to the one Yarn creates for you. This is needed because there's no bloated `node_modules` and instead everything is virtualized but it doesn't play well with many editors such as VSC or vim. You need to be familiar with React and TypeScript already. Change `vite.config.ts` and set the `host` to your local IP (or `127.0.0.1`) and `proxy` parameters. Proxy is used to work around CORS during development if your ComfyUI is running on another IP or port. Most probably it'd be easier for you to use the CORS parameter as described in the previous section. I have a more complex setup with containers and front-end proxy, so for me it's better to resort to the Vite proxy to keep things as close to production as possible.
