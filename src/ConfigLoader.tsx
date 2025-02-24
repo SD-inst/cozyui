@@ -24,7 +24,6 @@ export const ConfigLoader = () => {
     } = useGet({
         url: 'conf/config.local.json',
         staleTime: Infinity,
-        enabled: isSuccessConfig,
     });
     const apiUrl = useApiURL();
     const {
@@ -65,7 +64,7 @@ export const ConfigLoader = () => {
         if (isErrorLocalConfig) {
             console.error('Error getting local config: ' + errorLocalConfig);
         }
-        if (!isSuccessLocalConfig || !tr_ready) {
+        if (!isSuccessConfig || !isSuccessLocalConfig || !tr_ready) {
             return;
         }
         dispatch(mergeConfig({ config: dataLocalConfig, concatArrays: true }));
@@ -78,6 +77,7 @@ export const ConfigLoader = () => {
         dispatch,
         tr_ready,
         failureCountLocalConfig,
+        isSuccessConfig,
     ]);
     useEffect(() => {
         if (isErrorObj) {
