@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
 import { setConfig, mergeConfig, setLoaded } from './redux/config';
-import { useAppDispatch } from './redux/hooks';
+import { useAppDispatch, useAppSelector } from './redux/hooks';
 import { useTranslate, useTranslateReady } from './i18n/I18nContext';
 
 export const ConfigLoader = () => {
@@ -37,6 +37,7 @@ export const ConfigLoader = () => {
         cache: true,
     });
     const dispatch = useAppDispatch();
+    const main_config_applied = useAppSelector((s) => s.config.loaded[0]);
     useEffect(() => {
         if (isErrorConfig) {
             toast.error(
@@ -64,7 +65,12 @@ export const ConfigLoader = () => {
         if (isErrorLocalConfig) {
             console.error('Error getting local config: ' + errorLocalConfig);
         }
-        if (!isSuccessConfig || !isSuccessLocalConfig || !tr_ready) {
+        if (
+            !isSuccessConfig ||
+            !isSuccessLocalConfig ||
+            !main_config_applied ||
+            !tr_ready
+        ) {
             return;
         }
         dispatch(mergeConfig({ config: dataLocalConfig, concatArrays: true }));
@@ -78,6 +84,7 @@ export const ConfigLoader = () => {
         tr_ready,
         failureCountLocalConfig,
         isSuccessConfig,
+        main_config_applied,
     ]);
     useEffect(() => {
         if (isErrorObj) {
