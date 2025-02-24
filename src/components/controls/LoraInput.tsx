@@ -170,7 +170,9 @@ const LoraOption = ({ value, id, ...props }: { value: string; id: string }) => {
     }, [id, preview_root]);
     return (
         <Box {...props}>
-            {preview}
+            <Box display='flex' justifyContent='center' width={50}>
+                {preview}
+            </Box>
             <Box position='absolute' left={80}>
                 {value}
             </Box>
