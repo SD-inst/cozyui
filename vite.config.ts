@@ -15,6 +15,9 @@ export default defineConfig({
             '/cui/api': {
                 target: 'http://172.25.10.35:7861',
             },
+            '/lora_previews': {
+                target: 'http://172.25.10.35:7861',
+            },
         },
     },
     build: {

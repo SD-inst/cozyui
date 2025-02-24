@@ -15,7 +15,7 @@ import {
     Tooltip,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { mergeType } from '../../api/mergeType';
@@ -132,6 +132,49 @@ const LoraChip = ({
                 </DialogActions>
             </Dialog>
         </>
+    );
+};
+
+const preview_style = { maxWidth: '50px', maxHeight: '50px' };
+
+const LoraOption = ({ value, id, ...props }: { value: string; id: string }) => {
+    const [preview, setPreview] = useState<ReactElement>();
+    const preview_root = useAppSelector((s) => s.config.preview_root);
+    useEffect(() => {
+        if (!preview_root || !id.endsWith('.safetensors')) {
+            return;
+        }
+        const preview_img =
+            preview_root + '/' + id.replace(/(\.safetensors)$/, '.preview.png');
+        setPreview(
+            <img
+                style={preview_style}
+                src={preview_img}
+                onError={() => {
+                    const preview_vid =
+                        preview_root +
+                        '/' +
+                        id.replace(/(\.safetensors)$/, '.preview.mp4');
+                    setPreview(
+                        <video
+                            style={preview_style}
+                            autoPlay
+                            loop
+                            muted
+                            src={preview_vid}
+                        />
+                    );
+                }}
+            />
+        );
+    }, [id, preview_root]);
+    return (
+        <Box {...props}>
+            {preview}
+            <Box position='absolute' left={80}>
+                {value}
+            </Box>
+        </Box>
     );
 };
 
@@ -350,6 +393,17 @@ export const LoraInput = ({
                         <HelpButton title='lora' sx={{ right: 80, mt: -1 }} />
                     </>
                 )}
+                renderOption={(props, option, _, ownerState) => {
+                    const { key, ...optionProps } = props;
+                    return (
+                        <LoraOption
+                            key={key}
+                            {...optionProps}
+                            value={ownerState.getOptionLabel(option)}
+                            id={option.id}
+                        />
+                    );
+                }}
             />
             <Tooltip arrow title={tr('controls.lora_reload')}>
                 <Button

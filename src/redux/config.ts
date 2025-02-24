@@ -77,6 +77,7 @@ export type configType = {
     api: string;
     client_id: string;
     loaded: boolean[];
+    preview_root: string;
 };
 
 const slice = createSlice({

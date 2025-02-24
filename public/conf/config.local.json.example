@@ -18,5 +18,6 @@
                 "quantization": "fp8_e4m3fn"
             }
         ]
-    }
+    },
+    "preview_root": "/lora_previews"
 }
