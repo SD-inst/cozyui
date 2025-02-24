@@ -43,7 +43,7 @@ Models are expected to be placed in certain directories relative to ComfyUI root
 - Filenames:
     - regular FP8-quantized model: `hunyuan_video_720_fp8_e4m3fn.safetensors`
     - FastVideo: `hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors`
-VAE: `models/vae/hyvid/hunyuan_video_vae_bf16.safetensors`
+    - VAE: `models/vae/hyvid/hunyuan_video_vae_bf16.safetensors`
 
 #### Hunyuan loras
 
