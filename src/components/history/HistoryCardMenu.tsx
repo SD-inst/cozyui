@@ -13,20 +13,34 @@ import toast from 'react-hot-toast';
 import { CompareContext } from '../contexts/CompareContext';
 import { db, markEnum, TaskResult } from './db';
 import { useTranslate } from '../../i18n/I18nContext';
+import { FilterContext } from '../contexts/FilterContext';
+import { pkFromFilter } from './filter';
 
 export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
     const tr = useTranslate();
+    const filter = useContext(FilterContext);
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const { setCompare, selected_id } = useContext(CompareContext);
     const [open, setOpen] = useState(false);
     const handleCompareWithPrev = async () => {
         setAnchor(null);
-        const tasks = await db.taskResults
-            .where('id')
-            .belowOrEqual(output.id)
-            .reverse()
-            .limit(2)
-            .toArray();
+        let tasks = [];
+        if (!filter) {
+            tasks = await db.taskResults
+                .where('id')
+                .belowOrEqual(output.id)
+                .reverse()
+                .limit(2)
+                .toArray();
+        } else {
+            tasks = await db.taskResults
+                .where('id')
+                .anyOf(await pkFromFilter(filter))
+                .reverse()
+                .filter((r) => r.id <= output.id)
+                .limit(2)
+                .toArray();
+        }
         if (tasks.length != 2) {
             toast.error(tr('toasts.no_prev_result'));
             return;

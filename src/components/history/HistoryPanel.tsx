@@ -11,7 +11,7 @@ import {
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { Dispatch, SetStateAction, useContext, useRef, useState } from 'react';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { autoscrollSlotProps } from '../controls/utils';
 import { VerticalBox } from '../VerticalBox';
@@ -19,32 +19,19 @@ import { db } from './db';
 import { DiffViewer } from './DiffViewer';
 import { HistoryCard } from './HistoryCard';
 import { useTranslate } from '../../i18n/I18nContext';
+import { FilterContext } from '../contexts/FilterContext';
+import { pkFromFilter } from './filter';
 
 const page_size = 10;
-
-const pkFromFilter = async (filter: string) => {
-    const filter_words = filter.split(' ').map((w) => w.toLowerCase());
-    const pks = await Promise.all(
-        filter_words.map((w) =>
-            db.taskResults.where('words').startsWith(w).primaryKeys()
-        )
-    );
-    const pk_x = pks.reduce((a, b) => {
-        const set = new Set(b);
-        return a.filter((pk) => set.has(pk));
-    });
-    return pk_x;
-};
 
 const HistoryPagination = ({
     page,
     setPage,
-    filter,
 }: {
     page: number;
     setPage: Dispatch<SetStateAction<number>>;
-    filter: string;
 }) => {
+    const filter = useContext(FilterContext);
     const count =
         useLiveQuery(async () => {
             if (!filter) {
@@ -118,36 +105,32 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                 fullWidth
                             />
                         </Box>
-                        <HistoryPagination
-                            page={page}
-                            setPage={setPage}
-                            filter={filter}
-                        />
-                        <List
-                            sx={{
-                                width: '100%',
-                                p: 0,
-                            }}
-                            {...props}
-                        >
-                            {!results?.length && (
-                                <Typography
-                                    variant='body1'
-                                    align='center'
-                                    sx={{ mb: 2 }}
-                                >
-                                    {tr('controls.history_empty')}
-                                </Typography>
-                            )}
-                            {results?.map((r) => {
-                                return <HistoryCard output={r} key={r.id} />;
-                            })}
-                        </List>
-                        <HistoryPagination
-                            page={page}
-                            setPage={setPage}
-                            filter={filter}
-                        />
+                        <FilterContext.Provider value={filter}>
+                            <HistoryPagination page={page} setPage={setPage} />
+                            <List
+                                sx={{
+                                    width: '100%',
+                                    p: 0,
+                                }}
+                                {...props}
+                            >
+                                {!results?.length && (
+                                    <Typography
+                                        variant='body1'
+                                        align='center'
+                                        sx={{ mb: 2 }}
+                                    >
+                                        {tr('controls.history_empty')}
+                                    </Typography>
+                                )}
+                                {results?.map((r) => {
+                                    return (
+                                        <HistoryCard output={r} key={r.id} />
+                                    );
+                                })}
+                            </List>
+                            <HistoryPagination page={page} setPage={setPage} />
+                        </FilterContext.Provider>
                         <DiffViewer />
                     </VerticalBox>
                 </CompareContextProvider>
