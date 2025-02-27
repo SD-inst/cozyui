@@ -1,0 +1,21 @@
+services:
+  comfyui:
+    build:
+      dockerfile: comfyui.Dockerfile
+    ports:
+      - 8188:8188
+    runtime: nvidia
+    volumes:
+      - ./models:/app/models
+    command:
+      - "--listen"
+      - "--enable-cors-header"
+      - "*"
+
+  cozyui:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    volumes:
+      - ./docker/config.local.json:/app/conf/config.local.json

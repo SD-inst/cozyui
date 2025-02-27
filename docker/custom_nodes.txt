@@ -1,0 +1,10 @@
+https://github.com/chengzeyi/Comfy-WaveSpeed
+https://github.com/pythongosssss/ComfyUI-Custom-Scripts
+https://github.com/kijai/ComfyUI-Florence2
+https://github.com/logtd/ComfyUI-HunyuanLoom
+https://github.com/facok/ComfyUI-HunyuanVideoMultiLora
+https://github.com/kijai/ComfyUI-HunyuanVideoWrapper
+https://github.com/kijai/ComfyUI-KJNodes
+https://github.com/logtd/ComfyUI-LTXTricks
+https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
+https://github.com/gokayfem/ComfyUI_VLM_nodes

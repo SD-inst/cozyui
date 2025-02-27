@@ -26,3 +26,4 @@ dist-ssr
 .yarn/install-state.gz
 scripts/*.local.sh
 public/conf/*.local.json
+models/

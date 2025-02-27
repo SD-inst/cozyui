@@ -99,38 +99,8 @@ Add `preview_root` value to `config.local.json` with a URL root for the lora pre
 
 You can download previews for your existing loras from CivitAI (if they exist there, of course) using [Authproxy](https://github.com/SD-inst/authproxy). Compile the downloader binary with `go build ./cmd/civitaimetadl`, then run `./civitaimetadl /path/to/loras`. The entire directory and all subdirectories will be processed and the files will be placed next to the lora files. Only `.safetensors` files without accompanying .preview/.json files will be processed to save time on subsequent runs.
 
-## Nodes to install
+## Docker
 
-I have plenty of nodes already installed but try not to overuse them. Currently, I have these:
+A basic Docker setup (NVIDIA-only, I don't have AMD) is provided to get you started in no time, from scratch. It's best to have Docker Compose as well to install both ComfyUI and CozyUI. First, download the models (Hunyuan only, the rest you can add later yourself) with `docker/download_models.sh`. It will take some time. The model directory structure will be created as well.
 
-```
-ComfyUI_bitsandbytes_NF4
-ComfyUI-CogVideoXWrapper
-ComfyUI-Custom-Scripts
-ComfyUI-DynamiCrafterWrapper
-ComfyUI-Florence2
-ComfyUI-Fluxpromptenhancer
-ComfyUI-Frame-Interpolation
-ComfyUI-GGUF
-ComfyUI-HunyuanLoom
-ComfyUI-HunyuanVideoMultiLora
-ComfyUI-HunyuanVideoWrapper
-ComfyUI-KJNodes
-ComfyUI_LLM_Node
-ComfyUI-LTXTricks
-ComfyUI-LTXVideo
-ComfyUI-MMAudio
-ComfyUI-MochiWrapper
-ComfyUI-PyramidFlowWrapper
-ComfyUI-TeaCache
-ComfyUI_UltimateSDUpscale
-ComfyUI-VideoHelperSuite
-ComfyUI_VLM_nodes
-Comfy-WaveSpeed
-EasyAnimate
-OmniGen-ComfyUI
-rgthree-comfy
-sd-dynamic-thresholding
-```
-
-Most probably you wouldn't need all of them. `ComfyUI-KJNodes` and `ComfyUI-Custom-Scripts` are essential and used in almost every workflow, `ComfyUI-Florence2` is needed for the describe button to work. The rest depend on your needs. Open the API files (.json) from `public/api` in ComfyUI and see what nodes you're missing. If you don't plan to use certain workflows you don't need to install anything they require. In the future maybe there would be a Dockerfile to spin up a ComfyUI instance with all required extensions to use with CozyUI. But not today, sorry.
+After you have the models downloaded, run `docker compose up -d` and wait. You'll have two containers up and running. Open `http://127.0.0.1:3000` and try generating something in Hunyuan. If it doesn't work, check out the container logs with `docker compose logs comfyui` and see what the problem is. If some model is absent you'll see the expected path and can put it there in the `models/` directory in the program root. Note, that `docker/config.local.json` is mounted in CozyUI container by default. You can change it in `compose.yml` or modify the config itself. ComfyUI should be available at `http://127.0.0.1:8188`.
