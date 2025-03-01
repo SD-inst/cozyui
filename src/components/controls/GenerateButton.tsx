@@ -107,7 +107,7 @@ export const GenerateButton = ({
                 handlers[name] !== undefined
             ) {
                 try {
-                    handlers[name](params.prompt, val); // modify api request
+                    handlers[name](params.prompt, val, controls[name]); // modify api request
                 } catch (e) {
                     console.log(e);
                     toast.error(

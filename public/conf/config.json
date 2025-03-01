@@ -8,11 +8,12 @@
                     "field": "text"
                 },
                 "model": {
-                    "id": "13",
+                    "id": "handle",
+                    "node_id": "13",
                     "field": "unet_name"
                 },
                 "quantization": {
-                    "id": "13",
+                    "id": "skip",
                     "field": "weight_dtype"
                 },
                 "width": {

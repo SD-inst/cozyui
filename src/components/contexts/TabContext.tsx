@@ -9,9 +9,14 @@ import {
     useContext,
     useEffect,
 } from 'react';
+import { controlType } from '../../redux/config';
 
 export type handlerType = {
-    [control_name: string]: (api: any, value: any[]) => void;
+    [control_name: string]: (
+        api: any,
+        value: any[],
+        control?: controlType
+    ) => void;
 };
 
 /**
@@ -59,7 +64,7 @@ export const useRegisterHandler = ({
     handler,
 }: {
     name: string;
-    handler: (api: any, value: any) => void;
+    handler: (api: any, value: any, control?: controlType) => void;
 }) => {
     const { setValue } = useContext(TabContext);
     useEffect(() => {

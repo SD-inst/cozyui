@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { isArray, mergeWith } from 'lodash';
 
+export type controlType = {
+    id: string;
+    field: string;
+    [key: string]: any;
+};
+
 export type tabConfigType = {
     api: string;
     controls: {
-        [control: string]: {
-            id: string;
-            field: string;
-        };
+        [control: string]: controlType;
     };
     result: {
         id: string;
