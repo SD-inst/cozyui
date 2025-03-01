@@ -12,10 +12,6 @@
                     "node_id": "13",
                     "field": "unet_name"
                 },
-                "quantization": {
-                    "id": "skip",
-                    "field": "weight_dtype"
-                },
                 "width": {
                     "id": "14",
                     "field": "width"
@@ -113,10 +109,6 @@
                 "model": {
                     "id": "1",
                     "field": "model"
-                },
-                "quantization": {
-                    "id": "1",
-                    "field": "quantization"
                 },
                 "width": {
                     "id": "3",
@@ -348,10 +340,6 @@
                     "id": "1",
                     "field": "model"
                 },
-                "quantization": {
-                    "id": "1",
-                    "field": "quantization"
-                },
                 "size": {
                     "id": "2",
                     "field": "value"
@@ -442,10 +430,6 @@
                 "model": {
                     "id": "handle",
                     "node_id": "44"
-                },
-                "quantization": {
-                    "id": "skip",
-                    "field": "quantization"
                 },
                 "size": {
                     "id": "92",
@@ -590,13 +574,11 @@
         "hunyuan": [
             {
                 "name": "Original",
-                "path": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
-                "quantization": "fp8_e4m3fn"
+                "path": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors"
             },
             {
                 "name": "Fast (lower quality, fewer steps)",
-                "path": "hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors",
-                "quantization": "fp8_e4m3fn"
+                "path": "hyvid/hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors"
             }
         ]
     },

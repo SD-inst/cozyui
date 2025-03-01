@@ -26,7 +26,7 @@ import { useHyvModelChoices } from './hyv_models';
 
 const Content = () => {
     const tr = useTranslate();
-    const hyv_models = useHyvModelChoices((m) => m.quantization !== 'gguf');
+    const hyv_models = useHyvModelChoices((m) => !m.path.endsWith('gguf'));
     return (
         <Layout>
             <GridLeft>

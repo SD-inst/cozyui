@@ -39,7 +39,6 @@ export type tabConfigType = {
 export type modelType = {
     name: string;
     path: string;
-    quantization?: string;
 };
 
 export type configType = {

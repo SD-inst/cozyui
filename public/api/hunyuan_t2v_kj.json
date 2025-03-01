@@ -1,9 +1,9 @@
 {
     "1": {
         "inputs": {
-            "model": "hyvid/mp_rank_00_model_states_fp8.pt",
+            "model": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
             "base_precision": "bf16",
-            "quantization": "fp8_scaled",
+            "quantization": "fp8_e4m3fn",
             "load_device": "offload_device",
             "attention_mode": "sageattn_varlen",
             "auto_cpu_offload": false,

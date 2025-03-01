@@ -14,8 +14,7 @@
         "hunyuan": [
             {
                 "name": "HunCusVid",
-                "path": "hyvid/huncusvid_v10.safetensors",
-                "quantization": "fp8_e4m3fn"
+                "path": "hyvid/huncusvid_v10.safetensors"
             }
         ]
     },

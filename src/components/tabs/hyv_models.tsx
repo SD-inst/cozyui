@@ -9,11 +9,5 @@ export const useHyvModelChoices = (filter?: (m: modelType) => boolean) => {
     return models.filter(filter ?? (() => true)).map((m) => ({
         text: m.name,
         value: m.path,
-        alsoSet: [
-            {
-                name: 'quantization',
-                value: m.quantization || 'fp8_e4m3fn',
-            },
-        ],
     }));
 };

@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useFormContext } from 'react-hook-form';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { useHyvModelChoices } from '../tabs/hyv_models';
@@ -7,18 +6,15 @@ import { CustomSelectInputProps, SelectInput } from './SelectInput';
 
 export const HYModelSelectInput = ({ ...props }: CustomSelectInputProps) => {
     const hyv_models = useHyvModelChoices();
-    const { getValues } = useFormContext();
     const handler = useCallback(
         (api: any, val: string, control?: controlType) => {
             if (!control || !control['node_id']) {
                 throw 'control undefined';
             }
             const loader_node_id = control['node_id'];
-            const quantization = getValues('quantization');
-            console.log(val, control, quantization);
-            if (quantization !== 'gguf') {
+            if (!val.endsWith('.gguf')) {
                 api[loader_node_id].inputs['unet_name'] = val;
-                api[loader_node_id].inputs['weight_dtype'] = quantization;
+                api[loader_node_id].inputs['weight_dtype'] = 'fp8_e4m3fn';
                 return;
             }
             // replace loader node with GGUF loader
@@ -32,7 +28,7 @@ export const HYModelSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 },
             };
         },
-        [getValues]
+        []
     );
     useRegisterHandler({ name: props.name, handler });
     return (
