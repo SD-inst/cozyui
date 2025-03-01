@@ -25,7 +25,7 @@ import { useHyvModelChoices } from './hyv_models';
 
 const Content = () => {
     const tr = useTranslate();
-    const hyv_models = useHyvModelChoices();
+    const hyv_models = useHyvModelChoices((m) => m.quantization !== 'gguf');
     return (
         <Layout>
             <GridLeft>
@@ -122,6 +122,6 @@ const Content = () => {
     );
 };
 
-export const HunyanI2VTab = (
-    <WFTab label='Hunyuan I2V' value='Hunyuan I2V' content={<Content />} />
+export const HunyanI2VKJTab = (
+    <WFTab label='Hunyuan I2V Kijai' value='Hunyuan I2V' content={<Content />} />
 );

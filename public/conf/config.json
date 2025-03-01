@@ -1,7 +1,7 @@
 {
     "tabs": {
         "Hunyuan T2V": {
-            "api": "api/hunyuan_api_stock.json",
+            "api": "api/hunyuan_t2v_native.json",
             "controls": {
                 "prompt": {
                     "id": "8",
@@ -104,7 +104,7 @@
             }
         },
         "Hunyuan T2V KJ": {
-            "api": "api/hunyuan_api_kj.json",
+            "api": "api/hunyuan_t2v_kj.json",
             "controls": {
                 "prompt": {
                     "id": "30",
@@ -192,7 +192,7 @@
             }
         },
         "LTX I2V": {
-            "api": "api/ltx_i2v_api.json",
+            "api": "api/ltx_i2v.json",
             "controls": {
                 "prompt": {
                     "id": "186",
@@ -263,7 +263,7 @@
             }
         },
         "Describe image": {
-            "api": "api/describe_image_api.json",
+            "api": "api/describe_image.json",
             "controls": {
                 "image": {
                     "id": "11",
@@ -284,7 +284,7 @@
             }
         },
         "EasyAnimate I2V": {
-            "api": "api/easy_animate_api.json",
+            "api": "api/easy_animate.json",
             "controls": {
                 "prompt": {
                     "id": "75",
@@ -334,7 +334,7 @@
             }
         },
         "Hunyuan I2V": {
-            "api": "api/hunyuan_i2v_api.json",
+            "api": "api/hunyuan_i2v_kj.json",
             "controls": {
                 "image": {
                     "id": "44",

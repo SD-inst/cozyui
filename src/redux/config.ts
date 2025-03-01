@@ -36,6 +36,12 @@ export type tabConfigType = {
     };
 };
 
+export type modelType = {
+    name: string;
+    path: string;
+    quantization?: string;
+};
+
 export type configType = {
     tabs: {
         [tabName: string]: tabConfigType;
@@ -66,11 +72,7 @@ export type configType = {
         };
     };
     models: {
-        [name: string]: {
-            name: string;
-            path: string;
-            quantization?: string;
-        }[];
+        [name: string]: modelType[];
     };
     loras: {
         [name: string]: {
