@@ -15,6 +15,7 @@ export const HYModelSelectInput = ({ ...props }: CustomSelectInputProps) => {
             }
             const loader_node_id = control['node_id'];
             const quantization = getValues('quantization');
+            console.log(val, control, quantization);
             if (quantization !== 'gguf') {
                 api[loader_node_id].inputs['unet_name'] = val;
                 api[loader_node_id].inputs['weight_dtype'] = quantization;
@@ -33,7 +34,7 @@ export const HYModelSelectInput = ({ ...props }: CustomSelectInputProps) => {
         },
         [getValues]
     );
-    useRegisterHandler({ name: 'model', handler });
+    useRegisterHandler({ name: props.name, handler });
     return (
         <SelectInput
             defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'

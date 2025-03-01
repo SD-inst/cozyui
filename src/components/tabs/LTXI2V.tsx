@@ -1,20 +1,21 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
+import { useTranslate } from '../../i18n/I18nContext';
+import { CFGInput } from '../controls/CFGInput';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
+import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
+import { LLMSelectInput } from '../controls/LLMSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
-import { GenerateButton } from '../controls/GenerateButton';
 import { WFTab } from '../WFTab';
-import { CFGInput } from '../controls/CFGInput';
-import { useTranslate } from '../../i18n/I18nContext';
 
 const Content = () => {
     const tr = useTranslate();
@@ -32,24 +33,7 @@ const Content = () => {
                         ' The scene is computer-generated imagery.',
                     ]}
                 />
-                <SelectInput
-                    name='llm'
-                    choices={[
-                        {
-                            text: 'Florence2-base',
-                            value: 'microsoft/Florence-2-base',
-                        },
-                        {
-                            text: 'CogFlorence 2.2 Large',
-                            value: 'thwri/CogFlorence-2.2-Large',
-                        },
-                        {
-                            text: 'Florence2-large PromptGen v2.0',
-                            value: 'MiaoshouAI/Florence-2-large-PromptGen-v2.0',
-                        },
-                    ]}
-                    defaultValue='thwri/CogFlorence-2.2-Large'
-                />
+                <LLMSelectInput name='llm' />
                 <DescribeButton />
                 <TextInput name='prompt' multiline />
                 <Box display='flex' flexDirection='row' width='100%' mt={2}>

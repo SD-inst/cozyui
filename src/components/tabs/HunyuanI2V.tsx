@@ -2,31 +2,27 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { mergeType } from '../../api/mergeType';
 import { useTranslate } from '../../i18n/I18nContext';
-import { BlockSwapInput } from '../controls/BlockSwapInput';
 import { DescribeButton } from '../controls/DescribeButton';
-import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYSize } from '../controls/HYSize';
-import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LLMSelectInput } from '../controls/LLMSelectInput';
 import { LoraInput } from '../controls/LoraInput';
+import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
-import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
-import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { useHyvModelChoices } from './hyv_models';
+import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 
 const Content = () => {
     const tr = useTranslate();
-    const hyv_models = useHyvModelChoices((m) => m.quantization !== 'gguf');
     return (
         <Layout>
             <GridLeft>
@@ -39,11 +35,7 @@ const Content = () => {
                 <LLMSelectInput name='llm' />
                 <DescribeButton />
                 <TextInput name='prompt' multiline sx={{ mb: 3 }} />
-                <SelectInput
-                    name='model'
-                    defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                    choices={hyv_models}
-                />
+                <HYModelSelectInput name='model' />
                 <HYSize name='size' label='max size' defaultValue={544} />
                 <LengthInput
                     min={5}
@@ -60,7 +52,8 @@ const Content = () => {
                         {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
-                        <KJSchedulerSelectInput name='sampler' />
+                        <SamplerSelectInput name='sampler' />
+                        <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput defaultValue={10} />
                         <SliderInput
                             name='aug_strength'
@@ -76,9 +69,22 @@ const Content = () => {
                             step={0.01}
                             defaultValue={1}
                         />
-                        <EnhanceVideoInput name='enhance_video' />
-                        <TeaCacheInput name='tea_cache' defaultValue={0.15} />
-                        <BlockSwapInput name='block_swap' />
+                        <SliderInput
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            defaultValue={0.1}
+                            name='wave_speed'
+                            tooltip='wave_speed'
+                        />
+                        <SliderInput
+                            min={-1}
+                            max={10}
+                            step={1}
+                            defaultValue={2}
+                            name='wave_speed_maxhit'
+                            tooltip='wave_speed_maxhit'
+                        />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
@@ -106,10 +112,10 @@ const Content = () => {
     );
 };
 
-export const HunyanI2VKJTab = (
+export const HunyanI2VTab = (
     <WFTab
-        label='Hunyuan I2V Kijai'
-        value='Hunyuan I2V KJ'
+        label='Hunyuan I2V Native'
+        value='Hunyuan I2V'
         content={<Content />}
     />
 );

@@ -333,7 +333,7 @@
                 "type": "gifs"
             }
         },
-        "Hunyuan I2V": {
+        "Hunyuan I2V KJ": {
             "api": "api/hunyuan_i2v_kj.json",
             "controls": {
                 "image": {
@@ -426,6 +426,122 @@
             "result": {
                 "id": "34",
                 "type": "gifs"
+            }
+        },
+        "Hunyuan I2V": {
+            "api": "api/hunyuan_i2v_native.json",
+            "controls": {
+                "image": {
+                    "id": "65",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "45",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "44"
+                },
+                "quantization": {
+                    "id": "skip",
+                    "field": "quantization"
+                },
+                "size": {
+                    "id": "92",
+                    "field": "value"
+                },
+                "sampler": {
+                    "id": "51",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "52",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "90",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "52",
+                    "field": "steps"
+                },
+                "length": {
+                    "id": "53",
+                    "field": "length"
+                },
+                "flow_shift": {
+                    "id": "54",
+                    "field": "shift"
+                },
+                "guidance": {
+                    "id": "62",
+                    "field": "guidance"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "suffix": {
+                    "id": "skip"
+                },
+                "llm": {
+                    "id": "skip"
+                },
+                "aug_strength": {
+                    "id": "86",
+                    "field": "noise_aug_strength"
+                },
+                "latent_strength": {
+                    "id": "74",
+                    "field": "strength"
+                },
+                "wave_speed": {
+                    "id": "87",
+                    "field": "residual_diff_threshold"
+                },
+                "wave_speed_maxhit": {
+                    "id": "87",
+                    "field": "max_consecutive_cache_hits"
+                },
+                "tile_size": {
+                    "id": "57",
+                    "field": "tile_size"
+                },
+                "overlap": {
+                    "id": "57",
+                    "field": "overlap"
+                },
+                "temporal_size": {
+                    "id": "57",
+                    "field": "temporal_size"
+                },
+                "temporal_overlap": {
+                    "id": "57",
+                    "field": "temporal_overlap"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "44",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["87"],
+                    "output_idx": 0,
+                    "class_name": "HunyuanVideoLoraLoader",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "50",
+                "type": "gifs"
+            },
+            "defaults": {
+                "tile_size": 256,
+                "overlap": 64,
+                "temporal_size": 64,
+                "temporal_overlap": 4
             }
         },
         "Stable audio": {

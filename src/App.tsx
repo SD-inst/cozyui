@@ -13,6 +13,7 @@ import { ThemedToaster } from './components/controls/ThemedToaster';
 import { HistoryPanel } from './components/history/HistoryPanel';
 import { AppSettings } from './components/settings/AppSettings';
 import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
+import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 import { HunyanI2VKJTab } from './components/tabs/HunyuanI2VKJ';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
 import { HunyanT2VKJTab } from './components/tabs/HunyuanT2VKJ';
@@ -30,6 +31,7 @@ function App() {
                     <VerticalBox>
                         <WorkflowTabs>
                             {HunyanT2VTab}
+                            {HunyanI2VTab}
                             {HunyanI2VKJTab}
                             {HunyanT2VKJTab}
                             {LTXI2VTab}
