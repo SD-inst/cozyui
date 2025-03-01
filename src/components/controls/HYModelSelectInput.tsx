@@ -16,8 +16,8 @@ export const HYModelSelectInput = ({ ...props }: CustomSelectInputProps) => {
             const loader_node_id = control['node_id'];
             const quantization = getValues('quantization');
             if (quantization !== 'gguf') {
-                api[loader_node_id]['unet_name'] = val;
-                api[loader_node_id]['weight_dtype'] = quantization;
+                api[loader_node_id].inputs['unet_name'] = val;
+                api[loader_node_id].inputs['weight_dtype'] = quantization;
                 return;
             }
             // replace loader node with GGUF loader
