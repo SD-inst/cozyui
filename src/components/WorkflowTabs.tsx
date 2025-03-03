@@ -1,7 +1,7 @@
 import { Tab, Tabs } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { get } from 'lodash';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
     FormProvider,
     useForm,
@@ -15,6 +15,28 @@ import { VerticalBox } from './VerticalBox';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 import { db } from './history/db';
+
+const useRestoreValues = () => {
+    const tab_name = useTabName();
+    const api = useAppSelector((s) =>
+        get(s, ['config', 'tabs', tab_name], null)
+    );
+    const { setValue } = useFormContext();
+    return useCallback(
+        (key: string, value: any) => {
+            if (!api) {
+                console.log(
+                    `Trying to set ${key} to ${value} but tab ${tab_name} isn't loaded yet`
+                );
+                return;
+            }
+            if (api.controls[key]) {
+                setValue(key, value, { shouldDirty: false });
+            }
+        },
+        [api, setValue, tab_name]
+    );
+};
 
 const ValuesRestore = () => {
     const ref = useRef<HTMLDivElement>(null);
@@ -30,7 +52,7 @@ const ValuesRestore = () => {
         async () => (await db.formState.get(tab_name)) ?? null,
         [tab]
     );
-    const { setValue } = useFormContext();
+    const setValue = useRestoreValues();
     useEffect(() => {
         if (tab !== tab_name || action !== actionEnum.RESTORE) {
             return;
@@ -57,7 +79,7 @@ const ValuesRestore = () => {
         const vals = JSON.parse(idb.state);
         if (vals) {
             Object.keys(vals).forEach((c) => {
-                setValue(c, vals[c], { shouldDirty: false });
+                setValue(c, vals[c]);
             });
         }
         setInitialized(true);
