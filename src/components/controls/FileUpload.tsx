@@ -1,6 +1,6 @@
 import { Box, Link, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import { useApiURL } from '../../hooks/useApiURL';
@@ -9,8 +9,14 @@ import { useTranslate } from '../../i18n/I18nContext';
 export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
-    const [url, setUrl] = useState<string>();
     const apiUrl = useApiURL();
+    const imageURL = useMemo(() => {
+        const params = new URLSearchParams();
+        params.set('subfolder', '');
+        params.set('type', 'input');
+        params.set('filename', field.value);
+        return apiUrl + '/api/view?' + params.toString();
+    }, [apiUrl, field.value]);
     const { mutate } = useMutation({
         onMutate: (files: File[]) => {
             const formData = new FormData();
@@ -29,11 +35,6 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
                     j.filename = j.name;
                     delete j.name;
                     field.onChange(j.filename);
-                    setUrl(
-                        apiUrl +
-                            '/api/view?' +
-                            new URLSearchParams(j).toString()
-                    );
                 });
         },
     });
@@ -87,7 +88,7 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
                                 marginTop: 10,
                                 border: '1px solid gray',
                             }}
-                            src={url}
+                            src={imageURL}
                         />
                     )}
                 </Box>
