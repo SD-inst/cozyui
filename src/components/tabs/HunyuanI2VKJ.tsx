@@ -39,11 +39,6 @@ const Content = () => {
                 <LLMSelectInput name='llm' />
                 <DescribeButton />
                 <TextInput name='prompt' multiline sx={{ mb: 3 }} />
-                <SelectInput
-                    name='model'
-                    defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                    choices={hyv_models}
-                />
                 <HYSize name='size' label='max size' defaultValue={544} />
                 <LengthInput
                     min={5}
@@ -60,6 +55,11 @@ const Content = () => {
                         {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
+                        <SelectInput
+                            name='model'
+                            defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
+                            choices={hyv_models}
+                        />
                         <KJSchedulerSelectInput name='sampler' />
                         <FlowShiftInput defaultValue={10} />
                         <SliderInput

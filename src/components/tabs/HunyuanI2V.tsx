@@ -35,7 +35,6 @@ const Content = () => {
                 <LLMSelectInput name='llm' />
                 <DescribeButton />
                 <TextInput name='prompt' multiline sx={{ mb: 3 }} />
-                <HYModelSelectInput name='model' />
                 <HYSize name='size' label='max size' defaultValue={544} />
                 <LengthInput
                     min={5}
@@ -52,6 +51,7 @@ const Content = () => {
                         {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
+                        <HYModelSelectInput name='model' />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput defaultValue={10} />
