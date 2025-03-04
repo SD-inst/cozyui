@@ -148,6 +148,7 @@ const translation = {
         params_restored: 'Параметры генерации восстановлены',
         error_saving_history: 'Ошибка сохранения истории: %{err}',
         error_importing_database: 'Ошибка при импорте истории: %{err}',
+        error_exporting_database: 'Ошибка при экспорте истории: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',

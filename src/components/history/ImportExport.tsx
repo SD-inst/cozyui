@@ -37,8 +37,15 @@ export const ImportExport = () => {
             progressCallback,
             numRowsPerChunk: 1,
             filter: (table) => table === 'taskResults',
-        });
-        setProgress(0);
+        })
+            .catch((e) => {
+                toast.error(tr('toasts.error_exporting_database', { err: e }));
+                console.error(e);
+            })
+            .finally(() => setProgress(0));
+        if (!blob) {
+            return;
+        }
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = 'cozydb.json';

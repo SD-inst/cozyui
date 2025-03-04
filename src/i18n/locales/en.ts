@@ -147,6 +147,7 @@ const translation = {
         params_restored: 'Generation parameters restored',
         error_saving_history: 'Error saving history: %{err}',
         error_importing_database: 'Error importing history: %{err}',
+        error_exporting_database: 'Error exporting history: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',
