@@ -1,249 +1,209 @@
 {
-  "1": {
-    "inputs": {
-      "model": [
-        "6",
-        0
-      ],
-      "conditioning": [
-        "7",
-        0
-      ]
+    "1": {
+        "inputs": {
+            "model": ["6", 0],
+            "conditioning": ["7", 0]
+        },
+        "class_type": "BasicGuider",
+        "_meta": {
+            "title": "BasicGuider"
+        }
     },
-    "class_type": "BasicGuider",
-    "_meta": {
-      "title": "BasicGuider"
-    }
-  },
-  "2": {
-    "inputs": {
-      "noise_seed": [
-        "19",
-        0
-      ]
+    "2": {
+        "inputs": {
+            "noise_seed": ["19", 0]
+        },
+        "class_type": "RandomNoise",
+        "_meta": {
+            "title": "RandomNoise"
+        }
     },
-    "class_type": "RandomNoise",
-    "_meta": {
-      "title": "RandomNoise"
-    }
-  },
-  "3": {
-    "inputs": {
-      "sampler_name": "euler"
+    "3": {
+        "inputs": {
+            "sampler_name": "euler"
+        },
+        "class_type": "KSamplerSelect",
+        "_meta": {
+            "title": "KSamplerSelect"
+        }
     },
-    "class_type": "KSamplerSelect",
-    "_meta": {
-      "title": "KSamplerSelect"
-    }
-  },
-  "4": {
-    "inputs": {
-      "tile_size": 256,
-      "overlap": 64,
-      "temporal_size": 64,
-      "temporal_overlap": 4,
-      "samples": [
-        "5",
-        0
-      ],
-      "vae": [
-        "9",
-        0
-      ]
+    "4": {
+        "inputs": {
+            "tile_size": 256,
+            "overlap": 64,
+            "temporal_size": 64,
+            "temporal_overlap": 4,
+            "samples": ["5", 0],
+            "vae": ["9", 0]
+        },
+        "class_type": "VAEDecodeTiled",
+        "_meta": {
+            "title": "VAE Decode (Tiled)"
+        }
     },
-    "class_type": "VAEDecodeTiled",
-    "_meta": {
-      "title": "VAE Decode (Tiled)"
-    }
-  },
-  "5": {
-    "inputs": {
-      "noise": [
-        "2",
-        0
-      ],
-      "guider": [
-        "1",
-        0
-      ],
-      "sampler": [
-        "3",
-        0
-      ],
-      "sigmas": [
-        "12",
-        0
-      ],
-      "latent_image": [
-        "14",
-        0
-      ]
+    "5": {
+        "inputs": {
+            "noise": ["2", 0],
+            "guider": ["1", 0],
+            "sampler": ["3", 0],
+            "sigmas": ["12", 0],
+            "latent_image": ["14", 0]
+        },
+        "class_type": "SamplerCustomAdvanced",
+        "_meta": {
+            "title": "SamplerCustomAdvanced"
+        }
     },
-    "class_type": "SamplerCustomAdvanced",
-    "_meta": {
-      "title": "SamplerCustomAdvanced"
-    }
-  },
-  "6": {
-    "inputs": {
-      "shift": 10,
-      "model": [
-        "15",
-        0
-      ]
+    "6": {
+        "inputs": {
+            "shift": 10,
+            "model": ["15", 0]
+        },
+        "class_type": "ModelSamplingSD3",
+        "_meta": {
+            "title": "ModelSamplingSD3"
+        }
     },
-    "class_type": "ModelSamplingSD3",
-    "_meta": {
-      "title": "ModelSamplingSD3"
-    }
-  },
-  "7": {
-    "inputs": {
-      "guidance": 8,
-      "conditioning": [
-        "8",
-        0
-      ]
+    "7": {
+        "inputs": {
+            "guidance": 8,
+            "conditioning": ["8", 0]
+        },
+        "class_type": "FluxGuidance",
+        "_meta": {
+            "title": "FluxGuidance"
+        }
     },
-    "class_type": "FluxGuidance",
-    "_meta": {
-      "title": "FluxGuidance"
-    }
-  },
-  "8": {
-    "inputs": {
-      "text": "high quality nature video of a red panda balancing on a bamboo stick while a bird lands on the panda's head, there's a waterfall in the background",
-      "clip": [
-        "10",
-        0
-      ]
+    "8": {
+        "inputs": {
+            "text": "high quality nature video of a red panda balancing on a bamboo stick while a bird lands on the panda's head, there's a waterfall in the background",
+            "clip": ["10", 0]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Positive Prompt)"
+        }
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Positive Prompt)"
-    }
-  },
-  "9": {
-    "inputs": {
-      "vae_name": "hyvid/hunyuan_video_vae_bf16.safetensors"
+    "9": {
+        "inputs": {
+            "vae_name": "hyvid/hunyuan_video_vae_bf16.safetensors"
+        },
+        "class_type": "VAELoader",
+        "_meta": {
+            "title": "Load VAE"
+        }
     },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "Load VAE"
-    }
-  },
-  "10": {
-    "inputs": {
-      "clip_name1": "clip_l.safetensors",
-      "clip_name2": "llava_llama3_fp8_scaled.safetensors",
-      "type": "hunyuan_video",
-      "device": "default"
+    "10": {
+        "inputs": {
+            "clip_name1": "clip_l.safetensors",
+            "clip_name2": "llava_llama3_fp8_scaled.safetensors",
+            "type": "hunyuan_video",
+            "device": "default"
+        },
+        "class_type": "DualCLIPLoader",
+        "_meta": {
+            "title": "DualCLIPLoader"
+        }
     },
-    "class_type": "DualCLIPLoader",
-    "_meta": {
-      "title": "DualCLIPLoader"
-    }
-  },
-  "12": {
-    "inputs": {
-      "scheduler": "simple",
-      "steps": 7,
-      "denoise": 1,
-      "model": [
-        "15",
-        0
-      ]
+    "12": {
+        "inputs": {
+            "scheduler": "simple",
+            "steps": 7,
+            "denoise": 1,
+            "model": ["15", 0]
+        },
+        "class_type": "BasicScheduler",
+        "_meta": {
+            "title": "BasicScheduler"
+        }
     },
-    "class_type": "BasicScheduler",
-    "_meta": {
-      "title": "BasicScheduler"
-    }
-  },
-  "13": {
-    "inputs": {
-      "unet_name": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
-      "weight_dtype": "fp8_e4m3fn"
+    "13": {
+        "inputs": {
+            "unet_name": "hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors",
+            "weight_dtype": "fp8_e4m3fn"
+        },
+        "class_type": "UNETLoader",
+        "_meta": {
+            "title": "Load Diffusion Model"
+        }
     },
-    "class_type": "UNETLoader",
-    "_meta": {
-      "title": "Load Diffusion Model"
-    }
-  },
-  "14": {
-    "inputs": {
-      "width": 512,
-      "height": 320,
-      "length": 85,
-      "batch_size": 1
+    "14": {
+        "inputs": {
+            "width": 512,
+            "height": 320,
+            "length": 85,
+            "batch_size": 1
+        },
+        "class_type": "EmptyHunyuanLatentVideo",
+        "_meta": {
+            "title": "EmptyHunyuanLatentVideo"
+        }
     },
-    "class_type": "EmptyHunyuanLatentVideo",
-    "_meta": {
-      "title": "EmptyHunyuanLatentVideo"
-    }
-  },
-  "15": {
-    "inputs": {
-      "object_to_patch": "diffusion_model",
-      "residual_diff_threshold": 0.1,
-      "start": 0,
-      "end": 1,
-      "max_consecutive_cache_hits": -1,
-      "model": [
-        "13",
-        0
-      ]
+    "15": {
+        "inputs": {
+            "object_to_patch": "diffusion_model",
+            "residual_diff_threshold": 0.1,
+            "start": 0,
+            "end": 1,
+            "max_consecutive_cache_hits": -1,
+            "model": ["13", 0]
+        },
+        "class_type": "ApplyFBCacheOnModel",
+        "_meta": {
+            "title": "Apply First Block Cache"
+        }
     },
-    "class_type": "ApplyFBCacheOnModel",
-    "_meta": {
-      "title": "Apply First Block Cache"
-    }
-  },
-  "16": {
-    "inputs": {
-      "frame_rate": 24,
-      "loop_count": 0,
-      "filename_prefix": [
-        "18",
-        0
-      ],
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 6,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "4",
-        0
-      ]
+    "16": {
+        "inputs": {
+            "frame_rate": 24,
+            "loop_count": 0,
+            "filename_prefix": ["18", 0],
+            "format": "video/h264-mp4",
+            "pix_fmt": "yuv420p",
+            "crf": 6,
+            "save_metadata": true,
+            "trim_to_audio": false,
+            "pingpong": false,
+            "save_output": true,
+            "images": ["4", 0]
+        },
+        "class_type": "VHS_VideoCombine",
+        "_meta": {
+            "title": "Video Combine 🎥🅥🅗🅢"
+        }
     },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "18": {
-    "inputs": {
-      "prefix": "HunyuanVideo_",
-      "suffix": "",
-      "input": [
-        "19",
-        0
-      ]
+    "18": {
+        "inputs": {
+            "prefix": "HunyuanVideo_",
+            "suffix": "",
+            "input": ["19", 0]
+        },
+        "class_type": "SomethingToString",
+        "_meta": {
+            "title": "Something To String"
+        }
     },
-    "class_type": "SomethingToString",
-    "_meta": {
-      "title": "Something To String"
-    }
-  },
-  "19": {
-    "inputs": {
-      "value": 1024
+    "19": {
+        "inputs": {
+            "value": 1024
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "INT Constant"
+        }
     },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "INT Constant"
+    "20": {
+        "inputs": {
+            "filename_prefix": ["18", 0],
+            "fps": 24,
+            "lossless": true,
+            "quality": 80,
+            "method": "default",
+            "images": ["4", 0]
+        },
+        "class_type": "SaveAnimatedWEBP",
+        "_meta": {
+            "title": "SaveAnimatedWEBP"
+        }
     }
-  }
 }

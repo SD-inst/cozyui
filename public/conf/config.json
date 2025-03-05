@@ -88,9 +88,102 @@
                     "name_field_name": "lora_name"
                 }
             },
+            "result": [
+                {
+                    "id": "16",
+                    "type": "gifs"
+                },
+                { "id": "20", "type": "images" }
+            ],
+            "defaults": {
+                "tile_size": 256,
+                "overlap": 64,
+                "temporal_size": 64,
+                "temporal_overlap": 4
+            }
+        },
+        "Hunyuan Upscale": {
+            "api": "api/hunyuan_upscale.json",
+            "controls": {
+                "prompt": {
+                    "id": "12",
+                    "field": "text"
+                },
+                "image": {
+                    "id": "1",
+                    "field": "image"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "8"
+                },
+                "sampler": {
+                    "id": "11",
+                    "field": "sampler_name"
+                },
+                "guidance": {
+                    "id": "13",
+                    "field": "guidance"
+                },
+                "flow_shift": {
+                    "id": "14",
+                    "field": "shift"
+                },
+                "scheduler": {
+                    "id": "15",
+                    "field": "scheduler"
+                },
+                "steps": {
+                    "id": "15",
+                    "field": "steps"
+                },
+                "denoise": {
+                    "id": "15",
+                    "field": "denoise"
+                },
+                "seed": {
+                    "id": "21",
+                    "field": "value"
+                },
+                "upscale": {
+                    "id": "30",
+                    "field": "scale_by"
+                },
+                "tile_size": {
+                    "id": "19",
+                    "field": "tile_size"
+                },
+                "overlap": {
+                    "id": "19",
+                    "field": "overlap"
+                },
+                "temporal_size": {
+                    "id": "19",
+                    "field": "temporal_size"
+                },
+                "temporal_overlap": {
+                    "id": "19",
+                    "field": "temporal_overlap"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
             "result": {
-                "id": "16",
+                "id": "20",
                 "type": "gifs"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "8",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["14"],
+                    "output_idx": 0,
+                    "class_name": "HunyuanVideoLoraLoader",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora_name"
+                }
             },
             "defaults": {
                 "tile_size": 256,
@@ -517,10 +610,13 @@
                     "name_field_name": "lora_name"
                 }
             },
-            "result": {
-                "id": "50",
-                "type": "gifs"
-            },
+            "result": [
+                {
+                    "id": "50",
+                    "type": "gifs"
+                },
+                { "id": "93", "type": "images" }
+            ],
             "defaults": {
                 "tile_size": 256,
                 "overlap": 64,

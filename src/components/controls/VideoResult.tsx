@@ -4,13 +4,13 @@ import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
-import { VerticalBox } from '../VerticalBox';
 import { useTranslate } from '../../i18n/I18nContext';
+import { VerticalBox } from '../VerticalBox';
 
 export const VideoResult = ({ title }: { title?: string }) => {
     const results = useResult();
     const tr = useTranslate();
-    const videoRef = useRef<HTMLVideoElement>(null);
+    const videoRef = useRef<HTMLVideoElement & HTMLImageElement>(null);
     const apiUrl = useApiURL();
     useEffect(() => {
         if (results.length && videoRef.current) {
@@ -27,14 +27,22 @@ export const VideoResult = ({ title }: { title?: string }) => {
                 const url = makeOutputUrl(apiUrl, r);
                 return (
                     <VerticalBox key={r.filename}>
-                        <video
-                            ref={videoRef}
-                            style={{ width: '100%' }}
-                            src={url}
-                            controls
-                            autoPlay
-                            loop
-                        />
+                        {r.filename.endsWith('.webp') ? (
+                            <img
+                                ref={videoRef}
+                                style={{ width: '100%' }}
+                                src={url}
+                            />
+                        ) : (
+                            <video
+                                ref={videoRef}
+                                style={{ width: '100%' }}
+                                src={url}
+                                controls
+                                autoPlay
+                                loop
+                            />
+                        )}
                         <a download href={url}>
                             <Button variant='contained' color='success'>
                                 {tr('controls.download')}

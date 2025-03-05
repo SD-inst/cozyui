@@ -265,5 +265,19 @@
         "_meta": {
             "title": "Size"
         }
+    },
+    "93": {
+        "inputs": {
+            "filename_prefix": ["91", 0],
+            "fps": 24,
+            "lossless": true,
+            "quality": 80,
+            "method": "default",
+            "images": ["57", 0]
+        },
+        "class_type": "SaveAnimatedWEBP",
+        "_meta": {
+            "title": "SaveAnimatedWEBP"
+        }
     }
 }

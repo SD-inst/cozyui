@@ -87,6 +87,9 @@ const translation = {
         import_history: 'Импорт истории',
         export_history: 'Экспорт истории',
         please_wait: 'Пожалуйста, подождите...',
+        denoise: 'денойз',
+        upscale: 'увеличение',
+        send_to_upscale: 'Отправить на увеличение',
     },
     settings: {
         select_language: 'Выбор языка',
@@ -149,6 +152,7 @@ const translation = {
         error_saving_history: 'Ошибка сохранения истории: %{err}',
         error_importing_database: 'Ошибка при импорте истории: %{err}',
         error_exporting_database: 'Ошибка при экспорте истории: %{err}',
+        error_uploading: 'Ошибка при загрузке изображения: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',

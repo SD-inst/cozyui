@@ -5,7 +5,11 @@ export type resultOptionsType = {
     type?: string;
 };
 
-export const defaultValue: resultOptionsType = {};
+export type overrideType = resultOptionsType & { index?: number };
+
+export type resultsOptionsType = resultOptionsType | resultOptionsType[];
+
+export const defaultValue: overrideType = {};
 
 export const ResultOverrideContext = createContext(defaultValue);
 

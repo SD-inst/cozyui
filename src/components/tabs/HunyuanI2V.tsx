@@ -20,6 +20,8 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
+import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 
 const Content = () => {
     const tr = useTranslate();
@@ -102,8 +104,16 @@ const Content = () => {
                     ]}
                 />
             </GridLeft>
-            <GridRight>
+            <GridRight
+                display='flex'
+                gap={2}
+                flexDirection='column'
+                alignItems='center'
+            >
                 <VideoResult />
+                <ResultOverrideContextProvider value={{ index: 1 }}>
+                    <SendToUpscaleButton />
+                </ResultOverrideContextProvider>
             </GridRight>
             <GridBottom>
                 <GenerateButton />

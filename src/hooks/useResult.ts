@@ -1,12 +1,12 @@
 import { get, merge } from 'lodash';
 import {
-    resultOptionsType,
+    resultsOptionsType,
     useResultOverride,
 } from '../components/contexts/ResultOverrideContext';
 import { useTabName } from '../components/contexts/TabContext';
 import { useAppSelector } from '../redux/hooks';
 
-export const emptyResultParam: resultOptionsType = {
+export const emptyResultParam: resultsOptionsType = {
     id: '',
     type: '',
 };
@@ -18,7 +18,10 @@ export const useResultParam = () => {
     const result = useAppSelector((s) =>
         get(s, ['config', 'tabs', tab_name, 'result'], emptyResultParam)
     );
-    const override = useResultOverride();
+    const { index, ...override } = useResultOverride();
+    if (Array.isArray(result)) {
+        return merge({}, result[index || 0], override);
+    }
     return merge({}, result, override);
 };
 

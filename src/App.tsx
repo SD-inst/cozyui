@@ -20,6 +20,7 @@ import { HunyanT2VKJTab } from './components/tabs/HunyuanT2VKJ';
 import { LTXI2VTab } from './components/tabs/LTXI2V';
 import { StableAudioTab } from './components/tabs/StableAudio';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
+import { HunyanUpscale } from './components/tabs/HunyuanUpscale';
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                     <VerticalBox>
                         <WorkflowTabs>
                             {HunyanT2VTab}
+                            {HunyanUpscale}
                             {HunyanI2VTab}
                             {HunyanI2VKJTab}
                             {HunyanT2VKJTab}

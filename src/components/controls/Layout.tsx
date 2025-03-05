@@ -1,14 +1,14 @@
-import { Grid2 as Grid } from '@mui/material';
+import { Grid2 as Grid, Grid2Props } from '@mui/material';
 
-export const Layout = ({ ...props }) => {
+export const Layout = ({ ...props }: Grid2Props) => {
     return (
-        <Grid container width='100%' spacing={2}>
+        <Grid container width='100%' spacing={2} {...props}>
             {props.children}
         </Grid>
     );
 };
 
-export const GridLeft = ({ ...props }) => {
+export const GridLeft = ({ ...props }: Grid2Props) => {
     return (
         <Grid size={{ xs: 12, md: 8 }} {...props}>
             {props.children}
@@ -16,7 +16,7 @@ export const GridLeft = ({ ...props }) => {
     );
 };
 
-export const GridRight = ({ ...props }) => {
+export const GridRight = ({ ...props }: Grid2Props) => {
     return (
         <Grid size={{ xs: 12, md: 4 }} {...props}>
             {props.children}
@@ -24,7 +24,7 @@ export const GridRight = ({ ...props }) => {
     );
 };
 
-export const GridBottom = ({ ...props }) => {
+export const GridBottom = ({ ...props }: Grid2Props) => {
     return (
         <Grid
             justifyContent='center'

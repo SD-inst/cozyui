@@ -22,6 +22,8 @@ import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
+import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 
 const Content = () => {
     const tr = useTranslate();
@@ -81,8 +83,16 @@ const Content = () => {
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' type='hunyuan' />
             </GridLeft>
-            <GridRight>
+            <GridRight
+                display='flex'
+                gap={2}
+                flexDirection='column'
+                alignItems='center'
+            >
                 <VideoResult />
+                <ResultOverrideContextProvider value={{ index: 1 }}>
+                    <SendToUpscaleButton />
+                </ResultOverrideContextProvider>
             </GridRight>
             <GridBottom>
                 <GenerateButton />

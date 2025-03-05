@@ -1,12 +1,34 @@
 import { Box, Link, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useTranslate } from '../../i18n/I18nContext';
+import { UploadType } from './UploadType';
+import toast from 'react-hot-toast';
 
-export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
+const style = {
+    maxWidth: 200,
+    maxHeight: 200,
+    padding: 5,
+    marginTop: 10,
+    border: '1px solid gray',
+};
+
+const ext: { [type: string]: string[] } = {
+    [UploadType.IMAGE]: ['.jpg', '.gif', '.png', '.webp'],
+    [UploadType.VIDEO]: ['.webm', '.avi', '.mp4'],
+};
+
+export const FileUpload = ({
+    type = UploadType.IMAGE,
+    ...props
+}: {
+    name: string;
+    label?: string;
+    type?: UploadType;
+}) => {
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
@@ -35,7 +57,8 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
                     j.filename = j.name;
                     delete j.name;
                     field.onChange(j.filename);
-                });
+                })
+                .catch((e) => toast(tr('toasts.error_uploading', { err: e })));
         },
     });
     const onDrop = useCallback(
@@ -44,11 +67,35 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
         },
         [mutate]
     );
+    const accept = useMemo(() => {
+        switch (type) {
+            case UploadType.IMAGE:
+                return {
+                    'image/*': ext[UploadType.IMAGE],
+                };
+            case UploadType.VIDEO:
+                return {
+                    'image/*': ext[UploadType.IMAGE],
+                    'video/*': ext[UploadType.VIDEO],
+                };
+            default:
+                return {};
+        }
+    }, [type]) as Accept;
+    const filetype = useMemo(() => {
+        if (!field.value) {
+            return UploadType.IMAGE;
+        }
+        for (const k of Object.keys(ext)) {
+            if (ext[k].some((e) => field.value.endsWith(e))) {
+                return k;
+            }
+        }
+        return UploadType.IMAGE;
+    }, [field.value]);
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
-        accept: {
-            'image/*': ['.jpg', '.gif', '.png', '.webp'],
-        },
+        accept,
     });
     return (
         <Box mb={2} display='flex' flexDirection='column'>
@@ -79,18 +126,16 @@ export const FileUpload = ({ ...props }: { name: string; label?: string }) => {
                             {tr('controls.drop_files_desc')}
                         </Link>
                     )}
-                    {field.value && (
-                        <img
-                            style={{
-                                maxWidth: 200,
-                                maxHeight: 200,
-                                padding: 5,
-                                marginTop: 10,
-                                border: '1px solid gray',
-                            }}
-                            src={imageURL}
-                        />
-                    )}
+                    {field.value &&
+                        (filetype === UploadType.IMAGE ? (
+                            <img style={style} src={imageURL} />
+                        ) : (
+                            <video
+                                style={{ ...style, width: 200 }}
+                                src={imageURL}
+                                controls
+                            />
+                        ))}
                 </Box>
             </Box>
         </Box>
