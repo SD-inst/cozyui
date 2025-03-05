@@ -12,7 +12,7 @@ const translation = {
         guidance: 'гайданс',
         flow_shift: 'сдвиг потока',
         wave_speed: 'кэш WaveSpeed',
-        wave_speed_maxhit: 'Макс. попаданий WaveSpeed',
+        wave_speed_maxhit: 'макс. попаданий WaveSpeed',
         size: 'макс. размер',
         tea_cache: 'Tea Cache',
         enhance_video: 'вес Enhance-a-Video',
@@ -90,6 +90,7 @@ const translation = {
         denoise: 'денойз',
         upscale: 'увеличение',
         send_to_upscale: 'Отправить на увеличение',
+        allow_upscale: 'разрешить увеличение',
     },
     settings: {
         select_language: 'Выбор языка',

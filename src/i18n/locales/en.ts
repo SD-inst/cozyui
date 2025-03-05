@@ -91,6 +91,7 @@ const translation = {
         denoise: 'denoise',
         upscale: 'upscale',
         send_to_upscale: 'Send to upscale',
+        allow_upscale: 'allow upscale',
     },
     settings: {
         select_language: 'Select language',
@@ -151,7 +152,7 @@ const translation = {
         error_saving_history: 'Error saving history: %{err}',
         error_importing_database: 'Error importing history: %{err}',
         error_exporting_database: 'Error exporting history: %{err}',
-        error_uploading: 'Error uploading image: %{err}'
+        error_uploading: 'Error uploading image: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',

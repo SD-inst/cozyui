@@ -22,6 +22,7 @@ import { WFTab } from '../WFTab';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
+import { UpscaleToggle } from '../controls/UpscaleToggle';
 
 const Content = () => {
     const tr = useTranslate();
@@ -87,6 +88,7 @@ const Content = () => {
                             name='wave_speed_maxhit'
                             tooltip='wave_speed_maxhit'
                         />
+                        <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />

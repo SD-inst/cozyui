@@ -32,8 +32,8 @@ function App() {
                     <VerticalBox>
                         <WorkflowTabs>
                             {HunyanT2VTab}
-                            {HunyanUpscale}
                             {HunyanI2VTab}
+                            {HunyanUpscale}
                             {HunyanI2VKJTab}
                             {HunyanT2VKJTab}
                             {LTXI2VTab}

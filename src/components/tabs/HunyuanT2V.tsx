@@ -24,6 +24,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
+import { UpscaleToggle } from '../controls/UpscaleToggle';
 
 const Content = () => {
     const tr = useTranslate();
@@ -78,6 +79,7 @@ const Content = () => {
                             name='wave_speed_maxhit'
                             tooltip='wave_speed_maxhit'
                         />
+                        <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
