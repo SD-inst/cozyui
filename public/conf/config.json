@@ -113,8 +113,9 @@
                     "field": "text"
                 },
                 "image": {
-                    "id": "1",
-                    "field": "image"
+                    "id": "handle",
+                    "field": "image",
+                    "node_id": "1"
                 },
                 "model": {
                     "id": "handle",

@@ -7,6 +7,8 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useTranslate } from '../../i18n/I18nContext';
 import { UploadType } from './UploadType';
 import toast from 'react-hot-toast';
+import { useRegisterHandler } from '../contexts/TabContext';
+import { controlType } from '../../redux/config';
 
 const style = {
     maxWidth: 200,
@@ -20,6 +22,23 @@ const ext: { [type: string]: string[] } = {
     [UploadType.IMAGE]: ['.jpg', '.gif', '.png', '.webp'],
     [UploadType.VIDEO]: ['.webm', '.avi', '.mp4'],
 };
+
+const video_node = (video: string) => ({
+    inputs: {
+        video,
+        force_rate: 0,
+        force_size: 'Disabled',
+        custom_width: 512,
+        custom_height: 512,
+        frame_load_cap: 0,
+        skip_first_frames: 0,
+        select_every_nth: 1,
+    },
+    class_type: 'VHS_LoadVideo',
+    _meta: {
+        title: 'Load Video (Upload) 🎥🅥🅗🅢',
+    },
+});
 
 export const FileUpload = ({
     type = UploadType.IMAGE,
@@ -39,6 +58,31 @@ export const FileUpload = ({
         params.set('filename', field.value);
         return apiUrl + '/api/view?' + params.toString();
     }, [apiUrl, field.value]);
+    const filetype = useMemo(() => {
+        if (!field.value) {
+            return UploadType.IMAGE;
+        }
+        for (const k of Object.keys(ext)) {
+            if (ext[k].some((e) => field.value.endsWith(e))) {
+                return k;
+            }
+        }
+        return UploadType.IMAGE;
+    }, [field.value]);
+    const handler = useCallback(
+        (api: any, val: string, control?: controlType) => {
+            if (!control) {
+                return;
+            }
+            if (filetype === UploadType.IMAGE) {
+                api[control.node_id].inputs[control.field] = val;
+                return;
+            }
+            api[control.node_id] = video_node(val);
+        },
+        [filetype]
+    );
+    useRegisterHandler({ name: props.name, handler });
     const { mutate } = useMutation({
         onMutate: (files: File[]) => {
             const formData = new FormData();
@@ -82,17 +126,6 @@ export const FileUpload = ({
                 return {};
         }
     }, [type]) as Accept;
-    const filetype = useMemo(() => {
-        if (!field.value) {
-            return UploadType.IMAGE;
-        }
-        for (const k of Object.keys(ext)) {
-            if (ext[k].some((e) => field.value.endsWith(e))) {
-                return k;
-            }
-        }
-        return UploadType.IMAGE;
-    }, [field.value]);
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept,
