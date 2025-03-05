@@ -15,7 +15,7 @@ export const SendToUpscaleButton = ({ ...props }: ButtonProps) => {
     const { getValues } = useFormContext();
     const apiUrl = useApiURL();
     const handleClick = async () => {
-        const { prompt, model } = getValues();
+        const { prompt, model, lora } = getValues();
         const formData = new FormData();
         const url = makeOutputUrl(apiUrl, result[0]);
         const file = await fetch(url).then((b) => b.blob());
@@ -35,6 +35,7 @@ export const SendToUpscaleButton = ({ ...props }: ButtonProps) => {
                     prompt,
                     model,
                     image,
+                    lora
                 },
             })
         );
