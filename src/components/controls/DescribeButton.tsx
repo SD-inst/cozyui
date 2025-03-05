@@ -46,7 +46,13 @@ export const DescribeButton = ({
     );
     return (
         <TabContextProvider value={{ ...tab_ctx, api }}>
-            <ResultOverrideContextProvider value={describeResultParams}>
+            <ResultOverrideContextProvider
+                value={
+                    Array.isArray(describeResultParams)
+                        ? describeResultParams[0]
+                        : describeResultParams
+                }
+            >
                 <GenerateButton text={text} hideErrors noreset {...props} />
                 <SetResults field={field} />
             </ResultOverrideContextProvider>
