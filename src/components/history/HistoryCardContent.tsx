@@ -1,5 +1,4 @@
 import { Box, Typography } from '@mui/material';
-import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export const HistoryCardContent = ({
@@ -9,14 +8,14 @@ export const HistoryCardContent = ({
     url: string;
     type: string;
 }) => {
-    const phone = useIsPhone();
     const tr = useTranslate();
     switch (type) {
         case 'gifs':
             return (
                 <video
                     style={{
-                        width: phone ? '100%' : undefined,
+                        width: '100%',
+                        maxHeight: 500,
                     }}
                     src={url}
                     controls
