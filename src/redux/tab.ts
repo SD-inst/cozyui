@@ -57,11 +57,17 @@ const slice = createSlice({
             s,
             action: PayloadAction<{ prompt_id: string; tab_name: string }>
         ) => {
+            setWith(
+                s,
+                ['prompt', action.payload.prompt_id],
+                { tab_name: action.payload.tab_name },
+                Object
+            );
             const temp_result = s.result[action.payload.prompt_id];
             if (temp_result) {
                 // found temporary result, must be a race condition when
                 // /api/prompt returned *after* the results arrived via
-                // the websocket; don't set prompt and move the result instead
+                // the websocket; move the result
                 setWith(
                     s,
                     ['result', action.payload.tab_name],
@@ -74,12 +80,6 @@ const slice = createSlice({
                 );
                 return;
             }
-            setWith(
-                s,
-                ['prompt', action.payload.prompt_id],
-                { tab_name: action.payload.tab_name },
-                Object
-            );
         },
         clearPrompt: (s) => ({ ...s, prompt: {} }),
         setParams: (s, action: PayloadAction<paramsType>) => ({
