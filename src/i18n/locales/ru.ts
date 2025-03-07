@@ -92,6 +92,8 @@ const translation = {
         send_to_upscale: 'Отправить на увеличение',
         allow_upscale: 'разрешить увеличение',
         clip_model: 'модель CLIP LLM',
+        tab_json_diff: 'Параметры',
+        tab_video_diff: 'Видео',
     },
     settings: {
         select_language: 'Выбор языка',

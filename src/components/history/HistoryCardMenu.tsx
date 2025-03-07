@@ -50,15 +50,22 @@ export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
             open: true,
             jsonA: JSON.parse(tasks[0].params || '{}'),
             jsonB: JSON.parse(tasks[1].params || '{}'),
+            A_id: tasks[0].id,
+            B_id: tasks[1].id,
         }));
     };
     const handleSetCompare = () => {
         setAnchor(null);
-        setCompare((v) => ({ ...v, selected_id: output.id }));
+        setCompare((v) => ({
+            ...v,
+            selected_id: output.id,
+            A_id: output.id,
+            B_id: 0,
+        }));
     };
     const handleResetComparison = () => {
         setAnchor(null);
-        setCompare((v) => ({ ...v, selected_id: 0 }));
+        setCompare((v) => ({ ...v, selected_id: 0, A_id: 0, B_id: 0 }));
     };
     const handleCompareWithThis = async () => {
         setAnchor(null);
@@ -71,6 +78,8 @@ export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
             ...v,
             jsonA: JSON.parse(taskA?.params || '{}'),
             jsonB: JSON.parse(output.params || '{}'),
+            A_id: taskA?.id,
+            B_id: output.id,
             open: true,
         }));
     };
