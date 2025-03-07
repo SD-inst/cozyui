@@ -11,7 +11,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'Gradient estimation', value: 'gradient_estimation' },
                 { text: 'IPNDM', value: 'ipndm' },
             ]}
-            defaultValue='dpmpp_2m'
+            defaultValue='euler'
             tooltip='sampler'
             {...props}
         />
