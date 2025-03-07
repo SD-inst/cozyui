@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { isArray, mergeWith } from 'lodash';
+import { mergeType } from '../api/mergeType';
 
 export type controlType = {
     id: string;
@@ -41,6 +42,13 @@ export type modelType = {
     path: string;
 };
 
+export type loraDefaults = {
+    [path: string]: {
+        strength?: number;
+        merge?: mergeType;
+    };
+};
+
 export type configType = {
     tabs: {
         [tabName: string]: tabConfigType;
@@ -76,6 +84,7 @@ export type configType = {
     loras: {
         [name: string]: {
             filter: string;
+            defaults: loraDefaults;
         };
     };
     api: string;

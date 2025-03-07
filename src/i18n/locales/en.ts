@@ -70,7 +70,7 @@ const translation = {
         merge_type_single: 'Single blocks only',
         merge_type_double: 'Double blocks only',
         merge_type_full: 'Full',
-        weight: 'weight',
+        strength: 'strength',
         change_lora_merge_params: 'Change lora merge params',
         delete_result: 'Delete result',
         confirm_delete_result: 'Are you sure you want to delete this result?',
@@ -137,7 +137,7 @@ const translation = {
         guidance:
             "Prompt weight, if the result doesn't follow the prompt well, or if you see disappearing limbs and objects, increase this.",
         seed: "Seed is the reproduction number. To get a new result for the same parameters pick another seed. They're not correlated and even if you change it by just 1 the result would be unpredictably different. Same seed always produces the same result (if the other parameters are unchanged).",
-        lora: "LoRA (low-rank adaptation) is a method to add new concepts to the model, such as characters (people), movements, gestures, styles and so on. Multiple loras can be combined together with different weights. It's advised to use lower weights if you get any weird artifacts, especially if combining several loras.",
+        lora: "LoRA (low-rank adaptation) is a method to add new concepts to the model, such as characters (people), movements, gestures, styles and so on. Multiple loras can be combined together with different strengths. It's advised to use lower strength if you get any weird artifacts, especially if combining several loras.",
     },
     toasts: {
         disconnected: 'Disconnected',

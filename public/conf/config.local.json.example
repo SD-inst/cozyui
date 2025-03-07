@@ -18,5 +18,19 @@
             }
         ]
     },
+    "loras": {
+        "hunyuan": {
+            "defaults": {
+                "uploads/video/hyvid/hyreward_prompt_adherence.safetensors": {
+                    "strength": 1,
+                    "merge": 2
+                },
+                "uploads/video/hyvid/hyreward_aesthetics.safetensors": {
+                    "strength": 1,
+                    "merge": 2
+                }
+            }
+        }
+    },
     "preview_root": "/lora_previews"
 }

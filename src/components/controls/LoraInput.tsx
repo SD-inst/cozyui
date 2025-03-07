@@ -15,6 +15,7 @@ import {
     Tooltip,
 } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
+import { get } from 'lodash';
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -24,11 +25,11 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useAPI } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useTranslate } from '../../i18n/I18nContext';
+import { loraDefaults } from '../../redux/config';
+import { useAppSelector } from '../../redux/hooks';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { HelpButton } from './HelpButton';
 import { SelectControl } from './SelectControl';
-import { useAppSelector } from '../../redux/hooks';
-import { get } from 'lodash';
 
 type valueType = {
     id: string;
@@ -93,7 +94,7 @@ const LoraChip = ({
                     <TextField
                         fullWidth
                         sx={{ mt: 1 }}
-                        label={tr('controls.weight')}
+                        label={tr('controls.strength')}
                         value={strength}
                         type='number'
                         slotProps={{
@@ -180,6 +181,9 @@ const LoraOption = ({ value, id, ...props }: { value: string; id: string }) => {
     );
 };
 
+const emptyFilter = '';
+const emptyDefaults: loraDefaults = {};
+
 export const LoraInput = ({
     append,
     sx,
@@ -195,7 +199,10 @@ export const LoraInput = ({
     'renderInput' | 'options'
 >) => {
     const filter = useAppSelector((s) =>
-        get(s, ['config', 'loras', type, 'filter'], '')
+        get(s, ['config', 'loras', type, 'filter'], emptyFilter)
+    );
+    const defaults = useAppSelector((s) =>
+        get(s, ['config', 'loras', type, 'defaults'], emptyDefaults)
     );
     const final_filter = import.meta.env.VITE_FILTER_LORAS || filter;
     const tr = useTranslate();
@@ -350,15 +357,19 @@ export const LoraInput = ({
                 ? l.includes(final_filter)
                 : true
         )
-        .map((l) => ({
-            label: l.slice(
+        .map((l) => {
+            const label = l.slice(
                 l.lastIndexOf('/') + 1,
                 l.lastIndexOf('.safetensors')
-            ),
-            id: l,
-            strength: 1,
-            merge: mergeType.DOUBLE,
-        }));
+            );
+            return {
+                label,
+                id: l,
+                strength: 1,
+                merge: mergeType.DOUBLE,
+                ...defaults[l],
+            };
+        });
     return (
         <Box display='flex' position='relative' gap={1} sx={sx}>
             <Autocomplete
