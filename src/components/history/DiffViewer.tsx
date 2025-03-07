@@ -85,6 +85,7 @@ const VideoCompare = () => {
                         refs[1 - i].current!.currentTime =
                             refs[i].current.currentTime;
                     }}
+                    style={{ maxWidth: '100%' }}
                 />
             ))}
         </Box>
