@@ -23,6 +23,7 @@ import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
+import { ClipSelectInput } from '../controls/ClipSelectInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -55,6 +56,7 @@ const Content = () => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <HYModelSelectInput name='model' />
+                        <ClipSelectInput name='clip_model' />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput defaultValue={10} />

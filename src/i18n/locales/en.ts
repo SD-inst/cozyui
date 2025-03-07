@@ -92,6 +92,7 @@ const translation = {
         upscale: 'upscale',
         send_to_upscale: 'Send to upscale',
         allow_upscale: 'allow upscale',
+        clip_model: 'CLIP LLM model'
     },
     settings: {
         select_language: 'Select language',

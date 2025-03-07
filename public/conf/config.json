@@ -77,6 +77,10 @@
                 },
                 "allow_upscale": {
                     "id": "handle"
+                },
+                "clip_model": {
+                    "id": "10",
+                    "field": "clip_name2"
                 }
             },
             "handler_options": {
@@ -603,6 +607,10 @@
                 },
                 "allow_upscale": {
                     "id": "handle"
+                },
+                "clip_model": {
+                    "id": "47",
+                    "field": "clip_name2"
                 }
             },
             "handler_options": {

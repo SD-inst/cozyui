@@ -6,6 +6,8 @@ import {
     Box,
 } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
+import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
@@ -17,14 +19,13 @@ import { LoraInput } from '../controls/LoraInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
+import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
+import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
-import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
-import { UpscaleToggle } from '../controls/UpscaleToggle';
 
 const Content = () => {
     const tr = useTranslate();
@@ -60,6 +61,7 @@ const Content = () => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <HYModelSelectInput name='model' />
+                        <ClipSelectInput name='clip_model' />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput />
