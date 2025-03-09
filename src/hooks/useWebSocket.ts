@@ -14,6 +14,7 @@ export const useWebSocket = (
     const initSocket = useCallback(
         (url: string) => {
             s.current = new WebSocket(url);
+            s.current.binaryType = 'arraybuffer';
             s.current.onclose = () => {
                 if (onClose && last_state.current) { // only call onClose once until we reconnect
                     onClose();

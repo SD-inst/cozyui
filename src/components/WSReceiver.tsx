@@ -42,6 +42,9 @@ export const WSReceiver = () => {
     const apiUrl = useAppSelector((s) => s.config.api);
     const handleMessage = useCallback(
         (ev: MessageEvent) => {
+            if (ev.data instanceof ArrayBuffer) {
+                return;
+            }
             const j = JSON.parse(ev.data);
             if (j.type !== 'progress') {
                 // less spam
