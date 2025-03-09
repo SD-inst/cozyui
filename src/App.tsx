@@ -34,8 +34,8 @@ function App() {
                             {HunyanT2VTab}
                             {HunyanI2VTab}
                             {HunyanUpscale}
-                            {HunyanI2VKJTab}
                             {HunyanT2VKJTab}
+                            {HunyanI2VKJTab}
                             {LTXI2VTab}
                             {EasyAnimateI2VTab}
                             {StableAudioTab}

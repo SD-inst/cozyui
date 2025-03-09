@@ -26,6 +26,7 @@ export const TeaCacheInput = ({ ...props }) => {
             const tc_node = {
                 inputs: {
                     rel_l1_thresh: value,
+                    cache_device: 'offload_device'
                 },
                 class_type: 'HyVideoTeaCache',
                 _meta: {
