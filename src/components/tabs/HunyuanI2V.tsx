@@ -24,6 +24,7 @@ import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContext
 import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
+import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -90,6 +91,7 @@ const Content = () => {
                             name='wave_speed_maxhit'
                             tooltip='wave_speed_maxhit'
                         />
+                        <VirtualVRAMSliderInput name='virtual_vram' />
                         <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>
                 </Accordion>

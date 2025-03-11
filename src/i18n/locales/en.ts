@@ -95,6 +95,7 @@ const translation = {
         clip_model: 'CLIP LLM model',
         tab_json_diff: 'Config diff',
         tab_video_diff: 'Video diff',
+        virtual_vram: 'virtual VRAM',
     },
     settings: {
         select_language: 'Select language',
@@ -138,6 +139,7 @@ const translation = {
             "Prompt weight, if the result doesn't follow the prompt well, or if you see disappearing limbs and objects, increase this.",
         seed: "Seed is the reproduction number. To get a new result for the same parameters pick another seed. They're not correlated and even if you change it by just 1 the result would be unpredictably different. Same seed always produces the same result (if the other parameters are unchanged).",
         lora: "LoRA (low-rank adaptation) is a method to add new concepts to the model, such as characters (people), movements, gestures, styles and so on. Multiple loras can be combined together with different strengths. It's advised to use lower strength if you get any weird artifacts, especially if combining several loras.",
+        virtual_vram: "Virtual VRAM allows swapping model layers to the regular RAM and load them in advance when needed. There's almost no performance hit and it allows generating high resolution, long videos. Only works with GGUF.",
     },
     toasts: {
         disconnected: 'Disconnected',

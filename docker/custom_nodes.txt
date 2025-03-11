@@ -9,3 +9,4 @@ https://github.com/kijai/ComfyUI-KJNodes
 https://github.com/logtd/ComfyUI-LTXTricks
 https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
 https://github.com/gokayfem/ComfyUI_VLM_nodes
+https://github.com/pollockjj/ComfyUI-MultiGPU

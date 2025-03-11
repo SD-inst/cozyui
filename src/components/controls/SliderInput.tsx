@@ -15,9 +15,11 @@ export const SliderInput = ({
     tooltip,
     ...props
 }: SliderInputProps) => {
-    const ctl = useController({
+    const {
+        field: { value, onChange, ...field },
+    } = useController({
         name: props.name!,
-        defaultValue: defaultValue,
+        defaultValue,
     });
     const [edit, setEdit] = useState(false);
     const tr = useTranslate();
@@ -41,7 +43,9 @@ export const SliderInput = ({
                                 step: props.step,
                             },
                         }}
-                        {...ctl.field}
+                        value={value}
+                        onChange={(e) => onChange(parseFloat(e.target.value))}
+                        {...field}
                         onBlur={() => setEdit(false)}
                         onFocus={(e) => e.target.select()}
                         onKeyUp={(e) => e.key === 'Enter' && setEdit(false)}
@@ -50,14 +54,20 @@ export const SliderInput = ({
                     <Typography
                         variant='body1'
                         sx={{ cursor: 'pointer' }}
-                        onClick={() => setEdit(true)}
+                        onClick={() => !props.disabled && setEdit(true)}
                     >
-                        {ctl.field.value}
+                        {value}
                     </Typography>
                 )}
                 {tooltip && <HelpButton title={tooltip} />}
             </Box>
-            <Slider valueLabelDisplay='auto' {...ctl.field} {...props} />
+            <Slider
+                valueLabelDisplay='auto'
+                value={value}
+                onChange={(_, v) => onChange(v)}
+                {...field}
+                {...props}
+            />
         </Box>
     );
 };

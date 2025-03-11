@@ -81,6 +81,9 @@
                 "clip_model": {
                     "id": "10",
                     "field": "clip_name2"
+                },
+                "virtual_vram": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -611,6 +614,9 @@
                 "clip_model": {
                     "id": "47",
                     "field": "clip_name2"
+                },
+                "virtual_vram": {
+                    "id": "skip"
                 }
             },
             "handler_options": {

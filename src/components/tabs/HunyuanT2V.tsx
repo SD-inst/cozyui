@@ -26,6 +26,7 @@ import { TextInput } from '../controls/TextInput';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
+import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -81,6 +82,7 @@ const Content = () => {
                             name='wave_speed_maxhit'
                             tooltip='wave_speed_maxhit'
                         />
+                        <VirtualVRAMSliderInput name='virtual_vram' />
                         <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>
                 </Accordion>
