@@ -102,6 +102,7 @@ const translation = {
         save_history: 'Save history locally',
         save_outputs_locally: 'Save generation results locally',
         disable_help: 'Disable tooltips',
+        enable_previews: 'Enable previews',
         notification: 'Notification sound',
         notification_name: 'Sound effect #%{number}',
         notification_none: 'None',

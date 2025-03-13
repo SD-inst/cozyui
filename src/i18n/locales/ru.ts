@@ -94,13 +94,14 @@ const translation = {
         clip_model: 'модель CLIP LLM',
         tab_json_diff: 'Параметры',
         tab_video_diff: 'Видео',
-        virtual_vram: 'виртуальная VRAM'
+        virtual_vram: 'виртуальная VRAM',
     },
     settings: {
         select_language: 'Выбор языка',
         save_history: 'Сохранять историю локально',
         save_outputs_locally: 'Сохранять результаты локально',
         disable_help: 'Отключить подсказки',
+        enable_previews: 'Включить предпросмотр',
         notification: 'Звук уведомления',
         notification_name: 'Звуковой эффект №%{number}',
         notification_none: 'Нет',

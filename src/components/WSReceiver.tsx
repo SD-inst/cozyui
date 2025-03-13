@@ -15,6 +15,7 @@ import {
 } from '../redux/progress';
 import { addResult, clearPrompt } from '../redux/tab';
 import { useTranslate, useTranslateReady } from '../i18n/I18nContext';
+import { initPreview, setFrame } from '../redux/preview';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -32,6 +33,7 @@ export const WSReceiver = () => {
             dispatch(setProgress({ max: 0, value: -1 }));
             dispatch(setCurrentNode(''));
             dispatch(setGenerationEnd());
+            dispatch(initPreview({ length: 0, rate: 0 }));
             if (!noPromptReset) {
                 dispatch(clearPrompt());
             }
@@ -43,6 +45,18 @@ export const WSReceiver = () => {
     const handleMessage = useCallback(
         (ev: MessageEvent) => {
             if (ev.data instanceof ArrayBuffer) {
+                const dv = new DataView(ev.data.slice(0, 16));
+                const f1 = dv.getUint32(0);
+                const f2 = dv.getUint32(4);
+                const f3 = dv.getUint32(8);
+                if (f1 !== 1 || f2 !== 1 || f3 !== 1) {
+                    return;
+                }
+                const idx = dv.getUint32(12);
+                window
+                    .createImageBitmap(new Blob([ev.data.slice(16)]))
+                    .then((image) => dispatch(setFrame({ idx, image })));
+
                 return;
             }
             const j = JSON.parse(ev.data);
@@ -97,6 +111,9 @@ export const WSReceiver = () => {
                 case 'execution_interrupted':
                     dispatch(setStatus(statusEnum.INTERRUPTED));
                     reset(true); // don't reset promptId, it should've been done by InterruptButton (IB) already; if we reset here the user could've started another generation between pressing IB and GB and we'd cause a state race condition (GB enabled, IB missing, but generation is going on). Happens with long step duration.
+                    break;
+                case 'VHS_latentpreview':
+                    dispatch(initPreview(j.data));
                     break;
             }
         },

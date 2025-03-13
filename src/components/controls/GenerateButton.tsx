@@ -29,6 +29,8 @@ import {
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
+import { settings } from '../../hooks/settings';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 
 type error = {
     controls: string[];
@@ -80,6 +82,7 @@ export const GenerateButton = ({
         enabled: !!api,
     });
     const handlers = useHandlers();
+    const enable_previews = useBooleanSetting(settings.enable_previews);
     const sendPrompt = useCallback(() => {
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
@@ -88,6 +91,17 @@ export const GenerateButton = ({
             client_id,
             prompt: cloneDeep(apiData),
         };
+        if (enable_previews) {
+            (params as any).extra_data = {
+                extra_pnginfo: {
+                    workflow: {
+                        extra: {
+                            VHS_latentpreview: true,
+                        },
+                    },
+                },
+            };
+        }
 
         for (const name in controls) {
             if (!controls[name].id || controls[name].id === 'skip') {
@@ -189,6 +203,7 @@ export const GenerateButton = ({
         dispatch,
         client_id,
         apiData,
+        enable_previews,
         getValues,
         noexec,
         apiUrl,

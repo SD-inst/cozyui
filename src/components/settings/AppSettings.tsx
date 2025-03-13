@@ -42,6 +42,7 @@ export const AppSettings = () => {
                         disabled={!save_history}
                     />
                     <SettingCheckbox name={settings.disable_help} />
+                    <SettingCheckbox name={settings.enable_previews} />
                 </Box>
                 <NotificationSetting />
                 <LanguageSelect />

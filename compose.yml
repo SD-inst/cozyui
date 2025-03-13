@@ -11,6 +11,8 @@ services:
       - "--listen"
       - "--enable-cors-header"
       - "*"
+      - "--preview-method"
+      - "taesd"
 
   cozyui:
     build:

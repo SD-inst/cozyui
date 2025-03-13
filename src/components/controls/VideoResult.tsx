@@ -6,6 +6,7 @@ import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
+import { VideoPreview } from './VideoPreview';
 
 export const VideoResult = ({ title }: { title?: string }) => {
     const results = useResult();
@@ -23,6 +24,7 @@ export const VideoResult = ({ title }: { title?: string }) => {
             <Typography variant='body1'>
                 {title || tr('controls.video')}
             </Typography>
+            <VideoPreview size={300} />
             {results?.map((r: any) => {
                 const url = makeOutputUrl(apiUrl, r);
                 return (

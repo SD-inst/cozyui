@@ -4,4 +4,5 @@ export enum settings {
     disable_help = 'disable_help',
     notification_sound = 'notification_sound',
     language = 'language',
+    enable_previews = 'enable_previews',
 }
