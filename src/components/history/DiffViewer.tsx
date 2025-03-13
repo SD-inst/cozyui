@@ -53,40 +53,56 @@ const VideoCompare = () => {
         t?.data ? URL.createObjectURL(t.data) : t?.url
     );
     return (
-        <Box display='flex' flexDirection='row' flexWrap='wrap'>
+        <Box
+            display='flex'
+            flexDirection='row'
+            flexWrap='wrap'
+            alignItems='center'
+            justifyContent='center'
+        >
             {[0, 1].map((i) => (
-                <video
-                    key={i}
-                    src={urls[i]}
-                    ref={refs[i]}
-                    controls
-                    loop
-                    onCanPlay={() => {
-                        setLoaded((l) => {
-                            if (l[i]) {
-                                return l;
+                <Box
+                    sx={{
+                        maxWidth: {
+                            xs: 200,
+                            md: 300,
+                            lg: 400,
+                        },
+                    }}
+                >
+                    <video
+                        key={i}
+                        src={urls[i]}
+                        ref={refs[i]}
+                        controls
+                        loop
+                        onCanPlay={() => {
+                            setLoaded((l) => {
+                                if (l[i]) {
+                                    return l;
+                                }
+                                const newval = [...l];
+                                newval[i] = true;
+                                return newval;
+                            });
+                        }}
+                        onPause={() => refs[1 - i].current?.pause()}
+                        onPlay={() => refs[1 - i].current?.play()}
+                        onSeeking={() => {
+                            if (seek_breaker.current[i]) {
+                                seek_breaker.current[i] = false;
+                                return;
                             }
-                            const newval = [...l];
-                            newval[i] = true;
-                            return newval;
-                        });
-                    }}
-                    onPause={() => refs[1 - i].current?.pause()}
-                    onPlay={() => refs[1 - i].current?.play()}
-                    onSeeking={() => {
-                        if (seek_breaker.current[i]) {
-                            seek_breaker.current[i] = false;
-                            return;
-                        }
-                        if (!refs[i].current || !refs[1 - i].current) {
-                            return;
-                        }
-                        seek_breaker.current[1 - i] = true;
-                        refs[1 - i].current!.currentTime =
-                            refs[i].current.currentTime;
-                    }}
-                    style={{ maxWidth: '100%' }}
-                />
+                            if (!refs[i].current || !refs[1 - i].current) {
+                                return;
+                            }
+                            seek_breaker.current[1 - i] = true;
+                            refs[1 - i].current!.currentTime =
+                                refs[i].current.currentTime;
+                        }}
+                        style={{ maxWidth: '100%' }}
+                    />
+                </Box>
             ))}
         </Box>
     );
