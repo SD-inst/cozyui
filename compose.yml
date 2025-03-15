@@ -12,7 +12,7 @@ services:
       - "--enable-cors-header"
       - "*"
       - "--preview-method"
-      - "taesd"
+      - "latent2rgb"
 
   cozyui:
     build:
