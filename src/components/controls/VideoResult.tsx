@@ -24,7 +24,6 @@ export const VideoResult = ({ title }: { title?: string }) => {
             <Typography variant='body1'>
                 {title || tr('controls.video')}
             </Typography>
-            <VideoPreview size={300} />
             {results?.map((r: any) => {
                 const url = makeOutputUrl(apiUrl, r);
                 return (
@@ -53,6 +52,7 @@ export const VideoResult = ({ title }: { title?: string }) => {
                     </VerticalBox>
                 );
             })}
+            <VideoPreview size={300} />
         </VerticalBox>
     );
 };
