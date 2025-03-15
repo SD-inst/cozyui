@@ -59,6 +59,14 @@
                     "id": "15",
                     "field": "max_consecutive_cache_hits"
                 },
+                "wave_speed_start": {
+                    "id": "15",
+                    "field": "start"
+                },
+                "wave_speed_end": {
+                    "id": "15",
+                    "field": "end"
+                },
                 "tile_size": {
                     "id": "4",
                     "field": "tile_size"
@@ -594,6 +602,14 @@
                 "wave_speed_maxhit": {
                     "id": "87",
                     "field": "max_consecutive_cache_hits"
+                },
+                "wave_speed_start": {
+                    "id": "87",
+                    "field": "start"
+                },
+                "wave_speed_end": {
+                    "id": "87",
+                    "field": "end"
                 },
                 "tile_size": {
                     "id": "57",

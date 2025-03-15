@@ -27,6 +27,7 @@ import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
+import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -66,23 +67,8 @@ const Content = () => {
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput />
-                        <SliderInput
-                            min={0}
-                            max={1}
-                            step={0.01}
-                            defaultValue={0.1}
-                            name='wave_speed'
-                            tooltip='wave_speed'
-                        />
-                        <SliderInput
-                            min={-1}
-                            max={10}
-                            step={1}
-                            defaultValue={2}
-                            name='wave_speed_maxhit'
-                            tooltip='wave_speed_maxhit'
-                        />
                         <VirtualVRAMSliderInput name='virtual_vram' />
+                        <WaveSpeedInput />
                         <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>
                 </Accordion>

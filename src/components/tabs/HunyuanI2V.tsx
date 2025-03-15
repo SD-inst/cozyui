@@ -25,6 +25,7 @@ import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
+import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -75,22 +76,7 @@ const Content = () => {
                             step={0.01}
                             defaultValue={1}
                         />
-                        <SliderInput
-                            min={0}
-                            max={1}
-                            step={0.01}
-                            defaultValue={0.1}
-                            name='wave_speed'
-                            tooltip='wave_speed'
-                        />
-                        <SliderInput
-                            min={-1}
-                            max={10}
-                            step={1}
-                            defaultValue={2}
-                            name='wave_speed_maxhit'
-                            tooltip='wave_speed_maxhit'
-                        />
+                        <WaveSpeedInput />
                         <VirtualVRAMSliderInput name='virtual_vram' />
                         <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>

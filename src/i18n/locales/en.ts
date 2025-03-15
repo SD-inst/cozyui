@@ -13,6 +13,8 @@ const translation = {
         flow_shift: 'flow shift',
         wave_speed: 'WaveSpeed cache',
         wave_speed_maxhit: 'WaveSpeed max hits',
+        wave_speed_start: 'WaveSpeed start',
+        wave_speed_end: 'WaveSpeed end',
         size: 'max size',
         tea_cache: 'Tea Cache',
         enhance_video: 'Enhance-a-Video weight',
@@ -136,11 +138,16 @@ const translation = {
             "Defines whether to reuse the previous step results. If the first layer's output changed by less than N compared to the previous step (0.1 or 10% by default), the last layer's output is reused instead of doing a full calculation. If you get floaty background that follows other movements, try reducing this.",
         wave_speed_maxhit:
             'This many consecutive steps can use the caching trick, after which a full calculation will be forced. 0 disables caching (every step will be fully calculated), -1 allows unlimited consecutive steps being cached. If you get floaty background that follows other movements, try reducing this. If you want to accelerate render, set to a higher value or -1.',
+        wave_speed_start:
+            'WaveSpeed caching becomes active at this step (as a fraction of all steps). Increase the value if you get motion artifacts, so that more steps in the beginning are calculated without shortcuts. Early steps define the overall structure of the video while late steps improve fine details.',
+        wave_speed_end:
+            'WaveSpeed caching stops working at this step (as a fraction of all steps). Lower the value if you need more details. Early steps define the overall structure of the video while late steps improve fine details.',
         guidance:
             "Prompt weight, if the result doesn't follow the prompt well, or if you see disappearing limbs and objects, increase this.",
         seed: "Seed is the reproduction number. To get a new result for the same parameters pick another seed. They're not correlated and even if you change it by just 1 the result would be unpredictably different. Same seed always produces the same result (if the other parameters are unchanged).",
         lora: "LoRA (low-rank adaptation) is a method to add new concepts to the model, such as characters (people), movements, gestures, styles and so on. Multiple loras can be combined together with different strengths. It's advised to use lower strength if you get any weird artifacts, especially if combining several loras.",
-        virtual_vram: "Virtual VRAM allows swapping model layers to the regular RAM and load them in advance when needed. There's almost no performance hit and it allows generating high resolution, long videos. Only works with GGUF.",
+        virtual_vram:
+            "Virtual VRAM allows swapping model layers to the regular RAM and load them in advance when needed. There's almost no performance hit and it allows generating high resolution, long videos. Only works with GGUF.",
     },
     toasts: {
         disconnected: 'Disconnected',
