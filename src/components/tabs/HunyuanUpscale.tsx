@@ -16,6 +16,7 @@ import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
+import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -49,6 +50,7 @@ const Content = () => {
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <FlowShiftInput />
+                        <VirtualVRAMSliderInput name='virtual_vram' />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />

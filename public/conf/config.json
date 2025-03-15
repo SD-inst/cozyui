@@ -178,6 +178,9 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "virtual_vram": {
+                    "id": "skip"
                 }
             },
             "result": {
