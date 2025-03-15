@@ -3,9 +3,11 @@ import { useAppSelector } from '../../redux/hooks';
 import { useTabName } from '../contexts/TabContext';
 import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 import { settings } from '../../hooks/settings';
+import { statusEnum } from '../../redux/progress';
 
 export const VideoPreview = ({ size }: { size: number }) => {
     const enabled = useBooleanSetting(settings.enable_previews);
+    const status = useAppSelector((s) => s.progress.status);
     const ref = useRef<HTMLCanvasElement>(null);
     const frameRef = useRef<ImageBitmap[]>([]);
     const { frames, rate } = useAppSelector((s) => s.preview);
@@ -22,7 +24,7 @@ export const VideoPreview = ({ size }: { size: number }) => {
         ref.current.height = size;
         const ctx = ref.current.getContext('2d');
         if (!ctx) {
-            console.log('Cant get ctx');
+            console.log("Can't get ctx");
             return;
         }
     }, [size]);
@@ -53,19 +55,20 @@ export const VideoPreview = ({ size }: { size: number }) => {
                 return;
             }
             const aspect = img.width / img.height;
+            let fontSize = img.width / 20;
             if (aspect > 1) {
                 ctx.canvas.width = size;
                 ctx.canvas.height = size / aspect;
                 ctx.scale(size / img.width, size / img.width);
-                ctx.font = img.width / 20 + 'px sans-serif';
-                ctx.lineWidth = img.width / size / 2;
+                ctx.lineWidth = img.width / size / 4;
             } else {
                 ctx.canvas.height = size;
                 ctx.canvas.width = size * aspect;
                 ctx.scale(size / img.height, size / img.height);
-                ctx.font = img.height / 20 + 'px sans-serif';
-                ctx.lineWidth = img.height / size / 2;
+                fontSize = img.height / 20;
+                ctx.lineWidth = img.height / size / 4;
             }
+            ctx.font = `bold ${fontSize}px sans-serif`;
             ctx.drawImage(img, 0, 0);
             ctx.fillStyle = '#ccc';
             ctx.strokeStyle = '#000';
@@ -80,7 +83,7 @@ export const VideoPreview = ({ size }: { size: number }) => {
             clearInterval(interval);
         };
     }, [rate, size]);
-    if (!enabled) {
+    if (!enabled || status !== statusEnum.RUNNING) {
         return null;
     }
     return (
