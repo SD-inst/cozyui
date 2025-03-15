@@ -7,6 +7,7 @@ import { settings } from '../../hooks/settings';
 export const VideoPreview = ({ size }: { size: number }) => {
     const enabled = useBooleanSetting(settings.enable_previews);
     const ref = useRef<HTMLCanvasElement>(null);
+    const frameRef = useRef<ImageBitmap[]>([]);
     const { frames, rate } = useAppSelector((s) => s.preview);
     const prompt = useAppSelector((s) => s.tab.prompt);
     const active_tabs = Object.entries(prompt).map(
@@ -25,6 +26,11 @@ export const VideoPreview = ({ size }: { size: number }) => {
             return;
         }
     }, [size]);
+    // don't use state directly to avoid preview restarts
+    // instead, copy the updated frames to a ref
+    useEffect(() => {
+        frameRef.current = frames;
+    }, [frames]);
     useEffect(() => {
         const ctx = ref.current?.getContext('2d');
         if (!ctx) {
@@ -35,7 +41,13 @@ export const VideoPreview = ({ size }: { size: number }) => {
             return;
         }
         let idx = 0;
+        let frames: ImageBitmap[] = [];
         const interval = setInterval(() => {
+            // before rendering the first preview frame
+            // update the frames from the ref so that animation never breaks
+            if (!idx) {
+                frames = frameRef.current;
+            }
             const img = frames[idx];
             if (!img) {
                 return;
@@ -45,18 +57,29 @@ export const VideoPreview = ({ size }: { size: number }) => {
                 ctx.canvas.width = size;
                 ctx.canvas.height = size / aspect;
                 ctx.scale(size / img.width, size / img.width);
+                ctx.font = img.width / 20 + 'px sans-serif';
+                ctx.lineWidth = img.width / size / 2;
             } else {
                 ctx.canvas.height = size;
                 ctx.canvas.width = size * aspect;
                 ctx.scale(size / img.height, size / img.height);
+                ctx.font = img.height / 20 + 'px sans-serif';
+                ctx.lineWidth = img.height / size / 2;
             }
             ctx.drawImage(img, 0, 0);
+            ctx.fillStyle = '#ccc';
+            ctx.strokeStyle = '#000';
+            const fn = '' + (idx * 24) / rate;
+            const top = img.height / 10;
+            const left = 2;
+            ctx.fillText(fn, left, top);
+            ctx.strokeText(fn, left, top);
             idx = (idx + 1) % frames.length;
         }, 1000 / rate);
         return () => {
             clearInterval(interval);
         };
-    }, [frames, rate, size]);
+    }, [rate, size]);
     if (!enabled) {
         return null;
     }
