@@ -42,7 +42,7 @@ export const db = new Dexie('task_results') as Dexie & {
 
 db.version(2)
     .stores({
-        taskResults: '++id, timestamp, type, node_id, *words',
+        taskResults: '++id, timestamp, type, node_id, mark, *words',
         settings: '&name',
     })
     .upgrade((tx) => {

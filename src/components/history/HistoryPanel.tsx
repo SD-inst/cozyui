@@ -4,6 +4,8 @@ import {
     AccordionDetails,
     AccordionSummary,
     Box,
+    Checkbox,
+    FormControlLabel,
     List,
     ListProps,
     Pagination,
@@ -12,15 +14,15 @@ import {
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { Dispatch, SetStateAction, useContext, useRef, useState } from 'react';
+import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
+import { FilterContext } from '../contexts/FilterContext';
 import { autoscrollSlotProps } from '../controls/utils';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
 import { DiffViewer } from './DiffViewer';
-import { HistoryCard } from './HistoryCard';
-import { useTranslate } from '../../i18n/I18nContext';
-import { FilterContext } from '../contexts/FilterContext';
 import { pkFromFilter } from './filter';
+import { HistoryCard } from './HistoryCard';
 
 const page_size = 10;
 
@@ -34,7 +36,7 @@ const HistoryPagination = ({
     const filter = useContext(FilterContext);
     const count =
         useLiveQuery(async () => {
-            if (!filter) {
+            if (!filter.prompt && !filter.pinned) {
                 return db.taskResults.count();
             }
             const pk_x = await pkFromFilter(filter);
@@ -57,9 +59,10 @@ const HistoryPagination = ({
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
     const [page, setPage] = useState(1);
-    const [filter, setFilter] = useState('');
+    const [prompt, setPrompt] = useState('');
+    const [pinned, setPinned] = useState(false);
     const results = useLiveQuery(async () => {
-        if (!filter) {
+        if (!prompt && !pinned) {
             // return everything
             return db.taskResults
                 .orderBy('timestamp')
@@ -68,7 +71,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 .limit(page_size)
                 .toArray();
         }
-        const pk_x = await pkFromFilter(filter);
+        const pk_x = await pkFromFilter({ prompt, pinned });
         return db.taskResults
             .where(':id')
             .anyOf(pk_x)
@@ -76,7 +79,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             .limit(page_size)
             .reverse()
             .sortBy('timestamp');
-    }, [page, page_size, filter]);
+    }, [page, page_size, prompt, pinned]);
     const ref = useRef<HTMLElement>(null);
     return (
         <Accordion
@@ -99,13 +102,22 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                             <TextField
                                 placeholder={tr('controls.filter')}
                                 size='small'
-                                value={filter}
-                                onChange={(e) => setFilter(e.target.value)}
+                                value={prompt}
+                                onChange={(e) => setPrompt(e.target.value)}
                                 sx={{ pl: 1, pr: 1 }}
                                 fullWidth
                             />
+                            <FormControlLabel
+                                label={tr('controls.pinned')}
+                                control={
+                                    <Checkbox
+                                        checked={pinned}
+                                        onChange={(_, c) => setPinned(c)}
+                                    />
+                                }
+                            />
                         </Box>
-                        <FilterContext.Provider value={filter}>
+                        <FilterContext.Provider value={{ prompt, pinned }}>
                             <HistoryPagination page={page} setPage={setPage} />
                             <List
                                 sx={{

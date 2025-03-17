@@ -1,11 +1,25 @@
-import { db } from './db';
+import { FilterType } from '../contexts/filterType';
+import { db, markEnum } from './db';
 
-export const pkFromFilter = async (filter: string) => {
-    const filter_words = filter.split(' ').map((w) => w.toLowerCase());
+export const pkFromFilter = async (filter: FilterType) => {
+    const filter_words = filter.prompt.split(' ').map((w) => w.toLowerCase());
     const pks = await Promise.all(
-        filter_words.map((w) =>
-            db.taskResults.where('words').startsWith(w).primaryKeys()
-        )
+        filter_words.map((w) => {
+            if (w) {
+                return db.taskResults
+                    .where('words')
+                    .startsWith(w)
+                    .filter((t) =>
+                        filter.pinned ? t.mark === markEnum.PINNED : true
+                    )
+                    .primaryKeys();
+            } else {
+                return db.taskResults
+                    .where('mark')
+                    .equals(markEnum.PINNED)
+                    .primaryKeys();
+            }
+        })
     );
     const pk_x = pks.reduce((a, b) => {
         const set = new Set(b);

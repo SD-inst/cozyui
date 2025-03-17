@@ -80,6 +80,7 @@ const translation = {
         duration: '[%{sec} s]',
         pin: 'Pin',
         unpin: 'Unpin',
+        pinned: 'Pinned',
         unpin_title: 'Unpinning result',
         unpin_confirm:
             'Are you sure you want to unpin this result? It would become possible to delete it using clear history.',

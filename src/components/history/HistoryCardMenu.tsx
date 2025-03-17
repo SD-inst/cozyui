@@ -24,23 +24,21 @@ export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
     const [open, setOpen] = useState(false);
     const handleCompareWithPrev = async () => {
         setAnchor(null);
-        let tasks = [];
-        if (!filter) {
-            tasks = await db.taskResults
+        let tasks = null;
+        if (!filter.prompt && !filter.pinned) {
+            tasks = db.taskResults
                 .where('id')
                 .belowOrEqual(output.id)
-                .reverse()
-                .limit(2)
-                .toArray();
+                .reverse();
         } else {
-            tasks = await db.taskResults
+            tasks = db.taskResults
                 .where('id')
                 .anyOf(await pkFromFilter(filter))
                 .reverse()
-                .filter((r) => r.id <= output.id)
-                .limit(2)
-                .toArray();
+                .filter((r) => r.id <= output.id);
         }
+        tasks = await tasks.limit(2).toArray();
+
         if (tasks.length != 2) {
             toast.error(tr('toasts.no_prev_result'));
             return;
