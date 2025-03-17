@@ -16,6 +16,11 @@ export const VideoPreview = ({ size }: { size: number }) => {
         ([, { tab_name }]) => tab_name
     );
     const tab_name = useTabName();
+    // don't use state directly to avoid preview restarts
+    // instead, copy the updated frames to a ref
+    useEffect(() => {
+        frameRef.current = frames;
+    }, [frames]);
     useEffect(() => {
         if (!ref.current) {
             return;
@@ -27,17 +32,6 @@ export const VideoPreview = ({ size }: { size: number }) => {
             console.log("Can't get ctx");
             return;
         }
-    }, [size]);
-    // don't use state directly to avoid preview restarts
-    // instead, copy the updated frames to a ref
-    useEffect(() => {
-        frameRef.current = frames;
-    }, [frames]);
-    useEffect(() => {
-        const ctx = ref.current?.getContext('2d');
-        if (!ctx) {
-            return;
-        }
         if (!rate) {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             return;
@@ -45,12 +39,14 @@ export const VideoPreview = ({ size }: { size: number }) => {
         let idx = 0;
         let frames: ImageBitmap[] = [];
         const interval = setInterval(() => {
+            const fn = '' + (idx * 24) / rate;
             // before rendering the first preview frame
             // update the frames from the ref so that animation never breaks
             if (!idx) {
                 frames = frameRef.current;
             }
             const img = frames[idx];
+            idx = (idx + 1) % frames.length;
             if (!img) {
                 return;
             }
@@ -72,12 +68,10 @@ export const VideoPreview = ({ size }: { size: number }) => {
             ctx.drawImage(img, 0, 0);
             ctx.fillStyle = '#ccc';
             ctx.strokeStyle = '#000';
-            const fn = '' + (idx * 24) / rate;
             const top = img.height / 10;
             const left = 2;
             ctx.fillText(fn, left, top);
             ctx.strokeText(fn, left, top);
-            idx = (idx + 1) % frames.length;
         }, 1000 / rate);
         return () => {
             clearInterval(interval);
