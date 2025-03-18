@@ -20,7 +20,7 @@ export const useWebSocket = (
                     onClose();
                 }
                 last_state.current = false;
-                reconnectTimeout.current = setTimeout(() => {
+                reconnectTimeout.current = window.setTimeout(() => {
                     initSocket(url);
                 }, 1000);
             };
