@@ -122,11 +122,14 @@ const translation = {
         nothing_to_delete: 'Нечего удалять',
         nothing_to_delete_text:
             'Нет результатов %{cmp}, чем %{number} %{unit}.',
-        clear_history: 'Очистить историю',
+        clear_history: 'Очистка истории',
         clear_history_text:
             'Вы уверены, что хотите удалить результаты %{cmp}, чем %{number} %{unit}?<br />%{toDelete}',
         to_delete:
             '<b>%{smart_count} результат<b> будет удалён. |||| <b>%{smart_count} результата</b> будут удалены. |||| <b>%{smart_count} результатов</b> будут удалены.',
+        prompt_active:
+            'Фильтр активен! Будут удалены объекты, подходящие под "%{prompt}"',
+        pinned_active: 'Только закреплённые объекты будут удалены!',
     },
     help: {
         sampler:

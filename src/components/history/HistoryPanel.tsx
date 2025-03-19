@@ -59,8 +59,7 @@ const HistoryPagination = ({
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
     const [page, setPage] = useState(1);
-    const [prompt, setPrompt] = useState('');
-    const [pinned, setPinned] = useState(false);
+    const { pinned, prompt, setPinned, setPrompt } = useContext(FilterContext);
     const results = useLiveQuery(async () => {
         if (!prompt && !pinned) {
             // return everything
@@ -117,32 +116,28 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                 }
                             />
                         </Box>
-                        <FilterContext.Provider value={{ prompt, pinned }}>
-                            <HistoryPagination page={page} setPage={setPage} />
-                            <List
-                                sx={{
-                                    width: '100%',
-                                    p: 0,
-                                }}
-                                {...props}
-                            >
-                                {!results?.length && (
-                                    <Typography
-                                        variant='body1'
-                                        align='center'
-                                        sx={{ mb: 2 }}
-                                    >
-                                        {tr('controls.history_empty')}
-                                    </Typography>
-                                )}
-                                {results?.map((r) => {
-                                    return (
-                                        <HistoryCard output={r} key={r.id} />
-                                    );
-                                })}
-                            </List>
-                            <HistoryPagination page={page} setPage={setPage} />
-                        </FilterContext.Provider>
+                        <HistoryPagination page={page} setPage={setPage} />
+                        <List
+                            sx={{
+                                width: '100%',
+                                p: 0,
+                            }}
+                            {...props}
+                        >
+                            {!results?.length && (
+                                <Typography
+                                    variant='body1'
+                                    align='center'
+                                    sx={{ mb: 2 }}
+                                >
+                                    {tr('controls.history_empty')}
+                                </Typography>
+                            )}
+                            {results?.map((r) => {
+                                return <HistoryCard output={r} key={r.id} />;
+                            })}
+                        </List>
+                        <HistoryPagination page={page} setPage={setPage} />
                         <DiffViewer />
                     </VerticalBox>
                 </CompareContextProvider>

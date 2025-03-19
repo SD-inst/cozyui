@@ -21,6 +21,7 @@ import { LTXI2VTab } from './components/tabs/LTXI2V';
 import { StableAudioTab } from './components/tabs/StableAudio';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { HunyanUpscale } from './components/tabs/HunyuanUpscale';
+import { FilterContextProvider } from './components/contexts/FilterContextProvider';
 
 function App() {
     return (
@@ -42,8 +43,10 @@ function App() {
                         </WorkflowTabs>
                         <Progress />
                         <InterruptButton />
-                        <HistoryPanel />
-                        <AppSettings />
+                        <FilterContextProvider>
+                            <HistoryPanel />
+                            <AppSettings />
+                        </FilterContextProvider>
                     </VerticalBox>
                     <ThemedToaster />
                     <NotificationSound />

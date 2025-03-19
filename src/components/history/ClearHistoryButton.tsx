@@ -12,22 +12,26 @@ import {
     FormControlLabel,
     MenuItem,
     TextField,
+    Typography,
 } from '@mui/material';
-import { useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
+import { FilterContext } from '../contexts/FilterContext';
 import { SelectControl } from '../controls/SelectControl';
 import { db, markEnum, TaskResult } from './db';
-
-const clear_filter = (c: TaskResult) => c.mark !== markEnum.PINNED;
+import { usePkFromFilter } from './filter';
 
 export const ClearHistoryButton = ({ ...props }: BoxProps) => {
     const tr = useTranslate();
-    const [open, setOpen] = useState(false);
+    const pkFromFilter = usePkFromFilter();
+    const [openConfirm, setOpenConfirm] = useState(false);
     const [openNothing, setOpenNothing] = useState(false);
+    const [openCleanup, setOpenCleanup] = useState(false);
     const [number, setNumber] = useState('0');
     const [unit, setUnit] = useState('seconds');
     const [newer, setNewer] = useState(false);
     const [toDelete, setToDelete] = useState(0);
+    const filter = useContext(FilterContext);
     const seconds =
         new Date().getTime() -
         1000 *
@@ -50,98 +54,47 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                         return result;
                 }
             })();
-    const handleDelete = async () => {
-        const wc = db.taskResults.where('timestamp');
-        let coll = null;
-        if (newer) {
-            coll = wc.above(seconds);
-        } else {
-            coll = wc.below(seconds);
-        }
-        const cnt = await coll.filter(clear_filter).count();
+    const filterFunc = useCallback(
+        (t: TaskResult) =>
+            (newer ? t.timestamp > seconds : t.timestamp < seconds) &&
+            (filter.pinned
+                ? t.mark === markEnum.PINNED
+                : t.mark !== markEnum.PINNED),
+        [filter.pinned, newer, seconds]
+    );
+    const handleDelete = useCallback(async () => {
+        const coll = await pkFromFilter(filterFunc);
+        const cnt = coll.length;
         if (!cnt) {
             setOpenNothing(true);
         } else {
             setToDelete(cnt);
-            setOpen(true);
+            setOpenConfirm(true);
         }
-    };
-    const handleOK = async () => {
-        const wc = db.taskResults.where('timestamp');
-        let coll = null;
-        if (newer) {
-            coll = wc.above(seconds);
-        } else {
-            coll = wc.below(seconds);
-        }
-        coll.filter(clear_filter).delete();
-        setOpen(false);
-    };
+    }, [filterFunc, pkFromFilter]);
+    const handleOK = useCallback(async () => {
+        const coll = await pkFromFilter(filterFunc);
+        db.taskResults.bulkDelete(coll);
+        setOpenConfirm(false);
+        setTimeout(() => setOpenCleanup(false), 0);
+    }, [filterFunc, pkFromFilter]);
     const cmp = tr(newer ? 'settings.newer' : 'settings.older');
     return (
-        <Box
-            display='flex'
-            flexWrap='wrap'
-            justifyContent='center'
-            width='100%'
-            gap={1}
-            {...props}
-        >
-            <FormControl>
-                <TextField
-                    sx={{ width: 70 }}
-                    size='small'
-                    type='number'
-                    slotProps={{ htmlInput: { min: 0 } }}
-                    value={number}
-                    onChange={(e) => setNumber(e.target.value)}
-                />
-            </FormControl>
-            <SelectControl
-                sx={{ minWidth: 120, width: 0, mb: 0 }}
-                label='settings.unit'
-                size='small'
-                value={unit}
-                onChange={(e) => setUnit(e.target.value)}
-            >
-                {[
-                    'seconds',
-                    'minutes',
-                    'hours',
-                    'days',
-                    'weeks',
-                    'months',
-                    'years',
-                ].map((v) => (
-                    <MenuItem key={v} value={v}>
-                        {tr(`settings.${v}`, {
-                            smart_count: parseInt(number) || 0,
-                        })}
-                    </MenuItem>
-                ))}
-            </SelectControl>
-            <FormControlLabel
-                sx={{ minWidth: 100 }}
-                label={tr('settings.newer')}
-                control={
-                    <Checkbox
-                        checked={newer}
-                        onChange={(_, c) => setNewer(c)}
-                    />
-                }
-            />
-            <Button
-                startIcon={<Delete />}
-                color='error'
-                variant='outlined'
-                onClick={handleDelete}
-            >
-                {tr('settings.clear', { cmp })}
-            </Button>
+        <>
+            <Box>
+                <Button
+                    startIcon={<Delete />}
+                    color='error'
+                    variant='outlined'
+                    onClick={() => setOpenCleanup(true)}
+                >
+                    {tr('settings.clear_history')}
+                </Button>
+            </Box>
             <Dialog
-                open={open}
-                onClose={() => setOpen(false)}
-                onKeyUp={(e) => e.key === 'Esc' && setOpen(false)}
+                open={openConfirm}
+                onClose={() => setOpenConfirm(false)}
+                onKeyUp={(e) => e.key === 'Esc' && setOpenConfirm(false)}
             >
                 <DialogTitle>{tr('settings.clear_history')}</DialogTitle>
                 <DialogContent
@@ -160,7 +113,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 ></DialogContent>
                 <DialogActions>
                     <Button onClick={handleOK}>{tr('controls.ok')}</Button>
-                    <Button onClick={() => setOpen(false)}>
+                    <Button onClick={() => setOpenConfirm(false)}>
                         {tr('controls.cancel')}
                     </Button>
                 </DialogActions>
@@ -182,6 +135,88 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                     <Button onClick={() => setOpenNothing(false)}>OK</Button>
                 </DialogActions>
             </Dialog>
-        </Box>
+            <Dialog open={openCleanup} onClose={() => setOpenCleanup(false)}>
+                <DialogTitle>{tr('settings.clear_history')}</DialogTitle>
+                <DialogContent>
+                    {filter.prompt && (
+                        <Typography variant='body2' color='warning'>
+                            {tr('settings.prompt_active', {
+                                prompt: filter.prompt,
+                            })}
+                        </Typography>
+                    )}
+                    {filter.pinned && (
+                        <Typography variant='body2' color='error'>
+                            {tr('settings.pinned_active')}
+                        </Typography>
+                    )}
+                    <Box
+                        display='flex'
+                        flexWrap='wrap'
+                        justifyContent='center'
+                        width='100%'
+                        gap={1}
+                        {...props}
+                    >
+                        <FormControl>
+                            <TextField
+                                sx={{ width: 70 }}
+                                size='small'
+                                type='number'
+                                slotProps={{ htmlInput: { min: 0 } }}
+                                value={number}
+                                onChange={(e) => setNumber(e.target.value)}
+                            />
+                        </FormControl>
+                        <SelectControl
+                            sx={{ minWidth: 120, width: 0, mb: 0 }}
+                            label='settings.unit'
+                            size='small'
+                            value={unit}
+                            onChange={(e) => setUnit(e.target.value)}
+                        >
+                            {[
+                                'seconds',
+                                'minutes',
+                                'hours',
+                                'days',
+                                'weeks',
+                                'months',
+                                'years',
+                            ].map((v) => (
+                                <MenuItem key={v} value={v}>
+                                    {tr(`settings.${v}`, {
+                                        smart_count: parseInt(number) || 0,
+                                    })}
+                                </MenuItem>
+                            ))}
+                        </SelectControl>
+                        <FormControlLabel
+                            sx={{ minWidth: 100 }}
+                            label={tr('settings.newer')}
+                            control={
+                                <Checkbox
+                                    checked={newer}
+                                    onChange={(_, c) => setNewer(c)}
+                                />
+                            }
+                        />
+                        <Button
+                            startIcon={<Delete />}
+                            color='error'
+                            variant='outlined'
+                            onClick={handleDelete}
+                        >
+                            {tr('settings.clear', { cmp })}
+                        </Button>
+                    </Box>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenCleanup(false)}>
+                        {tr('controls.close')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 };

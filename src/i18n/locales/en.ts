@@ -123,11 +123,13 @@ const translation = {
         nothing_to_delete: 'Nothing to delete',
         nothing_to_delete_text:
             'There are no results %{cmp} than %{number} %{unit}.',
-        clear_history: 'Clear history',
+        clear_history: 'History cleanup',
         clear_history_text:
             'Are you sure you want to delete history %{cmp} than %{number} %{unit}?<br />%{toDelete}',
         to_delete:
             '<b>%{smart_count} result</b> will be deleted. |||| <b>%{smart_count} results</b> will be deleted.',
+        prompt_active: 'Filter is active! Only the items matching "%{prompt}" will be deleted',
+        pinned_active: 'Only pinned items will be deleted!',
     },
     help: {
         sampler:
