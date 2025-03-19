@@ -1,7 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
-import git from 'git-rev-sync';
-process.env.VITE_APP_VERSION = git.tag(true);
+import { execSync } from 'child_process';
+
+process.env.VITE_APP_VERSION = execSync('git describe --tags --always --dirty')
+    .toString('utf8')
+    .replace(/^\s+|\s+$/g, '');
 
 // https://vite.dev/config/
 export default defineConfig({
