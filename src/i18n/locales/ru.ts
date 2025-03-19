@@ -130,6 +130,7 @@ const translation = {
         prompt_active:
             'Фильтр активен! Будут удалены объекты, подходящие под "%{prompt}"',
         pinned_active: 'Только закреплённые объекты будут удалены!',
+        version: 'версия: %{version}',
     },
     help: {
         sampler:
