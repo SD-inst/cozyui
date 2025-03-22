@@ -2,6 +2,8 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { mergeType } from '../../api/mergeType';
 import { useTranslate } from '../../i18n/I18nContext';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
+import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
@@ -13,19 +15,18 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LLMSelectInput } from '../controls/LLMSelectInput';
 import { LoraInput } from '../controls/LoraInput';
+import { PromptInput } from '../controls/PromptInput';
+import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
+import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
-import { VideoResult } from '../controls/VideoResult';
-import { WFTab } from '../WFTab';
-import { SamplerSelectInput } from '../controls/SamplerSelectInput';
-import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
-import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
-import { ClipSelectInput } from '../controls/ClipSelectInput';
+import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
+import { WFTab } from '../WFTab';
 
 const Content = () => {
     const tr = useTranslate();
@@ -40,7 +41,7 @@ const Content = () => {
                 />
                 <LLMSelectInput name='llm' />
                 <DescribeButton />
-                <TextInput name='prompt' multiline sx={{ mb: 3 }} />
+                <PromptInput name='prompt' sx={{ mb: 3 }} />
                 <HYSize name='size' label='max size' defaultValue={544} />
                 <LengthInput
                     min={5}

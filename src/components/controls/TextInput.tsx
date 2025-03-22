@@ -3,13 +3,12 @@ import { useController } from 'react-hook-form';
 import { useCtrlEnter } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 
-export const TextInput = ({
-    defaultValue = '',
-    ...props
-}: {
+export type TextInputProps = {
     defaultValue?: any;
     name: string;
-} & TextFieldProps) => {
+} & TextFieldProps;
+
+export const TextInput = ({ defaultValue = '', ...props }: TextInputProps) => {
     const ctl = useController({
         name: props.name,
         defaultValue: defaultValue,
@@ -25,7 +24,12 @@ export const TextInput = ({
             label={tr(tr_key)}
             variant='filled'
             fullWidth
-            onKeyUp={ceHanler}
+            onKeyUp={(e) => {
+                if (props.onKeyUp) {
+                    props.onKeyUp(e);
+                }
+                ceHanler(e);
+            }}
             {...ctl.field}
             {...props}
         />

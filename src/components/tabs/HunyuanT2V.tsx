@@ -16,25 +16,25 @@ import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
+import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
-import { TextInput } from '../controls/TextInput';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
-import { WFTab } from '../WFTab';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
+import { WFTab } from '../WFTab';
 
 const Content = () => {
     const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
-                <TextInput name='prompt' multiline sx={{ mb: 2 }} />
+                <PromptInput name='prompt' />
                 <Box display='flex' flexDirection='row' width='100%'>
                     <Box display='flex' flexDirection='column' flex={1}>
                         <HYSize name='width' defaultValue={512} />
