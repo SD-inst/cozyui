@@ -8,6 +8,37 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 <img src=".github/2.jpg" width="500"/>
 <img src=".github/3.jpg" width="500"/>
 
+## Features
+
+- Supported models and modes:
+    - Hunyuan T2V (Native/Kijai)
+    - Hunyuan I2V (leapfusion lora)
+    - Hunyuan latent upscale + V2V
+    - LTX I2V
+    - EasyAnimate
+    - StableAudio
+- Lora support with weights and blocks to merge
+- Animated latent preview (if supported by ComfyUI)
+- Config overrides to tune defaults for your system
+- Docker support: ComfyUI+CozyUI
+- AUTOMATIC1111-like UI, not Gradio but uses similar concepts
+- Mobile-friendly
+- Hotkeys:
+    - Ctrl+Enter (run generation)
+    - Ctrl+Up/Down (increase/decrease selection weight by 0.1)
+    - Ctrl+Shift+Up/Down (increase/decrease selection weight by 1)
+- History management:
+    - Store generation data and video/audio locally in your browser (IndexedDB), including timestamp and total generation time
+    - Search (filter) by prompt
+    - Pin generations to prevent accidental deletion
+    - Collection cleanup by time (before/after N seconds/minutes/hours/etc.)
+    - Compare any two results side by side, generation data and videos, to see how changes affect the result
+    - Import/Export to back up the history or transfer it to another browser/device
+- Customizable audio notification when task completes
+- Localization support (English/Russian currently)
+- Many controls have tips and explanation (can be disabled in settings)
+- VRAM and speed optimizations: TeaCache, WaveSpeed, MultiGPU
+
 ## Goals
 
 -   make it simple to use
@@ -26,7 +57,7 @@ There was ComfyBox once. It is gone now (RIP). I don't want to set the bar too h
 
 ## Stack
 
-TypeScript/React/Redux/MaterialUI/react-hook-form/react-query/yarn and some small other libs. Pretty standard frontend stuff, nothing fancy or quirky.
+TypeScript/React/Redux/MaterialUI/react-hook-form/react-query/yarn and some other libs. Pretty standard frontend stuff, nothing fancy or quirky.
 
 ## Building & running
 
