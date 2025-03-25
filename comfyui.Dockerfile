@@ -26,6 +26,7 @@ WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache python -m pip install --extra-index-url https://download.pytorch.org/whl/cu124 -r requirements.txt
 COPY docker/custom_nodes.txt docker/install_nodes.sh /app/docker/
 RUN --mount=type=cache,target=/root/.cache /app/docker/install_nodes.sh
+RUN --mount=type=cache,target=/root/.cache python -m pip install llama-cpp-python llama-cpp-agent mkdocs mkdocs-material mkdocstrings[python]
 EXPOSE 8188/tcp
 ENTRYPOINT ["python", "main.py"]
 CMD ["--listen"]
