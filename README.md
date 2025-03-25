@@ -17,6 +17,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - LTX I2V
     - EasyAnimate
     - StableAudio
+    - MMAudio
 - Lora support with weights and blocks to merge
 - Animated latent preview (if supported by ComfyUI)
 - Config overrides to tune defaults for your system
@@ -104,6 +105,12 @@ Should download automatically if absent
 ### Stable Audio
 
 - Filename: `models/checkpoints/audio/stable_audio.safetensors`
+
+### MMAudio
+
+- Path: `models/mmaudio`
+
+Some files can be downloaded with `docker/download_models.sh`, some are automatically downloaded on first generation.
 
 ### LLM
 
