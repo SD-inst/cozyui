@@ -13,10 +13,13 @@ export const useWebSocket = (
     const reconnectTimeout = useRef<number>();
     const initSocket = useCallback(
         (url: string) => {
-            s.current = new WebSocket(url);
+            s.current = new WebSocket(
+                new URL(url, location.href).href.replace(/^http/, 'ws')
+            );
             s.current.binaryType = 'arraybuffer';
             s.current.onclose = () => {
-                if (onClose && last_state.current) { // only call onClose once until we reconnect
+                if (onClose && last_state.current) {
+                    // only call onClose once until we reconnect
                     onClose();
                 }
                 last_state.current = false;
