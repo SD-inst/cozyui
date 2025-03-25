@@ -1,5 +1,5 @@
-
 export enum UploadType {
     IMAGE = 'image',
-    VIDEO = 'video'
+    VIDEO = 'video',
+    BOTH = 'both',
 }

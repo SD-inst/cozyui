@@ -9,7 +9,13 @@ import { useStringSetting } from '../../hooks/useStringSetting';
 import { settings } from '../../hooks/settings';
 import { useTranslate } from '../../i18n/I18nContext';
 
-export const AudioResult = ({ title }: { title?: string }) => {
+export const AudioResult = ({
+    title,
+    noAutoplay,
+}: {
+    title?: string;
+    noAutoplay?: boolean;
+}) => {
     const tr = useTranslate();
     const results = useResult();
     const audioRef = useRef<HTMLAudioElement>(null);
@@ -24,7 +30,7 @@ export const AudioResult = ({ title }: { title?: string }) => {
         'None'
     );
     useEffect(() => {
-        if (!results.length) {
+        if (!results.length || noAutoplay) {
             return;
         }
         if (notification_sound !== 'None') {
@@ -33,7 +39,7 @@ export const AudioResult = ({ title }: { title?: string }) => {
         } else {
             audioRef.current?.play();
         }
-    }, [notification_sound, results]);
+    }, [noAutoplay, notification_sound, results]);
     useSaveToHistory();
     return (
         <VerticalBox width='100%'>

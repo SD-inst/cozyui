@@ -22,6 +22,7 @@ import { StableAudioTab } from './components/tabs/StableAudio';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { HunyanUpscale } from './components/tabs/HunyuanUpscale';
 import { FilterContextProvider } from './components/contexts/FilterContextProvider';
+import { MMAudioTab } from './components/tabs/MMAudio';
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                             {LTXI2VTab}
                             {EasyAnimateI2VTab}
                             {StableAudioTab}
+                            {MMAudioTab}
                         </WorkflowTabs>
                         <Progress />
                         <InterruptButton />

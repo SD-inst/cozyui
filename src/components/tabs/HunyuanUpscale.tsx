@@ -23,7 +23,7 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' type={UploadType.VIDEO} />
+                <FileUpload name='image' type={UploadType.BOTH} />
                 <TextInput name='prompt' multiline sx={{ mb: 2 }} />
                 <SliderInput
                     name='upscale'

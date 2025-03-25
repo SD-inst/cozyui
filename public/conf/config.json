@@ -704,6 +704,42 @@
                 "id": "5",
                 "type": "audio"
             }
+        },
+        "MM Audio": {
+            "api": "api/mmaudio.json",
+            "controls": {
+                "video": {
+                    "id": "91",
+                    "field": "video"
+                },
+                "prompt": {
+                    "id": "92",
+                    "field": "prompt"
+                },
+                "steps": {
+                    "id": "92",
+                    "field": "steps"
+                },
+                "neg_prompt": {
+                    "id": "92",
+                    "field": "negative_prompt"
+                },
+                "cfg": {
+                    "id": "92",
+                    "field": "cfg"
+                },
+                "seed": {
+                    "id": "92",
+                    "field": "seed"
+                }
+            },
+            "result": [
+                { "id": "97", "type": "gifs" },
+                {
+                    "id": "98",
+                    "type": "audio"
+                }
+            ]
         }
     },
     "models": {

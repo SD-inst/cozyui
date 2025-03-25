@@ -119,6 +119,10 @@ export const FileUpload = ({
                 };
             case UploadType.VIDEO:
                 return {
+                    'video/*': ext[UploadType.VIDEO],
+                };
+            case UploadType.BOTH:
+                return {
                     'image/*': ext[UploadType.IMAGE],
                     'video/*': ext[UploadType.VIDEO],
                 };
