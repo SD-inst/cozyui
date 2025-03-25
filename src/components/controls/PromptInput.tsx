@@ -1,5 +1,13 @@
-import { useRef } from 'react';
+import {
+    KeyboardArrowDown,
+    KeyboardArrowUp,
+    KeyboardDoubleArrowDown,
+    KeyboardDoubleArrowUp,
+} from '@mui/icons-material';
+import { Box, Button } from '@mui/material';
+import { useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useIsPhone } from '../../hooks/useIsPhone';
 import { TextInput, TextInputProps } from './TextInput';
 
 const roundNum = (x: number) => {
@@ -17,29 +25,63 @@ const roundNum = (x: number) => {
     return strx;
 };
 
+const wpHeight = 40;
+
+const WeightPanel = ({
+    open,
+    updateWeight,
+}: {
+    open: boolean;
+    updateWeight: (inc: number) => void;
+}) => {
+    const phone = useIsPhone();
+    if (!phone) {
+        return null;
+    }
+    return (
+        <Box
+            width='100%'
+            position='fixed'
+            top={open ? 0 : -wpHeight}
+            height={wpHeight}
+            zIndex={1000}
+            left={0}
+            bgcolor='ButtonFace'
+            display='flex'
+            flexDirection='row'
+            gap={1}
+            justifyContent='space-between'
+            sx={{ transition: '200ms ease-out' }}
+        >
+            <Button onClick={() => updateWeight(1)}>
+                <KeyboardDoubleArrowUp />
+            </Button>
+            <Button onClick={() => updateWeight(0.1)}>
+                <KeyboardArrowUp />
+            </Button>
+            <Button onClick={() => updateWeight(-0.1)}>
+                <KeyboardArrowDown />
+            </Button>
+            <Button onClick={() => updateWeight(-1)}>
+                <KeyboardDoubleArrowDown />
+            </Button>
+        </Box>
+    );
+};
+
 export const PromptInput = ({ ...props }: TextInputProps) => {
     const { setValue } = useFormContext();
+    const [weightPanelOpen, setWeightPanelOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement>();
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const wpShouldHide = useRef(false);
+    const findRange = () => {
         if (!inputRef.current) {
-            return;
+            return null;
         }
-        let inc = 0;
-        if (e.key === 'ArrowUp' && e.ctrlKey) {
-            inc = e.shiftKey ? 1 : 0.1;
-        }
-        if (e.key === 'ArrowDown' && e.ctrlKey) {
-            inc = e.shiftKey ? -1 : -0.1;
-        }
-        if (inc === 0) {
-            return;
-        }
-        e.stopPropagation();
-        e.preventDefault();
         const text = inputRef.current.value;
         const pos = inputRef.current.selectionStart;
         if (pos === null) {
-            return;
+            return null;
         }
         let segment_start = pos;
         let segment_end = pos;
@@ -58,7 +100,7 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
         } else {
             while (segment_start >= 0) {
                 if (text[segment_start] === ')') {
-                    return;
+                    return null;
                 }
                 if (text[segment_start] === '(') {
                     break;
@@ -66,13 +108,13 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
                 segment_start--;
             }
             if (segment_start < 0) {
-                return;
+                return null;
             } else {
                 segment_start++;
             }
             while (segment_end < text.length) {
                 if (text[segment_end] === '(') {
-                    return;
+                    return null;
                 }
                 if (text[segment_end] === ')') {
                     const col_idx = text
@@ -86,9 +128,23 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
                 segment_end++;
             }
             if (segment_end === text.length) {
-                return;
+                return null;
             }
         }
+        return { segment_start, segment_end, text, add_brackets };
+    };
+    const updateWeight = (inc: number) => {
+        if (!inputRef.current) {
+            return;
+        }
+        inputRef.current.focus();
+        wpShouldHide.current = false;
+        const range = findRange();
+        if (range === null) {
+            return;
+        }
+        const { text, add_brackets } = range;
+        let { segment_start, segment_end } = range;
         const tag = text.slice(segment_start, segment_end);
         let text_before = text.slice(0, segment_start);
         let text_after = text.slice(segment_end);
@@ -127,13 +183,53 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             0
         );
     };
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        let inc = 0;
+        if (e.key === 'ArrowUp' && e.ctrlKey) {
+            inc = e.shiftKey ? 1 : 0.1;
+        }
+        if (e.key === 'ArrowDown' && e.ctrlKey) {
+            inc = e.shiftKey ? -1 : -0.1;
+        }
+        if (inc === 0) {
+            return;
+        }
+        e.stopPropagation();
+        e.preventDefault();
+        updateWeight(inc);
+    };
     return (
-        <TextInput
-            multiline
-            sx={{ mb: 2 }}
-            onKeyDown={handleKeyDown}
-            inputRef={inputRef}
-            {...props}
-        />
+        <>
+            <TextInput
+                multiline
+                sx={{ mb: 2 }}
+                onKeyDown={handleKeyDown}
+                inputRef={inputRef}
+                onSelect={() => {
+                    if (!inputRef.current) {
+                        return;
+                    }
+                    const range = findRange();
+                    if (range === null) {
+                        setWeightPanelOpen(false);
+                        return;
+                    }
+                    setWeightPanelOpen(range.segment_end > range.segment_start);
+                }}
+                onBlur={() => {
+                    wpShouldHide.current = true;
+                    // if we lost focus because the weight panel has been
+                    // clicked, the ref will be set to false in updateWeight,
+                    // otherwise it will stay true
+                    setTimeout(() => {
+                        if (wpShouldHide.current) {
+                            setWeightPanelOpen(false);
+                        }
+                    });
+                }}
+                {...props}
+            />
+            <WeightPanel open={weightPanelOpen} updateWeight={updateWeight} />
+        </>
     );
 };
