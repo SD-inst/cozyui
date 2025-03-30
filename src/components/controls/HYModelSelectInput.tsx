@@ -16,7 +16,11 @@ export const HYModelSelectInput = ({ ...props }: CustomSelectInputProps) => {
             const loader_node_id = control['node_id'];
             if (!val.endsWith('.gguf')) {
                 api[loader_node_id].inputs['unet_name'] = val;
-                api[loader_node_id].inputs['weight_dtype'] = 'fp8_e4m3fn';
+                if (val.indexOf('fp8_e5m2') > 0) {
+                    api[loader_node_id].inputs['weight_dtype'] = 'fp8_e5m2';
+                } else {
+                    api[loader_node_id].inputs['weight_dtype'] = 'fp8_e4m3fn';
+                }
                 return;
             }
             // replace loader node with GGUF loader
