@@ -35,7 +35,7 @@ const Content = () => {
                 <SliderInput name='steps' defaultValue={10} min={1} max={50} />
                 <SliderInput
                     name='denoise'
-                    defaultValue={0.3}
+                    defaultValue={0.5}
                     min={0}
                     max={1}
                     step={0.01}
