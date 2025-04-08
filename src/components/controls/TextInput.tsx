@@ -15,7 +15,7 @@ export const TextInput = ({ defaultValue = '', ...props }: TextInputProps) => {
     });
     const tr = useTranslate();
     const tr_key = `controls.${props.name}`;
-    const ceHanler = useCtrlEnter();
+    const ceHandler = useCtrlEnter();
     return (
         <TextField
             sx={{
@@ -28,7 +28,7 @@ export const TextInput = ({ defaultValue = '', ...props }: TextInputProps) => {
                 if (props.onKeyUp) {
                     props.onKeyUp(e);
                 }
-                ceHanler(e);
+                ceHandler(e);
             }}
             {...ctl.field}
             {...props}

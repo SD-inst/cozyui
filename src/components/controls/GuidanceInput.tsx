@@ -1,6 +1,6 @@
 import { SliderInput, SliderInputProps } from './SliderInput';
 
-export const GuidanceInput = ({ ...props }: SliderInputProps) => {
+export const GuidanceInput = ({ ...props }: Omit<SliderInputProps, 'name'>) => {
     return (
         <SliderInput
             name='guidance'

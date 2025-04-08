@@ -26,6 +26,8 @@
             "force_offload": 1,
             "denoise_strength": 1,
             "scheduler": "FlowMatchDiscreteScheduler",
+            "riflex_freq_index": 0,
+            "i2v_mode": "dynamic",
             "model": ["1", 0],
             "hyvid_embeds": ["30", 0]
         },
@@ -65,7 +67,8 @@
             "precision": "fp16",
             "apply_final_norm": false,
             "hidden_state_skip_layer": 2,
-            "quantization": "disabled"
+            "quantization": "disabled",
+            "load_device": "offload_device"
         },
         "class_type": "DownloadAndLoadHyVideoTextEncoder",
         "_meta": {

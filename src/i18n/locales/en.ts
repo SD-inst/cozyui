@@ -99,6 +99,7 @@ const translation = {
         tab_json_diff: 'Config diff',
         tab_video_diff: 'Video diff',
         virtual_vram: 'virtual VRAM',
+        riflex: 'RIFLEx',
     },
     settings: {
         select_language: 'Select language',
@@ -153,6 +154,9 @@ const translation = {
         lora: "LoRA (low-rank adaptation) is a method to add new concepts to the model, such as characters (people), movements, gestures, styles and so on. Multiple loras can be combined together with different strengths. It's advised to use lower strength if you get any weird artifacts, especially if combining several loras.",
         virtual_vram:
             "Virtual VRAM allows swapping model layers to the regular RAM and load them in advance when needed. There's almost no performance hit and it allows generating high resolution, long videos. Only works with GGUF.",
+        riflex: 'RIFLEx allows to create longer videos (>5 seconds) without looping. If you want your video to loop, set the length to 201 frames and disable RIFLEx.',
+        upscale:
+            'Also save the result as a lossless animated WEBP and allow sending it to the upscale tab for further refinement.',
     },
     toasts: {
         disconnected: 'Disconnected',

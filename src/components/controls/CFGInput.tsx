@@ -1,6 +1,7 @@
+import { Optional } from './optional';
 import { SliderInput, SliderInputProps } from './SliderInput';
 
-export const CFGInput = ({ ...props }: SliderInputProps) => {
+export const CFGInput = ({ ...props }: Optional<SliderInputProps, 'name'>) => {
     return (
         <SliderInput
             name='cfg'

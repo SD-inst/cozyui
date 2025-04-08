@@ -92,6 +92,12 @@
                 },
                 "virtual_vram": {
                     "id": "skip"
+                },
+                "riflex": {
+                    "id": "handle",
+                    "input_node_id": "15",
+                    "output_node_id": "6",
+                    "latent_node_id": "14"
                 }
             },
             "handler_options": {

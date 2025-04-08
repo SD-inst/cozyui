@@ -3,9 +3,9 @@ import { useFormContext, useWatch } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useConfigTab';
 import { useRegisterHandler } from '../contexts/TabContext';
-import { SliderInput } from './SliderInput';
+import { SliderInput, SliderInputProps } from './SliderInput';
 
-export const TeaCacheInput = ({ ...props }) => {
+export const TeaCacheInput = ({ ...props }: SliderInputProps) => {
     const { handler_options } = useAPI();
     const { setValue, getValues } = useFormContext();
     const v = useWatch({ name: props.name });
@@ -26,7 +26,7 @@ export const TeaCacheInput = ({ ...props }) => {
             const tc_node = {
                 inputs: {
                     rel_l1_thresh: value,
-                    cache_device: 'offload_device'
+                    cache_device: 'offload_device',
                 },
                 class_type: 'HyVideoTeaCache',
                 _meta: {
@@ -41,7 +41,5 @@ export const TeaCacheInput = ({ ...props }) => {
         [handler_options.node_params.sampler_id]
     );
     useRegisterHandler({ name: props.name, handler });
-    return (
-        <SliderInput min={0} max={1} step={0.01} {...props} />
-    );
+    return <SliderInput min={0} max={1} step={0.01} {...props} />;
 };

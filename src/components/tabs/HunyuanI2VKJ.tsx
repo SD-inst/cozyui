@@ -39,7 +39,7 @@ const Content = () => {
                 <LLMSelectInput name='llm' />
                 <DescribeButton />
                 <TextInput name='prompt' multiline sx={{ mb: 3 }} />
-                <HYSize name='size' label='max size' defaultValue={544} />
+                <HYSize name='size' defaultValue={544} />
                 <LengthInput
                     min={5}
                     max={201}

@@ -110,7 +110,7 @@
             "scheduler": "simple",
             "steps": 7,
             "denoise": 1,
-            "model": ["15", 0]
+            "model": ["6", 0]
         },
         "class_type": "BasicScheduler",
         "_meta": {

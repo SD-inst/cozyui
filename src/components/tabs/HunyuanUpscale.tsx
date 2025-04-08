@@ -2,21 +2,21 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
 import { FileUpload } from '../controls/FileUpload';
-import { UploadType } from '../controls/UploadType';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
+import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
-import { TextInput } from '../controls/TextInput';
+import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
-import { WFTab } from '../WFTab';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
+import { WFTab } from '../WFTab';
 
 const Content = () => {
     const tr = useTranslate();
@@ -24,7 +24,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <FileUpload name='image' type={UploadType.BOTH} />
-                <TextInput name='prompt' multiline sx={{ mb: 2 }} />
+                <PromptInput name='prompt' multiline sx={{ mb: 2 }} />
                 <SliderInput
                     name='upscale'
                     defaultValue={2}

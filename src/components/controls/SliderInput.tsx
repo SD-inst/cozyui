@@ -7,6 +7,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 export type SliderInputProps = {
     tooltip?: string;
     suffix?: string;
+    name: string;
 } & SliderProps;
 
 export const SliderInput = ({
@@ -18,7 +19,7 @@ export const SliderInput = ({
     const {
         field: { value, onChange, ...field },
     } = useController({
-        name: props.name!,
+        name: props.name,
         defaultValue,
     });
     const [edit, setEdit] = useState(false);

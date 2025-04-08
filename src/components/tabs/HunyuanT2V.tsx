@@ -28,6 +28,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
+import { HYRiflexInput } from '../controls/HYRiflexInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -49,7 +50,7 @@ const Content = () => {
                 </Box>
                 <LengthInput
                     min={5}
-                    max={201}
+                    max={265}
                     step={4}
                     fps={24}
                     name='length'
@@ -69,6 +70,7 @@ const Content = () => {
                         <FlowShiftInput />
                         <VirtualVRAMSliderInput name='virtual_vram' />
                         <WaveSpeedInput />
+                        <HYRiflexInput name='riflex' />
                         <UpscaleToggle name='allow_upscale' />
                     </AccordionDetails>
                 </Accordion>
