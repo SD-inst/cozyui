@@ -58,8 +58,12 @@ export const Progress = () => {
                         color='success'
                         value={perc}
                     />
-                    <Typography variant='body2' color='secondary'>
-                        {Math.floor(perc) + '%'}
+                    <Typography
+                        variant='body2'
+                        color='secondary'
+                        sx={{ whiteSpace: 'nowrap' }}
+                    >
+                        {`${Math.floor(perc)}% [${value - min}/${range}]`}
                     </Typography>
                 </Box>
             )}
