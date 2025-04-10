@@ -53,6 +53,7 @@ const Content = () => {
                 />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput defaultValue={10} />
+                <FlowShiftInput defaultValue={10} />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         {tr('controls.advanced_parameters')}
@@ -62,7 +63,6 @@ const Content = () => {
                         <ClipSelectInput name='clip_model' />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
-                        <FlowShiftInput defaultValue={10} />
                         <SliderInput
                             name='aug_strength'
                             min={0}

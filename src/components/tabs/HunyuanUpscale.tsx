@@ -41,6 +41,7 @@ const Content = () => {
                     step={0.01}
                 />
                 <GuidanceInput />
+                <FlowShiftInput />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         {tr('controls.advanced_parameters')}
@@ -49,7 +50,6 @@ const Content = () => {
                         <HYModelSelectInput name='model' />
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
-                        <FlowShiftInput />
                         <VirtualVRAMSliderInput name='virtual_vram' />
                     </AccordionDetails>
                 </Accordion>

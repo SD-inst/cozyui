@@ -22,6 +22,7 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { useHyvModelChoices } from './hyv_models';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -52,6 +53,7 @@ const Content = () => {
                 />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput />
+                <FlowShiftInput />
                 <Accordion>
                     <AccordionSummary expandIcon={<ExpandMore />}>
                         {tr('controls.advanced_parameters')}
@@ -65,12 +67,6 @@ const Content = () => {
                         <KJHYCFG name='neg_prompt' />
                         <KJSchedulerSelectInput name='sampler' />
                         <KJAttentionSelectInput name='attention' />
-                        <SliderInput
-                            name='flow_shift'
-                            min={1}
-                            max={20}
-                            defaultValue={7}
-                        />
                         <EnhanceVideoInput name='enhance_video' />
                         <TeaCacheInput name='tea_cache' defaultValue={0.2} />
                         <BlockSwapInput name='block_swap' />

@@ -5,8 +5,8 @@ export const FlowShiftInput = ({ ...props }) => {
         <SliderInput
             name='flow_shift'
             min={1}
-            max={20}
-            defaultValue={7}
+            max={30}
+            defaultValue={8}
             tooltip='flow_shift'
             {...props}
         />
