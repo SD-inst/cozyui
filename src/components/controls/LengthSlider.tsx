@@ -4,19 +4,21 @@ import { SliderInput } from './SliderInput';
 import { useWatch } from 'react-hook-form';
 import { useTranslate } from '../../i18n/I18nContext';
 
+export type LengthInputProps = {
+    name: string;
+    min: number;
+    max: number;
+    step?: number;
+    fps?: number;
+} & SliderProps;
+
 export const LengthInput = ({
     min,
     max,
     step = 1,
     fps,
     ...props
-}: {
-    name: string;
-    min: number;
-    max: number;
-    step?: number;
-    fps?: number;
-} & SliderProps) => {
+}: LengthInputProps) => {
     const tr = useTranslate();
     const value = useWatch({
         name: props.name!,

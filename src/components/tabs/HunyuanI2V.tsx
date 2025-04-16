@@ -9,10 +9,10 @@ import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { HYLengthInput } from '../controls/HYLengthInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
-import { LengthInput } from '../controls/LengthSlider';
 import { LLMSelectInput } from '../controls/LLMSelectInput';
 import { LoraInput } from '../controls/LoraInput';
 import { PromptInput } from '../controls/PromptInput';
@@ -43,14 +43,7 @@ const Content = () => {
                 <DescribeButton />
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
                 <HYSize name='size' defaultValue={544} />
-                <LengthInput
-                    min={5}
-                    max={201}
-                    step={4}
-                    fps={24}
-                    name='length'
-                    defaultValue={85}
-                />
+                <HYLengthInput />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput defaultValue={10} />
                 <FlowShiftInput defaultValue={10} />

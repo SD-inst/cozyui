@@ -12,6 +12,10 @@ export const ClipSelectInput = ({ ...props }: CustomSelectInputProps) => {
                     text: 'LLaMA fp16',
                     value: 'llava_llama3_fp16.safetensors',
                 },
+                {
+                    text: 'LLaMA fp16 uncensored',
+                    value: 'hunyuanVideoSafetensors_uncensoredLlamaTE.safetensors',
+                },
             ]}
             defaultValue='llava_llama3_fp8_scaled.safetensors'
             {...props}

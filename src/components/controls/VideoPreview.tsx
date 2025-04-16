@@ -64,8 +64,11 @@ export const VideoPreview = ({ size }: { size: number }) => {
                 fontSize = img.height / 20;
                 ctx.lineWidth = img.height / size / 4;
             }
-            ctx.font = `bold ${fontSize}px sans-serif`;
             ctx.drawImage(img, 0, 0);
+            if (frames.length === 1) { // don't draw frame number for image preview
+                return
+            }
+            ctx.font = `bold ${fontSize}px sans-serif`;
             ctx.fillStyle = '#ccc';
             ctx.strokeStyle = '#000';
             const top = img.height / 10;

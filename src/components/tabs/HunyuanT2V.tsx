@@ -11,10 +11,11 @@ import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { HYLengthInput } from '../controls/HYLengthInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
+import { HYRiflexInput } from '../controls/HYRiflexInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
-import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
 import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
@@ -28,7 +29,6 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
-import { HYRiflexInput } from '../controls/HYRiflexInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -48,14 +48,7 @@ const Content = () => {
                         />
                     </Box>
                 </Box>
-                <LengthInput
-                    min={5}
-                    max={265}
-                    step={4}
-                    fps={24}
-                    name='length'
-                    defaultValue={85}
-                />
+                <HYLengthInput />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput />
                 <FlowShiftInput />
