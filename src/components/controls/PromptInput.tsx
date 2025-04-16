@@ -202,7 +202,6 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
         <>
             <TextInput
                 multiline
-                sx={{ mb: 2 }}
                 onKeyDown={handleKeyDown}
                 inputRef={inputRef}
                 onSelect={() => {
@@ -228,6 +227,7 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
                     });
                 }}
                 {...props}
+                sx={{ mb: 2, ...props.sx }}
             />
             <WeightPanel open={weightPanelOpen} updateWeight={updateWeight} />
         </>

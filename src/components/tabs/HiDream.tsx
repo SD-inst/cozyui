@@ -9,8 +9,11 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
+import { CFGInput } from '../controls/CFGInput';
+import { useWatch } from 'react-hook-form';
 
 const Content = () => {
+    const cfg = useWatch({ name: 'cfg' });
     return (
         <Layout>
             <GridLeft>
@@ -29,6 +32,11 @@ const Content = () => {
                 </Box>
                 <SliderInput name='steps' defaultValue={18} min={1} max={50} />
                 <FlowShiftInput defaultValue={9} />
+                <CFGInput defaultValue={1} max={5} />
+                <PromptInput
+                    name='neg_prompt'
+                    sx={{ display: cfg > 1 ? 'block' : 'none' }}
+                />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight

@@ -754,6 +754,10 @@
                     "id": "164",
                     "field": "text"
                 },
+                "neg_prompt": {
+                    "id": "44",
+                    "field": "text"
+                },
                 "width": {
                     "id": "198",
                     "field": "width"
@@ -773,6 +777,10 @@
                 "seed": {
                     "id": "201",
                     "field": "value"
+                },
+                "cfg": {
+                    "id": "190",
+                    "field": "cfg"
                 }
             },
             "result": {
