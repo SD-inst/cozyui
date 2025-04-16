@@ -1,7 +1,7 @@
 import { Box, Slider, SliderProps, TextField, Typography } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { HelpButton } from './HelpButton';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export type SliderInputProps = {
@@ -24,6 +24,10 @@ export const SliderInput = ({
     });
     const [edit, setEdit] = useState(false);
     const tr = useTranslate();
+    const commitValue = useCallback(() => {
+        onChange(value - (value % (props.step || 1)));
+        setEdit(false);
+    }, [props.step, onChange, value]);
     return (
         <Box width='100%' sx={{ position: 'relative', ...sx }}>
             {/* relative position to align the help elements inside the box */}
@@ -47,9 +51,9 @@ export const SliderInput = ({
                         value={value}
                         onChange={(e) => onChange(parseFloat(e.target.value))}
                         {...field}
-                        onBlur={() => setEdit(false)}
+                        onBlur={() => commitValue()}
                         onFocus={(e) => e.target.select()}
-                        onKeyUp={(e) => e.key === 'Enter' && setEdit(false)}
+                        onKeyUp={(e) => e.key === 'Enter' && commitValue()}
                     />
                 ) : (
                     <Typography
