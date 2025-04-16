@@ -96,7 +96,7 @@ const translation = {
         allow_upscale: 'разрешить увеличение',
         clip_model: 'модель CLIP LLM',
         tab_json_diff: 'Параметры',
-        tab_video_diff: 'Видео',
+        tab_media_diff: 'Медиа',
         virtual_vram: 'виртуальная VRAM',
         riflex: 'RIFLEx',
     },

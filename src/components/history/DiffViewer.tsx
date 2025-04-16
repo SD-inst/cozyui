@@ -16,10 +16,15 @@ import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContext } from '../contexts/CompareContext';
 import { db } from './db';
+import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 
 const VideoCompare = () => {
     const { A_id, B_id, open } = useContext(CompareContext);
     const [loaded, setLoaded] = useState([false, false]);
+    const [lbOpen, setLbOpen] = useState(false);
+    const [index, setIndex] = useState(0);
     const refA = useRef<HTMLVideoElement>(null);
     const refB = useRef<HTMLVideoElement>(null);
     const refs = useMemo(() => [refA, refB], []);
@@ -41,16 +46,54 @@ const VideoCompare = () => {
             db.taskResults.get(B_id || 0),
         ])
     );
-    if (
-        !tasks ||
-        !tasks[0] ||
-        !tasks[1] ||
-        !tasks.every((t) => t?.type === 'gifs')
-    ) {
+    if (!tasks || !tasks[0] || !tasks[1]) {
         return null;
     }
     const urls = tasks.map((t) =>
         t?.data ? URL.createObjectURL(t.data) : t?.url
+    );
+    const VideoViewer = ({ i }: { i: number }) => (
+        <video
+            key={i}
+            src={urls[i]}
+            ref={refs[i]}
+            controls
+            loop
+            onCanPlay={() => {
+                setLoaded((l) => {
+                    if (l[i]) {
+                        return l;
+                    }
+                    const newval = [...l];
+                    newval[i] = true;
+                    return newval;
+                });
+            }}
+            onPause={() => refs[1 - i].current?.pause()}
+            onPlay={() => refs[1 - i].current?.play()}
+            onSeeking={() => {
+                if (seek_breaker.current[i]) {
+                    seek_breaker.current[i] = false;
+                    return;
+                }
+                if (!refs[i].current || !refs[1 - i].current) {
+                    return;
+                }
+                seek_breaker.current[1 - i] = true;
+                refs[1 - i].current!.currentTime = refs[i].current.currentTime;
+            }}
+            style={{ maxWidth: '100%' }}
+        />
+    );
+    const ImageViewer = ({ i }: { i: number }) => (
+        <img
+            src={urls[i]}
+            style={{ maxWidth: '100%', cursor: 'pointer' }}
+            onClick={() => {
+                setIndex(i);
+                setLbOpen(true);
+            }}
+        />
     );
     return (
         <Box
@@ -70,40 +113,22 @@ const VideoCompare = () => {
                         },
                     }}
                 >
-                    <video
-                        key={i}
-                        src={urls[i]}
-                        ref={refs[i]}
-                        controls
-                        loop
-                        onCanPlay={() => {
-                            setLoaded((l) => {
-                                if (l[i]) {
-                                    return l;
-                                }
-                                const newval = [...l];
-                                newval[i] = true;
-                                return newval;
-                            });
-                        }}
-                        onPause={() => refs[1 - i].current?.pause()}
-                        onPlay={() => refs[1 - i].current?.play()}
-                        onSeeking={() => {
-                            if (seek_breaker.current[i]) {
-                                seek_breaker.current[i] = false;
-                                return;
-                            }
-                            if (!refs[i].current || !refs[1 - i].current) {
-                                return;
-                            }
-                            seek_breaker.current[1 - i] = true;
-                            refs[1 - i].current!.currentTime =
-                                refs[i].current.currentTime;
-                        }}
-                        style={{ maxWidth: '100%' }}
-                    />
+                    {tasks[i]?.type === 'gifs' ? <VideoViewer i={i} /> : null}
+                    {tasks[i]?.type === 'images' ? <ImageViewer i={i} /> : null}
                 </Box>
             ))}
+            <Lightbox
+                open={lbOpen}
+                index={index}
+                close={() => setLbOpen(false)}
+                slides={urls
+                    .filter((u) => u !== undefined)
+                    .map((u) => ({ src: u }))}
+                carousel={{ finite: true }}
+                animation={{ navigation: 0 }}
+                plugins={[Zoom, Fullscreen]}
+                zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+            />
         </Box>
     );
 };
@@ -174,7 +199,7 @@ export const DiffViewer = () => {
                                 value='json'
                             />
                             <Tab
-                                label={tr('controls.tab_video_diff')}
+                                label={tr('controls.tab_media_diff')}
                                 value='video'
                             />
                         </Tabs>

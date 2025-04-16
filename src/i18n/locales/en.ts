@@ -97,7 +97,7 @@ const translation = {
         allow_upscale: 'allow upscale',
         clip_model: 'CLIP LLM model',
         tab_json_diff: 'Config diff',
-        tab_video_diff: 'Video diff',
+        tab_media_diff: 'Media diff',
         virtual_vram: 'virtual VRAM',
         riflex: 'RIFLEx',
     },
