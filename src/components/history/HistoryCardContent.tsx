@@ -1,5 +1,9 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useState } from 'react';
+import Lightbox from 'yet-another-react-lightbox';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 
 export const HistoryCardContent = ({
     url,
@@ -9,6 +13,7 @@ export const HistoryCardContent = ({
     type: string;
 }) => {
     const tr = useTranslate();
+    const [open, setOpen] = useState(false);
     switch (type) {
         case 'gifs':
             return (
@@ -36,6 +41,29 @@ export const HistoryCardContent = ({
                     />
                 </Box>
             );
+        case 'images':
+            return (
+                <Box>
+                    <img
+                        style={{
+                            width: '100%',
+                            cursor: 'pointer',
+                            maxHeight: 300,
+                        }}
+                        src={url}
+                        onClick={() => setOpen(true)}
+                    />
+                    <Lightbox
+                        open={open}
+                        close={() => setOpen(false)}
+                        slides={[{ src: url }]}
+                        carousel={{ finite: true }}
+                        plugins={[Zoom, Fullscreen]}
+                        zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+                    />
+                </Box>
+            );
+
         default:
             return (
                 <Typography variant='h6'>

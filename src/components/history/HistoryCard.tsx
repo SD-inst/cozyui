@@ -32,6 +32,8 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 return <TextSnippet />;
             case 'audio':
                 return <AudioFile />;
+            case 'images':
+                return <Image />;
             default:
                 return <Image />;
         }
