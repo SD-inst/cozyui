@@ -11,6 +11,7 @@ import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
 import { CFGInput } from '../controls/CFGInput';
 import { useWatch } from 'react-hook-form';
+import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 
 const Content = () => {
     const cfg = useWatch({ name: 'cfg' });
@@ -37,6 +38,7 @@ const Content = () => {
                     name='neg_prompt'
                     sx={{ display: cfg > 1 ? 'block' : 'none' }}
                 />
+                <SamplerSelectInput name='sampler' defaultValue='lcm' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight

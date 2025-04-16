@@ -781,6 +781,10 @@
                 "cfg": {
                     "id": "190",
                     "field": "cfg"
+                },
+                "sampler": {
+                    "id": "180",
+                    "field": "sampler_name"
                 }
             },
             "result": {

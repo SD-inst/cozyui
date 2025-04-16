@@ -10,6 +10,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'DPM++ 3M SDE', value: 'dpmpp_3m_sde' },
                 { text: 'Gradient estimation', value: 'gradient_estimation' },
                 { text: 'IPNDM', value: 'ipndm' },
+                { text: 'LCM', value: 'lcm' },
             ]}
             defaultValue='euler'
             tooltip='sampler'
