@@ -1,0 +1,232 @@
+{
+  "44": {
+    "inputs": {
+      "text": "unused",
+      "clip": [
+        "161",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Negative)"
+    }
+  },
+  "105": {
+    "inputs": {
+      "vae_name": "hidream.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "161": {
+    "inputs": {
+      "clip_name1": "clip_g_hidream.safetensors",
+      "clip_name2": "clip_l_hidream.safetensors",
+      "clip_name3": "t5xxl_fp8_e4m3fn_scaled.safetensors",
+      "clip_name4": "llama_3.1_8b_instruct_fp8_scaled.safetensors"
+    },
+    "class_type": "QuadrupleCLIPLoader",
+    "_meta": {
+      "title": "QuadrupleCLIPLoader"
+    }
+  },
+  "162": {
+    "inputs": {
+      "unet_name": "hidream-i1-dev-Q8_0.gguf"
+    },
+    "class_type": "UnetLoaderGGUF",
+    "_meta": {
+      "title": "Unet Loader (GGUF)"
+    }
+  },
+  "164": {
+    "inputs": {
+      "text": "prompt goes here",
+      "clip": [
+        "161",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "167": {
+    "inputs": {
+      "filename_prefix": [
+        "200",
+        0
+      ],
+      "images": [
+        "169",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "169": {
+    "inputs": {
+      "samples": [
+        "181",
+        0
+      ],
+      "vae": [
+        "105",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "171": {
+    "inputs": {
+      "shift": 9,
+      "model": [
+        "175",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "175": {
+    "inputs": {
+      "backend": "inductor",
+      "model": [
+        "162",
+        0
+      ]
+    },
+    "class_type": "TorchCompileModel",
+    "_meta": {
+      "title": "TorchCompileModel"
+    }
+  },
+  "180": {
+    "inputs": {
+      "sampler_name": "lcm"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "181": {
+    "inputs": {
+      "noise": [
+        "197",
+        0
+      ],
+      "guider": [
+        "190",
+        0
+      ],
+      "sampler": [
+        "180",
+        0
+      ],
+      "sigmas": [
+        "183",
+        0
+      ],
+      "latent_image": [
+        "198",
+        0
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "SamplerCustomAdvanced"
+    }
+  },
+  "183": {
+    "inputs": {
+      "steps": 18,
+      "sigma_max": 1.0000000000000002,
+      "sigma_min": 0.0291675,
+      "rho": 0.5000000000000001
+    },
+    "class_type": "KarrasScheduler",
+    "_meta": {
+      "title": "KarrasScheduler"
+    }
+  },
+  "190": {
+    "inputs": {
+      "cfg": 1,
+      "model": [
+        "171",
+        0
+      ],
+      "positive": [
+        "164",
+        0
+      ],
+      "negative": [
+        "44",
+        0
+      ]
+    },
+    "class_type": "CFGGuider",
+    "_meta": {
+      "title": "CFGGuider"
+    }
+  },
+  "197": {
+    "inputs": {
+      "noise_seed": [
+        "201",
+        0
+      ]
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "198": {
+    "inputs": {
+      "width": 768,
+      "height": 1344,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "200": {
+    "inputs": {
+      "prefix": "HiDream_",
+      "suffix": "",
+      "input": [
+        "201",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "201": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Seed"
+    }
+  }
+}

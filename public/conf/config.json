@@ -746,6 +746,39 @@
                     "type": "audio"
                 }
             ]
+        },
+        "HiDream": {
+            "api": "api/hidream_native.json",
+            "controls": {
+                "prompt": {
+                    "id": "164",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "198",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "198",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "183",
+                    "field": "steps"
+                },
+                "flow_shift": {
+                    "id": "171",
+                    "field": "shift"
+                },
+                "seed": {
+                    "id": "201",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "167",
+                "type": "images"
+            }
         }
     },
     "models": {

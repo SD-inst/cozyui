@@ -1,6 +1,9 @@
-import { SliderInput } from './SliderInput';
+import { Optional } from './optional';
+import { SliderInput, SliderInputProps } from './SliderInput';
 
-export const FlowShiftInput = ({ ...props }) => {
+export const FlowShiftInput = ({
+    ...props
+}: Optional<SliderInputProps, 'name'>) => {
     return (
         <SliderInput
             name='flow_shift'

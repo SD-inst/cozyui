@@ -23,6 +23,7 @@ import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { HunyanUpscale } from './components/tabs/HunyuanUpscale';
 import { FilterContextProvider } from './components/contexts/FilterContextProvider';
 import { MMAudioTab } from './components/tabs/MMAudio';
+import { HiDreamTab } from './components/tabs/HiDream';
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                             {HunyanT2VTab}
                             {HunyanI2VTab}
                             {HunyanUpscale}
+                            {HiDreamTab}
                             {HunyanT2VKJTab}
                             {HunyanI2VKJTab}
                             {LTXI2VTab}

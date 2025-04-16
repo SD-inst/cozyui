@@ -1679,6 +1679,7 @@ __metadata:
     typescript: "npm:~5.7.2"
     typescript-eslint: "npm:^8.18.2"
     vite: "npm:^6.0.5"
+    yet-another-react-lightbox: "npm:^3.22.0"
   languageName: unknown
   linkType: soft
 
@@ -3843,6 +3844,23 @@ __metadata:
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: 10c0/5c28b9eb7adc46544f28d9a8d20c5b3cb1215a886609a2fd41f51628d8aaa5878ccd628b755dbcd29f6bb4921bd04ffbc6dcc370689bb96e594e2f9813d2605f
+  languageName: node
+  linkType: hard
+
+"yet-another-react-lightbox@npm:^3.22.0":
+  version: 3.22.0
+  resolution: "yet-another-react-lightbox@npm:3.22.0"
+  peerDependencies:
+    "@types/react": ^16 || ^17 || ^18 || ^19
+    "@types/react-dom": ^16 || ^17 || ^18 || ^19
+    react: ^16.8.0 || ^17 || ^18 || ^19
+    react-dom: ^16.8.0 || ^17 || ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 10c0/86623710b896a03a48e4068b09d9939beb644afda90249793deb84891152419e0323046bb530307510926124123df9292089a7e08d895610c433e06ae02a8efb
   languageName: node
   linkType: hard
 
