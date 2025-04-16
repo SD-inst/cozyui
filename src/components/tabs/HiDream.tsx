@@ -17,8 +17,8 @@ const Content = () => {
                 <PromptInput name='prompt' />
                 <Box display='flex' flexDirection='row' width='100%'>
                     <Box display='flex' flexDirection='column' flex={1}>
-                        <HYSize name='width' defaultValue={768} />
-                        <HYSize name='height' defaultValue={1344} />
+                        <HYSize name='width' defaultValue={768} max={2048} />
+                        <HYSize name='height' defaultValue={1344} max={2048} />
                     </Box>
                     <Box display='flex' alignItems='center'>
                         <SwapButton
