@@ -100,6 +100,7 @@ const translation = {
         tab_media_diff: 'Media diff',
         virtual_vram: 'virtual VRAM',
         riflex: 'RIFLEx',
+        compile_model: 'compile model',
     },
     settings: {
         select_language: 'Select language',

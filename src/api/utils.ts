@@ -20,5 +20,25 @@ export const getFreeNodeId = (api: any) =>
         .map((k) => parseInt(k))
         .reduce((a, k) => Math.max(a, k)) + 1;
 
+export const insertNode = (
+    api: any,
+    target_node_ids: string | string[],
+    target_field: string,
+    node: any,
+    node_offset: number = 0
+): string => {
+    const new_node_id = getFreeNodeId(api) + '';
+    api[new_node_id] = node;
+
+    const ids =
+        target_node_ids instanceof Array ? target_node_ids : [target_node_ids];
+    ids.forEach((id) => {
+        const input_node = api[id].inputs[target_field];
+        node.inputs[target_field] = input_node;
+        api[id].inputs[target_field] = [new_node_id, node_offset];
+    });
+    return new_node_id;
+};
+
 export const makeOutputUrl = (apiUrl: string, r: any) =>
     `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;

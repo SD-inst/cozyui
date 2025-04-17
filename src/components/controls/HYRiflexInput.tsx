@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { getFreeNodeId } from '../../api/utils';
+import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { ToggleInput, ToggleInputProps } from './ToggleInput';
@@ -10,11 +10,10 @@ export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
             if (!control || !value) {
                 return;
             }
-            const riflex_node_id = getFreeNodeId(api) + '';
-            api[riflex_node_id] = {
+            const riflex_node = {
                 inputs: {
                     k: 4,
-                    model: [control.input_node_id, 0],
+                    model: null,
                     latent: [control.latent_node_id, 0],
                 },
                 class_type: 'ApplyRifleXRoPE_HunuyanVideo',
@@ -22,7 +21,7 @@ export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
                     title: 'Apply RifleXRoPE HunuyanVideo',
                 },
             };
-            api[control.output_node_id].inputs['model'] = [riflex_node_id, 0];
+            insertNode(api, control.output_node_id, 'model', riflex_node);
         },
         []
     );

@@ -27,6 +27,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
+import { CompileModelToggle } from '../controls/CompileModelToggle';
 
 const Content = () => {
     const tr = useTranslate();
@@ -73,6 +74,7 @@ const Content = () => {
                         <WaveSpeedInput />
                         <VirtualVRAMSliderInput name='virtual_vram' />
                         <UpscaleToggle name='allow_upscale' />
+                        <CompileModelToggle />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />

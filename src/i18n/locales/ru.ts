@@ -99,6 +99,7 @@ const translation = {
         tab_media_diff: 'Медиа',
         virtual_vram: 'виртуальная VRAM',
         riflex: 'RIFLEx',
+        compile_model: 'скомпилировать модель',
     },
     settings: {
         select_language: 'Выбор языка',

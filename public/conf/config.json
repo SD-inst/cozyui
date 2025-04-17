@@ -95,9 +95,12 @@
                 },
                 "riflex": {
                     "id": "handle",
-                    "input_node_id": "15",
                     "output_node_id": "6",
                     "latent_node_id": "14"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "6"
                 }
             },
             "handler_options": {
@@ -642,6 +645,10 @@
                 },
                 "virtual_vram": {
                     "id": "skip"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "54"
                 }
             },
             "handler_options": {
@@ -769,6 +776,10 @@
                 "steps": {
                     "id": "183",
                     "field": "steps"
+                },
+                "scheduler": {
+                    "id": "183",
+                    "field": "scheduler"
                 },
                 "flow_shift": {
                     "id": "171",
