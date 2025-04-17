@@ -32,15 +32,15 @@ const Content = () => {
                         />
                     </Box>
                 </Box>
-                <SliderInput name='steps' defaultValue={18} min={1} max={50} />
-                <FlowShiftInput defaultValue={9} />
+                <SliderInput name='steps' defaultValue={28} min={1} max={50} />
+                <FlowShiftInput defaultValue={6} />
                 <CFGInput defaultValue={1} max={5} />
                 <PromptInput
                     name='neg_prompt'
                     sx={{ display: cfg > 1 ? 'block' : 'none' }}
                 />
-                <SamplerSelectInput name='sampler' defaultValue='lcm' />
-                <SchedulerSelectInput name='scheduler' defaultValue='karras' />
+                <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />
+                <SchedulerSelectInput name='scheduler' defaultValue='beta' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
