@@ -151,16 +151,16 @@
     }
   },
   "183": {
-    "inputs": {
-      "steps": 18,
-      "sigma_max": 1.0000000000000002,
-      "sigma_min": 0.0291675,
-      "rho": 0.5000000000000001
-    },
-    "class_type": "KarrasScheduler",
-    "_meta": {
-      "title": "KarrasScheduler"
-    }
+      "inputs": {
+          "scheduler": "normal",
+          "steps": 18,
+          "denoise": 1,
+          "model": ["171", 0]
+      },
+      "class_type": "BasicScheduler",
+      "_meta": {
+          "title": "BasicScheduler"
+      }
   },
   "190": {
     "inputs": {

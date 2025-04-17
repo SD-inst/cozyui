@@ -12,6 +12,7 @@ import { WFTab } from '../WFTab';
 import { CFGInput } from '../controls/CFGInput';
 import { useWatch } from 'react-hook-form';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
+import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 
 const Content = () => {
     const cfg = useWatch({ name: 'cfg' });
@@ -39,6 +40,7 @@ const Content = () => {
                     sx={{ display: cfg > 1 ? 'block' : 'none' }}
                 />
                 <SamplerSelectInput name='sampler' defaultValue='lcm' />
+                <SchedulerSelectInput name='scheduler' defaultValue='karras' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
