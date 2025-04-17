@@ -10,7 +10,6 @@ import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYLengthInput } from '../controls/HYLengthInput';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LLMSelectInput } from '../controls/LLMSelectInput';
@@ -28,6 +27,7 @@ import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 
 const Content = () => {
     const tr = useTranslate();

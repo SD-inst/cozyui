@@ -8,11 +8,11 @@ import {
 import { useTranslate } from '../../i18n/I18nContext';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
+import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYLengthInput } from '../controls/HYLengthInput';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYRiflexInput } from '../controls/HYRiflexInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -29,7 +29,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
-import { CompileModelToggle } from '../controls/CompileModelToggle';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 
 const Content = () => {
     const tr = useTranslate();

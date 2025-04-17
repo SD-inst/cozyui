@@ -5,7 +5,6 @@ import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { PromptInput } from '../controls/PromptInput';
@@ -17,6 +16,7 @@ import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../WFTab';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 
 const Content = () => {
     const tr = useTranslate();

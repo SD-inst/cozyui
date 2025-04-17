@@ -1,18 +1,18 @@
 import { Box } from '@mui/material';
+import { useWatch } from 'react-hook-form';
+import { CFGInput } from '../controls/CFGInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { HYSize } from '../controls/HYSize';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { PromptInput } from '../controls/PromptInput';
+import { SamplerSelectInput } from '../controls/SamplerSelectInput';
+import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
-import { CFGInput } from '../controls/CFGInput';
-import { useWatch } from 'react-hook-form';
-import { SamplerSelectInput } from '../controls/SamplerSelectInput';
-import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 
 const Content = () => {
     const cfg = useWatch({ name: 'cfg' });

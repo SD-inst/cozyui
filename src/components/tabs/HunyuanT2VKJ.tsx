@@ -4,8 +4,10 @@ import { Box } from '@mui/system';
 import { useTranslate } from '../../i18n/I18nContext';
 import { BlockSwapInput } from '../controls/BlockSwapInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYSize } from '../controls/HYSize';
 import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
 import { KJHYCFG } from '../controls/KJHYCFG';
@@ -14,19 +16,15 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
 import { SeedInput } from '../controls/SeedInput';
-import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { useHyvModelChoices } from './hyv_models';
-import { FlowShiftInput } from '../controls/FlowShiftInput';
 
 const Content = () => {
     const tr = useTranslate();
-    const hyv_models = useHyvModelChoices((m) => !m.path.endsWith('gguf'));
     return (
         <Layout>
             <GridLeft>
@@ -59,10 +57,9 @@ const Content = () => {
                         {tr('controls.advanced_parameters')}
                     </AccordionSummary>
                     <AccordionDetails>
-                        <SelectInput
+                        <HYModelSelectInput
                             name='model'
-                            defaultValue='hyvid/hunyuan_video_720_fp8_e4m3fn.safetensors'
-                            choices={hyv_models}
+                            filter={(m) => !m.path.endsWith('gguf')}
                         />
                         <KJHYCFG name='neg_prompt' />
                         <KJSchedulerSelectInput name='sampler' />
