@@ -125,10 +125,10 @@
   },
   "33": {
     "inputs": {
-      "tile_size": 256,
+      "tile_size": 192,
       "overlap": 64,
-      "temporal_size": 64,
-      "temporal_overlap": 8,
+      "temporal_size": 128,
+      "temporal_overlap": 16,
       "samples": [
         "39",
         0
