@@ -8,12 +8,14 @@ export type SliderInputProps = {
     tooltip?: string;
     suffix?: string;
     name: string;
+    label?: string;
 } & SliderProps;
 
 export const SliderInput = ({
     defaultValue,
     sx,
     tooltip,
+    label,
     ...props
 }: SliderInputProps) => {
     const {
@@ -33,7 +35,7 @@ export const SliderInput = ({
             {/* relative position to align the help elements inside the box */}
             <Box width='100%' display='flex' alignItems='center' gap={1}>
                 <Typography variant='body1'>
-                    {tr(`controls.${props.name}`)}
+                    {tr(`controls.${label || props.name}`)}
                     {props.suffix ? ' ' + props.suffix : ''}:
                 </Typography>
                 {edit ? (

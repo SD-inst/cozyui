@@ -101,6 +101,9 @@ const translation = {
         virtual_vram: 'virtual VRAM',
         riflex: 'RIFLEx',
         compile_model: 'compile model',
+        length_s: 'length in seconds',
+        window_size: 'segment size (in latents)',
+        rel_thresh: 'Tea Cache threshold'
     },
     settings: {
         select_language: 'Select language',

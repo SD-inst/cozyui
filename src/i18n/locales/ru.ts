@@ -100,6 +100,9 @@ const translation = {
         virtual_vram: 'виртуальная VRAM',
         riflex: 'RIFLEx',
         compile_model: 'скомпилировать модель',
+        length_s: 'длина в секундах',
+        window_size: 'размер сегмента (в латентах)',
+        rel_thresh: 'порог Tea Cache',
     },
     settings: {
         select_language: 'Выбор языка',

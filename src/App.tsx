@@ -24,6 +24,7 @@ import { HunyanUpscale } from './components/tabs/HunyuanUpscale';
 import { FilterContextProvider } from './components/contexts/FilterContextProvider';
 import { MMAudioTab } from './components/tabs/MMAudio';
 import { HiDreamTab } from './components/tabs/HiDream';
+import { FramePackI2VTab } from './components/tabs/FramePackI2V';
 
 function App() {
     return (
@@ -36,6 +37,7 @@ function App() {
                         <WorkflowTabs>
                             {HunyanT2VTab}
                             {HunyanI2VTab}
+                            {FramePackI2VTab}
                             {HunyanUpscale}
                             {HiDreamTab}
                             {HunyanT2VKJTab}

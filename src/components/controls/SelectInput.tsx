@@ -9,7 +9,7 @@ export type SelectInputProps = {
         | string
         | {
               text: string;
-              value: string;
+              value: string | number;
           }
     )[];
     tooltip?: string;

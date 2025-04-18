@@ -802,6 +802,55 @@
                 "id": "167",
                 "type": "images"
             }
+        },
+        "FramePack I2V": {
+            "api": "api/framepack_i2v_native.json",
+            "controls": {
+                "image": {
+                    "id": "19",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "47",
+                    "field": "text"
+                },
+                "length": {
+                    "id": "39",
+                    "field": "total_second_length"
+                },
+                "window_size": {
+                    "id": "39",
+                    "field": "latent_window_size"
+                },
+                "size": {
+                    "id": "51",
+                    "field": "base_resolution"
+                },
+                "steps": {
+                    "id": "39",
+                    "field": "steps"
+                },
+                "guidance": {
+                    "id": "39",
+                    "field": "guidance_scale"
+                },
+                "seed": {
+                    "id": "57",
+                    "field": "value"
+                },
+                "tea_cache": {
+                    "id": "39",
+                    "field": "use_teacache"
+                },
+                "rel_thresh": {
+                    "id": "39",
+                    "field": "teacache_rel_l1_thresh"
+                }
+            },
+            "result": {
+                "id": "23",
+                "type": "gifs"
+            }
         }
     },
     "models": {
