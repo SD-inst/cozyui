@@ -3,10 +3,10 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
+import { PromptInput } from '../controls/PromptInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
-import { TextInput } from '../controls/TextInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
@@ -16,7 +16,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
-                <TextInput name='prompt' sx={{ mb: 3 }} multiline />
+                <PromptInput name='prompt' sx={{ mb: 3 }} />
                 <SelectInput
                     name='size'
                     defaultValue={320}
