@@ -7,5 +7,6 @@ export const autoscrollSlotProps = (ref: RefObject<HTMLElement>) => ({
                 behavior: 'smooth',
             });
         },
+        timeout: 0,
     },
 });
