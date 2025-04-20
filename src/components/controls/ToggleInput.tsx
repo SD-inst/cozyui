@@ -13,7 +13,7 @@ export type ToggleInputProps = Omit<SwitchProps, 'defaultValue'> & {
 export const ToggleInput = ({
     label,
     tooltip,
-    defaultValue,
+    defaultValue = false,
     ...props
 }: ToggleInputProps) => {
     const tr = useTranslate();
