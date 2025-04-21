@@ -17,6 +17,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../WFTab';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
+import { CompileModelToggle } from '../controls/CompileModelToggle';
 
 const Content = () => {
     const tr = useTranslate();
@@ -51,6 +52,7 @@ const Content = () => {
                         <SamplerSelectInput name='sampler' />
                         <SchedulerSelectInput name='scheduler' />
                         <VirtualVRAMSliderInput name='virtual_vram' />
+                        <CompileModelToggle />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />

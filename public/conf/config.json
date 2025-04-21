@@ -198,6 +198,10 @@
                 },
                 "virtual_vram": {
                     "id": "skip"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "14"
                 }
             },
             "result": {
