@@ -40,6 +40,7 @@ const translation = {
         video: 'Video',
         audio: 'Audio',
         download: 'Download',
+        download_png: 'Download PNG',
         single_blocks: 'Single blocks',
         double_blocks: 'Double blocks',
         offload_txt_in: 'Offload txt in',

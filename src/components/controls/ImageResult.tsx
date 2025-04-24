@@ -1,5 +1,8 @@
-import { Button, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
+import Lightbox from 'yet-another-react-lightbox';
+import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
+import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
@@ -7,11 +10,9 @@ import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
 import { VideoPreview } from './VideoPreview';
-import Lightbox from 'yet-another-react-lightbox';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 
 import 'yet-another-react-lightbox/styles.css';
+import { DownloadImageButton } from './DownloadImageButton';
 
 export const ImageResult = ({ title }: { title?: string }) => {
     const results = useResult();
@@ -48,11 +49,7 @@ export const ImageResult = ({ title }: { title?: string }) => {
                             plugins={[Zoom, Fullscreen]}
                             zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                         />
-                        <a download href={url}>
-                            <Button variant='contained' color='success'>
-                                {tr('controls.download')}
-                            </Button>
-                        </a>
+                        <DownloadImageButton url={url} />
                     </VerticalBox>
                 );
             })}
