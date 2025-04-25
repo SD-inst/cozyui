@@ -80,14 +80,16 @@ export const VideoPreview = ({ size }: { size: number }) => {
             clearInterval(interval);
         };
     }, [rate, size]);
-    if (!enabled || status !== statusEnum.RUNNING) {
-        return null;
-    }
     return (
         <canvas
             ref={ref}
             style={{
-                display: active_tabs.includes(tab_name) ? 'block' : 'none',
+                display:
+                    active_tabs.includes(tab_name) &&
+                    enabled &&
+                    status === statusEnum.RUNNING
+                        ? 'block'
+                        : 'none',
             }}
         />
     );
