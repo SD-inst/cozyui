@@ -25,6 +25,7 @@ import { FilterContextProvider } from './components/contexts/FilterContextProvid
 import { MMAudioTab } from './components/tabs/MMAudio';
 import { HiDreamTab } from './components/tabs/HiDream';
 import { FramePackI2VTab } from './components/tabs/FramePackI2V';
+import { FluxTab } from './components/tabs/Flux';
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                             {FramePackI2VTab}
                             {HunyanUpscale}
                             {HiDreamTab}
+                            {FluxTab}
                             {HunyanT2VKJTab}
                             {HunyanI2VKJTab}
                             {LTXI2VTab}

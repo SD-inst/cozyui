@@ -811,6 +811,47 @@
                 "type": "images"
             }
         },
+        "Flux": {
+            "api": "api/flux.json",
+            "controls": {
+                "prompt": {
+                    "id": "6",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "5",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "5",
+                    "field": "height"
+                },
+                "batch_size": {
+                    "id": "5",
+                    "field": "batch_size"
+                },
+                "steps": {
+                    "id": "17",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "17",
+                    "field": "scheduler"
+                },
+                "sampler": {
+                    "id": "16",
+                    "field": "sampler_name"
+                },
+                "seed": {
+                    "id": "32",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "9",
+                "type": "images"
+            }
+        },
         "FramePack I2V": {
             "api": "api/framepack_i2v_native.json",
             "controls": {
