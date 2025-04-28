@@ -10,6 +10,7 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
+import { LoraInput } from '../controls/LoraInput';
 
 const Content = () => {
     return (
@@ -37,6 +38,7 @@ const Content = () => {
                     max={9}
                     defaultValue={1}
                 />
+                <LoraInput name='lora' type='flux' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
