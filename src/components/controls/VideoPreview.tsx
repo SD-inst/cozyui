@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { useAppSelector } from '../../redux/hooks';
-import { useTabName } from '../contexts/TabContext';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
 import { settings } from '../../hooks/settings';
+import { useActiveTab } from '../../hooks/useActiveTab';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
 
 export const VideoPreview = ({ size }: { size: number }) => {
@@ -11,11 +11,7 @@ export const VideoPreview = ({ size }: { size: number }) => {
     const ref = useRef<HTMLCanvasElement>(null);
     const frameRef = useRef<ImageBitmap[]>([]);
     const { frames, rate } = useAppSelector((s) => s.preview);
-    const prompt = useAppSelector((s) => s.tab.prompt);
-    const active_tabs = Object.entries(prompt).map(
-        ([, { tab_name }]) => tab_name
-    );
-    const tab_name = useTabName();
+    const isActiveTab = useActiveTab();
     // don't use state directly to avoid preview restarts
     // instead, copy the updated frames to a ref
     useEffect(() => {
@@ -65,8 +61,9 @@ export const VideoPreview = ({ size }: { size: number }) => {
                 ctx.lineWidth = img.height / size / 4;
             }
             ctx.drawImage(img, 0, 0);
-            if (frames.length === 1) { // don't draw frame number for image preview
-                return
+            if (frames.length === 1) {
+                // don't draw frame number for image preview
+                return;
             }
             ctx.font = `bold ${fontSize}px sans-serif`;
             ctx.fillStyle = '#ccc';
@@ -85,9 +82,7 @@ export const VideoPreview = ({ size }: { size: number }) => {
             ref={ref}
             style={{
                 display:
-                    active_tabs.includes(tab_name) &&
-                    enabled &&
-                    status === statusEnum.RUNNING
+                    isActiveTab && enabled && status === statusEnum.RUNNING
                         ? 'block'
                         : 'none',
             }}

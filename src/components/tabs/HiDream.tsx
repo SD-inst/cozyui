@@ -41,6 +41,7 @@ const Content = () => {
                 />
                 <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />
                 <SchedulerSelectInput name='scheduler' defaultValue='beta' />
+                <SliderInput name='batch_size' min={1} max={9} defaultValue={1} />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight

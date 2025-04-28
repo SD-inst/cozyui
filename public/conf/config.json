@@ -800,6 +800,10 @@
                 "sampler": {
                     "id": "180",
                     "field": "sampler_name"
+                },
+                "batch_size": {
+                    "id": "198",
+                    "field": "batch_size"
                 }
             },
             "result": {

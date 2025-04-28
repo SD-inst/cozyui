@@ -104,6 +104,7 @@ const translation = {
         length_s: 'длина в секундах',
         window_size: 'размер сегмента (в латентах)',
         rel_thresh: 'порог Tea Cache',
+        batch_size: 'размер батча',
     },
     settings: {
         select_language: 'Выбор языка',

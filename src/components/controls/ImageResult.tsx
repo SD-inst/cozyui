@@ -9,10 +9,10 @@ import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
-import { VideoPreview } from './VideoPreview';
 
 import 'yet-another-react-lightbox/styles.css';
 import { DownloadImageButton } from './DownloadImageButton';
+import { ImagePreview } from './ImagePreview';
 
 export const ImageResult = ({ title }: { title?: string }) => {
     const results = useResult();
@@ -53,7 +53,7 @@ export const ImageResult = ({ title }: { title?: string }) => {
                     </VerticalBox>
                 );
             })}
-            <VideoPreview size={300} />
+            <ImagePreview size={400} />
         </VerticalBox>
     );
 };
