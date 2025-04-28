@@ -1,7 +1,17 @@
-import { Button, ButtonGroup } from '@mui/material';
+import { Download } from '@mui/icons-material';
+import { Box, Button, ButtonGroup, SxProps } from '@mui/material';
+import { useLightboxState } from 'yet-another-react-lightbox';
 import { useTranslate } from '../../i18n/I18nContext';
 
-export const DownloadImageButton = ({ url }: { url: string }) => {
+export const DownloadImageButton = ({
+    url,
+    lightbox = false,
+    sx,
+}: {
+    url: string;
+    lightbox?: boolean;
+    sx?: SxProps;
+}) => {
     const tr = useTranslate();
     const handleSaveJPG = () => {
         const canvas = document.createElement('canvas');
@@ -29,14 +39,44 @@ export const DownloadImageButton = ({ url }: { url: string }) => {
             a.click();
         }, 'image/jpeg');
     };
+    if (lightbox) {
+        return (
+            <Box sx={{ mt: 1, ...sx }}>
+                <ButtonGroup variant='outlined' color='success' size='small'>
+                    <Button onClick={handleSaveJPG}>
+                        <Download />
+                    </Button>
+                    <a download href={url}>
+                        <Button>
+                            PNG <Download />
+                        </Button>
+                    </a>
+                </ButtonGroup>
+            </Box>
+        );
+    } else {
+        return (
+            <ButtonGroup variant='contained' sx={sx}>
+                <Button color='success' onClick={handleSaveJPG}>
+                    {tr('controls.download')}
+                </Button>
+                <a download href={url}>
+                    <Button color='success'>
+                        {tr('controls.download_png')}
+                    </Button>
+                </a>
+            </ButtonGroup>
+        );
+    }
+};
+
+export const DownloadImageButtonLightbox = () => {
+    const { currentSlide } = useLightboxState();
     return (
-        <ButtonGroup variant='contained'>
-            <Button color='success' onClick={handleSaveJPG}>
-                {tr('controls.download')}
-            </Button>
-            <a download href={url}>
-                <Button color='success'>{tr('controls.download_png')}</Button>
-            </a>
-        </ButtonGroup>
+        <DownloadImageButton
+            lightbox
+            url={currentSlide?.src || ''}
+            sx={{ mr: 2 }}
+        />
     );
 };
