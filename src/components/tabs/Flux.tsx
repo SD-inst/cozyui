@@ -11,6 +11,7 @@ import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
 import { LoraInput } from '../controls/LoraInput';
+import { GuidanceInput } from '../controls/GuidanceInput';
 
 const Content = () => {
     return (
@@ -30,6 +31,7 @@ const Content = () => {
                     </Box>
                 </Box>
                 <SliderInput name='steps' defaultValue={4} min={1} max={40} />
+                <GuidanceInput />
                 <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />
                 <SchedulerSelectInput name='scheduler' defaultValue='simple' />
                 <SliderInput

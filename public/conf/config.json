@@ -826,6 +826,10 @@
                     "id": "5",
                     "field": "height"
                 },
+                "guidance": {
+                    "id": "20",
+                    "field": "guidance"
+                },
                 "batch_size": {
                     "id": "5",
                     "field": "batch_size"
