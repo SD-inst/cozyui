@@ -12,6 +12,7 @@ import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
 import { LoraInput } from '../controls/LoraInput';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 
 const Content = () => {
     return (
@@ -31,7 +32,7 @@ const Content = () => {
                     </Box>
                 </Box>
                 <SliderInput name='steps' defaultValue={4} min={1} max={40} />
-                <GuidanceInput />
+                <GuidanceInput defaultValue={3.5} step={0.1} />
                 <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />
                 <SchedulerSelectInput name='scheduler' defaultValue='simple' />
                 <SliderInput
@@ -39,6 +40,15 @@ const Content = () => {
                     min={1}
                     max={9}
                     defaultValue={1}
+                />
+                <ModelSelectAutocomplete
+                    name='model'
+                    type='flux'
+                    sx={{ mb: 2 }}
+                    defaultValue={{
+                        id: 'flux/flux_schnell.safetensors',
+                        label: 'flux_schnell',
+                    }}
                 />
                 <LoraInput name='lora' type='flux' />
                 <SeedInput name='seed' defaultValue={1024} />

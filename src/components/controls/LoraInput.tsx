@@ -1,4 +1,3 @@
-import { Refresh } from '@mui/icons-material';
 import {
     Autocomplete,
     AutocompleteProps,
@@ -11,17 +10,13 @@ import {
     DialogContent,
     DialogTitle,
     MenuItem,
-    TextField,
-    Tooltip,
+    TextField
 } from '@mui/material';
-import { useQueryClient } from '@tanstack/react-query';
 import { get } from 'lodash';
-import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import { mergeType } from '../../api/mergeType';
 import { getFreeNodeId } from '../../api/utils';
-import { useApiURL } from '../../hooks/useApiURL';
 import { useAPI } from '../../hooks/useConfigTab';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useTranslate } from '../../i18n/I18nContext';
@@ -29,6 +24,8 @@ import { loraDefaults } from '../../redux/config';
 import { useAppSelector } from '../../redux/hooks';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { HelpButton } from './HelpButton';
+import { ModelOption } from './ModelOption';
+import { ObjectReloadButton } from './ObjectReloadButton';
 import { SelectControl } from './SelectControl';
 
 type valueType = {
@@ -43,11 +40,13 @@ const LoraChip = ({
     index,
     value,
     onOK,
+    hideMergeType = false,
 }: {
     getTagProps: AutocompleteRenderGetTagProps;
     index: number;
     value: valueType;
     onOK: (strength: number, merge: mergeType) => void;
+    hideMergeType?: boolean;
 }) => {
     const tr = useTranslate();
     const { key, ...tagProps } = getTagProps({ index });
@@ -109,21 +108,25 @@ const LoraChip = ({
                             e.stopPropagation();
                         }}
                     />
-                    <SelectControl
-                        label={'controls.merge_type'}
-                        value={merge}
-                        onChange={(e) => setMerge(e.target.value as mergeType)}
-                    >
-                        <MenuItem value={mergeType.SINGLE}>
-                            {tr('controls.merge_type_single')}
-                        </MenuItem>
-                        <MenuItem value={mergeType.DOUBLE}>
-                            {tr('controls.merge_type_double')}
-                        </MenuItem>
-                        <MenuItem value={mergeType.FULL}>
-                            {tr('controls.merge_type_full')}
-                        </MenuItem>
-                    </SelectControl>
+                    {!hideMergeType && (
+                        <SelectControl
+                            label={'controls.merge_type'}
+                            value={merge}
+                            onChange={(e) =>
+                                setMerge(e.target.value as mergeType)
+                            }
+                        >
+                            <MenuItem value={mergeType.SINGLE}>
+                                {tr('controls.merge_type_single')}
+                            </MenuItem>
+                            <MenuItem value={mergeType.DOUBLE}>
+                                {tr('controls.merge_type_double')}
+                            </MenuItem>
+                            <MenuItem value={mergeType.FULL}>
+                                {tr('controls.merge_type_full')}
+                            </MenuItem>
+                        </SelectControl>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleOK}>{tr('controls.ok')}</Button>
@@ -133,51 +136,6 @@ const LoraChip = ({
                 </DialogActions>
             </Dialog>
         </>
-    );
-};
-
-const preview_style = { maxWidth: '50px', maxHeight: '50px' };
-
-const LoraOption = ({ value, id, ...props }: { value: string; id: string }) => {
-    const [preview, setPreview] = useState<ReactElement>();
-    const preview_root = useAppSelector((s) => s.config.preview_root);
-    useEffect(() => {
-        if (!preview_root || !id.endsWith('.safetensors')) {
-            return;
-        }
-        const preview_img =
-            preview_root + '/' + id.replace(/(\.safetensors)$/, '.preview.png');
-        setPreview(
-            <img
-                style={preview_style}
-                src={preview_img}
-                onError={() => {
-                    const preview_vid =
-                        preview_root +
-                        '/' +
-                        id.replace(/(\.safetensors)$/, '.preview.mp4');
-                    setPreview(
-                        <video
-                            style={preview_style}
-                            autoPlay
-                            loop
-                            muted
-                            src={preview_vid}
-                        />
-                    );
-                }}
-            />
-        );
-    }, [id, preview_root]);
-    return (
-        <Box {...props}>
-            <Box display='flex' justifyContent='center' width={50}>
-                {preview}
-            </Box>
-            <Box position='absolute' left={80}>
-                {value}
-            </Box>
-        </Box>
     );
 };
 
@@ -207,8 +165,6 @@ export const LoraInput = ({
     const final_filter = import.meta.env.VITE_FILTER_LORAS || filter;
     const tr = useTranslate();
     const disable_lora_filter = localStorage.getItem('disable_lora_filter');
-    const qc = useQueryClient();
-    const apiUrl = useApiURL();
     const { setValue } = useFormContext();
     const ceHanler = useCtrlEnter();
     const {
@@ -388,6 +344,10 @@ export const LoraInput = ({
                                     ...values.slice(i + 1),
                                 ]);
                             }}
+                            hideMergeType={
+                                class_name !== 'HunyuanVideoLoraLoader' &&
+                                class_name !== 'HyVideoLoraSelect'
+                            }
                         />
                     ))
                 }
@@ -409,7 +369,7 @@ export const LoraInput = ({
                 renderOption={(props, option, _, ownerState) => {
                     const { key, ...optionProps } = props;
                     return (
-                        <LoraOption
+                        <ModelOption
                             key={key}
                             {...optionProps}
                             value={ownerState.getOptionLabel(option)}
@@ -418,22 +378,7 @@ export const LoraInput = ({
                     );
                 }}
             />
-            <Tooltip arrow title={tr('controls.lora_reload')}>
-                <Button
-                    variant='outlined'
-                    onClick={() =>
-                        qc
-                            .invalidateQueries({
-                                queryKey: [apiUrl + '/api/object_info'],
-                            })
-                            .then(() =>
-                                toast.success(tr('toasts.reloaded_objects'))
-                            )
-                    }
-                >
-                    <Refresh />
-                </Button>
-            </Tooltip>
+            <ObjectReloadButton />
         </Box>
     );
 };

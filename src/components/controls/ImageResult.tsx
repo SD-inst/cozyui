@@ -20,13 +20,14 @@ import { ImagePreview } from './ImagePreview';
 export const ImageResult = ({ title }: { title?: string }) => {
     const results = useResult();
     const tr = useTranslate();
-    const lbRef = useRef<HTMLVideoElement & HTMLImageElement>(null);
+    const boxRef = useRef<HTMLDivElement>(null);
     const apiUrl = useApiURL();
     const [open, setOpen] = useState(false);
     const [idx, setIdx] = useState(0);
     useEffect(() => {
-        if (results.length && lbRef.current) {
-            lbRef.current?.scrollIntoView();
+        if (results.length && boxRef.current) {
+            boxRef.current.scrollIntoView();
+            boxRef.current.scrollLeft = 0;
         }
     }, [results]);
     useSaveToHistory();
@@ -43,10 +44,11 @@ export const ImageResult = ({ title }: { title?: string }) => {
                 gap={1}
                 overflow='auto'
                 width='100%'
+                ref={boxRef}
             >
                 {urls.map((url: any, i: number) => (
                     <img
-                        ref={lbRef}
+                        key={url}
                         style={{
                             maxHeight: 400,
                             maxWidth: 200,

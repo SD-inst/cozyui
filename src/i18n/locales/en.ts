@@ -105,7 +105,7 @@ const translation = {
         length_s: 'length in seconds',
         window_size: 'segment size (in latents)',
         rel_thresh: 'Tea Cache threshold',
-        batch_size: 'batch size'
+        batch_size: 'batch size',
     },
     settings: {
         select_language: 'Select language',

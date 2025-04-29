@@ -852,6 +852,11 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "12",
+                    "field": "unet_name"
                 }
             },
             "handler_options": {
