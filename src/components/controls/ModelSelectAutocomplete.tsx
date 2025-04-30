@@ -33,7 +33,7 @@ export const ModelSelectAutocomplete = ({
     const ceHanler = useCtrlEnter();
     const ctl = useController({
         name: props.name,
-        defaultValue: [],
+        defaultValue: props.defaultValue,
     });
     const loras = useListChoices({
         component: 'UNETLoader',
