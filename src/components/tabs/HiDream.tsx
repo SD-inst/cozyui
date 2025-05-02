@@ -13,6 +13,8 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
+import { LoraInput } from '../controls/LoraInput';
+import { CompileModelToggle } from '../controls/CompileModelToggle';
 
 const Content = () => {
     const cfg = useWatch({ name: 'cfg' });
@@ -42,6 +44,8 @@ const Content = () => {
                 <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />
                 <SchedulerSelectInput name='scheduler' defaultValue='beta' />
                 <SliderInput name='batch_size' min={1} max={9} defaultValue={1} />
+                <LoraInput name='lora' type='hidream' />
+                <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight

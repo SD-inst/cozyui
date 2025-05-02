@@ -804,11 +804,30 @@
                 "batch_size": {
                     "id": "198",
                     "field": "batch_size"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "171"
+                },
+                "lora": {
+                    "id": "handle"
                 }
             },
             "result": {
                 "id": "167",
                 "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "171",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["183", "190"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
             }
         },
         "Flux": {
@@ -944,6 +963,9 @@
         },
         "flux": {
             "filter": "flux/"
+        },
+        "hidream": {
+            "filter": "hidream/"
         }
     },
     "api": "/cui"

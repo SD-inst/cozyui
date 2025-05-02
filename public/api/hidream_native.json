@@ -91,26 +91,13 @@
     "inputs": {
       "shift": 9,
       "model": [
-        "175",
+        "162",
         0
       ]
     },
     "class_type": "ModelSamplingSD3",
     "_meta": {
       "title": "ModelSamplingSD3"
-    }
-  },
-  "175": {
-    "inputs": {
-      "backend": "inductor",
-      "model": [
-        "162",
-        0
-      ]
-    },
-    "class_type": "TorchCompileModel",
-    "_meta": {
-      "title": "TorchCompileModel"
     }
   },
   "180": {
