@@ -74,6 +74,9 @@ export const ImageResult = ({ title }: { title?: string }) => {
                 toolbar={{
                     buttons: [<DownloadImageButtonLightbox />, 'close'],
                 }}
+                controller={{
+                    closeOnBackdropClick: true,
+                }}
             />
             <ImagePreview size={400} />
         </VerticalBox>

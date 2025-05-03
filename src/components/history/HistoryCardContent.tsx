@@ -60,6 +60,9 @@ export const HistoryCardContent = ({
                         carousel={{ finite: true }}
                         plugins={[Zoom, Fullscreen]}
                         zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+                        controller={{
+                            closeOnBackdropClick: true,
+                        }}
                     />
                 </Box>
             );
