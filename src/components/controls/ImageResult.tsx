@@ -50,8 +50,8 @@ export const ImageResult = ({ title }: { title?: string }) => {
                     <img
                         key={url}
                         style={{
-                            maxHeight: 400,
-                            maxWidth: 200,
+                            maxHeight: 500,
+                            maxWidth: 300,
                             cursor: 'pointer',
                         }}
                         src={url}
