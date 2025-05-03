@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import Counter from 'yet-another-react-lightbox/plugins/counter';
 import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
@@ -68,7 +69,7 @@ export const ImageResult = ({ title }: { title?: string }) => {
                 close={() => setOpen(false)}
                 slides={urls.map((url) => ({ src: url }))}
                 carousel={{ finite: true }}
-                plugins={[Zoom, Fullscreen]}
+                plugins={[Zoom, Fullscreen, Counter]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                 index={idx}
                 toolbar={{
