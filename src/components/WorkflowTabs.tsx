@@ -126,9 +126,28 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         }
         dispatch(setTab((props.children as any)[0].props.value));
     }, [dispatch, props.children, current_tab]);
+    const ref = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const c = ref.current?.getElementsByClassName('MuiTabs-scroller');
+        if (!c?.length) {
+            return;
+        }
+        const scroller = c.item(0) as HTMLDivElement;
+        if (!scroller) {
+            return;
+        }
+        scroller.addEventListener('wheel', (e: WheelEvent) => {
+            if (!ref.current || !e) {
+                return;
+            }
+            e.preventDefault();
+            scroller.scrollLeft += e.deltaY;
+        });
+    }, []);
     return (
         <>
             <Tabs
+                ref={ref}
                 value={current_tab}
                 onChange={(_, v) => dispatch(setTab(v))}
                 variant='scrollable'
