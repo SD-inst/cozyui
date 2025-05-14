@@ -26,6 +26,7 @@ import { MMAudioTab } from './components/tabs/MMAudio';
 import { HiDreamTab } from './components/tabs/HiDream';
 import { FramePackI2VTab } from './components/tabs/FramePackI2V';
 import { FluxTab } from './components/tabs/Flux';
+import { ChromaTab } from './components/tabs/Chroma';
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                             {HunyanI2VTab}
                             {FramePackI2VTab}
                             {HunyanUpscale}
+                            {ChromaTab}
                             {HiDreamTab}
                             {FluxTab}
                             {HunyanT2VKJTab}

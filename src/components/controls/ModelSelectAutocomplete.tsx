@@ -7,7 +7,7 @@ import { useAppSelector } from '../../redux/hooks';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { ModelOption } from './ModelOption';
 import { ObjectReloadButton } from './ObjectReloadButton';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { controlType } from '../../redux/config';
 
 const emptyFilter = '';
@@ -55,6 +55,11 @@ export const ModelSelectAutocomplete = ({
                 id: l,
             };
         });
+    useEffect(() => {
+        if (opts && opts.length && typeof ctl.field.value === 'string') {
+            ctl.field.onChange(opts.find((v) => v.id === ctl.field.value));
+        }
+    }, [opts, ctl.field]);
     const handler = useCallback(
         (api: any, value: valueType, control?: controlType) => {
             if (!value || !control || !control.node_id) {
@@ -71,6 +76,7 @@ export const ModelSelectAutocomplete = ({
                 onKeyUp={ceHanler}
                 fullWidth
                 {...ctl.field}
+                value={ctl.field.value || null}
                 onChange={(_, v) => {
                     if (!v || typeof v === 'string') {
                         return;

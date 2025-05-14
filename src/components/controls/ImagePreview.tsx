@@ -11,6 +11,7 @@ export const ImagePreview = ({ size }: { size: number }) => {
     const ref = useRef<HTMLCanvasElement>(null);
     const { frames } = useAppSelector((s) => s.preview);
     const isActiveTab = useActiveTab();
+    const active = isActiveTab && enabled && status === statusEnum.RUNNING;
     useEffect(() => {
         if (!ref.current) {
             return;
@@ -20,17 +21,23 @@ export const ImagePreview = ({ size }: { size: number }) => {
             console.log("Couldn't get canvas context");
             return;
         }
-        if (!frames.length || !frames[0]) {
+        if (!active || !frames.length || !frames[0]) {
             ctx.clearRect(0, 0, ref.current.width, ref.current.height);
             ref.current.width = size;
             ref.current.height = size;
             return;
         }
         const image_aspect = frames[0].width / frames[0].height;
-        const tiles_x_f = Math.floor(Math.sqrt(frames.length / image_aspect));
+        const tiles_x_f = Math.min(
+            frames.length,
+            Math.floor(Math.sqrt(frames.length / image_aspect))
+        );
         const tiles_y_f = Math.ceil(frames.length / tiles_x_f);
 
-        const tiles_x_c = Math.ceil(Math.sqrt(frames.length / image_aspect));
+        const tiles_x_c = Math.min(
+            frames.length,
+            Math.ceil(Math.sqrt(frames.length / image_aspect))
+        );
         const tiles_y_c = Math.ceil(frames.length / tiles_x_c);
 
         const tiles_x =
@@ -59,16 +66,13 @@ export const ImagePreview = ({ size }: { size: number }) => {
                 ctx.drawImage(frame, cx, cy, sx, sy);
             }
         }
-    }, [frames, size]);
+    }, [active, frames, size]);
 
     return (
         <canvas
             ref={ref}
             style={{
-                display:
-                    isActiveTab && enabled && status === statusEnum.RUNNING
-                        ? 'block'
-                        : 'none',
+                display: active ? 'block' : 'none',
             }}
         />
     );

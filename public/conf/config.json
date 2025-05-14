@@ -895,6 +895,68 @@
                 "type": "images"
             }
         },
+        "Chroma": {
+            "api": "api/chroma_native.json",
+            "controls": {
+                "prompt": {
+                    "id": "75",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "74",
+                    "field": "unet_name"
+                },
+                "neg_prompt": {
+                    "id": "5",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "69",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "69",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "63",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "63",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "32",
+                    "field": "value"
+                },
+                "cfg": {
+                    "id": "81",
+                    "field": "cfg"
+                },
+                "rescale_cfg": {
+                    "id": "70",
+                    "field": "multiplier"
+                },
+                "sampler": {
+                    "id": "62",
+                    "field": "sampler_name"
+                },
+                "batch_size": {
+                    "id": "69",
+                    "field": "batch_size"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "70"
+                }
+            },
+            "result": {
+                "id": "54",
+                "type": "images"
+            }
+        },
         "FramePack I2V": {
             "api": "api/framepack_i2v_native.json",
             "controls": {
@@ -966,6 +1028,9 @@
         },
         "hidream": {
             "filter": "hidream/"
+        },
+        "chroma": {
+            "filter": "chroma/"
         }
     },
     "api": "/cui"

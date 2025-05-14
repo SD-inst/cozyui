@@ -105,6 +105,7 @@ const translation = {
         window_size: 'размер сегмента (в латентах)',
         rel_thresh: 'порог Tea Cache',
         batch_size: 'размер батча',
+        rescale_cfg: 'Масштаб CFG'
     },
     settings: {
         select_language: 'Выбор языка',
