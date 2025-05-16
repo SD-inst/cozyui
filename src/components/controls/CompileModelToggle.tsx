@@ -15,12 +15,15 @@ export const CompileModelToggle = ({
             }
             const compile_node = {
                 inputs: {
+                    mode: 'default',
                     backend: 'inductor',
+                    fullgraph: false,
+                    dynamic: true,
                     model: null,
                 },
-                class_type: 'TorchCompileModel',
+                class_type: 'CompileModel',
                 _meta: {
-                    title: 'TorchCompileModel',
+                    title: 'Compile Model',
                 },
             };
             const compile_node_id = insertNode(
