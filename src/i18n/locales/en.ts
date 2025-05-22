@@ -106,7 +106,8 @@ const translation = {
         window_size: 'segment size (in latents)',
         rel_thresh: 'Tea Cache threshold',
         batch_size: 'batch size',
-        rescale_cfg: 'Rescale CFG'
+        rescale_cfg: 'Rescale CFG',
+        tabs: 'Tabs'
     },
     settings: {
         select_language: 'Select language',

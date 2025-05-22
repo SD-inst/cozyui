@@ -16,6 +16,7 @@ import { NotificationSetting } from './NotificationSetting';
 import { SettingCheckbox } from './SettingCheckbox';
 import { ImportExport } from '../history/ImportExport';
 import { Version } from './Version';
+import { HiddenTabs } from './HiddenTabs';
 
 export const AppSettings = () => {
     const tr = useTranslate();
@@ -49,6 +50,7 @@ export const AppSettings = () => {
                 <LanguageSelect />
                 <ClearHistoryButton sx={{ mt: 5 }} />
                 <ImportExport />
+                <HiddenTabs />
                 <Version />
             </AccordionDetails>
         </Accordion>

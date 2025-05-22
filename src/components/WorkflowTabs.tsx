@@ -1,17 +1,25 @@
 import { Tab, Tabs } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { get } from 'lodash';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import {
     FormProvider,
     useForm,
     useFormContext,
     useWatch,
 } from 'react-hook-form';
+import { useHiddenTabs } from '../hooks/useHiddenTabs';
 import { useSetDefaults } from '../hooks/useSetDefaults';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { VerticalBox } from './VerticalBox';
+import { HiddenTabsContext } from './contexts/HiddenTabsContext';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 import { db } from './history/db';
@@ -120,12 +128,45 @@ const TabContent = ({ ...props }) => {
 export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const { current_tab } = useAppSelector((s) => s.tab);
     const dispatch = useAppDispatch();
+    const { setWorkflowTabs } = useContext(HiddenTabsContext);
+    const hiddenTabs = useHiddenTabs();
     useEffect(() => {
-        if (!props.children || !(props.children as any).length || current_tab) {
+        if (
+            !props.children ||
+            !(props.children as any).length ||
+            current_tab ||
+            hiddenTabs === undefined
+        ) {
             return;
         }
-        dispatch(setTab((props.children as any)[0].props.value));
-    }, [dispatch, props.children, current_tab]);
+        const visibleTabs = (props.children as any[]).filter(
+            (t) => !hiddenTabs.includes(t.props.value)
+        );
+        if (visibleTabs.length) {
+            dispatch(setTab(visibleTabs[0].props.value));
+        }
+    }, [dispatch, props.children, current_tab, setWorkflowTabs, hiddenTabs]);
+    useEffect(() => {
+        if (hiddenTabs === undefined) {
+            return;
+        }
+        if (
+            typeof current_tab === 'string' &&
+            !hiddenTabs.includes(current_tab)
+        ) {
+            return;
+        }
+        const workflowTabs = (
+            props.children as Array<React.Component<any>>
+        ).map((c) => c.props.value);
+        setWorkflowTabs((v) => ({ ...v, workflowTabs }));
+        if (
+            typeof current_tab === 'string' &&
+            hiddenTabs.includes(current_tab)
+        ) {
+            dispatch(setTab(false));
+        }
+    }, [current_tab, dispatch, hiddenTabs, props.children, setWorkflowTabs]);
     const ref = useRef<HTMLDivElement>(null);
     useEffect(() => {
         const c = ref.current?.getElementsByClassName('MuiTabs-scroller');
@@ -158,6 +199,9 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                         return;
                     }
                     const { label, value } = c.props;
+                    if (hiddenTabs?.includes(value)) {
+                        return;
+                    }
                     return <Tab label={label} value={value || i} />;
                 })}
             </Tabs>

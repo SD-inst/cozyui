@@ -27,6 +27,7 @@ import { HiDreamTab } from './components/tabs/HiDream';
 import { FramePackI2VTab } from './components/tabs/FramePackI2V';
 import { FluxTab } from './components/tabs/Flux';
 import { ChromaTab } from './components/tabs/Chroma';
+import { HiddenTabsContextProvider } from './components/contexts/HiddenTabsContextProvider';
 
 function App() {
     return (
@@ -36,27 +37,29 @@ function App() {
                 <ResultOverrideContextProvider>
                     <WSReceiver />
                     <VerticalBox>
-                        <WorkflowTabs>
-                            {HunyanT2VTab}
-                            {HunyanI2VTab}
-                            {FramePackI2VTab}
-                            {HunyanUpscale}
-                            {ChromaTab}
-                            {HiDreamTab}
-                            {FluxTab}
-                            {HunyanT2VKJTab}
-                            {HunyanI2VKJTab}
-                            {LTXI2VTab}
-                            {EasyAnimateI2VTab}
-                            {StableAudioTab}
-                            {MMAudioTab}
-                        </WorkflowTabs>
-                        <Progress />
-                        <InterruptButton />
-                        <FilterContextProvider>
-                            <HistoryPanel />
-                            <AppSettings />
-                        </FilterContextProvider>
+                        <HiddenTabsContextProvider>
+                            <WorkflowTabs>
+                                {HunyanT2VTab}
+                                {HunyanI2VTab}
+                                {FramePackI2VTab}
+                                {HunyanUpscale}
+                                {ChromaTab}
+                                {HiDreamTab}
+                                {FluxTab}
+                                {HunyanT2VKJTab}
+                                {HunyanI2VKJTab}
+                                {LTXI2VTab}
+                                {EasyAnimateI2VTab}
+                                {StableAudioTab}
+                                {MMAudioTab}
+                            </WorkflowTabs>
+                            <Progress />
+                            <InterruptButton />
+                            <FilterContextProvider>
+                                <HistoryPanel />
+                                <AppSettings />
+                            </FilterContextProvider>
+                        </HiddenTabsContextProvider>
                     </VerticalBox>
                     <ThemedToaster />
                     <NotificationSound />

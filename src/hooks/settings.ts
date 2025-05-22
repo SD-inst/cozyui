@@ -5,4 +5,5 @@ export enum settings {
     notification_sound = 'notification_sound',
     language = 'language',
     enable_previews = 'enable_previews',
+    hidden_tabs = 'hidden_tabs',
 }
