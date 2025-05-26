@@ -97,7 +97,7 @@ const LoraChip = ({
                         value={strength}
                         type='number'
                         slotProps={{
-                            htmlInput: { step: 0.05, min: 0, max: 3 },
+                            htmlInput: { step: 0.05, min: -3, max: 3 },
                         }}
                         inputRef={ref}
                         onChange={(e) => setStrength(e.target.value)}
