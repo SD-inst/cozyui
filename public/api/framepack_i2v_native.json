@@ -113,7 +113,7 @@
       "backend": "inductor",
       "fullgraph": false,
       "mode": "default",
-      "dynamic": true,
+      "dynamic": false,
       "dynamo_cache_size_limit": 64,
       "compile_single_blocks": true,
       "compile_double_blocks": true
@@ -264,8 +264,9 @@
     "inputs": {
       "model": "hyvid/FramePackI2V_HY_fp8_e4m3fn.safetensors",
       "base_precision": "bf16",
-      "quantization": "fp8_e5m2",
+      "quantization": "fp8_e4m3fn",
       "attention_mode": "sageattn",
+      "load_device": "offload_device",
       "compile_args": [
         "27",
         0

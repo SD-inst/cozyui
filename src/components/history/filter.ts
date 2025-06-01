@@ -1,36 +1,52 @@
+import { Collection } from 'dexie';
 import { useCallback, useContext } from 'react';
+import { FilterContext } from '../contexts/FilterContext';
 import { FilterType } from '../contexts/filterType';
 import { db, markEnum, TaskResult } from './db';
-import { FilterContext } from '../contexts/FilterContext';
+
+type filterFunc<T extends Collection> = [
+    (param: any) => T, // index
+    (coll: T, param: any) => T // no index
+];
+
+type TRCollType = ReturnType<typeof db.taskResults.toCollection>;
+
+type trFilterFunc = filterFunc<TRCollType>;
+
+const wordFilter: trFilterFunc = [
+    (param: string) => {
+        return db.taskResults.where('words').startsWith(param);
+    },
+    (coll) => coll,
+];
+
+const pinFilter: trFilterFunc = [
+    (param: boolean) => {
+        if (param) {
+            return db.taskResults.where('mark').equals(markEnum.PINNED);
+        } else {
+            return db.taskResults.toCollection();
+        }
+    },
+    (coll: TRCollType, param: boolean) =>
+        coll.filter((t) => (param ? t.mark === markEnum.PINNED : true)),
+];
 
 export const pkFromFilter = async (
     filter: FilterType,
     additionalFilter?: (t: TaskResult) => boolean
 ) => {
-    const filter_words = filter.prompt.split(' ').map((w) => w.toLowerCase());
-    const pks = await Promise.all(
-        filter_words.map((w) => {
-            let coll = null;
-            if (w) {
-                coll = db.taskResults
-                    .where('words')
-                    .startsWith(w)
-                    .filter((t) =>
-                        filter.pinned ? t.mark === markEnum.PINNED : true
-                    );
-            } else {
-                if (filter.pinned) {
-                    coll = db.taskResults.where('mark').equals(markEnum.PINNED);
-                } else {
-                    coll = db.taskResults.toCollection();
-                }
-            }
-            if (additionalFilter) {
-                coll = coll.filter(additionalFilter);
-            }
-            return coll.primaryKeys();
-        })
-    );
+    const filter_words = filter.prompt
+        .split(' ')
+        .map((w) => w.toLowerCase())
+        .filter((w) => !!w);
+    const colls = !filter_words.length
+        ? [pinFilter[0](filter.pinned)]
+        : filter_words.map((w) => {
+              const coll = pinFilter[1](wordFilter[0](w), filter.pinned);
+              return additionalFilter ? coll.filter(additionalFilter) : coll;
+          });
+    const pks = await Promise.all(colls.map((c) => c.primaryKeys()));
     const pk_x = pks.reduce((a, b) => {
         const set = new Set(b);
         return a.filter((pk) => set.has(pk));
