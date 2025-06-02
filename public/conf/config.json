@@ -999,6 +999,27 @@
                 "rel_thresh": {
                     "id": "39",
                     "field": "teacache_rel_l1_thresh"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "52"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "prev_lora",
+                    "api_input_name": "lora",
+                    "output_node_ids": ["52"],
+                    "output_idx": 0,
+                    "class_name": "FramePackLoraSelect",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora",
+                    "additional_inputs": {
+                        "fuse_lora": false
+                    }
                 }
             },
             "result": {
@@ -1031,6 +1052,9 @@
         },
         "chroma": {
             "filter": "chroma/"
+        },
+        "framepack": {
+            "filter": "hyvid/"
         }
     },
     "api": "/cui"

@@ -28,6 +28,7 @@ export type tabConfigType = {
             class_name: string;
             strength_field_name: string;
             name_field_name: string;
+            additional_inputs: {[key: string]: string};
         };
         node_params: {
             sampler_id: string;

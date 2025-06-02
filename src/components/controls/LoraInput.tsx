@@ -10,7 +10,7 @@ import {
     DialogContent,
     DialogTitle,
     MenuItem,
-    TextField
+    TextField,
 } from '@mui/material';
 import { get } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -178,6 +178,7 @@ export const LoraInput = ({
                 class_name,
                 strength_field_name,
                 name_field_name,
+                additional_inputs,
             },
         },
     } = useAPI();
@@ -190,7 +191,7 @@ export const LoraInput = ({
                 return;
             }
             const last_node_id = getFreeNodeId(api);
-            const additional_fields = {} as any;
+            const additional_fields = { ...additional_inputs } as any;
             if (input_node_id) {
                 additional_fields[lora_input_name] = [
                     input_node_id,
@@ -285,17 +286,7 @@ export const LoraInput = ({
                 });
             }
         },
-        [
-            api_input_name,
-            lora_input_name,
-            input_node_id,
-            output_idx,
-            output_node_ids,
-            class_name,
-            name_field_name,
-            strength_field_name,
-            append,
-        ]
+        [append, additional_inputs, input_node_id, class_name, output_node_ids, lora_input_name, output_idx, name_field_name, strength_field_name, api_input_name]
     );
     useRegisterHandler({ name: props.name, handler });
     const ctl = useController({

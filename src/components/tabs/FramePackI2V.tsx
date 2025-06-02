@@ -1,8 +1,10 @@
 import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
+import { LoraInput } from '../controls/LoraInput';
 import { PromptInput } from '../controls/PromptInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
@@ -26,7 +28,13 @@ const Content = () => {
                         { text: '640p', value: 640 },
                     ]}
                 />
-                <SliderInput name='length' label='length_s' min={1} max={60} defaultValue={5} />
+                <SliderInput
+                    name='length'
+                    label='length_s'
+                    min={1}
+                    max={60}
+                    defaultValue={5}
+                />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <LengthInput
                     name='window_size'
@@ -44,6 +52,8 @@ const Content = () => {
                     step={0.01}
                     defaultValue={0.15}
                 />
+                <LoraInput name='lora' type='framepack' />
+                <KJCompileModelToggle classType='FramePackTorchCompileSettings' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
