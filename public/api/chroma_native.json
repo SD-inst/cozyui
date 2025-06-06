@@ -2,7 +2,7 @@
     "5": {
         "inputs": {
             "text": "negative prompt goes here",
-            "clip": ["76", 0]
+            "clip": ["77", 0]
         },
         "class_type": "CLIPTextEncode",
         "_meta": {
@@ -101,10 +101,28 @@
             "title": "SamplerCustomAdvanced"
         }
     },
+    "66": {
+        "inputs": {
+            "value": 832
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Width"
+        }
+    },
+    "67": {
+        "inputs": {
+            "value": 832
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Height"
+        }
+    },
     "69": {
         "inputs": {
-            "width": 832,
-            "height": 1280,
+            "width": ["66", 0],
+            "height": ["67", 0],
             "batch_size": 1
         },
         "class_type": "EmptyLatentImage",
@@ -115,11 +133,24 @@
     "70": {
         "inputs": {
             "multiplier": 0.5,
-            "model": ["74", 0]
+            "model": ["73", 0]
         },
         "class_type": "RescaleCFG",
         "_meta": {
             "title": "RescaleCFG"
+        }
+    },
+    "73": {
+        "inputs": {
+            "max_shift": 1.15,
+            "base_shift": 0.5,
+            "width": ["66", 0],
+            "height": ["67", 0],
+            "model": ["74", 0]
+        },
+        "class_type": "ModelSamplingFlux",
+        "_meta": {
+            "title": "ModelSamplingFlux"
         }
     },
     "74": {
@@ -135,7 +166,7 @@
     "75": {
         "inputs": {
             "text": "positive prompt goes here",
-            "clip": ["76", 0]
+            "clip": ["77", 0]
         },
         "class_type": "CLIPTextEncode",
         "_meta": {
@@ -151,6 +182,17 @@
         "class_type": "CLIPLoader",
         "_meta": {
             "title": "Load CLIP"
+        }
+    },
+    "77": {
+        "inputs": {
+            "min_padding": 1,
+            "min_length": 7,
+            "clip": ["76", 0]
+        },
+        "class_type": "T5TokenizerOptions",
+        "_meta": {
+            "title": "T5TokenizerOptions"
         }
     },
     "81": {

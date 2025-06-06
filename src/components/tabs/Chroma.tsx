@@ -13,6 +13,7 @@ import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
+import { LoraInput } from '../controls/LoraInput';
 
 const Content = () => {
     return (
@@ -56,6 +57,7 @@ const Content = () => {
                     defaultValue={1}
                 />
                 <ModelSelectAutocomplete name='model' type='chroma' />
+                <LoraInput name='lora' type='flux' sx={{ mt: 2 }} />
                 <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>

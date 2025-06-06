@@ -912,12 +912,12 @@
                     "field": "text"
                 },
                 "width": {
-                    "id": "69",
-                    "field": "width"
+                    "id": "66",
+                    "field": "value"
                 },
                 "height": {
-                    "id": "69",
-                    "field": "height"
+                    "id": "67",
+                    "field": "value"
                 },
                 "steps": {
                     "id": "63",
@@ -950,11 +950,26 @@
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "70"
+                },
+                "lora": {
+                    "id": "handle"
                 }
             },
             "result": {
                 "id": "54",
                 "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "74",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["70"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
             }
         },
         "FramePack I2V": {
