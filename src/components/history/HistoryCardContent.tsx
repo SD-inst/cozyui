@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
+import { DownloadImageButtonLightbox } from '../controls/DownloadImageButton';
 
 export const HistoryCardContent = ({
     url,
@@ -60,6 +61,9 @@ export const HistoryCardContent = ({
                         carousel={{ finite: true }}
                         plugins={[Zoom, Fullscreen]}
                         zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+                        toolbar={{
+                            buttons: [<DownloadImageButtonLightbox />, 'close'],
+                        }}
                         controller={{
                             closeOnBackdropClick: true,
                         }}
