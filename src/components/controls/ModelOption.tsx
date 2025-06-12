@@ -1,21 +1,24 @@
-import { useState, ReactElement, useEffect } from 'react';
-import { useAppSelector } from '../../redux/hooks';
 import { Box } from '@mui/material';
+import { BoxOwnProps } from '@mui/system';
+import { ReactElement, useEffect, useState } from 'react';
+import { useAppSelector } from '../../redux/hooks';
 
 const preview_style = { maxWidth: '50px', maxHeight: '50px' };
 
 export const ModelOption = ({
     value,
     id,
+    previews = true,
     ...props
 }: {
     value: string;
     id: string;
-}) => {
+    previews?: boolean;
+} & BoxOwnProps) => {
     const [preview, setPreview] = useState<ReactElement>();
     const preview_root = useAppSelector((s) => s.config.preview_root);
     useEffect(() => {
-        if (!preview_root || !id.endsWith('.safetensors')) {
+        if (!previews || !preview_root || !id.endsWith('.safetensors')) {
             return;
         }
         const preview_img =
@@ -41,15 +44,21 @@ export const ModelOption = ({
                 }}
             />
         );
-    }, [id, preview_root]);
+    }, [id, preview_root, previews]);
     return (
         <Box {...props}>
-            <Box display='flex' justifyContent='center' width={50}>
-                {preview}
-            </Box>
-            <Box position='absolute' left={80}>
-                {value}
-            </Box>
+            {previews ? (
+                <>
+                    <Box display='flex' justifyContent='center' width={50}>
+                        {preview}
+                    </Box>
+                    <Box position='absolute' left={80}>
+                        {value}
+                    </Box>
+                </>
+            ) : (
+                <Box sx={{wordBreak: 'break-word'}}>{value}</Box>
+            )}
         </Box>
     );
 };

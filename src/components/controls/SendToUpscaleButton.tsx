@@ -8,14 +8,20 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { makeOutputUrl } from '../../api/utils';
 import toast from 'react-hot-toast';
 
-export const SendToUpscaleButton = ({ ...props }: ButtonProps) => {
+export const SendToUpscaleButton = ({
+    targetTab,
+    fields,
+    ...props
+}: ButtonProps & { targetTab: string; fields: string[] }) => {
     const tr = useTranslate();
     const result = useResult();
     const dispatch = useAppDispatch();
     const { getValues } = useFormContext();
     const apiUrl = useApiURL();
     const handleClick = async () => {
-        const { prompt, model, lora } = getValues();
+        const values = Object.fromEntries(
+            Object.entries(getValues()).filter((e) => fields.includes(e[0]))
+        );
         const formData = new FormData();
         const url = makeOutputUrl(apiUrl, result[0]);
         const file = await fetch(url).then((b) => b.blob());
@@ -30,13 +36,8 @@ export const SendToUpscaleButton = ({ ...props }: ButtonProps) => {
         dispatch(
             setParams({
                 action: actionEnum.RESTORE,
-                tab: 'Hunyuan Upscale',
-                values: {
-                    prompt,
-                    model,
-                    image,
-                    lora
-                },
+                tab: targetTab,
+                values: { ...values, image },
             })
         );
     };

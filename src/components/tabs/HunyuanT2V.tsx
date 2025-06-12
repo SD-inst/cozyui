@@ -80,7 +80,10 @@ const Content = () => {
             >
                 <VideoResult />
                 <ResultOverrideContextProvider value={{ index: 1 }}>
-                    <SendToUpscaleButton />
+                    <SendToUpscaleButton
+                        targetTab='Hunyuan Upscale'
+                        fields={['prompt', 'model', 'lora']}
+                    />
                 </ResultOverrideContextProvider>
             </GridRight>
             <GridBottom>

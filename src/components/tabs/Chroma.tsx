@@ -14,6 +14,7 @@ import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { LoraInput } from '../controls/LoraInput';
+import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 
 const Content = () => {
     return (
@@ -49,7 +50,7 @@ const Content = () => {
                     name='sampler'
                     defaultValue='res_multistep'
                 />
-                <SchedulerSelectInput name='scheduler' defaultValue='beta' />
+                <SchedulerSelectInput name='scheduler' defaultValue='simple' />
                 <SliderInput
                     name='batch_size'
                     min={1}
@@ -68,6 +69,10 @@ const Content = () => {
                 alignItems='center'
             >
                 <ImageResult />
+                <SendToUpscaleButton
+                    targetTab='Chroma Upscale'
+                    fields={['prompt', 'neg_prompt', 'model', 'lora']}
+                />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

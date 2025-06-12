@@ -972,6 +972,104 @@
                 }
             }
         },
+        "Chroma Upscale": {
+            "api": "api/chroma_upscale.json",
+            "controls": {
+                "image": {
+                    "id": "82",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "75",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "74",
+                    "field": "unet_name"
+                },
+                "neg_prompt": {
+                    "id": "5",
+                    "field": "text"
+                },
+                "upscale": {
+                    "id": "83",
+                    "field": "upscale_by"
+                },
+                "tile_width": {
+                    "id": "66",
+                    "field": "value"
+                },
+                "tile_height": {
+                    "id": "67",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "83",
+                    "field": "steps"
+                },
+                "denoise": {
+                    "id": "83",
+                    "field": "denoise"
+                },
+                "scheduler": {
+                    "id": "83",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "32",
+                    "field": "value"
+                },
+                "cfg": {
+                    "id": "83",
+                    "field": "cfg"
+                },
+                "rescale_cfg": {
+                    "id": "70",
+                    "field": "multiplier"
+                },
+                "padding": {
+                    "id": "83",
+                    "field": "tile_padding"
+                },
+                "mask_blur": {
+                    "id": "83",
+                    "field": "mask_blur"
+                },
+                "sampler": {
+                    "id": "83",
+                    "field": "sampler_name"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "70"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "upscale_model": {
+                    "id": "handle",
+                    "node_id": "84",
+                    "field": "model_name"
+                }
+            },
+            "result": {
+                "id": "54",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "74",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["70"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
         "FramePack I2V": {
             "api": "api/framepack_i2v_native.json",
             "controls": {

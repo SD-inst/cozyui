@@ -28,6 +28,7 @@ import { FramePackI2VTab } from './components/tabs/FramePackI2V';
 import { FluxTab } from './components/tabs/Flux';
 import { ChromaTab } from './components/tabs/Chroma';
 import { HiddenTabsContextProvider } from './components/contexts/HiddenTabsContextProvider';
+import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
 
 function App() {
     return (
@@ -52,6 +53,7 @@ function App() {
                                 {StableAudioTab}
                                 {MMAudioTab}
                                 {HunyanUpscale}
+                                {ChromaUpscaleTab}
                             </WorkflowTabs>
                             <Progress />
                             <InterruptButton />

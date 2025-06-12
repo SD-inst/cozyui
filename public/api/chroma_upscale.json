@@ -1,0 +1,260 @@
+{
+  "5": {
+    "inputs": {
+      "text": "negative prompt",
+      "clip": [
+        "77",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Negative Prompt"
+    }
+  },
+  "11": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "32": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "33": {
+    "inputs": {
+      "prefix": "ChromaUpscale_",
+      "suffix": "",
+      "input": [
+        "32",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "54": {
+    "inputs": {
+      "filename_prefix": [
+        "33",
+        0
+      ],
+      "images": [
+        "83",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "61": {
+    "inputs": {
+      "noise_seed": [
+        "32",
+        0
+      ]
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "RandomNoise"
+    }
+  },
+  "62": {
+    "inputs": {
+      "sampler_name": "res_multistep"
+    },
+    "class_type": "KSamplerSelect",
+    "_meta": {
+      "title": "KSamplerSelect"
+    }
+  },
+  "66": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Width"
+    }
+  },
+  "67": {
+    "inputs": {
+      "value": 1280
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Height"
+    }
+  },
+  "70": {
+    "inputs": {
+      "multiplier": 0.5000000000000001,
+      "model": [
+        "73",
+        0
+      ]
+    },
+    "class_type": "RescaleCFG",
+    "_meta": {
+      "title": "RescaleCFG"
+    }
+  },
+  "73": {
+    "inputs": {
+      "max_shift": 1.1500000000000001,
+      "base_shift": 0.5000000000000001,
+      "width": [
+        "66",
+        0
+      ],
+      "height": [
+        "67",
+        0
+      ],
+      "model": [
+        "74",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingFlux",
+    "_meta": {
+      "title": "ModelSamplingFlux"
+    }
+  },
+  "74": {
+    "inputs": {
+      "unet_name": "chroma/chroma-unlocked-v36-detail-calibrated.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "75": {
+    "inputs": {
+      "text": "positive prompt",
+      "clip": [
+        "77",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncode",
+    "_meta": {
+      "title": "Positive Prompt"
+    }
+  },
+  "76": {
+    "inputs": {
+      "clip_name": "t5xxl_fp16.safetensors",
+      "type": "chroma",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "77": {
+    "inputs": {
+      "min_padding": 1,
+      "min_length": 7,
+      "clip": [
+        "76",
+        0
+      ]
+    },
+    "class_type": "T5TokenizerOptions",
+    "_meta": {
+      "title": "T5TokenizerOptions"
+    }
+  },
+  "82": {
+    "inputs": {
+      "image": "2025-06-09_15-01-46.jpg"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "83": {
+    "inputs": {
+      "upscale_by": 2,
+      "seed": ["32", 0],
+      "steps": 10,
+      "cfg": 3,
+      "sampler_name": "res_multistep",
+      "scheduler": "beta",
+      "denoise": 0.30000000000000004,
+      "mode_type": "Linear",
+      "tile_width": [
+        "66",
+        0
+      ],
+      "tile_height": [
+        "67",
+        0
+      ],
+      "mask_blur": 8,
+      "tile_padding": 32,
+      "seam_fix_mode": "None",
+      "seam_fix_denoise": 1,
+      "seam_fix_width": 64,
+      "seam_fix_mask_blur": 8,
+      "seam_fix_padding": 16,
+      "force_uniform_tiles": true,
+      "tiled_decode": false,
+      "image": [
+        "82",
+        0
+      ],
+      "model": [
+        "70",
+        0
+      ],
+      "positive": [
+        "75",
+        0
+      ],
+      "negative": [
+        "5",
+        0
+      ],
+      "vae": [
+        "11",
+        0
+      ],
+      "upscale_model": [
+        "84",
+        0
+      ]
+    },
+    "class_type": "UltimateSDUpscale",
+    "_meta": {
+      "title": "Ultimate SD Upscale"
+    }
+  },
+  "84": {
+    "inputs": {
+      "model_name": "4x_NMKD-Siax_200k.pth"
+    },
+    "class_type": "UpscaleModelLoader",
+    "_meta": {
+      "title": "Load Upscale Model"
+    }
+  }
+}

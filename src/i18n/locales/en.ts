@@ -106,8 +106,13 @@ const translation = {
         window_size: 'segment size (in latents)',
         rel_thresh: 'Tea Cache threshold',
         batch_size: 'batch size',
-        rescale_cfg: 'Rescale CFG',
-        tabs: 'Tabs'
+        rescale_cfg: 'rescale CFG',
+        tabs: 'Tabs',
+        tile_width: 'tile width',
+        tile_height: 'tile height',
+        upscale_model: 'upscale model',
+        padding: 'tile padding',
+        mask_blur: 'mask blur',
     },
     settings: {
         select_language: 'Select language',

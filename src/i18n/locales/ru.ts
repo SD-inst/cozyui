@@ -105,8 +105,13 @@ const translation = {
         window_size: 'размер сегмента (в латентах)',
         rel_thresh: 'порог Tea Cache',
         batch_size: 'размер батча',
-        rescale_cfg: 'Масштаб CFG',
-        tabs: 'Вкладки'
+        rescale_cfg: 'масштаб CFG',
+        tabs: 'Вкладки',
+        tile_width: 'ширина тайла',
+        tile_height: 'высота тайла',
+        upscale_model: 'модель увеличения',
+        padding: 'бордюр тайла',
+        mask_blur: 'размытие маски',
     },
     settings: {
         select_language: 'Выбор языка',

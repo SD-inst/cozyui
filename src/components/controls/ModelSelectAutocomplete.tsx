@@ -22,6 +22,7 @@ export const ModelSelectAutocomplete = ({
     type,
     component = 'UNETLoader',
     field = 'unet_name',
+    previews = true,
     ...props
 }: {
     name: string;
@@ -29,6 +30,7 @@ export const ModelSelectAutocomplete = ({
     label?: string;
     component?: string;
     field?: string;
+    previews?: boolean;
 } & Omit<
     AutocompleteProps<valueType, false, any, any>,
     'renderInput' | 'options'
@@ -52,7 +54,7 @@ export const ModelSelectAutocomplete = ({
         .map((l) => {
             const label = l.slice(
                 l.lastIndexOf('/') + 1,
-                l.lastIndexOf('.safetensors')
+                l.lastIndexOf('.')
             );
             return {
                 label,
@@ -108,6 +110,8 @@ export const ModelSelectAutocomplete = ({
                             {...optionProps}
                             value={ownerState.getOptionLabel(option)}
                             id={option.id}
+                            previews={previews}
+                            minHeight={30}
                         />
                     );
                 }}
