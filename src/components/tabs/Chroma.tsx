@@ -5,6 +5,8 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { HYSize } from '../controls/HYSize';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
+import { LoraInput } from '../controls/LoraInput';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
@@ -12,9 +14,6 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
-import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
-import { LoraInput } from '../controls/LoraInput';
-import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
 
 const Content = () => {
     return (
@@ -68,10 +67,9 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <ImageResult />
-                <SendToUpscaleButton
-                    targetTab='Chroma Upscale'
-                    fields={['prompt', 'neg_prompt', 'model', 'lora']}
+                <ImageResult
+                    upscaleTargetTab='Chroma Upscale'
+                    upscaleFields={['prompt', 'neg_prompt', 'model', 'lora']}
                 />
             </GridRight>
             <GridBottom>

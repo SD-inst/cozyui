@@ -1,9 +1,9 @@
 import { Box, Typography } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
+import Counter from 'yet-another-react-lightbox/plugins/counter';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
-import Counter from 'yet-another-react-lightbox/plugins/counter';
 import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
@@ -17,8 +17,18 @@ import {
     DownloadImageButtonLightbox,
 } from './DownloadImageButton';
 import { ImagePreview } from './ImagePreview';
+import { LightboxSendToUpscaleButton } from './LightboxSendToUpscaleButton';
+import { SendToUpscaleButton } from './SendToUpscaleButton';
 
-export const ImageResult = ({ title }: { title?: string }) => {
+export const ImageResult = ({
+    title,
+    upscaleTargetTab,
+    upscaleFields,
+}: {
+    title?: string;
+    upscaleTargetTab?: string;
+    upscaleFields?: string[];
+}) => {
     const results = useResult();
     const tr = useTranslate();
     const boxRef = useRef<HTMLDivElement>(null);
@@ -73,13 +83,27 @@ export const ImageResult = ({ title }: { title?: string }) => {
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                 index={idx}
                 toolbar={{
-                    buttons: [<DownloadImageButtonLightbox />, 'close'],
+                    buttons: [
+                        <LightboxSendToUpscaleButton
+                            targetTab={upscaleTargetTab}
+                            fields={upscaleFields}
+                            icon
+                        />,
+                        <DownloadImageButtonLightbox />,
+                        'close',
+                    ],
                 }}
                 controller={{
                     closeOnBackdropClick: true,
                 }}
             />
             <ImagePreview size={400} />
+            {results.length === 1 && (
+                <SendToUpscaleButton
+                    targetTab={upscaleTargetTab}
+                    fields={upscaleFields}
+                />
+            )}
         </VerticalBox>
     );
 };
