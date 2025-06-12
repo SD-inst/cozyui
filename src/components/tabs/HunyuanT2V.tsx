@@ -94,6 +94,7 @@ export const HunyanT2VTab = (
     <WFTab
         label='Hunyuan T2V Native'
         value='Hunyuan T2V'
+        group='T2V'
         content={<Content />}
     />
 );

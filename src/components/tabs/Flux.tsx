@@ -69,5 +69,5 @@ const Content = () => {
 };
 
 export const FluxTab = (
-    <WFTab label='Flux' value='Flux' content={<Content />} />
+    <WFTab label='Flux' value='Flux' group='T2I' content={<Content />} />
 );

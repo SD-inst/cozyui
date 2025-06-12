@@ -77,5 +77,5 @@ const Content = () => {
 };
 
 export const ChromaTab = (
-    <WFTab label='Chroma' value='Chroma' content={<Content />} />
+    <WFTab label='Chroma' value='Chroma' group='T2I' content={<Content />} />
 );

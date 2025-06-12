@@ -64,5 +64,5 @@ const Content = () => {
 };
 
 export const HiDreamTab = (
-    <WFTab label='HiDream' value='HiDream' content={<Content />} />
+    <WFTab label='HiDream' value='HiDream' group='T2I' content={<Content />} />
 );

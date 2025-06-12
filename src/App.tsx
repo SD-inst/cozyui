@@ -40,10 +40,9 @@ function App() {
                         <HiddenTabsContextProvider>
                             <WorkflowTabs>
                                 {HunyanT2VTab}
+                                {ChromaTab}
                                 {HunyanI2VTab}
                                 {FramePackI2VTab}
-                                {HunyanUpscale}
-                                {ChromaTab}
                                 {HiDreamTab}
                                 {FluxTab}
                                 {HunyanT2VKJTab}
@@ -52,6 +51,7 @@ function App() {
                                 {EasyAnimateI2VTab}
                                 {StableAudioTab}
                                 {MMAudioTab}
+                                {HunyanUpscale}
                             </WorkflowTabs>
                             <Progress />
                             <InterruptButton />

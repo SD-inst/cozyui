@@ -2,6 +2,7 @@ import { Tab, Tabs } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { get } from 'lodash';
 import React, {
+    Children,
     useCallback,
     useContext,
     useEffect,
@@ -18,11 +19,11 @@ import { useHiddenTabs } from '../hooks/useHiddenTabs';
 import { useSetDefaults } from '../hooks/useSetDefaults';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
-import { VerticalBox } from './VerticalBox';
 import { HiddenTabsContext } from './contexts/HiddenTabsContext';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 import { db } from './history/db';
+import { VerticalBox } from './VerticalBox';
 
 const useRestoreValues = () => {
     const tab_name = useTabName();
@@ -125,6 +126,110 @@ const TabContent = ({ ...props }) => {
     );
 };
 
+const SubTabContent = ({
+    active,
+    ...props
+}: React.PropsWithChildren & { active: boolean }) => {
+    const { current_tab } = useAppSelector((s) => s.tab);
+    const dispatch = useAppDispatch();
+    const ref = useRef<HTMLDivElement>(null);
+    useScroller(ref.current);
+    return (
+        <VerticalBox mt={3} width='100%' display={active ? 'flex' : 'none'}>
+            <Tabs
+                value={active ? current_tab : false}
+                onChange={(_, v) => dispatch(setTab(v))}
+                variant='scrollable'
+                sx={{ width: '100%', mt: -2 }}
+                ref={ref}
+            >
+                {Children.map(props.children, (c) => {
+                    if (!React.isValidElement(c)) {
+                        return null;
+                    }
+                    const { label, value } = c.props;
+                    return <Tab label={label} value={value} key={value} />;
+                })}
+            </Tabs>
+            {Children.map(props.children, (c) => {
+                if (!React.isValidElement(c)) {
+                    return null;
+                }
+                return <TabContent key={c.props.value}>{c}</TabContent>;
+            })}
+        </VerticalBox>
+    );
+};
+
+type activeType = { [group: string]: string };
+
+const GroupTabs = ({ groups }: { groups: groupType }) => {
+    const dispatch = useAppDispatch();
+    const { current_tab } = useAppSelector((s) => s.tab);
+    const activeSubtabs = useRef<activeType>({}); // remember selected subtabs here
+    return Object.entries(groups).map((e) => {
+        const tabValues = e[1].map((c) => c.props.value);
+        const selected = tabValues.includes(current_tab);
+        if (selected && typeof current_tab === 'string') {
+            activeSubtabs.current[e[0]] = current_tab;
+        }
+        return (
+            <Tab
+                label={e[0]}
+                value={selected ? current_tab : e[0]}
+                key={e[0]}
+                onClick={() => {
+                    if (!activeSubtabs.current[e[0]]) {
+                        activeSubtabs.current[e[0]] = e[1][0].props.value;
+                    }
+                    dispatch(setTab(activeSubtabs.current[e[0]]));
+                }}
+            />
+        );
+    });
+};
+
+const GroupTabContents = ({ groups }: { groups: groupType }) => {
+    const { current_tab } = useAppSelector((s) => s.tab);
+    return Object.entries(groups).map((e) => {
+        const tabValues = e[1].map((c) => c.props.value);
+        const selected = tabValues.includes(current_tab);
+        return (
+            <SubTabContent key={e[0]} active={selected}>
+                {e[1]}
+            </SubTabContent>
+        );
+    });
+};
+
+type groupType = {
+    [group: string]: React.ReactElement[];
+};
+
+const useScroller = (root: HTMLDivElement | null) => {
+    useEffect(() => {
+        if (!root) {
+            return;
+        }
+        const c = root.getElementsByClassName('MuiTabs-scroller');
+        if (!c?.length) {
+            return;
+        }
+        const scroller = c.item(0) as HTMLDivElement;
+        if (!scroller) {
+            return;
+        }
+        scroller.addEventListener('wheel', (e: WheelEvent) => {
+            if (!root || !e) {
+                return;
+            }
+            e.preventDefault();
+            scroller.scrollLeft += e.deltaY;
+        });
+        console.log('Added scroller to ', scroller);
+    }, [root]);
+};
+
 export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const { current_tab } = useAppSelector((s) => s.tab);
     const dispatch = useAppDispatch();
@@ -168,23 +273,22 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         }
     }, [current_tab, dispatch, hiddenTabs, props.children, setWorkflowTabs]);
     const ref = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-        const c = ref.current?.getElementsByClassName('MuiTabs-scroller');
-        if (!c?.length) {
+    useScroller(ref.current);
+    const groups: groupType = {};
+    React.Children.forEach(props.children, (c) => {
+        if (
+            !React.isValidElement(c) ||
+            !c.props.group ||
+            hiddenTabs?.includes(c.props.value)
+        ) {
             return;
         }
-        const scroller = c.item(0) as HTMLDivElement;
-        if (!scroller) {
-            return;
+        if (!groups[c.props.group]) {
+            groups[c.props.group] = [c];
+        } else {
+            groups[c.props.group].push(c);
         }
-        scroller.addEventListener('wheel', (e: WheelEvent) => {
-            if (!ref.current || !e) {
-                return;
-            }
-            e.preventDefault();
-            scroller.scrollLeft += e.deltaY;
-        });
-    }, []);
+    });
     return (
         <>
             <Tabs
@@ -198,16 +302,20 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                     if (!React.isValidElement(c)) {
                         return;
                     }
-                    const { label, value } = c.props;
-                    if (hiddenTabs?.includes(value)) {
+                    const { label, value, group } = c.props;
+                    if (hiddenTabs?.includes(value) || group) {
                         return;
                     }
                     return <Tab label={label} value={value || i} />;
                 })}
+                {GroupTabs({ groups: groups })}
             </Tabs>
-            {React.Children.map(props.children, (c) => (
-                <TabContent>{c}</TabContent>
-            ))}
+            {React.Children.map(props.children, (c) =>
+                (c as React.ReactElement).props.group ? null : (
+                    <TabContent>{c}</TabContent>
+                )
+            )}
+            <GroupTabContents groups={groups} />
         </>
     );
 };

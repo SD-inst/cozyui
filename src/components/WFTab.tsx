@@ -5,6 +5,7 @@ export const WFTab = ({}: {
     label: string;
     value?: number | string;
     content: ReactNode;
+    group?: string;
 }) => {
     return null;
 };

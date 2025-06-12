@@ -107,6 +107,7 @@ export const HunyanI2VKJTab = (
     <WFTab
         label='Hunyuan I2V Kijai'
         value='Hunyuan I2V KJ'
+        group='I2V'
         content={<Content />}
     />
 );

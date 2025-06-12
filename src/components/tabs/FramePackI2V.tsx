@@ -72,5 +72,10 @@ const Content = () => {
 };
 
 export const FramePackI2VTab = (
-    <WFTab label='FramePack I2V' value='FramePack I2V' content={<Content />} />
+    <WFTab
+        label='FramePack I2V'
+        value='FramePack I2V'
+        group='I2V'
+        content={<Content />}
+    />
 );

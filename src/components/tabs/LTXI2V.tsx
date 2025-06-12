@@ -133,5 +133,5 @@ const Content = () => {
 };
 
 export const LTXI2VTab = (
-    <WFTab label='LTX I2V' value='LTX I2V' content={<Content />} />
+    <WFTab label='LTX I2V' value='LTX I2V' group='I2V' content={<Content />} />
 );

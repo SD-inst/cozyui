@@ -97,6 +97,7 @@ export const EasyAnimateI2VTab = (
     <WFTab
         label='EasyAnimate I2V'
         value='EasyAnimate I2V'
+        group='I2V'
         content={<Content />}
     />
 );

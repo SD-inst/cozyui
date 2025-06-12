@@ -63,5 +63,10 @@ const Content = () => {
 };
 
 export const StableAudioTab = (
-    <WFTab label='Stable audio' value='Stable audio' content={<Content />} />
+    <WFTab
+        label='Stable audio'
+        value='Stable audio'
+        group='Audio'
+        content={<Content />}
+    />
 );

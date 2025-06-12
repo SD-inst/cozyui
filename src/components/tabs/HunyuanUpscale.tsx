@@ -72,6 +72,7 @@ export const HunyanUpscale = (
     <WFTab
         label='Hunyuan Upscale'
         value='Hunyuan Upscale'
+        group='Upscale'
         content={<Content />}
     />
 );

@@ -20,11 +20,15 @@ type valueType = {
 export const ModelSelectAutocomplete = ({
     sx,
     type,
+    component = 'UNETLoader',
+    field = 'unet_name',
     ...props
 }: {
     name: string;
     type: string;
     label?: string;
+    component?: string;
+    field?: string;
 } & Omit<
     AutocompleteProps<valueType, false, any, any>,
     'renderInput' | 'options'
@@ -35,15 +39,15 @@ export const ModelSelectAutocomplete = ({
         name: props.name,
         defaultValue: props.defaultValue,
     });
-    const loras = useListChoices({
-        component: 'UNETLoader',
-        field: 'unet_name',
+    const models = useListChoices({
+        component,
+        field,
         index: 0,
     });
     const filter = useAppSelector((s) =>
         get(s, ['config', 'loras', type, 'filter'], emptyFilter)
     );
-    const opts = loras
+    const opts = models
         .filter((l) => l.includes(filter))
         .map((l) => {
             const label = l.slice(
