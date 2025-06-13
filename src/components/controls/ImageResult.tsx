@@ -36,10 +36,12 @@ export const ImageResult = ({
     const [open, setOpen] = useState(false);
     const [idx, setIdx] = useState(0);
     useEffect(() => {
-        if (results.length && boxRef.current) {
-            boxRef.current.scrollIntoView();
-            boxRef.current.scrollLeft = 0;
-        }
+        setTimeout(() => {
+            if (results.length && boxRef.current) {
+                boxRef.current.scrollIntoView();
+                boxRef.current.scrollLeft = 0;
+            }
+        });
     }, [results]);
     useSaveToHistory();
     const urls = results?.map((r: any) => makeOutputUrl(apiUrl, r));

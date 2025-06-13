@@ -226,7 +226,6 @@ const useScroller = (root: HTMLDivElement | null) => {
             e.preventDefault();
             scroller.scrollLeft += e.deltaY;
         });
-        console.log('Added scroller to ', scroller);
     }, [root]);
 };
 

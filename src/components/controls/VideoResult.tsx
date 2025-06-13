@@ -14,9 +14,11 @@ export const VideoResult = ({ title }: { title?: string }) => {
     const videoRef = useRef<HTMLVideoElement & HTMLImageElement>(null);
     const apiUrl = useApiURL();
     useEffect(() => {
-        if (results.length && videoRef.current) {
-            videoRef.current?.scrollIntoView();
-        }
+        setTimeout(() => {
+            if (results.length && videoRef.current) {
+                videoRef.current?.scrollIntoView();
+            }
+        });
     }, [results]);
     useSaveToHistory();
     return (
