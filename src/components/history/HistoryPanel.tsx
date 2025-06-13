@@ -1,15 +1,16 @@
-import { ExpandMore, History } from '@mui/icons-material';
+import { Close, ExpandMore, History } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
     AccordionSummary,
     Box,
+    Button,
     Checkbox,
     FormControlLabel,
     List,
     ListProps,
+    OutlinedInput,
     Pagination,
-    TextField,
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -97,13 +98,30 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             <AccordionDetails ref={ref} sx={{ p: { xs: 0, md: 2 } }}>
                 <CompareContextProvider>
                     <VerticalBox>
-                        <Box width='100%' display='flex'>
-                            <TextField
+                        <Box
+                            width='100%'
+                            display='flex'
+                            flexWrap={{ xs: 'wrap', lg: 'nowrap' }}
+                        >
+                            <OutlinedInput
                                 placeholder={tr('controls.filter')}
                                 size='small'
                                 value={prompt}
                                 onChange={(e) => setPrompt(e.target.value)}
-                                sx={{ pl: 1, pr: 1 }}
+                                sx={{ ml: { xs: 1, lg: 0 }, mr: 1 }}
+                                endAdornment={
+                                    <Button
+                                        size='small'
+                                        sx={{
+                                            mr: -3,
+                                            backgroundColor: 'transparent',
+                                        }}
+                                        disableRipple
+                                        onClick={() => setPrompt('')}
+                                    >
+                                        <Close />
+                                    </Button>
+                                }
                                 fullWidth
                             />
                             <FormControlLabel
@@ -114,6 +132,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                         onChange={(_, c) => setPinned(c)}
                                     />
                                 }
+                                sx={{ ml: 0 }}
                             />
                         </Box>
                         <HistoryPagination page={page} setPage={setPage} />
