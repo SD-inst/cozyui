@@ -8,7 +8,14 @@ import { Box, Button } from '@mui/material';
 import { useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useIsPhone } from '../../hooks/useIsPhone';
+import { useTagsController } from '../../hooks/useTagsController';
+import { Tags } from '../history/db';
+import { TagSuggestion } from './TagSuggestion';
 import { TextInput, TextInputProps } from './TextInput';
+import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { settings } from '../../hooks/settings';
+
+const controlKeys = ['ArrowUp', 'ArrowDown', 'Enter', 'Tab'];
 
 const roundNum = (x: number) => {
     let strx = x.toFixed(2);
@@ -74,6 +81,7 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
     const [weightPanelOpen, setWeightPanelOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement>();
     const wpShouldHide = useRef(false);
+    const tagCompletionEnabled = useBooleanSetting(settings.tag_completion);
     const findRange = () => {
         if (!inputRef.current) {
             return null;
@@ -183,6 +191,83 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             0
         );
     };
+    const tagsctl = useTagsController();
+    const currentTag = () => {
+        if (!inputRef.current) {
+            return null;
+        }
+        const pos = inputRef.current.selectionStart;
+        if (pos === null) {
+            return null;
+        }
+        const text = inputRef.current.value.slice(0, pos);
+        return /(?:[,. ]|^)([^,. ]*)$/.exec(text);
+    };
+    const handleTagSelected = (tag: string) => {
+        if (!inputRef.current || !inputRef.current.selectionStart) {
+            return;
+        }
+        const matches = currentTag();
+        if (!matches || matches.length < 2 || !matches[1]) {
+            return;
+        }
+        const comma =
+            inputRef.current.value[inputRef.current.selectionStart] === ' '
+                ? ','
+                : ', ';
+        const pos = matches.index ? matches.index + 1 : 0;
+        const tagFiltered = tag.replace(/_/g, ' ');
+        const text =
+            inputRef.current.value.slice(0, pos) +
+            tagFiltered +
+            comma +
+            inputRef.current.value.slice(inputRef.current.selectionStart);
+        setValue(props.name, text);
+        setTimeout(() => {
+            if (inputRef.current) {
+                const selpos = pos + tagFiltered.length + 2;
+                inputRef.current.selectionStart = selpos;
+                inputRef.current.selectionEnd = selpos;
+            }
+        });
+        tagsctl.setOpen(false);
+    };
+    const handleTags = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        const matches = currentTag();
+        if (!matches || matches.length < 2 || !matches[1]) {
+            tagsctl.setOpen(false);
+            return;
+        }
+        tagsctl.setTag(matches[1]);
+        tagsctl.setOpen(true);
+        let inc = 0;
+        if (tagsctl.open) {
+            if (e.key === 'ArrowUp') {
+                inc = -1;
+            }
+            if (e.key === 'ArrowDown') {
+                inc = 1;
+            }
+            if (inc) {
+                e.preventDefault();
+                tagsctl.move(inc);
+                return;
+            }
+            if (e.key === 'Escape') {
+                tagsctl.setOpen(false);
+            }
+            if (
+                (e.key === 'Tab' || e.key === 'Enter') &&
+                !e.shiftKey &&
+                !e.ctrlKey &&
+                tagsctl.currentTag
+            ) {
+                setTimeout(() => handleTagSelected(tagsctl.currentTag.name));
+                e.preventDefault();
+                return;
+            }
+        }
+    };
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         let inc = 0;
         if (e.key === 'ArrowUp' && e.ctrlKey) {
@@ -192,6 +277,16 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             inc = e.shiftKey ? -1 : -0.1;
         }
         if (inc === 0) {
+            if (tagCompletionEnabled) {
+                if (controlKeys.includes(e.key)) {
+                    handleTags(e);
+                } else {
+                    // to use updated input field value
+                    setTimeout(() => {
+                        handleTags(e);
+                    });
+                }
+            }
             return;
         }
         e.stopPropagation();
@@ -224,10 +319,16 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
                         if (wpShouldHide.current) {
                             setWeightPanelOpen(false);
                         }
+                        tagsctl.setOpen(false);
                     });
                 }}
                 {...props}
                 sx={{ mb: 2, ...props.sx }}
+            />
+            <TagSuggestion
+                el={inputRef.current}
+                {...tagsctl}
+                onClick={(t: Tags) => handleTagSelected(t.name)}
             />
             <WeightPanel open={weightPanelOpen} updateWeight={updateWeight} />
         </>

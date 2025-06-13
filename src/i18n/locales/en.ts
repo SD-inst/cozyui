@@ -120,6 +120,7 @@ const translation = {
         save_outputs_locally: 'Save generation results locally',
         disable_help: 'Disable tooltips',
         enable_previews: 'Enable previews',
+        tag_completion: 'Tag completion',
         notification: 'Notification sound',
         notification_name: 'Sound effect #%{number}',
         notification_none: 'None',
@@ -188,6 +189,7 @@ const translation = {
         error_importing_database: 'Error importing history: %{err}',
         error_exporting_database: 'Error exporting history: %{err}',
         error_uploading: 'Error uploading image: %{err}',
+        tags_loaded: 'Tags loaded'
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',

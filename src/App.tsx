@@ -29,12 +29,14 @@ import { FluxTab } from './components/tabs/Flux';
 import { ChromaTab } from './components/tabs/Chroma';
 import { HiddenTabsContextProvider } from './components/contexts/HiddenTabsContextProvider';
 import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
+import { TagLoader } from './components/controls/TagAutocomplete';
 
 function App() {
     return (
         <ThemeContext>
             <I18nContextProvider>
                 <ConfigLoader />
+                <TagLoader />
                 <ResultOverrideContextProvider>
                     <WSReceiver />
                     <VerticalBox>

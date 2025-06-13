@@ -24,9 +24,10 @@ export interface Settings {
 
 export interface Tags {
     name: string;
-    color: string;
-    weight: number;
-    age: number;
+    color: number;
+    score: number;
+    alias: string[];
+    index: string[];
 }
 
 export interface FormState {
@@ -38,6 +39,7 @@ export const db = new Dexie('task_results') as Dexie & {
     taskResults: EntityTable<TaskResult, 'id'>;
     settings: Table<Settings, string>;
     formState: Table<FormState, string>;
+    tags: Table<Tags, string>
 };
 
 db.version(2)
@@ -64,6 +66,8 @@ db.version(3)
             subtx.put(t);
         });
     });
+
+db.version(4).stores({tags: '&name, color, *index'})
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

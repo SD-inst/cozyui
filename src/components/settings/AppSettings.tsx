@@ -45,6 +45,7 @@ export const AppSettings = () => {
                     />
                     <SettingCheckbox name={settings.disable_help} />
                     <SettingCheckbox name={settings.enable_previews} />
+                    <SettingCheckbox name={settings.tag_completion} />
                 </Box>
                 <NotificationSetting />
                 <LanguageSelect />

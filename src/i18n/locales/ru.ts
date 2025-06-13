@@ -119,6 +119,7 @@ const translation = {
         save_outputs_locally: 'Сохранять результаты локально',
         disable_help: 'Отключить подсказки',
         enable_previews: 'Включить предпросмотр',
+        tag_completion: 'Дополнение тегов',
         notification: 'Звук уведомления',
         notification_name: 'Звуковой эффект №%{number}',
         notification_none: 'Нет',
@@ -189,6 +190,7 @@ const translation = {
         error_importing_database: 'Ошибка при импорте истории: %{err}',
         error_exporting_database: 'Ошибка при экспорте истории: %{err}',
         error_uploading: 'Ошибка при загрузке изображения: %{err}',
+        tags_loaded: 'Теги загружены',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',
