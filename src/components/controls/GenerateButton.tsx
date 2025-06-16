@@ -214,11 +214,16 @@ export const GenerateButton = ({
     ]);
     const handleCtrlEnter = useCallback(
         (e: KeyboardEvent) => {
-            if (e.ctrlKey && e.key === 'Enter') {
+            if (
+                !generation_disabled &&
+                apiSuccess &&
+                e.ctrlKey &&
+                e.key === 'Enter'
+            ) {
                 sendPrompt();
             }
         },
-        [sendPrompt]
+        [apiSuccess, generation_disabled, sendPrompt]
     );
     useEffect(() => {
         setValue((s) => ({
