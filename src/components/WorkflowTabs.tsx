@@ -6,6 +6,7 @@ import React, {
     useCallback,
     useContext,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -176,7 +177,7 @@ const GroupTabs = ({ groups }: { groups: groupType }) => {
         return (
             <Tab
                 label={e[0]}
-                value={selected ? current_tab : e[0]}
+                value={e[0]}
                 key={e[0]}
                 onClick={() => {
                     if (!activeSubtabs.current[e[0]]) {
@@ -234,6 +235,14 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const dispatch = useAppDispatch();
     const { setWorkflowTabs } = useContext(HiddenTabsContext);
     const hiddenTabs = useHiddenTabs();
+    const visibleTabs = useMemo(() => {
+        if (hiddenTabs === undefined) {
+            return [];
+        }
+        return (props.children as any[]).filter(
+            (t) => !hiddenTabs.includes(t.props.value)
+        );
+    }, [hiddenTabs, props.children]);
     useEffect(() => {
         if (
             !props.children ||
@@ -243,13 +252,10 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         ) {
             return;
         }
-        const visibleTabs = (props.children as any[]).filter(
-            (t) => !hiddenTabs.includes(t.props.value)
-        );
         if (visibleTabs.length) {
             dispatch(setTab(visibleTabs[0].props.value));
         }
-    }, [dispatch, props.children, current_tab, setWorkflowTabs, hiddenTabs]);
+    }, [dispatch, props.children, current_tab, hiddenTabs, visibleTabs]);
     useEffect(() => {
         if (hiddenTabs === undefined) {
             return;
@@ -273,26 +279,36 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     }, [current_tab, dispatch, hiddenTabs, props.children, setWorkflowTabs]);
     const ref = useRef<HTMLDivElement>(null);
     useScroller(ref.current);
-    const groups: groupType = {};
-    React.Children.forEach(props.children, (c) => {
-        if (
-            !React.isValidElement(c) ||
-            !c.props.group ||
-            hiddenTabs?.includes(c.props.value)
-        ) {
-            return;
-        }
-        if (!groups[c.props.group]) {
-            groups[c.props.group] = [c];
-        } else {
-            groups[c.props.group].push(c);
-        }
-    });
+    const [groups, revIndex] = useMemo(() => {
+        const result: groupType = {};
+        React.Children.forEach(props.children, (c) => {
+            if (
+                !React.isValidElement(c) ||
+                !c.props.group ||
+                hiddenTabs?.includes(c.props.value)
+            ) {
+                return;
+            }
+            if (!result[c.props.group]) {
+                result[c.props.group] = [c];
+            } else {
+                result[c.props.group].push(c);
+            }
+        });
+        const revIndex = Object.fromEntries(
+            Object.entries(result).flatMap((e) =>
+                e[1].map((t) => [t.props.value, e[0]])
+            )
+        );
+        return [result, revIndex];
+    }, [hiddenTabs, props.children]);
+    const selectedGroupTab =
+        typeof current_tab === 'string' ? revIndex[current_tab] : undefined;
     return (
         <>
             <Tabs
                 ref={ref}
-                value={current_tab}
+                value={selectedGroupTab || current_tab}
                 onChange={(_, v) => dispatch(setTab(v))}
                 variant='scrollable'
                 sx={{ width: '100%' }}
@@ -307,7 +323,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                     }
                     return <Tab label={label} value={value || i} />;
                 })}
-                {GroupTabs({ groups: groups })}
+                {GroupTabs({ groups })}
             </Tabs>
             {React.Children.map(props.children, (c) =>
                 (c as React.ReactElement).props.group ? null : (
