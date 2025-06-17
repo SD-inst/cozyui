@@ -3,7 +3,7 @@ import {
     FormControlLabel,
     FormControlLabelProps,
 } from '@mui/material';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { useBooleanSetting } from '../../hooks/useSetting';
 import { settings } from '../../hooks/settings';
 import { db } from '../history/db';
 import { useTranslate } from '../../i18n/I18nContext';

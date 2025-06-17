@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { settings } from '../../hooks/settings';
 import { useActiveTab } from '../../hooks/useActiveTab';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { useBooleanSetting } from '../../hooks/useSetting';
 import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
 

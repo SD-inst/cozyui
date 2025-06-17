@@ -1,8 +1,8 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useRef, useState } from 'react';
 import { Tags, db } from '../components/history/db';
-
-const MAX_TAGS = 10;
+import { useNumberSetting } from './useSetting';
+import { settings } from './settings';
 
 export const useTagsController = () => {
     const [open, setOpen] = useState(false);
@@ -10,6 +10,7 @@ export const useTagsController = () => {
     const [tag, setTag] = useState<string>('');
     const [tags, setTags] = useState<Tags[]>([]);
     const tagRC = useRef<string>('');
+    const tag_number = useNumberSetting(settings.tag_number, 10);
     useLiveQuery(async () => {
         if (!tag) {
             return;
@@ -25,8 +26,9 @@ export const useTagsController = () => {
             // discard everything, tag has changed
             return;
         }
-        if (words.length === 1) { // one word fast path
-            setTags(dbtags[0].reverse().slice(0, MAX_TAGS));
+        if (words.length === 1) {
+            // one word fast path
+            setTags(dbtags[0].reverse().slice(0, tag_number));
         }
         const names = dbtags
             .map((ta) => ta.map((t) => t.name))
@@ -42,8 +44,8 @@ export const useTagsController = () => {
             // discard everything, tag has changed
             return;
         }
-        setTags(dbtagsDeduped.reverse().slice(0, MAX_TAGS));
-    }, [tag]);
+        setTags(dbtagsDeduped.reverse().slice(0, tag_number));
+    }, [tag, tag_number]);
     const move = (inc: number) => {
         setPos((p) => (p + inc + tags.length) % tags.length);
     };

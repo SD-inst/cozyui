@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { settings } from '../../hooks/settings';
-import { useStringSetting } from '../../hooks/useStringSetting';
 import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
+import { useStringSetting } from '../../hooks/useSetting';
 
 export const NotificationSound = () => {
     const sound = useStringSetting(settings.notification_sound, 'None');

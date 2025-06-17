@@ -21,7 +21,7 @@ type resultType = {
 };
 
 type tabType = {
-    current_tab: boolean | string;
+    current_tab: string;
     api: any;
     prompt: {
         [id: string]: {
@@ -35,7 +35,7 @@ type tabType = {
 const slice = createSlice({
     name: 'tab',
     initialState: {
-        current_tab: false,
+        current_tab: '',
         api: {} as any,
         prompt: {},
         params: {
@@ -45,7 +45,7 @@ const slice = createSlice({
         result: {},
     } as tabType,
     reducers: {
-        setTab: (s, action: PayloadAction<string | boolean>) => ({
+        setTab: (s, action: PayloadAction<string>) => ({
             ...s,
             current_tab: action.payload,
         }),

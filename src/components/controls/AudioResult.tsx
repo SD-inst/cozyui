@@ -5,9 +5,9 @@ import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { VerticalBox } from '../VerticalBox';
-import { useStringSetting } from '../../hooks/useStringSetting';
 import { settings } from '../../hooks/settings';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useStringSetting } from '../../hooks/useSetting';
 
 export const AudioResult = ({
     title,

@@ -7,7 +7,7 @@ import { statusEnum } from '../redux/progress';
 import { actionEnum, addResult } from '../redux/tab';
 import { useResult, useResultParam } from './useResult';
 import { useApiURL } from './useApiURL';
-import { useBooleanSetting } from './useBooleanSetting';
+import { useBooleanSetting } from './useSetting';
 import { settings } from './settings';
 import { useTabName } from '../components/contexts/TabContext';
 import { useTranslate } from '../i18n/I18nContext';

@@ -1,5 +1,13 @@
-import { Box, MenuItem, MenuList, Paper, Popper } from '@mui/material';
+import {
+    Box,
+    MenuItem,
+    MenuItemProps,
+    MenuList,
+    Paper,
+    Popper,
+} from '@mui/material';
 import { Tags } from '../history/db';
+import { useEffect, useRef } from 'react';
 
 const formatScore = (n: number) => {
     if (n > 1e6) {
@@ -21,6 +29,60 @@ const colors: colorType = {
     5: 'orange',
 };
 
+const TagItem = ({
+    tag,
+    selected,
+    onClick,
+    ...props
+}: {
+    tag: Tags;
+    selected: boolean;
+    onClick?: (tag: Tags) => void;
+} & Omit<MenuItemProps, 'onClick'>) => {
+    const ref = useRef<HTMLLIElement>(null);
+    useEffect(() => {
+        if (selected && ref.current) {
+            ref.current.scrollIntoView({
+                block: 'nearest',
+            });
+        }
+    }, [selected]);
+
+    return (
+        <MenuItem
+            key={tag.name}
+            dense
+            selected={selected}
+            sx={{
+                justifyContent: 'space-between',
+            }}
+            onMouseDown={(e) => {
+                if (onClick) {
+                    onClick(tag);
+                }
+                e.preventDefault();
+            }}
+            ref={ref}
+            {...props}
+        >
+            <Box
+                sx={{
+                    color: colors[tag.color] || 'white',
+                    whiteSpace: 'normal',
+                }}
+            >
+                {tag.alias.length
+                    ? tag.alias.slice(0, 3).join(', ') +
+                      (tag.alias.length > 3 ? ', ...' : '') +
+                      ' ⇒ '
+                    : ''}
+                {tag.name}
+            </Box>
+            <Box sx={{ ml: 2 }}>{formatScore(tag.score)}</Box>
+        </MenuItem>
+    );
+};
+
 export const TagSuggestion = ({
     open,
     tags,
@@ -39,40 +101,17 @@ export const TagSuggestion = ({
             open={!!el && open}
             anchorEl={el}
             placement='bottom-start'
-            sx={{ zIndex: 100 }}
+            sx={{ zIndex: 100, maxHeight: 300, overflow: 'auto' }}
         >
             <Paper elevation={5} sx={{ borderRadius: 2 }}>
                 <MenuList onKeyDown={() => {}}>
                     {tags.map((t, i) => (
-                        <MenuItem
+                        <TagItem
+                            tag={t}
                             key={t.name}
-                            dense
                             selected={i === pos}
-                            sx={{
-                                justifyContent: 'space-between',
-                            }}
-                            onMouseDown={(e) => {
-                                if (onClick) {
-                                    onClick(t);
-                                }
-                                e.preventDefault();
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    color: colors[t.color] || 'white',
-                                    whiteSpace: 'normal',
-                                }}
-                            >
-                                {t.alias.length
-                                    ? t.alias.slice(0, 3).join(', ') +
-                                      (t.alias.length > 3 ? ', ...' : '') +
-                                      ' ⇒ '
-                                    : ''}
-                                {t.name}
-                            </Box>
-                            <Box sx={{ ml: 2 }}>{formatScore(t.score)}</Box>
-                        </MenuItem>
+                            onClick={onClick}
+                        />
                     ))}
                 </MenuList>
             </Paper>

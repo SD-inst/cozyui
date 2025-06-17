@@ -121,6 +121,8 @@ const translation = {
         disable_help: 'Disable tooltips',
         enable_previews: 'Enable previews',
         tag_completion: 'Tag completion',
+        tag_number: 'Number of tag suggestions',
+        tag_enabled_tabs: 'Tags enabled on tabs',
         notification: 'Notification sound',
         notification_name: 'Sound effect #%{number}',
         notification_none: 'None',

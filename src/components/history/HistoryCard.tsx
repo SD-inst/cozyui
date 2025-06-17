@@ -17,10 +17,10 @@ import { useRef } from 'react';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
 import { markEnum, TaskResult } from './db';
-import { DeleteButton } from './DeleteButton';
 import { HistoryCardContent } from './HistoryCardContent';
 import { HistoryCardMenu } from './HistoryCardMenu';
 import { LoadParamsButton } from './LoadParamsButton';
+import { DeleteButton } from './DeleteButton';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const cache = useRef('');

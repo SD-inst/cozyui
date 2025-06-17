@@ -1,6 +1,6 @@
 import { Help } from '@mui/icons-material';
 import { Tooltip, TooltipProps } from '@mui/material';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { useBooleanSetting } from '../../hooks/useSetting';
 import { settings } from '../../hooks/settings';
 import { useTranslate } from '../../i18n/I18nContext';
 

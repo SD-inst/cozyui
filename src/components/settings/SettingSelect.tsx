@@ -1,5 +1,5 @@
 import { settings } from '../../hooks/settings';
-import { useStringSetting } from '../../hooks/useStringSetting';
+import { useStringSetting } from '../../hooks/useSetting';
 import { SelectControl, SelectControlProps } from '../controls/SelectControl';
 import { db } from '../history/db';
 

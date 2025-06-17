@@ -30,7 +30,7 @@ import {
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
 import { settings } from '../../hooks/settings';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { useBooleanSetting } from '../../hooks/useSetting';
 
 type error = {
     controls: string[];

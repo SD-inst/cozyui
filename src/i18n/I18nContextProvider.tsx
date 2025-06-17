@@ -1,7 +1,7 @@
 import { PropsWithChildren, useMemo, useState } from 'react';
 import { settings } from '../hooks/settings';
-import { useStringSetting } from '../hooks/useStringSetting';
 import { createPolyglot, I18nContext } from './I18nContext';
+import { useStringSetting } from '../hooks/useSetting';
 
 export const I18nContextProvider = ({ ...props }: PropsWithChildren) => {
     const [locale, setLocale] = useState('');

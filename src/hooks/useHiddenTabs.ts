@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { settings } from './settings';
-import { useStringSetting } from './useStringSetting';
+import { useStringSetting } from './useSetting';
 
 export const useHiddenTabs = () => {
     const hiddenTabsStr = useStringSetting(settings.hidden_tabs, '[]');

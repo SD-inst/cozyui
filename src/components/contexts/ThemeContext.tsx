@@ -4,7 +4,7 @@ import {
     createTheme,
     ThemeProvider,
 } from '@mui/material';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
+import { useBooleanSetting } from '../../hooks/useSetting';
 import { settings } from '../../hooks/settings';
 
 export const ThemeContext = ({ ...props }) => {

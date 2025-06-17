@@ -7,15 +7,28 @@ import {
 import { Box, Button } from '@mui/material';
 import { useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { settings } from '../../hooks/settings';
+import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { useIsPhone } from '../../hooks/useIsPhone';
+import { useBooleanSetting, useMultiSetting } from '../../hooks/useSetting';
 import { useTagsController } from '../../hooks/useTagsController';
+import {
+    useFilteredTabs
+} from '../contexts/HiddenTabsContext';
 import { Tags } from '../history/db';
 import { TagSuggestion } from './TagSuggestion';
 import { TextInput, TextInputProps } from './TextInput';
-import { useBooleanSetting } from '../../hooks/useBooleanSetting';
-import { settings } from '../../hooks/settings';
 
-const controlKeys = ['ArrowUp', 'ArrowDown', 'Enter', 'Tab'];
+const controlKeys = [
+    'ArrowUp',
+    'ArrowDown',
+    'PageUp',
+    'PageDown',
+    'Enter',
+    'Tab',
+];
+
+const PAGE_SIZE = 10;
 
 const roundNum = (x: number) => {
     let strx = x.toFixed(2);
@@ -81,7 +94,12 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
     const [weightPanelOpen, setWeightPanelOpen] = useState(false);
     const inputRef = useRef<HTMLInputElement>();
     const wpShouldHide = useRef(false);
-    const tagCompletionEnabled = useBooleanSetting(settings.tag_completion);
+    const current_tab = useCurrentTab();
+    const T2Itabs = useFilteredTabs('T2I');
+    const enabledTabs = useMultiSetting(settings.tag_enabled_tabs, T2Itabs);
+    const tagEnabled = enabledTabs?.includes(current_tab);
+    const tagCompletionEnabled =
+        useBooleanSetting(settings.tag_completion) && tagEnabled;
     const findRange = () => {
         if (!inputRef.current) {
             return null;
@@ -240,7 +258,7 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
         }
         tagsctl.setTag(matches[1]);
         tagsctl.setOpen(true);
-        let inc = 0;
+        let inc = undefined;
         if (tagsctl.open) {
             if (e.key === 'ArrowUp') {
                 inc = -1;
@@ -248,7 +266,16 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             if (e.key === 'ArrowDown') {
                 inc = 1;
             }
-            if (inc) {
+            if (e.key === 'PageUp') {
+                inc = tagsctl.pos >= PAGE_SIZE ? -PAGE_SIZE : -tagsctl.pos;
+            }
+            if (e.key === 'PageDown') {
+                inc =
+                    tagsctl.tags.length - tagsctl.pos > PAGE_SIZE
+                        ? PAGE_SIZE
+                        : tagsctl.tags.length - tagsctl.pos - 1;
+            }
+            if (inc !== undefined) {
                 e.preventDefault();
                 tagsctl.move(inc);
                 return;

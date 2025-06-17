@@ -120,6 +120,8 @@ const translation = {
         disable_help: 'Отключить подсказки',
         enable_previews: 'Включить предпросмотр',
         tag_completion: 'Дополнение тегов',
+        tag_number: 'Количество предлагаемых тегов',
+        tag_enabled_tabs: 'Теги разрешены на вкладках',
         notification: 'Звук уведомления',
         notification_name: 'Звуковой эффект №%{number}',
         notification_none: 'Нет',
