@@ -11,9 +11,11 @@ import { VideoPreview } from './VideoPreview';
 export const VideoResult = ({
     title,
     rate_override,
+    fps,
 }: {
     title?: string;
     rate_override?: number;
+    fps?: number;
 }) => {
     const results = useResult();
     const tr = useTranslate();
@@ -60,7 +62,7 @@ export const VideoResult = ({
                     </VerticalBox>
                 );
             })}
-            <VideoPreview size={300} rate_override={rate_override} />
+            <VideoPreview size={300} rate_override={rate_override} fps={fps} />
         </VerticalBox>
     );
 };

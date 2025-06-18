@@ -19,6 +19,7 @@ import { WanEndImage } from '../controls/WanEndImage';
 import { WanLengthInput } from '../controls/WanLengthInput';
 import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WFTab } from '../WFTab';
+import { WanFLF2V } from '../controls/WanFLF2V';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -42,7 +43,9 @@ const Content = () => {
                     <ModelSelectAutocomplete
                         name='model'
                         type='wan'
-                        extraFilter={(m) => m.includes('I2V')}
+                        extraFilter={(m) =>
+                            m.includes('I2V') || m.includes('FLF2V')
+                        }
                     />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
                     <WanRiflexToggle name='riflex' />
@@ -88,6 +91,7 @@ const Content = () => {
                 />
                 <KJCompileModelToggle classType='WanVideoTorchCompileSettings' />
                 <SeedInput name='seed' defaultValue={1024} />
+                <WanFLF2V name='flf2v' />
             </GridLeft>
             <GridRight
                 display='flex'
@@ -95,7 +99,7 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoResult rate_override={4} />
+                <VideoResult rate_override={4} fps={16} />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

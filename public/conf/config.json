@@ -1220,6 +1220,12 @@
                     "id": "handle",
                     "field": "riflex_freq_index",
                     "node_id": "27"
+                },
+                "flf2v": {
+                    "id": "handle",
+                    "i2v_encode_node_id": "88",
+                    "clip_vision_node_id": "93",
+                    "clip_vision_loader_node_id": "94"
                 }
             },
             "handler_options": {

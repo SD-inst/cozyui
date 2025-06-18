@@ -83,7 +83,7 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoResult rate_override={4} />
+                <VideoResult rate_override={4} fps={16} />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

@@ -8,9 +8,11 @@ import { statusEnum } from '../../redux/progress';
 export const VideoPreview = ({
     size,
     rate_override,
+    fps = 24,
 }: {
     size: number;
     rate_override?: number;
+    fps?: number;
 }) => {
     const enabled = useBooleanSetting(settings.enable_previews);
     const status = useAppSelector((s) => s.progress.status);
@@ -42,7 +44,7 @@ export const VideoPreview = ({
         let frames: ImageBitmap[] = [];
         const effective_rate = rate_override || rate;
         const interval = setInterval(() => {
-            const fn = '' + (idx * 24) / effective_rate;
+            const fn = '' + (idx * fps) / effective_rate;
             // before rendering the first preview frame
             // update the frames from the ref so that animation never breaks
             if (!idx) {
@@ -83,7 +85,7 @@ export const VideoPreview = ({
         return () => {
             clearInterval(interval);
         };
-    }, [rate, rate_override, size]);
+    }, [fps, rate, rate_override, size]);
     return (
         <canvas
             ref={ref}
