@@ -2,7 +2,6 @@ import { useWatch } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
-import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { HYLengthInput } from '../controls/HYLengthInput';
@@ -17,7 +16,8 @@ import { SliderInput } from '../controls/SliderInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { WanEndImage } from '../controls/WanEndImage';
+import { Box } from '@mui/material';
+import { SwapButton } from '../controls/SwapButton';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -25,15 +25,24 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' />
-                <WanEndImage name='use_end_image' />
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
+                <Box display='flex' flexDirection='row' width='100%'>
+                    <Box display='flex' flexDirection='column' flex={1}>
+                        <HYSize name='width' defaultValue={720} />
+                        <HYSize name='height' defaultValue={480} />
+                    </Box>
+                    <Box display='flex' alignItems='center'>
+                        <SwapButton
+                            names={['width', 'height']}
+                            sx={{ mt: 3 }}
+                        />
+                    </Box>
+                </Box>
                 <PromptInput
                     name='neg_prompt'
                     sx={{ mb: 3, display: cfg > 1 ? 'block' : 'none' }}
                     defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
                 />
-                <HYSize name='size' defaultValue={720} />
                 <HYLengthInput defaultValue={97} fps={16} />
                 <SliderInput name='steps' defaultValue={8} min={1} max={50} />
                 <FlowShiftInput defaultValue={10} />
@@ -41,31 +50,10 @@ const Content = () => {
                     <ModelSelectAutocomplete
                         name='model'
                         type='wan'
-                        extraFilter={(m) => m.includes('I2V')}
+                        extraFilter={(m) => m.includes('T2V')}
                     />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
                     <CFGInput defaultValue={1} />
-                    <SliderInput
-                        name='aug_strength'
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        defaultValue={0}
-                    />
-                    <SliderInput
-                        name='start_strength'
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        defaultValue={1}
-                    />
-                    <SliderInput
-                        name='end_strength'
-                        min={0}
-                        max={1}
-                        step={0.01}
-                        defaultValue={1}
-                    />
                 </AdvancedSettings>
                 <LoraInput
                     name='lora'
@@ -102,6 +90,6 @@ const Content = () => {
     );
 };
 
-export const WanI2VTab = (
-    <WFTab label='Wan I2V' value='Wan I2V' group='I2V' content={<Content />} />
+export const WanT2VTab = (
+    <WFTab label='Wan T2V' value='Wan T2V' group='T2V' content={<Content />} />
 );

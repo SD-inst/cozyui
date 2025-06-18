@@ -1231,6 +1231,83 @@
             "result": {
                 "id": "30",
                 "type": "gifs"
+            },
+            "defaults": {
+                "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
+            }
+        },
+        "Wan T2V": {
+            "api": "api/wan_t2v_kj.json",
+            "controls": {
+                "prompt": {
+                    "id": "16",
+                    "field": "positive_prompt"
+                },
+                "neg_prompt": {
+                    "id": "16",
+                    "field": "negative_prompt"
+                },
+                "width": {
+                    "id": "113",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "113",
+                    "field": "height"
+                },
+                "length": {
+                    "id": "113",
+                    "field": "num_frames"
+                },
+                "steps": {
+                    "id": "27",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "27",
+                    "field": "cfg"
+                },
+                "flow_shift": {
+                    "id": "27",
+                    "field": "shift"
+                },
+                "seed": {
+                    "id": "26",
+                    "field": "value"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "22",
+                    "field": "model"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "22"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "self_forcing_lora": {
+                    "id": "skip"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "prev_lora",
+                    "api_input_name": "lora",
+                    "output_node_ids": ["22"],
+                    "output_idx": 0,
+                    "class_name": "WanVideoLoraSelect",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora"
+                }
+            },
+            "result": {
+                "id": "30",
+                "type": "gifs"
+            },
+            "defaults": {
+                "model": "wan/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors"
             }
         }
     },

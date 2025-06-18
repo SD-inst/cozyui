@@ -112,7 +112,7 @@ const translation = {
         upscale_model: 'модель увеличения',
         padding: 'бордюр тайла',
         mask_blur: 'размытие маски',
-        self_forcing_lora: 'включить ускорение Self Forcing',
+        self_forcing_lora: 'включить ускорение Self Forcing (только 14B)',
         start_strength: 'сила начального изображения',
         end_strength: 'сила конечного изображения',
         use_end_image: 'использовать конечное изображение'

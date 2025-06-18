@@ -31,6 +31,7 @@ import { HiddenTabsContextProvider } from './components/contexts/HiddenTabsConte
 import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
 import { TagLoader } from './components/controls/TagAutocomplete';
 import { WanI2VTab } from './components/tabs/WanI2V';
+import { WanT2VTab } from './components/tabs/WanT2V';
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
                         <HiddenTabsContextProvider>
                             <WorkflowTabs>
                                 {HunyanT2VTab}
+                                {WanT2VTab}
                                 {ChromaTab}
                                 {WanI2VTab}
                                 {HunyanI2VTab}

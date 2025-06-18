@@ -113,7 +113,7 @@ const translation = {
         upscale_model: 'upscale model',
         padding: 'tile padding',
         mask_blur: 'mask blur',
-        self_forcing_lora: 'use Self Forcing acceleration',
+        self_forcing_lora: 'use Self Forcing acceleration (14B only)',
         start_strength: 'start image strength',
         end_strength: 'end image strength',
         use_end_image: 'use end image'
