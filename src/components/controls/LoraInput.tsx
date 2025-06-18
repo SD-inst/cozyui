@@ -162,7 +162,11 @@ export const LoraInput = ({
     const defaults = useAppSelector((s) =>
         get(s, ['config', 'loras', type, 'defaults'], emptyDefaults)
     );
-    const final_filter = import.meta.env.VITE_FILTER_LORAS || filter;
+    const envFilter = (l: string) =>
+        import.meta.env.VITE_FILTER_LORAS
+            ? l.includes(import.meta.env.VITE_FILTER_LORAS)
+            : true;
+    const final_filter = (l: string) => envFilter(l) && l.includes(filter);
     const tr = useTranslate();
     const disable_lora_filter = localStorage.getItem('disable_lora_filter');
     const { setValue } = useFormContext();
@@ -286,7 +290,18 @@ export const LoraInput = ({
                 });
             }
         },
-        [append, additional_inputs, input_node_id, class_name, output_node_ids, lora_input_name, output_idx, name_field_name, strength_field_name, api_input_name]
+        [
+            append,
+            additional_inputs,
+            input_node_id,
+            class_name,
+            output_node_ids,
+            lora_input_name,
+            output_idx,
+            name_field_name,
+            strength_field_name,
+            api_input_name,
+        ]
     );
     useRegisterHandler({ name: props.name, handler });
     const ctl = useController({
@@ -299,11 +314,7 @@ export const LoraInput = ({
         index: 0,
     });
     const opts = loras
-        .filter((l) =>
-            final_filter && !disable_lora_filter
-                ? l.includes(final_filter)
-                : true
-        )
+        .filter((l) => (!disable_lora_filter ? final_filter(l) : true))
         .map((l) => {
             const label = l.slice(
                 l.lastIndexOf('/') + 1,
