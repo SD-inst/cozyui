@@ -65,7 +65,7 @@ const translation = {
         generation_params: 'Параметры генерации',
         difference: 'Различия',
         image: 'изображение',
-        image_end: 'конечное изображение (необязательно)',
+        image_end: 'конечное изображение',
         drop_files_here: 'Перетащите файлы сюда...',
         drop_files_desc: 'Перетащите файлы сюда или кликните для выбора файлов',
         merge_type: 'тип слияния',
@@ -112,6 +112,10 @@ const translation = {
         upscale_model: 'модель увеличения',
         padding: 'бордюр тайла',
         mask_blur: 'размытие маски',
+        self_forcing_lora: 'включить ускорение Self Forcing',
+        start_strength: 'сила начального изображения',
+        end_strength: 'сила конечного изображения',
+        use_end_image: 'использовать конечное изображение'
     },
     settings: {
         select_language: 'Выбор языка',

@@ -30,6 +30,7 @@ import { ChromaTab } from './components/tabs/Chroma';
 import { HiddenTabsContextProvider } from './components/contexts/HiddenTabsContextProvider';
 import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
 import { TagLoader } from './components/controls/TagAutocomplete';
+import { WanI2VTab } from './components/tabs/WanI2V';
 
 function App() {
     return (
@@ -44,6 +45,7 @@ function App() {
                             <WorkflowTabs>
                                 {HunyanT2VTab}
                                 {ChromaTab}
+                                {WanI2VTab}
                                 {HunyanI2VTab}
                                 {FramePackI2VTab}
                                 {HiDreamTab}

@@ -21,8 +21,10 @@ export const KJCompileModelToggle = ({
                     fullgraph: false,
                     dynamic: true,
                     dynamo_cache_size_limit: 64,
+                    dynamo_recompile_limit: 128,
                     compile_single_blocks: true,
                     compile_double_blocks: true,
+                    compile_transformer_blocks_only: true,
                 },
                 class_type: classType,
                 _meta: {

@@ -65,7 +65,7 @@ const translation = {
         generation_params: 'Generation params',
         difference: 'Difference',
         image: 'image',
-        image_end: 'end image (optional)',
+        image_end: 'end image',
         drop_files_here: 'Drop the files here...',
         drop_files_desc:
             "Drag'n'drop some files here, or click to select files",
@@ -113,6 +113,10 @@ const translation = {
         upscale_model: 'upscale model',
         padding: 'tile padding',
         mask_blur: 'mask blur',
+        self_forcing_lora: 'use Self Forcing acceleration',
+        start_strength: 'start image strength',
+        end_strength: 'end image strength',
+        use_end_image: 'use end image'
     },
     settings: {
         select_language: 'Select language',
@@ -191,7 +195,7 @@ const translation = {
         error_importing_database: 'Error importing history: %{err}',
         error_exporting_database: 'Error exporting history: %{err}',
         error_uploading: 'Error uploading image: %{err}',
-        tags_loaded: 'Tags loaded'
+        tags_loaded: 'Tags loaded',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',

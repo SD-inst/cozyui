@@ -23,6 +23,7 @@ export const ModelSelectAutocomplete = ({
     component = 'UNETLoader',
     field = 'unet_name',
     previews = true,
+    extraFilter,
     ...props
 }: {
     name: string;
@@ -31,6 +32,7 @@ export const ModelSelectAutocomplete = ({
     component?: string;
     field?: string;
     previews?: boolean;
+    extraFilter?: (v: string) => boolean;
 } & Omit<
     AutocompleteProps<valueType, false, any, any>,
     'renderInput' | 'options'
@@ -50,12 +52,11 @@ export const ModelSelectAutocomplete = ({
         get(s, ['config', 'loras', type, 'filter'], emptyFilter)
     );
     const opts = models
-        .filter((l) => l.includes(filter))
+        .filter(
+            (l) => l.includes(filter) && (extraFilter ? extraFilter(l) : true)
+        )
         .map((l) => {
-            const label = l.slice(
-                l.lastIndexOf('/') + 1,
-                l.lastIndexOf('.')
-            );
+            const label = l.slice(l.lastIndexOf('/') + 1, l.lastIndexOf('.'));
             return {
                 label,
                 id: l,

@@ -1,18 +1,15 @@
-import { ExpandMore } from '@mui/icons-material';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Box,
+    Box
 } from '@mui/material';
-import { useTranslate } from '../../i18n/I18nContext';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYLengthInput } from '../controls/HYLengthInput';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYRiflexInput } from '../controls/HYRiflexInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -29,10 +26,8 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 
 const Content = () => {
-    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -53,22 +48,17 @@ const Content = () => {
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput />
                 <FlowShiftInput />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <HYModelSelectInput name='model' />
-                        <ClipSelectInput name='clip_model' />
-                        <SamplerSelectInput name='sampler' />
-                        <SchedulerSelectInput name='scheduler' />
-                        <VirtualVRAMSliderInput name='virtual_vram' />
-                        <WaveSpeedInput />
-                        <HYRiflexInput name='riflex' />
-                        <UpscaleToggle name='allow_upscale' />
-                        <CompileModelToggle />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <HYModelSelectInput name='model' />
+                    <ClipSelectInput name='clip_model' />
+                    <SamplerSelectInput name='sampler' />
+                    <SchedulerSelectInput name='scheduler' />
+                    <VirtualVRAMSliderInput name='virtual_vram' />
+                    <WaveSpeedInput />
+                    <HYRiflexInput name='riflex' />
+                    <UpscaleToggle name='allow_upscale' />
+                    <CompileModelToggle />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' type='hunyuan' />
             </GridLeft>
