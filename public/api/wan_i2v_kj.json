@@ -111,21 +111,6 @@
             "title": "Video Combine 🎥🅥🅗🅢"
         }
     },
-    "35": {
-        "inputs": {
-            "backend": "inductor",
-            "fullgraph": false,
-            "mode": "default",
-            "dynamic": false,
-            "dynamo_cache_size_limit": 64,
-            "compile_transformer_blocks_only": true,
-            "dynamo_recompile_limit": 128
-        },
-        "class_type": "WanVideoTorchCompileSettings",
-        "_meta": {
-            "title": "WanVideo Torch Compile Settings"
-        }
-    },
     "38": {
         "inputs": {
             "model_name": "wan_2.1_vae.safetensors",

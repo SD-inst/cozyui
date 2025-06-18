@@ -5,7 +5,6 @@ import { CFGInput } from '../controls/CFGInput';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
-import { HYLengthInput } from '../controls/HYLengthInput';
 import { HYSize } from '../controls/HYSize';
 import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -16,8 +15,10 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoResult } from '../controls/VideoResult';
-import { WFTab } from '../WFTab';
 import { WanEndImage } from '../controls/WanEndImage';
+import { WanLengthInput } from '../controls/WanLengthInput';
+import { WanRiflexToggle } from '../controls/WanRiflexToggle';
+import { WFTab } from '../WFTab';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -34,7 +35,7 @@ const Content = () => {
                     defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
                 />
                 <HYSize name='size' defaultValue={720} />
-                <HYLengthInput defaultValue={97} fps={16} />
+                <WanLengthInput />
                 <SliderInput name='steps' defaultValue={8} min={1} max={50} />
                 <FlowShiftInput defaultValue={10} />
                 <AdvancedSettings>
@@ -44,6 +45,7 @@ const Content = () => {
                         extraFilter={(m) => m.includes('I2V')}
                     />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
+                    <WanRiflexToggle name='riflex' />
                     <CFGInput defaultValue={1} />
                     <SliderInput
                         name='aug_strength'

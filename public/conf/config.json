@@ -1215,6 +1215,11 @@
                     "i2v_encode_node_id": "88",
                     "clip_vision_node_id": "93",
                     "resize_node_id": "116"
+                },
+                "riflex": {
+                    "id": "handle",
+                    "field": "riflex_freq_index",
+                    "node_id": "27"
                 }
             },
             "handler_options": {
@@ -1289,6 +1294,11 @@
                 },
                 "self_forcing_lora": {
                     "id": "skip"
+                },
+                "riflex": {
+                    "id": "handle",
+                    "field": "riflex_freq_index",
+                    "node_id": "27"
                 }
             },
             "handler_options": {

@@ -1,10 +1,10 @@
+import { Box } from '@mui/material';
 import { useWatch } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
-import { HYLengthInput } from '../controls/HYLengthInput';
 import { HYSize } from '../controls/HYSize';
 import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -13,11 +13,12 @@ import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
+import { SwapButton } from '../controls/SwapButton';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoResult } from '../controls/VideoResult';
+import { WanLengthInput } from '../controls/WanLengthInput';
 import { WFTab } from '../WFTab';
-import { Box } from '@mui/material';
-import { SwapButton } from '../controls/SwapButton';
+import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -43,7 +44,7 @@ const Content = () => {
                     sx={{ mb: 3, display: cfg > 1 ? 'block' : 'none' }}
                     defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
                 />
-                <HYLengthInput defaultValue={97} fps={16} />
+                <WanLengthInput />
                 <SliderInput name='steps' defaultValue={8} min={1} max={50} />
                 <FlowShiftInput defaultValue={10} />
                 <AdvancedSettings>
@@ -53,6 +54,7 @@ const Content = () => {
                         extraFilter={(m) => m.includes('T2V')}
                     />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
+                    <WanRiflexToggle name='riflex' />
                     <CFGInput defaultValue={1} />
                 </AdvancedSettings>
                 <LoraInput

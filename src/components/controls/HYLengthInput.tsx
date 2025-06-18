@@ -3,13 +3,23 @@ import { LengthInput, LengthInputProps } from './LengthSlider';
 import { Optional } from './optional';
 
 export const HYLengthInput = ({
+    max = [201, 265],
     ...props
-}: Optional<LengthInputProps, 'max' | 'min' | 'name'>) => {
+}: { max?: number | number[] } & Optional<
+    Omit<LengthInputProps, 'max'>,
+    'min' | 'name'
+>) => {
     const riflex = useWatch({ name: 'riflex' });
     return (
         <LengthInput
             min={5}
-            max={riflex ? 265 : 201}
+            max={
+                Array.isArray(max)
+                    ? riflex && max.length > 1
+                        ? max[1]
+                        : max[0]
+                    : max
+            }
             step={4}
             fps={24}
             defaultValue={85}

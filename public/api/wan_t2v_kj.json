@@ -52,7 +52,7 @@
             "shift": 8,
             "seed": ["26", 0],
             "force_offload": true,
-            "scheduler": "unipc",
+            "scheduler": "unipc/beta",
             "riflex_freq_index": 0,
             "denoise_strength": 1,
             "batched_cfg": false,
