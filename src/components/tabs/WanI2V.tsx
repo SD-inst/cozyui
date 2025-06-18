@@ -20,7 +20,7 @@ import { WFTab } from '../WFTab';
 import { WanEndImage } from '../controls/WanEndImage';
 
 const Content = () => {
-    const sflora = useWatch({ name: 'self_forcing_lora' });
+    const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
     const cfg = useWatch({ name: 'cfg' });
     return (
         <Layout>
