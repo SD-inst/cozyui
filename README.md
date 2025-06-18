@@ -11,13 +11,27 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 ## Features
 
 - Supported models and modes:
-    - Hunyuan T2V (Native/Kijai)
-    - Hunyuan I2V (leapfusion lora)
-    - Hunyuan latent upscale + V2V
-    - LTX I2V
-    - EasyAnimate
-    - StableAudio
-    - MMAudio
+    - T2V
+        - Hunyuan T2V (Native/Kijai)
+        - Wan T2V (Kijai)
+    - I2V
+        - Hunyuan I2V (leapfusion lora)
+        - Wan I2V (Kijai)
+        - Framepack
+        - LTX I2V
+        - EasyAnimate I2V
+    - T2I
+        - Flux
+        - Chroma
+        - HiDream
+    - I2I
+        - Chroma upscale
+    - V2V
+        - Hunyuan latent upscale
+    - T2A
+        - StableAudio
+        - MMAudio
+
 - Lora support with weights and blocks to merge
 - Animated latent preview (if supported by ComfyUI)
 - Config overrides to tune defaults for your system
@@ -39,6 +53,9 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - Localization support (English/Russian currently)
 - Many controls have tips and explanation (can be disabled in settings)
 - VRAM and speed optimizations: TeaCache, WaveSpeed, MultiGPU
+- Animated and batch previews during generation
+- Hide any model tabs you don't need
+- Danbooru tag completion
 
 ## Goals
 
