@@ -8,7 +8,13 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
 import { VideoPreview } from './VideoPreview';
 
-export const VideoResult = ({ title }: { title?: string }) => {
+export const VideoResult = ({
+    title,
+    rate_override,
+}: {
+    title?: string;
+    rate_override?: number;
+}) => {
     const results = useResult();
     const tr = useTranslate();
     const videoRef = useRef<HTMLVideoElement & HTMLImageElement>(null);
@@ -54,7 +60,7 @@ export const VideoResult = ({ title }: { title?: string }) => {
                     </VerticalBox>
                 );
             })}
-            <VideoPreview size={300} />
+            <VideoPreview size={300} rate_override={rate_override} />
         </VerticalBox>
     );
 };

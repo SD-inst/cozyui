@@ -5,7 +5,13 @@ import { useBooleanSetting } from '../../hooks/useSetting';
 import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
 
-export const VideoPreview = ({ size }: { size: number }) => {
+export const VideoPreview = ({
+    size,
+    rate_override,
+}: {
+    size: number;
+    rate_override?: number;
+}) => {
     const enabled = useBooleanSetting(settings.enable_previews);
     const status = useAppSelector((s) => s.progress.status);
     const ref = useRef<HTMLCanvasElement>(null);
@@ -34,8 +40,9 @@ export const VideoPreview = ({ size }: { size: number }) => {
         }
         let idx = 0;
         let frames: ImageBitmap[] = [];
+        const effective_rate = rate_override || rate;
         const interval = setInterval(() => {
-            const fn = '' + (idx * 24) / rate;
+            const fn = '' + (idx * 24) / effective_rate;
             // before rendering the first preview frame
             // update the frames from the ref so that animation never breaks
             if (!idx) {
@@ -72,11 +79,11 @@ export const VideoPreview = ({ size }: { size: number }) => {
             const left = 2;
             ctx.fillText(fn, left, top);
             ctx.strokeText(fn, left, top);
-        }, 1000 / rate);
+        }, 1000 / effective_rate);
         return () => {
             clearInterval(interval);
         };
-    }, [rate, size]);
+    }, [rate, rate_override, size]);
     return (
         <canvas
             ref={ref}
