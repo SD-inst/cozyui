@@ -16,25 +16,19 @@ import { SliderInput } from '../controls/SliderInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WanEndImage } from '../controls/WanEndImage';
+import { WanFLF2V } from '../controls/WanFLF2V';
 import { WanLengthInput } from '../controls/WanLengthInput';
 import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WFTab } from '../WFTab';
-import { WanFLF2V } from '../controls/WanFLF2V';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
-    const cfg = useWatch({ name: 'cfg' });
     return (
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
                 <WanEndImage name='use_end_image' />
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
-                <PromptInput
-                    name='neg_prompt'
-                    sx={{ mb: 3, display: cfg > 1 ? 'block' : 'none' }}
-                    defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
-                />
                 <HYSize name='size' defaultValue={720} />
                 <WanLengthInput />
                 <SliderInput name='steps' defaultValue={8} min={1} max={50} />
@@ -50,6 +44,11 @@ const Content = () => {
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
                     <WanRiflexToggle name='riflex' />
                     <CFGInput defaultValue={1} />
+                    <PromptInput
+                        name='neg_prompt'
+                        sx={{ mb: 3 }}
+                        defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
+                    />
                     <SliderInput
                         name='aug_strength'
                         min={0}
