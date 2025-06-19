@@ -10,7 +10,7 @@ import {
     DialogContent,
     DialogTitle,
     MenuItem,
-    TextField,
+    TextField
 } from '@mui/material';
 import { get } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -369,13 +369,13 @@ export const LoraInput = ({
                     </>
                 )}
                 renderOption={(props, option, _, ownerState) => {
-                    const { key, ...optionProps } = props;
                     return (
                         <ModelOption
-                            key={key}
-                            {...optionProps}
+                            {...props}
+                            key={option.id}
                             value={ownerState.getOptionLabel(option)}
                             id={option.id}
+                            minHeight={30}
                         />
                     );
                 }}
