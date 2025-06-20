@@ -256,7 +256,7 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             tagsctl.setOpen(false);
             return;
         }
-        tagsctl.setTag(matches[1]);
+        tagsctl.setTag(matches[1].toLowerCase());
         tagsctl.setOpen(true);
         let inc = undefined;
         if (tagsctl.open) {
