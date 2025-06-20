@@ -46,7 +46,7 @@ export const ModelOption = ({
         );
     }, [id, preview_root, previews]);
     return (
-        <Box {...props}>
+        <Box minHeight='60px !important' {...props}>
             {previews ? (
                 <>
                     <Box display='flex' justifyContent='center' width={50}>
@@ -57,7 +57,7 @@ export const ModelOption = ({
                     </Box>
                 </>
             ) : (
-                <Box sx={{wordBreak: 'break-word'}}>{value}</Box>
+                <Box sx={{ wordBreak: 'break-word' }}>{value}</Box>
             )}
         </Box>
     );

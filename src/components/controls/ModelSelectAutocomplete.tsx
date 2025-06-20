@@ -78,7 +78,14 @@ export const ModelSelectAutocomplete = ({
     );
     useRegisterHandler({ name: props.name, handler });
     return (
-        <Box display='flex' position='relative' gap={1} sx={sx}>
+        <Box
+            display='flex'
+            position='relative'
+            flexWrap={{ xs: 'wrap', sm: 'nowrap' }}
+            justifyContent='center'
+            gap={1}
+            sx={sx}
+        >
             <Autocomplete
                 onKeyUp={ceHanler}
                 fullWidth
@@ -112,7 +119,6 @@ export const ModelSelectAutocomplete = ({
                             value={ownerState.getOptionLabel(option)}
                             id={option.id}
                             previews={previews}
-                            minHeight={30}
                         />
                     );
                 }}

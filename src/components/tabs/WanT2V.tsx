@@ -46,6 +46,7 @@ const Content = () => {
                         name='model'
                         type='wan'
                         extraFilter={(m) => m.includes('T2V')}
+                        previews={false}
                     />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
                     <WanRiflexToggle name='riflex' />

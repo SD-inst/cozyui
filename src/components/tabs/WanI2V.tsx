@@ -40,6 +40,7 @@ const Content = () => {
                         extraFilter={(m) =>
                             m.includes('I2V') || m.includes('FLF2V')
                         }
+                        previews={false}
                     />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
                     <WanRiflexToggle name='riflex' />

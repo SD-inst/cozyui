@@ -10,7 +10,7 @@ import {
     DialogContent,
     DialogTitle,
     MenuItem,
-    TextField
+    TextField,
 } from '@mui/material';
 import { get } from 'lodash';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -329,7 +329,14 @@ export const LoraInput = ({
             };
         });
     return (
-        <Box display='flex' position='relative' gap={1} sx={sx}>
+        <Box
+            display='flex'
+            position='relative'
+            flexWrap={{ xs: 'wrap', sm: 'nowrap' }}
+            justifyContent='center'
+            gap={1}
+            sx={sx}
+        >
             <Autocomplete
                 onKeyUp={ceHanler}
                 renderTags={(values, getTagProps) =>
@@ -375,7 +382,6 @@ export const LoraInput = ({
                             key={option.id}
                             value={ownerState.getOptionLabel(option)}
                             id={option.id}
-                            minHeight={30}
                         />
                     );
                 }}
