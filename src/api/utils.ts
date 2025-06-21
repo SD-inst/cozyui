@@ -25,7 +25,7 @@ export const insertNode = (
     target_node_ids: string | string[],
     target_field: string,
     node: any,
-    node_offset: number = 0
+    output_index: number = 0
 ): string => {
     const new_node_id = getFreeNodeId(api) + '';
     api[new_node_id] = node;
@@ -35,7 +35,7 @@ export const insertNode = (
     ids.forEach((id) => {
         const input_node = api[id].inputs[target_field];
         node.inputs[target_field] = input_node;
-        api[id].inputs[target_field] = [new_node_id, node_offset];
+        api[id].inputs[target_field] = [new_node_id, output_index];
     });
     return new_node_id;
 };
