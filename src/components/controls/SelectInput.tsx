@@ -14,7 +14,7 @@ export type SelectInputProps = {
     )[];
     tooltip?: string;
     name: string;
-} & SelectProps;
+} & Omit<SelectProps, 'label'>;
 
 export type CustomSelectInputProps = Optional<
     SelectInputProps,
@@ -38,6 +38,7 @@ export const SelectInput = ({
             label={`controls.${props.name}`}
             selectRef={ref}
             {...field}
+            {...props}
         >
             {choices.map((c) => (
                 <MenuItem

@@ -21,6 +21,7 @@ import { WanLengthInput } from '../controls/WanLengthInput';
 import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WFTab } from '../WFTab';
 import { WanNAG } from '../controls/WanNAG';
+import { WanSampler } from '../controls/WanSampler';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -43,6 +44,7 @@ const Content = () => {
                         }
                         previews={false}
                     />
+                    <WanSampler name='sampler' />
                     <ToggleInput name='self_forcing_lora' defaultValue={true} />
                     <WanRiflexToggle name='riflex' />
                     <CFGInput defaultValue={1} />

@@ -1203,6 +1203,10 @@
                 "lora": {
                     "id": "handle"
                 },
+                "sampler": {
+                    "id": "27",
+                    "field": "scheduler"
+                },
                 "self_forcing_lora": {
                     "id": "skip"
                 },
@@ -1302,6 +1306,10 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "sampler": {
+                    "id": "27",
+                    "field": "scheduler"
                 },
                 "self_forcing_lora": {
                     "id": "skip"

@@ -91,6 +91,7 @@ export const WanNAG = ({
             border='1px gray solid'
             borderRadius={3}
             p={2}
+            mb={2}
             {...props}
         >
             <ToggleInputBase
