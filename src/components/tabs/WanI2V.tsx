@@ -20,6 +20,7 @@ import { WanFLF2V } from '../controls/WanFLF2V';
 import { WanLengthInput } from '../controls/WanLengthInput';
 import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WFTab } from '../WFTab';
+import { WanNAG } from '../controls/WanNAG';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -31,8 +32,8 @@ const Content = () => {
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
                 <HYSize name='size' defaultValue={720} />
                 <WanLengthInput />
-                <SliderInput name='steps' defaultValue={8} min={1} max={50} />
-                <FlowShiftInput defaultValue={10} />
+                <SliderInput name='steps' defaultValue={10} min={1} max={50} />
+                <FlowShiftInput defaultValue={8} />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'
@@ -50,6 +51,7 @@ const Content = () => {
                         sx={{ mb: 3 }}
                         defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
                     />
+                    <WanNAG name='nag' />
                     <SliderInput
                         name='aug_strength'
                         min={0}

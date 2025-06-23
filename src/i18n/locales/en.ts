@@ -116,7 +116,11 @@ const translation = {
         self_forcing_lora: 'use Self Forcing acceleration (14B only)',
         start_strength: 'start image strength',
         end_strength: 'end image strength',
-        use_end_image: 'use end image'
+        use_end_image: 'use end image',
+        nag: 'enable NAG',
+        nag_scale: 'NAG scale',
+        nag_tau: 'NAG tau',
+        nag_alpha: 'NAG alpha',
     },
     settings: {
         select_language: 'Select language',
@@ -177,6 +181,12 @@ const translation = {
         riflex: 'RIFLEx allows to create longer videos (>5 seconds) without looping. If you want your video to loop, set the length to 201 frames and disable RIFLEx.',
         upscale:
             'Also save the result as a lossless animated WEBP and allow sending it to the upscale tab for further refinement.',
+        nag: 'Normalized Attention Guidance allows using negative prompting in guidance-distilled models (or accelerated CFG models with CFG=1).',
+        nag_scale: 'Power of negative prompt.',
+        nag_alpha:
+            'Blending factor between positive and negative prompts, higher value means more higher power of negative prompt.',
+        nag_tau:
+            'Limiting factor to prevent the negative prompt going too far.',
     },
     toasts: {
         disconnected: 'Disconnected',

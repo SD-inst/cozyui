@@ -40,5 +40,18 @@ export const insertNode = (
     return new_node_id;
 };
 
+export const replaceNodeConnection = (
+    api: any,
+    target_node_id: string,
+    target_field: string,
+    node: any,
+    output_index: number = 0
+): string => {
+    const new_node_id = getFreeNodeId(api) + '';
+    api[new_node_id] = node;
+    api[target_node_id].inputs[target_field] = [new_node_id, output_index];
+    return new_node_id;
+};
+
 export const makeOutputUrl = (apiUrl: string, r: any) =>
     `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;

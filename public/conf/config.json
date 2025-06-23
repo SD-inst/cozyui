@@ -1226,6 +1226,11 @@
                     "i2v_encode_node_id": "88",
                     "clip_vision_node_id": "93",
                     "clip_vision_loader_node_id": "94"
+                },
+                "nag": {
+                    "id": "handle",
+                    "sampler_node_id": "27",
+                    "prompt_node_id": "16"
                 }
             },
             "handler_options": {
@@ -1305,6 +1310,11 @@
                     "id": "handle",
                     "field": "riflex_freq_index",
                     "node_id": "27"
+                },
+                "nag": {
+                    "id": "handle",
+                    "sampler_node_id": "27",
+                    "prompt_node_id": "16"
                 }
             },
             "handler_options": {
