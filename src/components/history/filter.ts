@@ -40,12 +40,13 @@ export const pkFromFilter = async (
         .split(' ')
         .map((w) => w.toLowerCase())
         .filter((w) => !!w);
-    const colls = !filter_words.length
-        ? [pinFilter[0](filter.pinned)]
-        : filter_words.map((w) => {
-              const coll = pinFilter[1](wordFilter[0](w), filter.pinned);
-              return additionalFilter ? coll.filter(additionalFilter) : coll;
-          });
+    const colls = (
+        !filter_words.length
+            ? [pinFilter[0](filter.pinned)]
+            : filter_words.map((w) =>
+                  pinFilter[1](wordFilter[0](w), filter.pinned)
+              )
+    ).map((coll) => (additionalFilter ? coll.filter(additionalFilter) : coll));
     const pks = await Promise.all(colls.map((c) => c.primaryKeys()));
     const pk_x = pks.reduce((a, b) => {
         const set = new Set(b);
