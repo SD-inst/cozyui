@@ -1,7 +1,6 @@
-import { Box, FormControlLabel, Switch, SwitchProps } from '@mui/material';
-import { useTranslate } from '../../i18n/I18nContext';
+import { SwitchProps } from '@mui/material';
 import { useController } from 'react-hook-form';
-import { HelpButton } from './HelpButton';
+import { ToggleInputBase } from './ToggleInputBase';
 
 export type ToggleInputProps = Omit<SwitchProps, 'defaultValue'> & {
     name: string;
@@ -11,23 +10,9 @@ export type ToggleInputProps = Omit<SwitchProps, 'defaultValue'> & {
 };
 
 export const ToggleInput = ({
-    label,
-    tooltip,
     defaultValue = false,
     ...props
 }: ToggleInputProps) => {
-    const tr = useTranslate();
-    const {
-        field: { value, ...field },
-    } = useController({ name: props.name, defaultValue });
-    return (
-        <Box position='relative'>
-            <FormControlLabel
-                sx={{ mt: 1 }}
-                label={label ? tr(label) : tr('controls.' + props.name)}
-                control={<Switch checked={value} {...field} {...props} />}
-            />
-            {tooltip && <HelpButton title={tooltip} />}
-        </Box>
-    );
+    const { field } = useController({ name: props.name, defaultValue });
+    return <ToggleInputBase {...field} {...props} />;
 };
