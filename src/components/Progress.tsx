@@ -2,7 +2,7 @@ import { Box, LinearProgress, Typography } from '@mui/material';
 import { useAppSelector } from '../redux/hooks';
 import { VerticalBox } from './VerticalBox';
 import { get } from 'lodash';
-import { useTaskDuration } from '../hooks/useTaskDuration';
+import { useTaskDuration, useTaskEta } from '../hooks/useTaskDuration';
 import { useEffect } from 'react';
 import { useTranslate } from '../i18n/I18nContext';
 import { statusEnum } from '../redux/progress';
@@ -12,6 +12,7 @@ export const Progress = () => {
         useAppSelector((s) => s.progress);
     const tr = useTranslate();
     const dur = useTaskDuration();
+    const eta = useTaskEta();
     const api = useAppSelector((s) => s.tab.api);
     const range = max - min;
     const perc = ((value - min) * 100) / range || 0;
@@ -37,7 +38,7 @@ export const Progress = () => {
                     {status === statusEnum.ERROR && status_message
                         ? ': ' + status_message
                         : ''}{' '}
-                    {dur ? `[${dur}]` : ''}
+                    {dur ? `[${dur}${eta ? `/${eta}` : ''}]` : ''}
                 </Typography>
             )}
             {queue > 1 ? (
