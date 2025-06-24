@@ -41,10 +41,14 @@ const translation = {
         audio: 'Аудио',
         download: 'Скачать',
         download_png: 'Скачать PNG',
+        blocks_to_swap: 'Выгружать блоков',
+        vace_blocks_to_swap: 'Выгружать блоков VACE',
         single_blocks: 'Единые блоки',
         double_blocks: 'Двойные блоки',
         offload_txt_in: 'Выгружать txt in',
         offload_img_in: 'Выгружать img in',
+        offload_txt_emb: 'Выгружать txt emb',
+        offload_img_emb: 'Выгружать img emb',
         block_swap: 'Включить выгрузку блоков (экономит VRAM, замедляет)',
         lora: 'LoRA',
         lora_reload: 'Перезагрузить список лор',
@@ -185,7 +189,8 @@ const translation = {
         nag_scale: 'Сила негативного промпта.',
         nag_alpha:
             'Фактор смешения между позитивным и негативным промптом, бо́льшие значения означают бо́льшую силу негативного промпта.',
-        nag_tau: 'Ограничивающий фактор, чтобы предотвратить слишком сильный вылет негативного промпта.',
+        nag_tau:
+            'Ограничивающий фактор, чтобы предотвратить слишком сильный вылет негативного промпта.',
     },
     toasts: {
         disconnected: 'Отключен',

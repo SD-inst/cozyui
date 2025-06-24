@@ -2,7 +2,7 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { Box } from '@mui/system';
 import { useTranslate } from '../../i18n/I18nContext';
-import { BlockSwapInput } from '../controls/BlockSwapInput';
+import { KJHYBlockSwapInput } from '../controls/KJHYBlockSwapInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -66,7 +66,7 @@ const Content = () => {
                         <KJAttentionSelectInput name='attention' />
                         <EnhanceVideoInput name='enhance_video' />
                         <TeaCacheInput name='tea_cache' defaultValue={0.2} />
-                        <BlockSwapInput name='block_swap' />
+                        <KJHYBlockSwapInput name='block_swap' />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />

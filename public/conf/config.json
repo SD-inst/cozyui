@@ -1235,6 +1235,10 @@
                     "id": "handle",
                     "sampler_node_id": "27",
                     "prompt_node_id": "16"
+                },
+                "block_swap": {
+                    "id": "handle",
+                    "loader_node_id": "22"
                 }
             },
             "handler_options": {
@@ -1323,6 +1327,10 @@
                     "id": "handle",
                     "sampler_node_id": "27",
                     "prompt_node_id": "16"
+                },
+                "block_swap": {
+                    "id": "handle",
+                    "loader_node_id": "22"
                 }
             },
             "handler_options": {

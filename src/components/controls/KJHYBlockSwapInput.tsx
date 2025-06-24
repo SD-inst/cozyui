@@ -14,7 +14,7 @@ type valueType = {
     offload_img_in: boolean;
 };
 
-export const BlockSwapInput = ({ ...props }) => {
+export const KJHYBlockSwapInput = ({ ...props }) => {
     const { handler_options } = useAPI();
     const tr = useTranslate();
     const handler = useCallback(

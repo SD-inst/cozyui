@@ -2,7 +2,7 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { mergeType } from '../../api/mergeType';
 import { useTranslate } from '../../i18n/I18nContext';
-import { BlockSwapInput } from '../controls/BlockSwapInput';
+import { KJHYBlockSwapInput } from '../controls/KJHYBlockSwapInput';
 import { DescribeButton } from '../controls/DescribeButton';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FileUpload } from '../controls/FileUpload';
@@ -75,7 +75,7 @@ const Content = () => {
                         />
                         <EnhanceVideoInput name='enhance_video' />
                         <TeaCacheInput name='tea_cache' defaultValue={0.15} />
-                        <BlockSwapInput name='block_swap' />
+                        <KJHYBlockSwapInput name='block_swap' />
                     </AccordionDetails>
                 </Accordion>
                 <SeedInput name='seed' defaultValue={1024} />
