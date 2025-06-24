@@ -62,7 +62,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 : t.mark !== markEnum.PINNED),
         [filter.pinned, newer, seconds]
     );
-    const handleDelete = useCallback(async () => {
+    const handleConfirmDelete = useCallback(async () => {
         const coll = await pkFromFilter(filterFunc);
         const cnt = coll.length;
         if (!cnt) {
@@ -72,7 +72,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             setOpenConfirm(true);
         }
     }, [filterFunc, pkFromFilter]);
-    const handleOK = useCallback(async () => {
+    const handleDelete = useCallback(async () => {
         const coll = await pkFromFilter(filterFunc);
         db.taskResults.bulkDelete(coll);
         setOpenConfirm(false);
@@ -112,7 +112,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                     }}
                 ></DialogContent>
                 <DialogActions>
-                    <Button onClick={handleOK}>{tr('controls.ok')}</Button>
+                    <Button onClick={handleDelete}>{tr('controls.ok')}</Button>
                     <Button onClick={() => setOpenConfirm(false)}>
                         {tr('controls.cancel')}
                     </Button>
@@ -205,7 +205,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                             startIcon={<Delete />}
                             color='error'
                             variant='outlined'
-                            onClick={handleDelete}
+                            onClick={handleConfirmDelete}
                         >
                             {tr('settings.clear', { cmp })}
                         </Button>
