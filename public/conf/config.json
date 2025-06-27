@@ -1359,6 +1359,16 @@
                     "id": "41",
                     "field": "image"
                 },
+                "append_image": {
+                    "id": "handle",
+                    "image_1_id": "41",
+                    "image_2_id": "64",
+                    "scale_id": "40"
+                },
+                "second_image": {
+                    "id": "64",
+                    "field": "image"
+                },
                 "prompt": {
                     "id": "6",
                     "field": "text"

@@ -125,7 +125,9 @@ const translation = {
         nag_scale: 'NAG scale',
         nag_tau: 'NAG tau',
         nag_alpha: 'NAG alpha',
-        send_back: 'Send back'
+        send_back: 'Send back',
+        append_image: 'Append image',
+        second_image: 'Second image',
     },
     settings: {
         select_language: 'Select language',
