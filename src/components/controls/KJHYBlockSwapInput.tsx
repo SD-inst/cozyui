@@ -3,7 +3,7 @@ import { useController } from 'react-hook-form';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useAPI';
 import { useTranslate } from '../../i18n/I18nContext';
 
 type valueType = {

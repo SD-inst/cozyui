@@ -10,7 +10,7 @@ import {
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useAPI } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useAPI';
 import { useGet } from '../../hooks/useGet';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';

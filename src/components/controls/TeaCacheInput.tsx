@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useAPI';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput, SliderInputProps } from './SliderInput';
 

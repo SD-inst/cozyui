@@ -2,7 +2,7 @@ import { Box, TextField, TextFieldProps } from '@mui/material';
 import { useCallback } from 'react';
 import { useController } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useAPI';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useRegisterHandler } from '../contexts/TabContext';
 

@@ -17,7 +17,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
 import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useConfigTab';
+import { useAPI } from '../../hooks/useAPI';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useTranslate } from '../../i18n/I18nContext';
 import { loraDefaults } from '../../redux/config';
