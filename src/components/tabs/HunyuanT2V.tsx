@@ -18,7 +18,7 @@ import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
-import { SendToUpscaleButton } from '../controls/SendToUpscaleButton';
+import { SendResultButton } from '../controls/SendResultButton';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
@@ -70,7 +70,7 @@ const Content = () => {
             >
                 <VideoResult />
                 <ResultOverrideContextProvider value={{ index: 1 }}>
-                    <SendToUpscaleButton
+                    <SendResultButton
                         targetTab='Hunyuan Upscale'
                         fields={['prompt', 'model', 'lora']}
                     />

@@ -18,16 +18,18 @@ import {
 } from './DownloadImageButton';
 import { ImagePreview } from './ImagePreview';
 import { LightboxSendToUpscaleButton } from './LightboxSendToUpscaleButton';
-import { SendToUpscaleButton } from './SendToUpscaleButton';
+import { SendResultButton } from './SendResultButton';
 
 export const ImageResult = ({
     title,
-    upscaleTargetTab,
-    upscaleFields,
+    sendTargetTab,
+    sendFields,
+    sendLabel,
 }: {
     title?: string;
-    upscaleTargetTab?: string;
-    upscaleFields?: string[];
+    sendTargetTab?: string;
+    sendFields?: string[];
+    sendLabel?: string;
 }) => {
     const results = useResult();
     const tr = useTranslate();
@@ -87,8 +89,8 @@ export const ImageResult = ({
                 toolbar={{
                     buttons: [
                         <LightboxSendToUpscaleButton
-                            targetTab={upscaleTargetTab}
-                            fields={upscaleFields}
+                            targetTab={sendTargetTab}
+                            fields={sendFields}
                             icon
                         />,
                         <DownloadImageButtonLightbox />,
@@ -101,9 +103,10 @@ export const ImageResult = ({
             />
             <ImagePreview size={400} />
             {results.length === 1 && (
-                <SendToUpscaleButton
-                    targetTab={upscaleTargetTab}
-                    fields={upscaleFields}
+                <SendResultButton
+                    targetTab={sendTargetTab}
+                    fields={sendFields}
+                    label={sendLabel}
                 />
             )}
         </VerticalBox>

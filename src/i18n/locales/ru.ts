@@ -124,6 +124,7 @@ const translation = {
         nag_scale: 'NAG масштаб',
         nag_tau: 'NAG тау',
         nag_alpha: 'NAG альфа',
+        send_back: 'Отправить назад',
     },
     settings: {
         select_language: 'Выбор языка',

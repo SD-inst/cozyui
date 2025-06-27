@@ -1,12 +1,11 @@
 import { Box } from '@mui/material';
-import { CFGInput } from '../controls/CFGInput';
-import { CompileModelToggle } from '../controls/CompileModelToggle';
+import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
+import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYSize } from '../controls/HYSize';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
-import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
@@ -19,11 +18,8 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
+                <FileUpload name='image' />
                 <PromptInput name='prompt' />
-                <PromptInput
-                    name='neg_prompt'
-                    defaultValue='low quality, jpeg, 3d, realistic'
-                />
                 <Box display='flex' flexDirection='row' width='100%'>
                     <Box display='flex' flexDirection='column' flex={1}>
                         <HYSize name='width' defaultValue={832} max={2048} />
@@ -36,19 +32,9 @@ const Content = () => {
                         />
                     </Box>
                 </Box>
-                <SliderInput name='steps' defaultValue={30} min={1} max={50} />
-                <CFGInput defaultValue={6} max={10} />
-                <SliderInput
-                    name='rescale_cfg'
-                    defaultValue={0.5}
-                    min={0}
-                    max={1}
-                    step={0.01}
-                />
-                <SamplerSelectInput
-                    name='sampler'
-                    defaultValue='res_multistep'
-                />
+                <SliderInput name='steps' defaultValue={20} min={1} max={40} />
+                <GuidanceInput defaultValue={2.5} step={0.1} />
+                <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />
                 <SchedulerSelectInput name='scheduler' defaultValue='simple' />
                 <SliderInput
                     name='batch_size'
@@ -56,9 +42,7 @@ const Content = () => {
                     max={9}
                     defaultValue={1}
                 />
-                <ModelSelectAutocomplete name='model' type='chroma' />
-                <LoraInput name='lora' type='flux' sx={{ mt: 2 }} />
-                <CompileModelToggle />
+                <LoraInput name='lora' type='flux' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
@@ -68,8 +52,9 @@ const Content = () => {
                 alignItems='center'
             >
                 <ImageResult
-                    sendTargetTab='Chroma Upscale'
-                    sendFields={['prompt', 'neg_prompt', 'model', 'lora']}
+                    sendTargetTab='Flux Kontext'
+                    sendFields={[]}
+                    sendLabel='send_back'
                 />
             </GridRight>
             <GridBottom>
@@ -79,6 +64,11 @@ const Content = () => {
     );
 };
 
-export const ChromaTab = (
-    <WFTab label='Chroma' value='Chroma' group='T2I' content={<Content />} />
+export const FluxKontextTab = (
+    <WFTab
+        label='Flux Kontext'
+        value='Flux Kontext'
+        group='I2I'
+        content={<Content />}
+    />
 );

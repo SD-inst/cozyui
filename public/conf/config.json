@@ -1351,6 +1351,70 @@
             "defaults": {
                 "model": "wan/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors"
             }
+        },
+        "Flux Kontext": {
+            "api": "api/flux_kontext.json",
+            "controls": {
+                "image": {
+                    "id": "41",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "6",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "61",
+                    "field": "value"
+                },
+                "height": {
+                    "id": "62",
+                    "field": "value"
+                },
+                "guidance": {
+                    "id": "26",
+                    "field": "guidance"
+                },
+                "batch_size": {
+                    "id": "27",
+                    "field": "batch_size"
+                },
+                "steps": {
+                    "id": "17",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "17",
+                    "field": "scheduler"
+                },
+                "sampler": {
+                    "id": "16",
+                    "field": "sampler_name"
+                },
+                "seed": {
+                    "id": "63",
+                    "field": "value"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "12",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["30"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "9",
+                "type": "images"
+            }
         }
     },
     "models": {

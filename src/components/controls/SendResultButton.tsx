@@ -1,6 +1,6 @@
-import { ZoomOutMap } from '@mui/icons-material';
+import { Reply } from '@mui/icons-material';
 import { Box, Button, ButtonProps } from '@mui/material';
-import { useSendToUpscale } from '../../hooks/useSendToUpscale';
+import { useSendResult } from '../../hooks/useSendToUpscale';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export type SendToUpscaleButtonProps = ButtonProps & {
@@ -8,18 +8,20 @@ export type SendToUpscaleButtonProps = ButtonProps & {
     fields?: string[];
     index?: number;
     icon?: boolean;
+    label?: string;
 };
 
-export const SendToUpscaleButton = ({
+export const SendResultButton = ({
     targetTab,
     fields,
     index = 0,
     icon = false,
     onClick,
+    label = 'send_to_upscale',
     ...props
 }: SendToUpscaleButtonProps) => {
     const tr = useTranslate();
-    const handleSend = useSendToUpscale({ targetTab, fields, index });
+    const handleSend = useSendResult({ targetTab, fields, index });
     if (!handleSend) {
         return null;
     }
@@ -39,7 +41,7 @@ export const SendToUpscaleButton = ({
                     size='small'
                     {...props}
                 >
-                    <ZoomOutMap />
+                    <Reply transform='scale(-1, 1)' />
                 </Button>
             </Box>
         );
@@ -51,7 +53,7 @@ export const SendToUpscaleButton = ({
                 onClick={handleClick}
                 {...props}
             >
-                {tr('controls.send_to_upscale')}
+                {tr('controls.' + label)}
             </Button>
         );
     }

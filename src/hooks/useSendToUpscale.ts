@@ -7,7 +7,7 @@ import { useApiURL } from './useApiURL';
 import { useResult } from './useResult';
 import { useTranslate } from '../i18n/I18nContext';
 
-export const useSendToUpscale = ({
+export const useSendResult = ({
     targetTab,
     fields,
     index = 0,

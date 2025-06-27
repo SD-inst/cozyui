@@ -32,6 +32,7 @@ import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
 import { TagLoader } from './components/controls/TagAutocomplete';
 import { WanI2VTab } from './components/tabs/WanI2V';
 import { WanT2VTab } from './components/tabs/WanT2V';
+import { FluxKontextTab } from './components/tabs/FluxKontext';
 
 function App() {
     return (
@@ -47,6 +48,7 @@ function App() {
                                 {HunyanT2VTab}
                                 {WanT2VTab}
                                 {ChromaTab}
+                                {FluxKontextTab}
                                 {WanI2VTab}
                                 {HunyanI2VTab}
                                 {FramePackI2VTab}
