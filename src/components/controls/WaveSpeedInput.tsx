@@ -1,6 +1,15 @@
+import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { SliderInput } from './SliderInput';
 
 export const WaveSpeedInput = () => {
+    const { setValue, watch } = useFormContext();
+    const nag = watch('nag');
+    useEffect(() => {
+        if (nag && nag.enabled) {
+            setValue('wave_speed_maxhit', 0);
+        }
+    }, [nag, setValue]);
     return (
         <>
             <SliderInput
@@ -16,6 +25,7 @@ export const WaveSpeedInput = () => {
                 max={10}
                 step={1}
                 defaultValue={2}
+                disabled={nag && nag.enabled}
                 name='wave_speed_maxhit'
                 tooltip='wave_speed_maxhit'
             />

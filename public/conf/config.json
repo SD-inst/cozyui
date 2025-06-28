@@ -7,6 +7,9 @@
                     "id": "8",
                     "field": "text"
                 },
+                "neg_prompt": {
+                    "id": "skip"
+                },
                 "model": {
                     "id": "handle",
                     "node_id": "13",
@@ -101,6 +104,14 @@
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "6"
+                },
+                "nag": {
+                    "id": "handle",
+                    "sampler_node_id": "5",
+                    "prompt_node_id": "8",
+                    "guidance_node_id": "7",
+                    "latent_node_id": "14",
+                    "model_node_id": "15"
                 }
             },
             "handler_options": {

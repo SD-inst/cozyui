@@ -26,6 +26,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
+import { HYNAG } from '../controls/HYNAG';
 
 const Content = () => {
     return (
@@ -55,6 +56,7 @@ const Content = () => {
                     <SchedulerSelectInput name='scheduler' />
                     <VirtualVRAMSliderInput name='virtual_vram' />
                     <WaveSpeedInput />
+                    <HYNAG name='nag' />
                     <HYRiflexInput name='riflex' />
                     <UpscaleToggle name='allow_upscale' />
                     <CompileModelToggle />
