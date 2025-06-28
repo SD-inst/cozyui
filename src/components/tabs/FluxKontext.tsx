@@ -1,7 +1,10 @@
-import { Box } from '@mui/material';
-import { useCallback } from 'react';
-import { useWatch } from 'react-hook-form';
+import { Cancel } from '@mui/icons-material';
+import { Box, Button, Typography } from '@mui/material';
+import { useCallback, useEffect } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { replaceNodeConnection } from '../../api/utils';
+import { useResult } from '../../hooks/useResult';
+import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { FileUpload } from '../controls/FileUpload';
@@ -20,6 +23,22 @@ import { SwapButton } from '../controls/SwapButton';
 import { ToggleInput } from '../controls/ToggleInput';
 import { WFTab } from '../WFTab';
 
+const useLatents = (name: string) => {
+    const latents = useResult({ index: 1 });
+    const { setValue } = useFormContext();
+    const setLatents = useCallback(() => {
+        if (!latents || latents.length != 1) {
+            return;
+        }
+        setValue(name, latents[0].filename + ' [output]');
+    }, [latents, name, setValue]);
+    const resetLatents = useCallback(
+        () => setValue(name, ''),
+        [name, setValue]
+    );
+    return { setLatents, resetLatents };
+};
+
 const AppendImage = ({
     name,
     upload_name,
@@ -27,6 +46,8 @@ const AppendImage = ({
     name: string;
     upload_name: string;
 }) => {
+    const { getValues } = useFormContext();
+    const { resetLatents } = useLatents('latents');
     const handler = useCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (
@@ -53,24 +74,109 @@ const AppendImage = ({
                 },
             };
             replaceNodeConnection(api, control.scale_id, 'image', concatNode);
+            api[control.image_2_id].inputs.image = getValues(upload_name);
         },
-        []
+        [getValues, upload_name]
     );
     useRegisterHandler({ name, handler });
     const enabled = useWatch({ name });
     return (
         <Box>
             <ToggleInput name={name} />
-            {enabled && <FileUpload name={upload_name} />}
+            {enabled && (
+                <FileUpload name={upload_name} onUpload={resetLatents} />
+            )}
         </Box>
     );
 };
 
+const LoadLatents = ({ name }: { name: string }) => {
+    const handler = useCallback(
+        (api: any, value: boolean, control?: controlType) => {
+            if (!value || !control || !control.reference_node_id) {
+                return;
+            }
+            const loadLatentNode = {
+                inputs: {
+                    latent: value,
+                },
+                class_type: 'LoadLatent',
+                _meta: {
+                    title: 'LoadLatent',
+                },
+            };
+            replaceNodeConnection(
+                api,
+                control.reference_node_id,
+                'latent',
+                loadLatentNode
+            );
+        },
+        []
+    );
+    useRegisterHandler({ name, handler });
+    const { watch, setValue } = useFormContext();
+    const tr = useTranslate();
+    const latents = watch(name);
+    useEffect(() => {
+        if (latents === undefined) {
+            setValue(name, '');
+        }
+    }, [latents, name, setValue]);
+    if (!latents) {
+        return null;
+    } else {
+        return (
+            <Box display='flex' gap={1} alignItems='center'>
+                <Typography variant='body2' color='info'>
+                    {tr('controls.latents_loaded')}
+                </Typography>
+                <Button
+                    variant='text'
+                    size='small'
+                    onClick={() => setValue(name, '')}
+                >
+                    <Cancel />
+                </Button>
+            </Box>
+        );
+    }
+};
+
 const Content = () => {
+    const { setLatents, resetLatents } = useLatents('latents');
+    const { setValue } = useFormContext();
+    const updateSize = useCallback(
+        async (file: File) => {
+            const img = new Image();
+            img.src = URL.createObjectURL(file);
+            img.onload = () => {
+                let width = img.width;
+                let height = img.height;
+                const size = width * height;
+                if (size > 1500000 || size < 1000000) {
+                    [width, height] = [
+                        (width / Math.sqrt(size)) * Math.sqrt(1000000),
+                        (height / Math.sqrt(size)) * Math.sqrt(1000000),
+                    ];
+                }
+                setValue('width', Math.ceil(width - (width % 16)));
+                setValue('height', Math.ceil(height - (height % 16)));
+            };
+        },
+        [setValue]
+    );
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' />
+                <FileUpload
+                    name='image'
+                    onUpload={(file: File) => {
+                        updateSize(file);
+                        resetLatents();
+                    }}
+                />
+                <LoadLatents name='latents' />
                 <AppendImage name='append_image' upload_name='second_image' />
                 <PromptInput name='prompt' />
                 <Box display='flex' flexDirection='row' width='100%'>
@@ -108,6 +214,7 @@ const Content = () => {
                     sendTargetTab='Flux Kontext'
                     sendFields={[]}
                     sendLabel='send_back'
+                    sendOnClick={setLatents}
                 />
             </GridRight>
             <GridBottom>

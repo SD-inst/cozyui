@@ -127,6 +127,7 @@ const translation = {
         send_back: 'Отправить назад',
         append_image: 'Добавить изображение',
         second_image: 'Второе изображение',
+        latents_loaded: 'Используются латенты, не изображение (выше качество)',
     },
     settings: {
         select_language: 'Выбор языка',

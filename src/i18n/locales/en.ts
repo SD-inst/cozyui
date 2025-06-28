@@ -128,6 +128,7 @@ const translation = {
         send_back: 'Send back',
         append_image: 'Append image',
         second_image: 'Second image',
+        latents_loaded: 'Using latents, not image (better quality)'
     },
     settings: {
         select_language: 'Select language',

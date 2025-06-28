@@ -42,11 +42,13 @@ const video_node = (video: string) => ({
 
 export const FileUpload = ({
     type = UploadType.IMAGE,
+    onUpload,
     ...props
 }: {
     name: string;
     label?: string;
     type?: UploadType;
+    onUpload?: (file: File) => void;
 }) => {
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
@@ -84,7 +86,7 @@ export const FileUpload = ({
     );
     useRegisterHandler({ name: props.name, handler });
     const { mutate } = useMutation({
-        onMutate: (files: File[]) => {
+        onMutate: async (files: File[]) => {
             const formData = new FormData();
             const file = new File(
                 [files[0]],
@@ -92,23 +94,25 @@ export const FileUpload = ({
                 { type: files[0].type }
             );
             formData.append('image', file);
-            fetch(apiUrl + '/api/upload/image', {
-                method: 'POST',
-                body: formData,
-            })
-                .then((r) => r.json())
-                .then((j) => {
-                    j.filename = j.name;
-                    delete j.name;
-                    field.onChange(j.filename);
-                })
-                .catch((e) => toast(tr('toasts.error_uploading', { err: e })));
+            try {
+                const r = await fetch(apiUrl + '/api/upload/image', {
+                    method: 'POST',
+                    body: formData,
+                });
+                const j = await r.json();
+                j.filename = j.name;
+                delete j.name;
+                field.onChange(j.filename);
+                if (onUpload && j.filename) {
+                    onUpload(file);
+                }
+            } catch (e) {
+                toast(tr('toasts.error_uploading', { err: e }));
+            }
         },
     });
     const onDrop = useCallback(
-        (acceptedFiles: any) => {
-            mutate(acceptedFiles);
-        },
+        (acceptedFiles: any) => mutate(acceptedFiles),
         [mutate]
     );
     const accept = useMemo(() => {

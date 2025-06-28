@@ -13,4 +13,10 @@ export const defaultValue: overrideType = {};
 
 export const ResultOverrideContext = createContext(defaultValue);
 
-export const useResultOverride = () => useContext(ResultOverrideContext);
+export const useResultOverride = (override?: overrideType) => {
+    const result = useContext(ResultOverrideContext);
+    if (override) {
+        return override;
+    }
+    return result;
+};

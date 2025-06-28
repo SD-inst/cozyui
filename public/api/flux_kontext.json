@@ -231,5 +231,15 @@
         "_meta": {
             "title": "Load Second Image"
         }
+    },
+    "65": {
+        "inputs": {
+            "filename_prefix": ["59", 0],
+            "samples": ["13", 0]
+        },
+        "class_type": "SaveLatent",
+        "_meta": {
+            "title": "SaveLatent"
+        }
     }
 }

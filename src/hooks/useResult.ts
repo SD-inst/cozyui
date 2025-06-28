@@ -1,5 +1,6 @@
 import { get, merge } from 'lodash';
 import {
+    overrideType,
     resultsOptionsType,
     useResultOverride,
 } from '../components/contexts/ResultOverrideContext';
@@ -13,22 +14,22 @@ export const emptyResultParam: resultsOptionsType = {
 
 const emptyResult: any[] = [];
 
-export const useResultParam = () => {
+export const useResultParam = (override?: overrideType) => {
     const tab_name = useTabName();
     const result = useAppSelector((s) =>
         get(s, ['config', 'tabs', tab_name, 'result'], emptyResultParam)
     );
-    const { index, ...override } = useResultOverride();
+    const { index, ...overrideCtx } = useResultOverride(override);
     if (Array.isArray(result)) {
-        return merge({}, result[index || 0], override);
+        return merge({}, result[index || 0], overrideCtx);
     }
-    return merge({}, result, override);
+    return merge({}, result, overrideCtx);
 };
 
-export const useResult = () => {
+export const useResult = (override?: overrideType) => {
     const tab_name = useTabName();
     const result = useAppSelector((s) => s.tab.result);
-    const { id, type } = useResultParam();
+    const { id, type } = useResultParam(override);
     if (!id || !type) {
         return emptyResult;
     }

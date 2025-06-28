@@ -25,11 +25,13 @@ export const ImageResult = ({
     sendTargetTab,
     sendFields,
     sendLabel,
+    sendOnClick,
 }: {
     title?: string;
     sendTargetTab?: string;
     sendFields?: string[];
     sendLabel?: string;
+    sendOnClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
     const results = useResult();
     const tr = useTranslate();
@@ -107,6 +109,7 @@ export const ImageResult = ({
                     targetTab={sendTargetTab}
                     fields={sendFields}
                     label={sendLabel}
+                    onClick={sendOnClick}
                 />
             )}
         </VerticalBox>
