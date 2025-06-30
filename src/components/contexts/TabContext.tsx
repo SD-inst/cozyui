@@ -10,6 +10,7 @@ import {
     useEffect,
 } from 'react';
 import { controlType } from '../../redux/config';
+import { useCurrentTab } from '../../hooks/useCurrentTab';
 
 export type handlerType = {
     [control_name: string]: (
@@ -57,6 +58,12 @@ export const useCtrlEnter = () => {
 export const useTabName = () => {
     const { tab_name } = useContext(TabContext);
     return tab_name;
+};
+
+export const useIsCurrentTab = () => {
+    const { tab_name } = useContext(TabContext);
+    const current_tab = useCurrentTab();
+    return tab_name === current_tab;
 };
 
 export const useRegisterHandler = ({

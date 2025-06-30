@@ -1,14 +1,14 @@
 import { Box, Link, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useTranslate } from '../../i18n/I18nContext';
-import { UploadType } from './UploadType';
-import toast from 'react-hot-toast';
-import { useRegisterHandler } from '../contexts/TabContext';
 import { controlType } from '../../redux/config';
+import { useIsCurrentTab, useRegisterHandler } from '../contexts/TabContext';
+import { UploadType } from './UploadType';
 
 const style = {
     maxWidth: 200,
@@ -138,6 +138,30 @@ export const FileUpload = ({
         onDrop,
         accept,
     });
+    const handlePaste = useCallback(
+        (e: ClipboardEvent) => {
+            const items = e.clipboardData?.items;
+            if (!items) {
+                return;
+            }
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.kind === 'file' && item.type.startsWith('image/')) {
+                    const file = item.getAsFile();
+                    onDrop([file]);
+                    return;
+                }
+            }
+        },
+        [onDrop]
+    );
+    const isCurrentTab = useIsCurrentTab();
+    useEffect(() => {
+        if (isCurrentTab) {
+            document.addEventListener('paste', handlePaste);
+        }
+        return () => document.removeEventListener('paste', handlePaste);
+    }, [isCurrentTab, handlePaste]);
     return (
         <Box mb={2} display='flex' flexDirection='column'>
             <Typography variant='body1'>
