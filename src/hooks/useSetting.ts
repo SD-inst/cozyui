@@ -8,7 +8,7 @@ export const useBooleanSetting = (name: settings) => {
             return (
                 (await db.settings.where({ name }).first())?.value === 'true'
             );
-        }) ?? false
+        }, [name]) ?? false
     );
 };
 
@@ -30,7 +30,7 @@ export const useStringSetting = (
                 (await db.settings.where({ name }).first())?.value ??
                 defaultValue
             );
-        }, [defaultValue]) ?? (undefinedAwait ? undefined : defaultValue)
+        }, [defaultValue, name]) ?? (undefinedAwait ? undefined : defaultValue)
     );
 };
 
@@ -47,7 +47,7 @@ export const useNumberSetting = (
                 .then((v) =>
                     v !== undefined ? parseInt(v.value) : defaultValue
                 );
-        }, [defaultValue]) ?? (undefinedAwait ? undefined : defaultValue)
+        }, [defaultValue, name]) ?? (undefinedAwait ? undefined : defaultValue)
     );
 };
 
@@ -66,6 +66,6 @@ export const useMultiSetting = (
                         ? (JSON.parse(v.value) as string[])
                         : defaultValue
                 );
-        }, [defaultValue]) ?? (undefinedAwait ? undefined : defaultValue)
+        }, [defaultValue, name]) ?? (undefinedAwait ? undefined : defaultValue)
     );
 };

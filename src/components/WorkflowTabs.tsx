@@ -61,7 +61,7 @@ const ValuesRestore = () => {
     const [initialized, setInitialized] = useState(false);
     const idb = useLiveQuery(
         async () => (await db.formState.get(tab_name)) ?? null,
-        [tab]
+        [tab_name]
     );
     const setValue = useRestoreValues();
     useEffect(() => {

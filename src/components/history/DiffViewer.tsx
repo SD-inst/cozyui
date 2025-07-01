@@ -44,7 +44,7 @@ const VideoCompare = () => {
         Promise.all([
             db.taskResults.get(A_id || 0),
             db.taskResults.get(B_id || 0),
-        ])
+        ]), [A_id, B_id]
     );
     if (!tasks || !tasks[0] || !tasks[1]) {
         return null;

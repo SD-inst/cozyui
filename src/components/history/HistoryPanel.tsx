@@ -79,7 +79,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             .limit(page_size)
             .reverse()
             .sortBy('timestamp');
-    }, [page, page_size, prompt, pinned]);
+    }, [page, prompt, pinned]);
     const ref = useRef<HTMLElement>(null);
     return (
         <Accordion

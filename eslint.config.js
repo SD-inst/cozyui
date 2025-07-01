@@ -25,6 +25,12 @@ export default tseslint.config(
             ],
             'no-warning-comments': 'warn',
             '@typescript-eslint/no-explicit-any': 'off',
+            'react-hooks/exhaustive-deps': [
+                'error',
+                {
+                    additionalHooks: '(useLiveQuery)',
+                },
+            ],
         },
     }
 );
