@@ -16,16 +16,16 @@ import {
     useFormContext,
     useWatch,
 } from 'react-hook-form';
+import { useCurrentTab } from '../hooks/useCurrentTab';
 import { useHiddenTabs } from '../hooks/useHiddenTabs';
 import { useSetDefaults } from '../hooks/useSetDefaults';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
-import { HiddenTabsContext } from './contexts/HiddenTabsContext';
+import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 import { db } from './history/db';
 import { VerticalBox } from './VerticalBox';
-import { useCurrentTab } from '../hooks/useCurrentTab';
 
 const useRestoreValues = () => {
     const tab_name = useTabName();
@@ -234,8 +234,11 @@ const useScroller = (root: HTMLDivElement | null) => {
 export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const current_tab = useCurrentTab();
     const dispatch = useAppDispatch();
-    const { setWorkflowTabs, setWorkflowTabGroups, workflowTabGroups } =
-        useContext(HiddenTabsContext);
+    const {
+        setWorkflowTabs,
+        setWorkflowTabGroups,
+        workflowTabGroups,
+    } = useContext(WorkflowTabsContext);
     const hiddenTabs = useHiddenTabs();
     const visibleTabs = useMemo(() => {
         if (hiddenTabs === undefined) {

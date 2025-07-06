@@ -1,13 +1,13 @@
 import { Box, Checkbox, FormControlLabel, Typography } from '@mui/material';
 import { useContext } from 'react';
-import { HiddenTabsContext } from '../contexts/HiddenTabsContext';
+import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
 import { db } from '../history/db';
 import { settings } from '../../hooks/settings';
 import { useHiddenTabs } from '../../hooks/useHiddenTabs';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export const HiddenTabs = ({ ...props }) => {
-    const { workflowTabs } = useContext(HiddenTabsContext);
+    const { workflowTabs } = useContext(WorkflowTabsContext);
     const hiddenTabs = useHiddenTabs();
     const tr = useTranslate();
     return (

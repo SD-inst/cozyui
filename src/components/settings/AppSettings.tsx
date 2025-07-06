@@ -20,15 +20,15 @@ import { HiddenTabs } from './HiddenTabs';
 import { SettingNumber } from './SettingNumber';
 import { SettingMultichoice } from './SettingMultichoice';
 import {
-    HiddenTabsContext,
+    WorkflowTabsContext,
     useFilteredTabs,
-} from '../contexts/HiddenTabsContext';
+} from '../contexts/WorkflowTabsContext';
 
 export const AppSettings = () => {
     const tr = useTranslate();
     const save_history = useBooleanSetting(settings.save_history);
     const tag_enabled = useBooleanSetting(settings.tag_completion);
-    const { workflowTabs } = useContext(HiddenTabsContext);
+    const { workflowTabs } = useContext(WorkflowTabsContext);
     const T2Itabs = useFilteredTabs('T2I');
     const ref = useRef<HTMLElement>(null);
     return (

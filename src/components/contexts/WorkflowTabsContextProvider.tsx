@@ -2,17 +2,18 @@ import { PropsWithChildren, useCallback, useState } from 'react';
 import {
     defaultValue,
     groupType,
-    HiddenTabsContext,
-    HiddenTabsType,
-} from './HiddenTabsContext';
+    WorkflowTabsContext,
+    WorkflowTabsType,
+    receiverType
+} from './WorkflowTabsContext';
 
-export const HiddenTabsContextProvider = ({
+export const WorkflowTabsContextProvider = ({
     value,
     ...props
 }: {
-    value?: HiddenTabsType;
+    value?: WorkflowTabsType;
 } & PropsWithChildren) => {
-    const [state, setState] = useState<HiddenTabsType>(defaultValue);
+    const [state, setState] = useState<WorkflowTabsType>(defaultValue);
     const setWorkflowTabs = useCallback(
         (workflowTabs: string[]) => setState((v) => ({ ...v, workflowTabs })),
         []
@@ -22,16 +23,23 @@ export const HiddenTabsContextProvider = ({
             setState((v) => ({ ...v, workflowTabGroups })),
         []
     );
+    const setReceivers = useCallback((receivers: receiverType) => {
+        setState((v) => ({
+            ...v,
+            receivers,
+        }));
+    }, []);
     return (
-        <HiddenTabsContext.Provider
+        <WorkflowTabsContext.Provider
             value={{
                 ...state,
                 setWorkflowTabs,
                 setWorkflowTabGroups,
+                setReceivers,
                 ...value,
             }}
         >
             {props.children}
-        </HiddenTabsContext.Provider>
+        </WorkflowTabsContext.Provider>
     );
 };

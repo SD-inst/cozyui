@@ -27,7 +27,7 @@ import { HiDreamTab } from './components/tabs/HiDream';
 import { FramePackI2VTab } from './components/tabs/FramePackI2V';
 import { FluxTab } from './components/tabs/Flux';
 import { ChromaTab } from './components/tabs/Chroma';
-import { HiddenTabsContextProvider } from './components/contexts/HiddenTabsContextProvider';
+import { WorkflowTabsContextProvider } from './components/contexts/WorkflowTabsContextProvider';
 import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
 import { TagLoader } from './components/controls/TagAutocomplete';
 import { WanI2VTab } from './components/tabs/WanI2V';
@@ -43,7 +43,7 @@ function App() {
                 <ResultOverrideContextProvider>
                     <WSReceiver />
                     <VerticalBox>
-                        <HiddenTabsContextProvider>
+                        <WorkflowTabsContextProvider>
                             <WorkflowTabs>
                                 {HunyanT2VTab}
                                 {WanT2VTab}
@@ -69,7 +69,7 @@ function App() {
                                 <HistoryPanel />
                                 <AppSettings />
                             </FilterContextProvider>
-                        </HiddenTabsContextProvider>
+                        </WorkflowTabsContextProvider>
                     </VerticalBox>
                     <ThemedToaster />
                     <NotificationSound />

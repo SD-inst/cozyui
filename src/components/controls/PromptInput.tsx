@@ -14,7 +14,7 @@ import { useBooleanSetting, useMultiSetting } from '../../hooks/useSetting';
 import { useTagsController } from '../../hooks/useTagsController';
 import {
     useFilteredTabs
-} from '../contexts/HiddenTabsContext';
+} from '../contexts/WorkflowTabsContext';
 import { Tags } from '../history/db';
 import { TagSuggestion } from './TagSuggestion';
 import { TextInput, TextInputProps } from './TextInput';
