@@ -125,6 +125,7 @@ const translation = {
         nag_scale: 'NAG scale',
         nag_tau: 'NAG tau',
         nag_alpha: 'NAG alpha',
+        nag_sigma_end: 'NAG sigma end',
         send_back: 'Send back',
         append_image: 'Append image',
         second_image: 'Second image',
@@ -195,6 +196,7 @@ const translation = {
             'Blending factor between positive and negative prompts, higher value means more higher power of negative prompt.',
         nag_tau:
             'Limiting factor to prevent the negative prompt going too far.',
+        nag_sigma_end: 'Stop applying NAG at this sigma, provides speed boost with some quality loss. Safe to leave at 0.9.'
     },
     toasts: {
         disconnected: 'Disconnected',

@@ -2,12 +2,11 @@ import { Box } from '@mui/material';
 import { useCallback } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { insertNode, replaceNodeConnection } from '../../api/utils';
-import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { PromptInput } from './PromptInput';
 import { TextInputBase } from './TextInputBase';
 import { ToggleInputBase } from './ToggleInputBase';
-import { PromptInput } from './PromptInput';
 
 type valueType = {
     enabled: boolean;
@@ -25,7 +24,6 @@ export const HYNAG = ({
     name: string;
     neg_prompt_field?: string;
 }) => {
-    const tr = useTranslate();
     const {
         field: { value, onChange },
     } = useController({
@@ -115,7 +113,7 @@ export const HYNAG = ({
             {...props}
         >
             <ToggleInputBase
-                label={tr(`controls.${name}`)}
+                name={name}
                 value={value.enabled}
                 onChange={(_, enabled) => onChange({ ...value, enabled })}
                 tooltip='nag'

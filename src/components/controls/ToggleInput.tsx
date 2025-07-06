@@ -13,6 +13,8 @@ export const ToggleInput = ({
     defaultValue = false,
     ...props
 }: ToggleInputProps) => {
-    const { field } = useController({ name: props.name, defaultValue });
-    return <ToggleInputBase {...field} {...props} />;
+    const {
+        field: { ref, ...rest },
+    } = useController({ name: props.name, defaultValue });
+    return <ToggleInputBase baseRef={ref} {...rest} {...props} />;
 };

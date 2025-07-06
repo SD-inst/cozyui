@@ -9,7 +9,9 @@ export type TextInputProps = {
 } & TextFieldProps;
 
 export const TextInput = ({ defaultValue = '', ...props }: TextInputProps) => {
-    const ctl = useController({
+    const {
+        field: { ref, ...rest },
+    } = useController({
         name: props.name,
         defaultValue: defaultValue,
     });
@@ -18,9 +20,10 @@ export const TextInput = ({ defaultValue = '', ...props }: TextInputProps) => {
             sx={{
                 mb: 1,
             }}
+            baseRef={ref}
             variant='filled'
             fullWidth
-            {...ctl.field}
+            {...rest}
             {...props}
         />
     );

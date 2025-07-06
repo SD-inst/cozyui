@@ -4,13 +4,15 @@ import { useCtrlEnter } from '../contexts/TabContext';
 import { HelpButton } from './HelpButton';
 import { Optional } from './optional';
 import { TextInputProps } from './TextInput';
+import { Ref } from 'react';
 
 export const TextInputBase = ({
     name,
     tooltip,
     fullWidth,
+    baseRef,
     ...props
-}: Optional<TextInputProps, 'name'>) => {
+}: Optional<TextInputProps, 'name'> & { baseRef?: Ref<any> }) => {
     const tr = useTranslate();
     const ceHandler = useCtrlEnter();
     return (
@@ -26,6 +28,7 @@ export const TextInputBase = ({
                     }
                     ceHandler(e);
                 }}
+                ref={baseRef}
                 {...props}
             />
             {tooltip && <HelpButton title={tooltip} sx={{ mr: 4, mt: 2 }} />}
