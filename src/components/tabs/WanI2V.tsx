@@ -115,5 +115,11 @@ const Content = () => {
 };
 
 export const WanI2VTab = (
-    <WFTab label='Wan I2V' value='Wan I2V' group='I2V' content={<Content />} />
+    <WFTab
+        label='Wan I2V'
+        value='Wan I2V'
+        group='I2V'
+        receivers={['image', 'image_end']}
+        content={<Content />}
+    />
 );

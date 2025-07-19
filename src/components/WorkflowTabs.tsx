@@ -237,6 +237,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const {
         setWorkflowTabs,
         setWorkflowTabGroups,
+        setReceivers,
         workflowTabGroups,
     } = useContext(WorkflowTabsContext);
     const hiddenTabs = useHiddenTabs();
@@ -254,8 +255,22 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             props.children as Array<React.Component<any>>,
             (c) => c.props.value
         );
+        const r = Children.map(
+            props.children as Array<React.Component<any>>,
+            (c) => {
+                if (c.props.receivers) {
+                    const result = {
+                        [c.props.value]: c.props.receivers,
+                    };
+                    return result;
+                }
+                return null;
+            }
+        );
+        const receivers = r.reduce((p, v) => Object.assign(p, v), {});
         setWorkflowTabs(workflowTabs);
-    }, [props.children, setWorkflowTabs]);
+        setReceivers(receivers);
+    }, [props.children, setReceivers, setWorkflowTabs]);
     // switch to first visible tab if none are selected
     useEffect(() => {
         if (

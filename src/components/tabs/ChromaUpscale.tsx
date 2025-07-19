@@ -139,6 +139,7 @@ export const ChromaUpscaleTab = (
         label='Chroma Upscale'
         value='Chroma Upscale'
         group='Upscale'
+        receivers={['image']}
         content={<Content />}
     />
 );

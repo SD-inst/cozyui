@@ -6,6 +6,7 @@ export const WFTab = ({}: {
     value?: number | string;
     content: ReactNode;
     group?: string;
+    receivers?: string[];
 }) => {
     return null;
 };
