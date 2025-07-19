@@ -129,6 +129,9 @@ const translation = {
         append_image: 'Добавить изображение',
         second_image: 'Второе изображение',
         latents_loaded: 'Используются латенты, не изображение (выше качество)',
+        full_steps: 'полных шагов',
+        refine_steps: 'улучшающих шагов',
+        max_full_steps: 'макс. полных шагов',
     },
     settings: {
         select_language: 'Выбор языка',

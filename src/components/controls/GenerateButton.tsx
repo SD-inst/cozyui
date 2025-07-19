@@ -132,25 +132,28 @@ export const GenerateButton = ({
                 }
                 continue;
             }
-            if (params.prompt[controls[name].id] === undefined) {
-                setErrors((e) => ({
-                    ...e,
-                    ids: [...e.ids, controls[name].id],
-                }));
-                continue;
-            }
-            if (
-                params.prompt[controls[name].id].inputs[
-                    controls[name].field
-                ] === undefined
-            ) {
-                setErrors((e) => ({
-                    ...e,
-                    fields: [...e.fields, name + ' / ' + controls[name].id],
-                }));
-                continue;
-            }
-            params.prompt[controls[name].id].inputs[controls[name].field] = val;
+            const ids = Array.isArray(controls[name].id)
+                ? controls[name].id
+                : [controls[name].id];
+            ids.forEach((id) => {
+                if (params.prompt[id] === undefined) {
+                    setErrors((e) => ({
+                        ...e,
+                        ids: [...e.ids, id],
+                    }));
+                    return;
+                }
+                if (
+                    params.prompt[id].inputs[controls[name].field] === undefined
+                ) {
+                    setErrors((e) => ({
+                        ...e,
+                        fields: [...e.fields, name + ' / ' + id],
+                    }));
+                    return;
+                }
+                params.prompt[id].inputs[controls[name].field] = val;
+            });
         }
 
         const vals = getValues();

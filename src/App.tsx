@@ -33,6 +33,7 @@ import { TagLoader } from './components/controls/TagAutocomplete';
 import { WanI2VTab } from './components/tabs/WanI2V';
 import { WanT2VTab } from './components/tabs/WanT2V';
 import { FluxKontextTab } from './components/tabs/FluxKontext';
+import { WanI2V2STab } from './components/tabs/WanI2V2S';
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                                 {ChromaTab}
                                 {FluxKontextTab}
                                 {WanI2VTab}
+                                {WanI2V2STab}
                                 {HunyanI2VTab}
                                 {FramePackI2VTab}
                                 {HiDreamTab}

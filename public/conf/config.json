@@ -1271,6 +1271,94 @@
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
             }
         },
+        "Wan I2V 2S": {
+            "api": "api/wan_i2v_2stage_native.json",
+            "controls": {
+                "image": {
+                    "id": "52",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "6",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "7",
+                    "field": "text"
+                },
+                "size": {
+                    "id": "70",
+                    "field": "value"
+                },
+                "length": {
+                    "id": "50",
+                    "field": "length"
+                },
+                "full_steps": {
+                    "id": "65",
+                    "field": "value"
+                },
+                "refine_steps": {
+                    "id": "67",
+                    "field": "value"
+                },
+                "max_full_steps": {
+                    "id": "55",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "55",
+                    "field": "cfg"
+                },
+                "flow_shift": {
+                    "id": "54",
+                    "field": "shift"
+                },
+                "seed": {
+                    "id": "59",
+                    "field": "value"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "37",
+                    "field": "model"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "54"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "sampler": {
+                    "id": ["55", "61"],
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": ["55", "61"],
+                    "field": "scheduler"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "37",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["54"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "56",
+                "type": "gifs"
+            },
+            "defaults": {
+                "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
+            }
+        },
         "Wan T2V": {
             "api": "api/wan_t2v_kj.json",
             "controls": {
