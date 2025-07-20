@@ -30,7 +30,7 @@ export const LengthInput = ({
             max={max}
             marks={(() => {
                 const result: Mark[] = [];
-                for (let i = 1; i <= (max - min) / step + 1; i++) {
+                for (let i = (min - 1) / step; i <= (max - min) / step + 1; i++) {
                     result.push({ value: i * step + 1 });
                 }
                 return result;

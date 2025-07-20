@@ -10,6 +10,7 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYLengthInput } from '../controls/HYLengthInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
+import { HYNAG } from '../controls/HYNAG';
 import { HYRiflexInput } from '../controls/HYRiflexInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -22,11 +23,11 @@ import { SendResultButton } from '../controls/SendResultButton';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
-import { VideoResult } from '../controls/VideoResult';
+import { VideoImageResult } from '../controls/VideoImageResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WaveSpeedInput } from '../controls/WaveSpeedInput';
 import { WFTab } from '../WFTab';
-import { HYNAG } from '../controls/HYNAG';
+import { VideoImageOverride } from '../controls/VideoImageOverride';
 
 const Content = () => {
     return (
@@ -63,6 +64,7 @@ const Content = () => {
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' type='hunyuan' />
+                <VideoImageOverride />
             </GridLeft>
             <GridRight
                 display='flex'
@@ -70,7 +72,7 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoResult />
+                <VideoImageResult />
                 <ResultOverrideContextProvider value={{ index: 1 }}>
                     <SendResultButton
                         targetTab='Hunyuan Upscale'

@@ -112,6 +112,9 @@
                     "guidance_node_id": "7",
                     "latent_node_id": "14",
                     "model_node_id": "15"
+                },
+                "video_image_override": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -1430,6 +1433,9 @@
                 "block_swap": {
                     "id": "handle",
                     "loader_node_id": "22"
+                },
+                "video_image_override": {
+                    "id": "handle"
                 }
             },
             "handler_options": {

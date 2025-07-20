@@ -12,7 +12,7 @@ export const HYLengthInput = ({
     const riflex = useWatch({ name: 'riflex' });
     return (
         <LengthInput
-            min={5}
+            min={1}
             max={
                 Array.isArray(max)
                     ? riflex && max.length > 1

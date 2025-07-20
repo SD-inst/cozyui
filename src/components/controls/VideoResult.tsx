@@ -8,15 +8,17 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
 import { VideoPreview } from './VideoPreview';
 
+export type VideoResultProps = {
+    title?: string;
+    rate_override?: number;
+    fps?: number;
+};
+
 export const VideoResult = ({
     title,
     rate_override,
     fps,
-}: {
-    title?: string;
-    rate_override?: number;
-    fps?: number;
-}) => {
+}: VideoResultProps) => {
     const results = useResult();
     const tr = useTranslate();
     const videoRef = useRef<HTMLVideoElement & HTMLImageElement>(null);

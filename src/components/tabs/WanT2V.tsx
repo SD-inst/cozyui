@@ -7,6 +7,7 @@ import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { HYSize } from '../controls/HYSize';
 import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
+import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
@@ -15,13 +16,13 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { ToggleInput } from '../controls/ToggleInput';
-import { VideoResult } from '../controls/VideoResult';
+import { VideoImageOverride } from '../controls/VideoImageOverride';
 import { WanLengthInput } from '../controls/WanLengthInput';
-import { WanRiflexToggle } from '../controls/WanRiflexToggle';
-import { WFTab } from '../WFTab';
 import { WanNAG } from '../controls/WanNAG';
+import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WanSampler } from '../controls/WanSampler';
-import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
+import { WFTab } from '../WFTab';
+import { VideoImageResult } from '../controls/VideoImageResult';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -82,6 +83,7 @@ const Content = () => {
                 />
                 <KJCompileModelToggle classType='WanVideoTorchCompileSettings' />
                 <SeedInput name='seed' defaultValue={1024} />
+                <VideoImageOverride />
             </GridLeft>
             <GridRight
                 display='flex'
@@ -89,7 +91,7 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoResult rate_override={4} fps={16} />
+                <VideoImageResult rate_override={4} fps={16} />
             </GridRight>
             <GridBottom>
                 <GenerateButton />
