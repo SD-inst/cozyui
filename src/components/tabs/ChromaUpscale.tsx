@@ -77,7 +77,7 @@ const Content = () => {
                         <CFGInput defaultValue={3} max={10} />
                         <SliderInput
                             name='rescale_cfg'
-                            defaultValue={0.5}
+                            defaultValue={0}
                             min={0}
                             max={1}
                             step={0.01}
