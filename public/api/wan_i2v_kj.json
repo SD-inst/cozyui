@@ -16,6 +16,7 @@
             "positive_prompt": "prompt",
             "negative_prompt": "过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
             "force_offload": true,
+            "use_disk_cache": false,
             "t5": ["11", 0]
         },
         "class_type": "WanVideoTextEncode",
@@ -73,6 +74,7 @@
             "tile_y": 272,
             "tile_stride_x": 144,
             "tile_stride_y": 128,
+            "normalization": "default",
             "vae": ["38", 0],
             "samples": ["27", 0]
         },
@@ -149,6 +151,7 @@
             "end_latent_strength": 1,
             "force_offload": true,
             "fun_or_fl2v_model": false,
+            "tiled_vae": false,
             "vae": ["38", 0],
             "clip_embeds": ["93", 0],
             "start_image": ["116", 0]
@@ -193,6 +196,7 @@
             "pad_color": "0, 0, 0",
             "crop_position": "center",
             "divisible_by": 16,
+            "device": "cpu",
             "image": ["58", 0]
         },
         "class_type": "ImageResizeKJv2",
