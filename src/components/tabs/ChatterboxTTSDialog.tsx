@@ -31,7 +31,7 @@ SPEAKER B: Let's count: 1 2 3`}
                     audioName='audio_input_D'
                 />
                 <SliderInput
-                    min={0}
+                    min={0.25}
                     max={2}
                     step={0.01}
                     name='exaggeration'
@@ -40,14 +40,14 @@ SPEAKER B: Let's count: 1 2 3`}
                 <SliderInput
                     name='cfg'
                     defaultValue={0.8}
-                    min={0}
+                    min={0.2}
                     max={1}
                     step={0.01}
                 />
                 <SliderInput
                     name='temperature'
                     defaultValue={0.8}
-                    min={0}
+                    min={0.05}
                     max={1}
                     step={0.01}
                 />

@@ -14,7 +14,7 @@ const Content = () => {
                 <TextInput name='prompt' multiline sx={{ mb: 2 }} />
                 <AudioInput toggleName='audio_toggle' audioName='audio_input' />
                 <SliderInput
-                    min={0}
+                    min={0.25}
                     max={2}
                     step={0.01}
                     name='exaggeration'
@@ -23,14 +23,14 @@ const Content = () => {
                 <SliderInput
                     name='cfg'
                     defaultValue={0.8}
-                    min={0}
+                    min={0.2}
                     max={1}
                     step={0.01}
                 />
                 <SliderInput
                     name='temperature'
                     defaultValue={0.8}
-                    min={0}
+                    min={0.05}
                     max={1}
                     step={0.01}
                 />
