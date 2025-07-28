@@ -50,7 +50,7 @@
         0
       ],
       "use_cpu": false,
-      "keep_model_loaded": true,
+      "keep_model_loaded": false,
       "speaker_A_Audio": [
         "15",
         0

@@ -10,7 +10,7 @@
         0
       ],
       "use_cpu": false,
-      "keep_model_loaded": true
+      "keep_model_loaded": false
     },
     "class_type": "FL_ChatterboxTTS",
     "_meta": {
