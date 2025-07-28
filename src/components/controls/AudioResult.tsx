@@ -12,9 +12,11 @@ import { useStringSetting } from '../../hooks/useSetting';
 export const AudioResult = ({
     title,
     noAutoplay,
+    loop = true,
 }: {
     title?: string;
     noAutoplay?: boolean;
+    loop?: boolean;
 }) => {
     const tr = useTranslate();
     const results = useResult();
@@ -55,7 +57,7 @@ export const AudioResult = ({
                             style={{ width: '100%' }}
                             src={url}
                             controls
-                            loop
+                            loop={loop}
                         />
                         <a download href={url}>
                             <Button variant='contained' color='success'>

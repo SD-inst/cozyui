@@ -772,6 +772,43 @@
                 }
             ]
         },
+        "Chatterbox TTS": {
+            "api": "api/chatterbox_single.json",
+            "controls": {
+                "prompt": {
+                    "id": "3",
+                    "field": "text"
+                },
+                "exaggeration": {
+                    "id": "3",
+                    "field": "exaggeration"
+                },
+                "cfg": {
+                    "id": "3",
+                    "field": "cfg_weight"
+                },
+                "temperature": {
+                    "id": "3",
+                    "field": "temperature"
+                },
+                "seed": {
+                    "id": "10",
+                    "field": "value"
+                },
+                "audio_toggle": {
+                    "id": "handle",
+                    "tts_node_id": "3",
+                    "tts_field": "audio_prompt"
+                },
+                "audio_input": {
+                    "id": "skip"
+                }
+            },
+            "result": {
+                "id": "8",
+                "type": "audio"
+            }
+        },
         "HiDream": {
             "api": "api/hidream_native.json",
             "controls": {
@@ -1263,7 +1300,10 @@
                     "output_idx": 0,
                     "class_name": "WanVideoLoraSelect",
                     "strength_field_name": "strength",
-                    "name_field_name": "lora"
+                    "name_field_name": "lora",
+                    "additional_inputs": {
+                        "merge_loras": false
+                    }
                 }
             },
             "result": {
@@ -1446,7 +1486,10 @@
                     "output_idx": 0,
                     "class_name": "WanVideoLoraSelect",
                     "strength_field_name": "strength",
-                    "name_field_name": "lora"
+                    "name_field_name": "lora",
+                    "additional_inputs": {
+                        "merge_loras": false
+                    }
                 }
             },
             "result": {

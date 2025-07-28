@@ -132,6 +132,10 @@ const translation = {
         full_steps: 'полных шагов',
         refine_steps: 'улучшающих шагов',
         max_full_steps: 'макс. полных шагов',
+        audio_toggle: 'использовать образец аудио',
+        audio_input: 'загрузить аудио',
+        exaggeration: 'выразительность',
+        temperature: 'температура',
     },
     settings: {
         select_language: 'Выбор языка',

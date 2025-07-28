@@ -21,6 +21,7 @@ const style = {
 const ext: { [type: string]: string[] } = {
     [UploadType.IMAGE]: ['.jpg', '.gif', '.png', '.webp'],
     [UploadType.VIDEO]: ['.webm', '.avi', '.mp4'],
+    [UploadType.AUDIO]: ['.mp3', '.ogg', '.wav', '.flac', '.wma', '.aac'],
 };
 
 const video_node = (video: string) => ({
@@ -124,6 +125,10 @@ export const FileUpload = ({
             case UploadType.VIDEO:
                 return {
                     'video/*': ext[UploadType.VIDEO],
+                };
+            case UploadType.AUDIO:
+                return {
+                    'audio/*': ext[UploadType.AUDIO],
                 };
             case UploadType.BOTH:
                 return {

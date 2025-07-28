@@ -6,12 +6,17 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { HelpButton } from './HelpButton';
 
 export const SeedInput = ({
+    seedLength = 13,
     ...props
-}: { name: string; defaultValue?: number } & TextFieldProps) => {
+}: {
+    name: string;
+    seedLength?: number;
+    defaultValue?: number;
+} & TextFieldProps) => {
     const { setValue } = useFormContext();
     const tr = useTranslate();
     const randomize = () => {
-        const hexString = Array(13)
+        const hexString = Array(seedLength)
             .fill(0)
             .map(() => Math.round(Math.random() * 0xf).toString(16))
             .join('');

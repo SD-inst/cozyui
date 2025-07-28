@@ -1,0 +1,60 @@
+{
+  "3": {
+    "inputs": {
+      "text": "text",
+      "exaggeration": 0.5,
+      "cfg_weight": 0.5,
+      "temperature": 0.8,
+      "seed": [
+        "10",
+        0
+      ],
+      "use_cpu": false,
+      "keep_model_loaded": true
+    },
+    "class_type": "FL_ChatterboxTTS",
+    "_meta": {
+      "title": "FL Chatterbox TTS"
+    }
+  },
+  "8": {
+    "inputs": {
+      "filename_prefix": [
+        "9",
+        0
+      ],
+      "audioUI": "",
+      "audio": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "SaveAudio"
+    }
+  },
+  "9": {
+    "inputs": {
+      "prefix": "Chatterbox_TTS_",
+      "suffix": "",
+      "input": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "10": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "INT Constant"
+    }
+  }
+}

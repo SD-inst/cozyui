@@ -34,6 +34,7 @@ import { WanI2VTab } from './components/tabs/WanI2V';
 import { WanT2VTab } from './components/tabs/WanT2V';
 import { FluxKontextTab } from './components/tabs/FluxKontext';
 import { WanI2V2STab } from './components/tabs/WanI2V2S';
+import { ChatterboxTab } from './components/tabs/ChatterboxTTS';
 
 function App() {
     return (
@@ -62,6 +63,7 @@ function App() {
                                 {EasyAnimateI2VTab}
                                 {StableAudioTab}
                                 {MMAudioTab}
+                                {ChatterboxTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
                             </WorkflowTabs>

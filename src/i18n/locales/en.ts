@@ -133,6 +133,10 @@ const translation = {
         full_steps: 'full steps',
         refine_steps: 'refine steps',
         max_full_steps: 'max full steps',
+        audio_toggle: 'use audio prompt',
+        audio_input: 'upload audio',
+        exaggeration: 'exaggeration',
+        temperature: 'temperature',
     },
     settings: {
         select_language: 'Select language',
