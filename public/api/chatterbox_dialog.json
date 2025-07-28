@@ -1,0 +1,88 @@
+{
+  "8": {
+    "inputs": {
+      "filename_prefix": [
+        "9",
+        0
+      ],
+      "audioUI": "",
+      "audio": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "SaveAudio"
+    }
+  },
+  "9": {
+    "inputs": {
+      "prefix": "Chatterbox_TTS_",
+      "suffix": "",
+      "input": [
+        "10",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "10": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "INT Constant"
+    }
+  },
+  "14": {
+    "inputs": {
+      "dialog_text": "",
+      "exaggeration": 0.5,
+      "cfg_weight": 0.5,
+      "temperature": 0.8,
+      "seed": [
+        "10",
+        0
+      ],
+      "use_cpu": false,
+      "keep_model_loaded": true,
+      "speaker_A_Audio": [
+        "15",
+        0
+      ],
+      "speaker_B_Audio": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "FL_ChatterboxDialogTTS",
+    "_meta": {
+      "title": "FL Chatterbox Dialog TTS"
+    }
+  },
+  "15": {
+    "inputs": {
+      "audio": "",
+      "audioUI": ""
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "LoadAudio"
+    }
+  },
+  "16": {
+    "inputs": {
+      "audio": "",
+      "audioUI": ""
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "LoadAudio"
+    }
+  }
+}

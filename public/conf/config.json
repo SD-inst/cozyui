@@ -809,6 +809,59 @@
                 "type": "audio"
             }
         },
+        "Chatterbox TTS Dialog": {
+            "api": "api/chatterbox_dialog.json",
+            "controls": {
+                "prompt": {
+                    "id": "14",
+                    "field": "dialog_text"
+                },
+                "exaggeration": {
+                    "id": "14",
+                    "field": "exaggeration"
+                },
+                "cfg": {
+                    "id": "14",
+                    "field": "cfg_weight"
+                },
+                "temperature": {
+                    "id": "14",
+                    "field": "temperature"
+                },
+                "seed": {
+                    "id": "10",
+                    "field": "value"
+                },
+                "audio_input_A": {
+                    "id": "15",
+                    "field": "audio"
+                },
+                "audio_input_B": {
+                    "id": "16",
+                    "field": "audio"
+                },
+                "audio_toggle_C": {
+                    "id": "handle",
+                    "tts_node_id": "14",
+                    "tts_field": "speaker_C_Audio"
+                },
+                "audio_input_C": {
+                    "id": "skip"
+                },
+                "audio_toggle_D": {
+                    "id": "handle",
+                    "tts_node_id": "14",
+                    "tts_field": "speaker_D_Audio"
+                },
+                "audio_input_D": {
+                    "id": "skip"
+                }
+            },
+            "result": {
+                "id": "8",
+                "type": "audio"
+            }
+        },
         "HiDream": {
             "api": "api/hidream_native.json",
             "controls": {
