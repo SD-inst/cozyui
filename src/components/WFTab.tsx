@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 export type receiverParametersType = {
     name: string;
     weight?: number;
-    acceptedTypes?: string | string[];
+    acceptedTypes: string | string[];
 };
 
 //eslint-disable-next-line no-empty-pattern

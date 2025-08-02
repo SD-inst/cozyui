@@ -7,6 +7,7 @@ import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
 import { VideoPreview } from './VideoPreview';
+import { SendResultButton } from './SendResultButton';
 
 export type VideoResultProps = {
     title?: string;
@@ -65,6 +66,7 @@ export const VideoResult = ({
                 );
             })}
             <VideoPreview size={300} rate_override={rate_override} fps={fps} />
+            <SendResultButton />
         </VerticalBox>
     );
 };

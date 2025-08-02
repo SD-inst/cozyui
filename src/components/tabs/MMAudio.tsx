@@ -36,5 +36,11 @@ const Content = () => {
 };
 
 export const MMAudioTab = (
-    <WFTab label='MM Audio' value='MM Audio' group='Audio' content={<Content />} />
+    <WFTab
+        label='MM Audio'
+        value='MM Audio'
+        group='Audio'
+        receivers={[{ name: 'video', acceptedTypes: 'gifs', weight: 50 }]}
+        content={<Content />}
+    />
 );
