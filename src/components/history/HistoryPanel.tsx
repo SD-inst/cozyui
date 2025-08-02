@@ -14,7 +14,14 @@ import {
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Dispatch, SetStateAction, useContext, useRef, useState } from 'react';
+import {
+    Dispatch,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { FilterContext } from '../contexts/FilterContext';
@@ -43,12 +50,18 @@ const HistoryPagination = ({
             const pk_x = await pkFromFilter(filter);
             return db.taskResults.where(':id').anyOf(pk_x).count();
         }, [filter]) ?? 0;
+    const pages = Math.ceil(count / page_size);
+    useEffect(() => {
+        if (page > pages && pages > 0) {
+            setPage(pages);
+        }
+    }, [count, page, pages, setPage]);
     if (count <= page_size) {
         return null;
     }
     return (
         <Pagination
-            count={Math.ceil(count / page_size)}
+            count={pages}
             page={page}
             onChange={(_, p) => setPage(p)}
             showFirstButton
