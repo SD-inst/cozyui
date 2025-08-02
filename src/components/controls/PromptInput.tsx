@@ -12,9 +12,7 @@ import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { useBooleanSetting, useMultiSetting } from '../../hooks/useSetting';
 import { useTagsController } from '../../hooks/useTagsController';
-import {
-    useFilteredTabs
-} from '../contexts/WorkflowTabsContext';
+import { useFilteredTabs } from '../contexts/WorkflowTabsContext';
 import { Tags } from '../history/db';
 import { TagSuggestion } from './TagSuggestion';
 import { TextInput, TextInputProps } from './TextInput';
@@ -257,7 +255,14 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             return;
         }
         tagsctl.setTag(matches[1].toLowerCase());
-        tagsctl.setOpen(true);
+        if (
+            (e.code >= 'KeyA' && e.code <= 'KeyZ') ||
+            e.code.startsWith('Digit') ||
+            e.code == 'Slash' ||
+            e.code == 'Minus'
+        ) {
+            tagsctl.setOpen(true);
+        }
         let inc = undefined;
         if (tagsctl.open) {
             if (e.key === 'ArrowUp') {
