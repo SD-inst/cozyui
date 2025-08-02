@@ -29,7 +29,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
     const [openCleanup, setOpenCleanup] = useState(false);
     const [number, setNumber] = useState('0');
     const [unit, setUnit] = useState('seconds');
-    const [newer, setNewer] = useState(false);
+    const [newer, setNewer] = useState(true);
     const [toDelete, setToDelete] = useState(0);
     const filter = useContext(FilterContext);
     const seconds =
