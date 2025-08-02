@@ -36,6 +36,7 @@ import { FluxKontextTab } from './components/tabs/FluxKontext';
 import { WanI2V2STab } from './components/tabs/WanI2V2S';
 import { ChatterboxTab } from './components/tabs/ChatterboxTTS';
 import { ChatterboxDialogTab } from './components/tabs/ChatterboxTTSDialog';
+import { SDTab } from './components/tabs/SD';
 
 function App() {
     return (
@@ -51,6 +52,7 @@ function App() {
                                 {HunyanT2VTab}
                                 {WanT2VTab}
                                 {ChromaTab}
+                                {SDTab}
                                 {FluxKontextTab}
                                 {WanI2VTab}
                                 {WanI2V2STab}

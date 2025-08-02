@@ -22,13 +22,16 @@ export type tabConfigType = {
         lora_params: {
             input_node_id?: string;
             lora_input_name: string;
+            clip_input_name?: string;
             api_input_name: string;
             output_idx?: number;
             output_node_ids: string[];
+            output_clip_ids?: string[];
             class_name: string;
             strength_field_name: string;
+            clip_strength_field_name?: string;
             name_field_name: string;
-            additional_inputs: {[key: string]: string};
+            additional_inputs: { [key: string]: string };
         };
         node_params: {
             sampler_id: string;

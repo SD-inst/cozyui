@@ -1076,6 +1076,78 @@
                 }
             }
         },
+        "SD": {
+            "api": "api/sd.json",
+            "controls": {
+                "prompt": {
+                    "id": "6",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "7",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "4",
+                    "field": "ckpt_name"
+                },
+                "width": {
+                    "id": "5",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "5",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "3",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "3",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "11",
+                    "field": "value"
+                },
+                "cfg": {
+                    "id": "3",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "3",
+                    "field": "sampler_name"
+                },
+                "batch_size": {
+                    "id": "5",
+                    "field": "batch_size"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": {
+                "id": "9",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "4",
+                    "lora_input_name": "model",
+                    "clip_input_name": "clip",
+                    "api_input_name": "model",
+                    "output_node_ids": ["3"],
+                    "output_idx": 0,
+                    "output_clip_ids": ["6", "7"],
+                    "class_name": "LoraLoader",
+                    "strength_field_name": "strength_model",
+                    "clip_strength_field_name": "strength_clip",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {
@@ -1664,6 +1736,9 @@
         },
         "wan": {
             "filter": "wan/"
+        },
+        "sd": {
+            "filter": "sd/"
         }
     },
     "api": "/cui"

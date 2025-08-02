@@ -176,11 +176,14 @@ export const LoraInput = ({
             lora_params: {
                 api_input_name,
                 lora_input_name,
+                clip_input_name,
                 input_node_id,
                 output_idx,
                 output_node_ids,
+                output_clip_ids,
                 class_name,
                 strength_field_name,
+                clip_strength_field_name,
                 name_field_name,
                 additional_inputs,
             },
@@ -196,16 +199,25 @@ export const LoraInput = ({
             }
             const last_node_id = getFreeNodeId(api);
             const additional_fields = { ...additional_inputs } as any;
-            if (input_node_id) {
+            if (input_node_id && output_idx !== undefined) {
                 additional_fields[lora_input_name] = [
                     input_node_id,
                     output_idx,
                 ];
+                if (clip_input_name) {
+                    additional_fields[clip_input_name] = [
+                        input_node_id,
+                        output_idx + 1,
+                    ];
+                }
             }
             const loraNodes = values.map((v) => ({
                 inputs: {
                     [name_field_name]: v.id,
                     [strength_field_name]: v.strength,
+                    ...(clip_strength_field_name
+                        ? { [clip_strength_field_name]: v.strength }
+                        : {}),
                     ...additional_fields,
                 },
                 class_type: class_name,
@@ -230,7 +242,11 @@ export const LoraInput = ({
                         output_idx,
                     ])
             );
-
+            if (output_clip_ids) {
+                output_clip_ids.forEach(
+                    (id) => (api[id].inputs['clip'] = ['' + last_node_id, 1])
+                );
+            }
             loraNodes.forEach((n, i) => {
                 api['' + (last_node_id + i)] = n;
                 if (i < loraNodes.length - 1) {
@@ -238,6 +254,12 @@ export const LoraInput = ({
                         '' + (last_node_id + i + 1),
                         output_idx,
                     ];
+                    if (clip_input_name && output_idx !== undefined) {
+                        (n.inputs as any)[clip_input_name] = [
+                            '' + (last_node_id + i + 1),
+                            output_idx + 1,
+                        ];
+                    }
                 }
             });
 
@@ -294,12 +316,15 @@ export const LoraInput = ({
             append,
             additional_inputs,
             input_node_id,
+            output_idx,
             class_name,
             output_node_ids,
+            output_clip_ids,
             lora_input_name,
-            output_idx,
+            clip_input_name,
             name_field_name,
             strength_field_name,
+            clip_strength_field_name,
             api_input_name,
         ]
     );
