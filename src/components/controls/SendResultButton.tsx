@@ -85,6 +85,7 @@ export const SendResultButton = ({
                             showField={receivers[tab].length > 1}
                             fileField={field.name}
                             key={tab + '/' + field.name}
+                            onClick={onClick}
                         />,
                         field.weight ? -field.weight : ti * 100 + fi,
                     ];
@@ -176,12 +177,7 @@ export const SendResultButton = ({
                 open={!!anchor}
                 anchorEl={anchor}
                 onClose={() => setAnchor(null)}
-                onClick={(e) => {
-                    if (onClick) {
-                        onClick(e as any);
-                    }
-                    setAnchor(null);
-                }}
+                onClick={() => setAnchor(null)}
                 sx={{ zIndex: 10000 }}
             >
                 {menu}
