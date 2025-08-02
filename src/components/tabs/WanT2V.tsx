@@ -32,8 +32,8 @@ const Content = () => {
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
                 <Box display='flex' flexDirection='row' width='100%'>
                     <Box display='flex' flexDirection='column' flex={1}>
-                        <HYSize name='width' defaultValue={720} />
-                        <HYSize name='height' defaultValue={480} />
+                        <HYSize name='width' defaultValue={720} max={2048} />
+                        <HYSize name='height' defaultValue={480} max={2048} />
                     </Box>
                     <Box display='flex' alignItems='center'>
                         <SwapButton
