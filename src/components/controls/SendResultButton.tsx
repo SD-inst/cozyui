@@ -12,6 +12,7 @@ import { useResult, useResultParam } from '../../hooks/useResult';
 import { useSendResult } from '../../hooks/useSendResult';
 import { useTranslate } from '../../i18n/I18nContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
+import { useHiddenTabs } from '../../hooks/useHiddenTabs';
 
 export type SendResultButtonProps = ButtonProps & {
     targetTab?: string;
@@ -69,10 +70,14 @@ export const SendResultButton = ({
     const [anchor, setAnchor] = useState(null);
     const handleSend = useSendResult({ targetTab, fields, index, fileField });
     const { receivers } = useContext(WorkflowTabsContext);
+    const hiddenTabs = useHiddenTabs();
     const menu = Object.keys(receivers)
         .flatMap((tab, ti) =>
             receivers[tab].map((field, fi): [JSX.Element, number] | null => {
-                if (field.acceptedTypes.includes(type)) {
+                if (
+                    field.acceptedTypes.includes(type) &&
+                    !hiddenTabs?.includes(tab)
+                ) {
                     return [
                         <SendMenuItem
                             targetTab={tab}
