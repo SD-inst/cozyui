@@ -143,6 +143,7 @@ const translation = {
         audio_input_D: 'upload audio for speaker D',
         exaggeration: 'exaggeration',
         temperature: 'temperature',
+        send_to: 'Send to %{target} ⇒ %{fileField}',
     },
     settings: {
         select_language: 'Select language',

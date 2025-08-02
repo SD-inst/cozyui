@@ -142,6 +142,7 @@ const translation = {
         audio_input: 'загрузить аудио',
         exaggeration: 'выразительность',
         temperature: 'температура',
+        send_to: 'Отправить в %{target} ⇒ %{fileField}',
     },
     settings: {
         select_language: 'Выбор языка',

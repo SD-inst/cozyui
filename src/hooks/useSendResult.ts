@@ -11,10 +11,12 @@ export const useSendResult = ({
     targetTab,
     fields,
     index = 0,
+    fileField = 'image',
 }: {
     targetTab?: string;
     fields?: string[];
     index?: number;
+    fileField?: string;
 }) => {
     const tr = useTranslate();
     const result = useResult();
@@ -40,7 +42,7 @@ export const useSendResult = ({
             setParams({
                 action: actionEnum.RESTORE,
                 tab: targetTab,
-                values: { ...values, image },
+                values: { ...values, [fileField]: image },
             })
         );
     };
