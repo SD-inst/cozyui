@@ -21,7 +21,8 @@ export const useSendResult = ({
     const tr = useTranslate();
     const result = useResult();
     const dispatch = useAppDispatch();
-    const { getValues } = useFormContext();
+    const formCtx = useFormContext();
+    const getValues = formCtx?.getValues || (() => ({}));
     const apiUrl = useApiURL();
     const handleClick = async () => {
         const values = Object.fromEntries(

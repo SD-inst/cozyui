@@ -29,9 +29,14 @@ export const useResultParam = (override?: overrideType) => {
 export const useResult = (override?: overrideType) => {
     const tab_name = useTabName();
     const result = useAppSelector((s) => s.tab.result);
-    const { id, type } = useResultParam(override);
+    const { id, type, filename, url } = useResultParam(override);
     if (!id || !type) {
         return emptyResult;
+    }
+    // used for history: return the potentially overridden URL and type directly
+    // only recognized by makeOutputUrl
+    if (url && filename) {
+        return [{ url, filename, type }];
     }
     return get(result, [tab_name, id, type], emptyResult) as any[];
 };

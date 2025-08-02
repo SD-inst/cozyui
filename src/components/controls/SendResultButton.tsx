@@ -1,4 +1,4 @@
-import { ExpandMore, Reply } from '@mui/icons-material';
+import { ExpandLess, ExpandMore, Reply } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -72,16 +72,14 @@ export const SendResultButton = ({
     const menu = Object.keys(receivers)
         .flatMap((tab, ti) =>
             receivers[tab].map((field, fi): [JSX.Element, number] | null => {
-                if (
-                    !field.acceptedTypes ||
-                    field.acceptedTypes.includes(type)
-                ) {
+                if (field.acceptedTypes.includes(type)) {
                     return [
                         <SendMenuItem
                             targetTab={tab}
                             index={index}
                             showField={receivers[tab].length > 1}
                             fileField={field.name}
+                            key={tab + '/' + field.name}
                         />,
                         field.weight ? -field.weight : ti * 100 + fi,
                     ];
@@ -135,7 +133,7 @@ export const SendResultButton = ({
                         size='small'
                         onClick={() => setAnchor(bgref.current || null)}
                     >
-                        <ExpandMore />
+                        {anchor ? <ExpandLess /> : <ExpandMore />}
                     </Button>
                 </Box>
             )}

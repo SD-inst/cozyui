@@ -5,13 +5,17 @@ import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import { DownloadImageButtonLightbox } from '../controls/DownloadImageButton';
+import { LightboxSendResultButton } from '../controls/LightboxSendResultButton';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 
 export const HistoryCardContent = ({
     url,
     type,
+    filename,
 }: {
     url: string;
     type: string;
+    filename: string;
 }) => {
     const tr = useTranslate();
     const [open, setOpen] = useState(false);
@@ -54,20 +58,33 @@ export const HistoryCardContent = ({
                         src={url}
                         onClick={() => setOpen(true)}
                     />
-                    <Lightbox
-                        open={open}
-                        close={() => setOpen(false)}
-                        slides={[{ src: url }]}
-                        carousel={{ finite: true }}
-                        plugins={[Zoom, Fullscreen]}
-                        zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
-                        toolbar={{
-                            buttons: [<DownloadImageButtonLightbox />, 'close'],
+                    <ResultOverrideContextProvider
+                        value={{
+                            id: 'history',
+                            type,
+                            url,
+                            filename,
                         }}
-                        controller={{
-                            closeOnBackdropClick: true,
-                        }}
-                    />
+                    >
+                        <Lightbox
+                            open={open}
+                            close={() => setOpen(false)}
+                            slides={[{ src: url }]}
+                            carousel={{ finite: true }}
+                            plugins={[Zoom, Fullscreen]}
+                            zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+                            toolbar={{
+                                buttons: [
+                                    <LightboxSendResultButton icon />,
+                                    <DownloadImageButtonLightbox />,
+                                    'close',
+                                ],
+                            }}
+                            controller={{
+                                closeOnBackdropClick: true,
+                            }}
+                        />
+                    </ResultOverrideContextProvider>
                 </Box>
             );
 

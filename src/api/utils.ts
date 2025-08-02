@@ -53,5 +53,9 @@ export const replaceNodeConnection = (
     return new_node_id;
 };
 
-export const makeOutputUrl = (apiUrl: string, r: any) =>
-    `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
+export const makeOutputUrl = (apiUrl: string, r: any) => {
+    if (r.url) {
+        return r.url;
+    }
+    return `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
+};

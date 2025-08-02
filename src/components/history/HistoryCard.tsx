@@ -21,6 +21,8 @@ import { HistoryCardContent } from './HistoryCardContent';
 import { HistoryCardMenu } from './HistoryCardMenu';
 import { LoadParamsButton } from './LoadParamsButton';
 import { DeleteButton } from './DeleteButton';
+import { SendResultButton } from '../controls/SendResultButton';
+import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const cache = useRef('');
@@ -46,7 +48,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     if (!dlUrl.startsWith('http')) {
         dlUrl = 'http://127.0.0.1/' + dlUrl; //fake URL, only need it for parsing the filename
     }
-    const filename = new URL(dlUrl).searchParams.get('filename');
+    const filename = new URL(dlUrl).searchParams.get('filename') || '';
     const duration = formatDuration(output.duration / 1000);
     const params = JSON.parse(output.params || '');
     const tab = params.tab;
@@ -79,7 +81,11 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
             />
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
-                    <HistoryCardContent type={output.type} url={url} />
+                    <HistoryCardContent
+                        type={output.type}
+                        url={url}
+                        filename={filename}
+                    />
                 </VerticalBox>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
@@ -88,6 +94,16 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                         <Download />
                     </Button>
                 </a>
+                <ResultOverrideContextProvider
+                    value={{
+                        id: 'history',
+                        type: output.type,
+                        url,
+                        filename,
+                    }}
+                >
+                    <SendResultButton icon />
+                </ResultOverrideContextProvider>
                 <LoadParamsButton params={output.params} />
                 <DeleteButton id={output.id} />
             </CardActions>
