@@ -88,7 +88,7 @@ export const WanI2V2STab = (
         label='Wan I2V 2-stage'
         value='Wan I2V 2S'
         group='I2V'
-        receivers={['image']}
+        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );

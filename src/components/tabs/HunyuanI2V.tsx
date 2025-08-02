@@ -118,7 +118,7 @@ export const HunyanI2VTab = (
         label='Hunyuan I2V Native'
         value='Hunyuan I2V'
         group='I2V'
-        receivers={['image']}
+        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );

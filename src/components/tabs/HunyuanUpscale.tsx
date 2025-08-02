@@ -73,6 +73,7 @@ export const HunyanUpscale = (
         label='Hunyuan Upscale'
         value='Hunyuan Upscale'
         group='Upscale'
+        receivers={[{ name: 'image', acceptedTypes: 'gifs' }]}
         content={<Content />}
     />
 );

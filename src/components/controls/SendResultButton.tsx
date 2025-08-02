@@ -8,6 +8,7 @@ import {
     MenuItem,
 } from '@mui/material';
 import { useContext, useRef, useState } from 'react';
+import { useResult, useResultParam } from '../../hooks/useResult';
 import { useSendResult } from '../../hooks/useSendResult';
 import { useTranslate } from '../../i18n/I18nContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
@@ -25,15 +26,15 @@ const SendMenuItem = ({
     targetTab,
     index,
     fileField,
+    showField = false,
     onClick,
-}: SendResultButtonProps) => {
+}: SendResultButtonProps & { showField?: boolean }) => {
     const handleSend = useSendResult({
         targetTab,
         fields: [],
         index,
         fileField,
     });
-    const tr = useTranslate();
     if (!handleSend) {
         return null;
     }
@@ -46,7 +47,7 @@ const SendMenuItem = ({
                 }
             }}
         >
-            {tr('controls.send_to', { target: targetTab, fileField })}
+            {targetTab + (showField ? ' ⇒ ' + fileField : '')}
         </MenuItem>
     );
 };
@@ -63,40 +64,82 @@ export const SendResultButton = ({
 }: SendResultButtonProps) => {
     const tr = useTranslate();
     const bgref = useRef(null);
+    const { type } = useResultParam({ index });
+    const results = useResult();
     const [anchor, setAnchor] = useState(null);
     const handleSend = useSendResult({ targetTab, fields, index, fileField });
     const { receivers } = useContext(WorkflowTabsContext);
-    const menu = Object.keys(receivers).flatMap((tab) =>
-        receivers[tab].map((field) => (
-            <SendMenuItem targetTab={tab} index={index} fileField={field} />
-        ))
-    );
-    if (!handleSend) {
-        return null;
-    }
+    const menu = Object.keys(receivers)
+        .flatMap((tab, ti) =>
+            receivers[tab].map((field, fi): [JSX.Element, number] | null => {
+                if (
+                    !field.acceptedTypes ||
+                    field.acceptedTypes.includes(type)
+                ) {
+                    return [
+                        <SendMenuItem
+                            targetTab={tab}
+                            index={index}
+                            showField={receivers[tab].length > 1}
+                            fileField={field.name}
+                        />,
+                        field.weight ? -field.weight : ti * 100 + fi,
+                    ];
+                }
+                return null;
+            })
+        )
+        .filter((e) => !!e)
+        .sort((a, b) => a[1] - b[1])
+        .map((e) => e[0]);
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-        handleSend();
+        if (handleSend) {
+            handleSend();
+        }
         if (onClick) {
             onClick(e);
         }
     };
-    if (icon) {
-        return (
-            <Box>
-                <Button
-                    variant='outlined'
-                    color='secondary'
-                    onClick={handleClick}
-                    size='small'
-                    {...props}
-                >
-                    <Reply transform='scale(-1, 1)' />
-                </Button>
-            </Box>
-        );
-    } else {
-        return (
-            <>
+    if (!icon && results.length !== 1) {
+        return null;
+    }
+    return (
+        <>
+            {icon && handleSend && (
+                <Box ref={bgref} sx={props.sx}>
+                    <ButtonGroup>
+                        <Button
+                            variant='outlined'
+                            color='secondary'
+                            onClick={handleClick}
+                            size='small'
+                        >
+                            <Reply transform='scale(-1, 1)' />
+                        </Button>
+                        <Button
+                            variant='outlined'
+                            color='secondary'
+                            size='small'
+                            onClick={() => setAnchor(bgref.current || null)}
+                        >
+                            <ExpandMore />
+                        </Button>
+                    </ButtonGroup>
+                </Box>
+            )}
+            {icon && !handleSend && (
+                <Box ref={bgref} sx={props.sx}>
+                    <Button
+                        variant='outlined'
+                        color='secondary'
+                        size='small'
+                        onClick={() => setAnchor(bgref.current || null)}
+                    >
+                        <ExpandMore />
+                    </Button>
+                </Box>
+            )}
+            {!icon && handleSend && (
                 <ButtonGroup ref={bgref}>
                     <Button
                         variant='contained'
@@ -115,15 +158,31 @@ export const SendResultButton = ({
                         <ExpandMore />
                     </Button>
                 </ButtonGroup>
-                <Menu
-                    open={!!anchor}
-                    anchorEl={anchor}
-                    onClose={() => setAnchor(null)}
-                    onClick={() => setAnchor(null)}
+            )}
+            {!icon && !handleSend && (
+                <Button
+                    ref={bgref}
+                    variant='contained'
+                    color='secondary'
+                    onClick={() => setAnchor(bgref.current || null)}
                 >
-                    {menu}
-                </Menu>
-            </>
-        );
-    }
+                    {tr('controls.send_to')}
+                </Button>
+            )}
+            <Menu
+                open={!!anchor}
+                anchorEl={anchor}
+                onClose={() => setAnchor(null)}
+                onClick={(e) => {
+                    if (onClick) {
+                        onClick(e as any);
+                    }
+                    setAnchor(null);
+                }}
+                sx={{ zIndex: 10000 }}
+            >
+                {menu}
+            </Menu>
+        </>
+    );
 };

@@ -12,7 +12,7 @@ export const LightboxSendResultButton = ({
     return (
         <SendResultButton
             index={currentIndex}
-            sx={{ mt: 1, mr: 3, ...props.sx }}
+            sx={{ mt: 1, mr: 2, ...props.sx }}
             onClick={close}
             {...props}
         />

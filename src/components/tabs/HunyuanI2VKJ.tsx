@@ -108,6 +108,7 @@ export const HunyanI2VKJTab = (
         label='Hunyuan I2V Kijai'
         value='Hunyuan I2V KJ'
         group='I2V'
+        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );

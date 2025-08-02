@@ -76,6 +76,7 @@ export const FramePackI2VTab = (
         label='FramePack I2V'
         value='FramePack I2V'
         group='I2V'
+        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );

@@ -104,14 +104,12 @@ export const ImageResult = ({
                 }}
             />
             <ImagePreview size={400} />
-            {results.length === 1 && (
-                <SendResultButton
-                    targetTab={sendTargetTab}
-                    fields={sendFields}
-                    label={sendLabel}
-                    onClick={sendOnClick}
-                />
-            )}
+            <SendResultButton
+                targetTab={sendTargetTab}
+                fields={sendFields}
+                label={sendLabel}
+                onClick={sendOnClick}
+            />
         </VerticalBox>
     );
 };

@@ -119,7 +119,10 @@ export const WanI2VTab = (
         label='Wan I2V'
         value='Wan I2V'
         group='I2V'
-        receivers={['image', 'image_end']}
+        receivers={[
+            { name: 'image', weight: 100 },
+            { name: 'image_end', weight: 99 },
+        ]}
         content={<Content />}
     />
 );

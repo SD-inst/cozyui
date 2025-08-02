@@ -1,8 +1,11 @@
 import { createContext, Dispatch, useContext, useMemo } from 'react';
+import { receiverParametersType } from '../WFTab';
 
 export type groupType = { [tab: string]: string };
 
-export type receiverType = { [tab: string]: string[] };
+export type receiverType = {
+    [tab: string]: receiverParametersType[];
+};
 
 export type WorkflowTabsType = {
     workflowTabs: string[];
@@ -22,7 +25,8 @@ export const defaultValue = {
     setReceivers: () => {},
 };
 
-export const WorkflowTabsContext = createContext<WorkflowTabsType>(defaultValue);
+export const WorkflowTabsContext =
+    createContext<WorkflowTabsType>(defaultValue);
 
 export const useFilteredTabs = (group: string) => {
     const { workflowTabs, workflowTabGroups } = useContext(WorkflowTabsContext);

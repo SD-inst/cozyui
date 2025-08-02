@@ -98,6 +98,7 @@ export const EasyAnimateI2VTab = (
         label='EasyAnimate I2V'
         value='EasyAnimate I2V'
         group='I2V'
+        receivers={[{ name: 'image' }, { name: 'image_end' }]}
         content={<Content />}
     />
 );

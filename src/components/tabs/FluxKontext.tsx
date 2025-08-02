@@ -229,6 +229,7 @@ export const FluxKontextTab = (
         label='Flux Kontext'
         value='Flux Kontext'
         group='I2I'
+        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );
