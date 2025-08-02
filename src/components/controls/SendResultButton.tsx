@@ -1,9 +1,8 @@
 import { Reply } from '@mui/icons-material';
-import { Box, Button, ButtonProps } from '@mui/material';
-import { useSendResult } from '../../hooks/useSendToUpscale';
+import { useSendResult } from '../../hooks/useSendResult';
 import { useTranslate } from '../../i18n/I18nContext';
 
-export type SendToUpscaleButtonProps = ButtonProps & {
+export type SendResultButtonProps = ButtonProps & {
     targetTab?: string;
     fields?: string[];
     index?: number;
@@ -19,7 +18,7 @@ export const SendResultButton = ({
     onClick,
     label = 'send_to_upscale',
     ...props
-}: SendToUpscaleButtonProps) => {
+}: SendResultButtonProps) => {
     const tr = useTranslate();
     const handleSend = useSendResult({ targetTab, fields, index });
     if (!handleSend) {

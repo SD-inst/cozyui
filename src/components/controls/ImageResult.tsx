@@ -17,7 +17,7 @@ import {
     DownloadImageButtonLightbox,
 } from './DownloadImageButton';
 import { ImagePreview } from './ImagePreview';
-import { LightboxSendToUpscaleButton } from './LightboxSendToUpscaleButton';
+import { LightboxSendResultButton } from './LightboxSendResultButton';
 import { SendResultButton } from './SendResultButton';
 
 export const ImageResult = ({
@@ -90,7 +90,7 @@ export const ImageResult = ({
                 index={idx}
                 toolbar={{
                     buttons: [
-                        <LightboxSendToUpscaleButton
+                        <LightboxSendResultButton
                             targetTab={sendTargetTab}
                             fields={sendFields}
                             icon

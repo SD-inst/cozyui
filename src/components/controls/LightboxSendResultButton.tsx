@@ -1,12 +1,12 @@
 import { useController, useLightboxState } from 'yet-another-react-lightbox';
 import {
     SendResultButton,
-    SendToUpscaleButtonProps,
+    SendResultButtonProps,
 } from './SendResultButton';
 
-export const LightboxSendToUpscaleButton = ({
+export const LightboxSendResultButton = ({
     ...props
-}: SendToUpscaleButtonProps) => {
+}: SendResultButtonProps) => {
     const { currentIndex } = useLightboxState();
     const { close } = useController();
     return (
