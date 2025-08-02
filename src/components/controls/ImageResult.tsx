@@ -12,6 +12,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
 
 import 'yet-another-react-lightbox/styles.css';
+import 'yet-another-react-lightbox/plugins/counter.css';
 import {
     DownloadImageButton,
     DownloadImageButtonLightbox,
@@ -84,10 +85,15 @@ export const ImageResult = ({
                 open={open}
                 close={() => setOpen(false)}
                 slides={urls.map((url) => ({ src: url }))}
-                carousel={{ finite: true }}
                 plugins={[Zoom, Fullscreen, Counter]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                 index={idx}
+                animation={{ navigation: 0 }}
+                counter={{
+                    container: {
+                        style: { top: 'unset', bottom: 0 },
+                    },
+                }}
                 toolbar={{
                     buttons: [
                         <LightboxSendResultButton
