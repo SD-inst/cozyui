@@ -19,13 +19,29 @@ export const InterruptButton = ({ ...props }: ButtonProps) => {
         return null;
     }
     const handleInterrupt = () => {
-        fetch(apiUrl + '/api/interrupt', {
-            method: 'POST',
-            body: JSON.stringify({ id: prompt_ids[0] }),
-        }).finally(() => {
-            dispatch(clearPrompt());
-            dispatch(setStatus(statusEnum.CANCELLED));
-        });
+        const interrupt = (cnt: number) => {
+            fetch(apiUrl + '/api/interrupt', {
+                method: 'POST',
+                body: JSON.stringify({ id: prompt_ids[0] }),
+            })
+                .then((r) => {
+                    if (r.status !== 200) {
+                        throw new Error(`Bad status ${r.status}`);
+                    }
+                })
+                .catch((r) => {
+                    console.log('Error interrupting: ', r);
+                    if (cnt > 0) {
+                        console.log('Retrying interrupt...');
+                        setTimeout(interrupt, 1000, cnt - 1);
+                    }
+                })
+                .finally(() => {
+                    dispatch(clearPrompt());
+                    dispatch(setStatus(statusEnum.CANCELLED));
+                });
+        };
+        interrupt(5);
     };
     return (
         <Button
