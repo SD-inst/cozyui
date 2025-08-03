@@ -259,7 +259,8 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
             (e.code >= 'KeyA' && e.code <= 'KeyZ') ||
             e.code.startsWith('Digit') ||
             e.code == 'Slash' ||
-            e.code == 'Minus'
+            e.code == 'Minus' ||
+            !e.code
         ) {
             tagsctl.setOpen(true);
         }
