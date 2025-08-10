@@ -1,4 +1,4 @@
-import { Box, Link, Typography } from '@mui/material';
+import { Box, Button, Link, Typography } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
@@ -208,6 +208,15 @@ export const FileUpload = ({
                         ))}
                 </Box>
             </Box>
+            {field.value && (
+                <Button
+                    size='small'
+                    onClick={() => field.onChange(null)}
+                    sx={{ mt: 2, width: 100, alignSelf: 'center' }}
+                >
+                    {tr('controls.reset_form')}
+                </Button>
+            )}
         </Box>
     );
 };
