@@ -148,7 +148,7 @@
     "inputs": {
       "shift": 8,
       "model": [
-        "37",
+        "72",
         0
       ]
     },
@@ -368,6 +368,19 @@
     "class_type": "INTConstant",
     "_meta": {
       "title": "Size"
+    }
+  },
+  "72": {
+    "inputs": {
+      "sage_attention": "sageattn_qk_int8_pv_fp16_cuda",
+      "model": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "PathchSageAttentionKJ",
+    "_meta": {
+      "title": "Patch Sage Attention KJ"
     }
   }
 }
