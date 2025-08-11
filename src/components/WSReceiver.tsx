@@ -54,7 +54,7 @@ export const WSReceiver = () => {
                 }
                 const idx = dv.getUint32(12);
                 window
-                    .createImageBitmap(new Blob([ev.data.slice(16)]))
+                    .createImageBitmap(new Blob([ev.data.slice(32)]))
                     .then((image) => dispatch(setFrame({ idx, image })));
 
                 return;
