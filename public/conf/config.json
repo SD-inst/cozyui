@@ -1148,6 +1148,83 @@
                 }
             }
         },
+        "Qwen Image": {
+            "api": "api/qwen_image.json",
+            "controls": {
+                "prompt": {
+                    "id": "6",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "37",
+                    "field": "unet_name"
+                },
+                "neg_prompt": {
+                    "id": "7",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "58",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "58",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "3",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "3",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "69",
+                    "field": "value"
+                },
+                "cfg": {
+                    "id": "3",
+                    "field": "cfg"
+                },
+                "flow_shift": {
+                    "id": "66",
+                    "field": "shift"
+                },
+                "sampler": {
+                    "id": "3",
+                    "field": "sampler_name"
+                },
+                "batch_size": {
+                    "id": "58",
+                    "field": "batch_size"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "3"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": {
+                "id": "60",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "input_node_id": "37",
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["66"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {
@@ -1739,6 +1816,9 @@
         },
         "sd": {
             "filter": "sd/"
+        },
+        "qwen": {
+            "filter": "qwen/"
         }
     },
     "api": "/cui"

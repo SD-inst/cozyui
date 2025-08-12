@@ -37,6 +37,7 @@ import { WanI2V2STab } from './components/tabs/WanI2V2S';
 import { ChatterboxTab } from './components/tabs/ChatterboxTTS';
 import { ChatterboxDialogTab } from './components/tabs/ChatterboxTTSDialog';
 import { SDTab } from './components/tabs/SD';
+import { QwenImageTab } from './components/tabs/QwenImage';
 
 function App() {
     return (
@@ -53,6 +54,7 @@ function App() {
                                 {WanT2VTab}
                                 {ChromaTab}
                                 {SDTab}
+                                {QwenImageTab}
                                 {FluxKontextTab}
                                 {WanI2VTab}
                                 {WanI2V2STab}
