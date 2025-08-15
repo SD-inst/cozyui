@@ -12,29 +12,45 @@ export const ModelSelectInput = ({ ...props }: SelectInputProps) => {
                 throw 'control undefined';
             }
             const loader_node_id = control['node_id'];
+            const virtual_vram = getValues('virtual_vram');
             if (!val.endsWith('.gguf')) {
-                api[loader_node_id].inputs['unet_name'] = val;
-                if (val.indexOf('fp8_e5m2') > 0) {
-                    api[loader_node_id].inputs['weight_dtype'] = 'fp8_e5m2';
+                const weight_dtype =
+                    val.indexOf('fp8_e5m2') > 0 ? 'fp8_e5m2' : 'fp8_e4m3fn';
+                if (virtual_vram > 0) {
+                    api[loader_node_id] = {
+                        inputs: {
+                            unet_name: val,
+                            weight_dtype,
+                            compute_device: 'cuda:0',
+                            virtual_vram_gb: virtual_vram,
+                            donor_device: 'cpu',
+                            expert_mode_allocations: '',
+                        },
+                        class_type: 'UNETLoaderDisTorch2MultiGPU',
+                        _meta: {
+                            title: 'UNETLoaderDisTorch2MultiGPU',
+                        },
+                    };
                 } else {
-                    api[loader_node_id].inputs['weight_dtype'] = 'fp8_e4m3fn';
+                    api[loader_node_id].inputs['unet_name'] = val;
+                    api[loader_node_id].inputs['weight_dtype'] = weight_dtype;
                 }
-                return;
+            } else {
+                // replace loader node with GGUF loader
+                api[loader_node_id] = {
+                    inputs: {
+                        unet_name: val,
+                        compute_device: 'cuda:0',
+                        virtual_vram_gb: virtual_vram,
+                        donor_device: 'cpu',
+                        expert_mode_allocations: '',
+                    },
+                    class_type: 'UnetLoaderGGUFDisTorch2MultiGPU',
+                    _meta: {
+                        title: 'UnetLoaderGGUFDisTorch2MultiGPU',
+                    },
+                };
             }
-            // replace loader node with GGUF loader
-            api[loader_node_id] = {
-                inputs: {
-                    unet_name: val,
-                    device: 'cuda:0',
-                    virtual_vram_gb: getValues('virtual_vram'),
-                    use_other_vram: true,
-                    expert_mode_allocations: '',
-                },
-                class_type: 'UnetLoaderGGUFDisTorchMultiGPU',
-                _meta: {
-                    title: 'UnetLoaderGGUFDisTorchMultiGPU',
-                },
-            };
         },
         [getValues]
     );
