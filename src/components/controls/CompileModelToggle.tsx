@@ -15,35 +15,20 @@ export const CompileModelToggle = ({
             }
             const compile_node = {
                 inputs: {
-                    mode: 'default',
                     backend: 'inductor',
-                    fullgraph: false,
-                    dynamic: true,
                     model: null,
                 },
-                class_type: 'CompileModel',
+                class_type: 'TorchCompileModel',
                 _meta: {
-                    title: 'Compile Model',
+                    title: 'TorchCompileModel',
                 },
             };
-            const compile_node_id = insertNode(
+            insertNode(
                 api,
                 control['output_node_id'],
                 'model',
                 compile_node
             );
-            const patcher_node = {
-                inputs: {
-                    patch_order: 'weight_patch_first',
-                    full_load: 'auto',
-                    model: null,
-                },
-                class_type: 'PatchModelPatcherOrder',
-                _meta: {
-                    title: 'Patch Model Patcher Order',
-                },
-            };
-            insertNode(api, compile_node_id, 'model', patcher_node);
         },
         []
     );
