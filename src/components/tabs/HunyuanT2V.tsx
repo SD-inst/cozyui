@@ -25,7 +25,7 @@ import { SwapButton } from '../controls/SwapButton';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoImageResult } from '../controls/VideoImageResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
-import { WaveSpeedInput } from '../controls/WaveSpeedInput';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { WFTab } from '../WFTab';
 import { VideoImageOverride } from '../controls/VideoImageOverride';
 
@@ -56,7 +56,7 @@ const Content = () => {
                     <SamplerSelectInput name='sampler' />
                     <SchedulerSelectInput name='scheduler' />
                     <VirtualVRAMSliderInput name='virtual_vram' />
-                    <WaveSpeedInput />
+                    <TeaCacheInput />
                     <HYNAG name='nag' />
                     <HYRiflexInput name='riflex' />
                     <UpscaleToggle name='allow_upscale' />

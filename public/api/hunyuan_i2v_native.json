@@ -225,16 +225,16 @@
     },
     "87": {
         "inputs": {
-            "object_to_patch": "diffusion_model",
-            "residual_diff_threshold": 0.1,
-            "start": 0,
-            "end": 1,
-            "max_consecutive_cache_hits": 2,
+            "model_type": "hunyuan_video",
+            "rel_l1_thresh": 0.1,
+            "start_percent": 0,
+            "end_percent": 1,
+            "cache_device": "cuda",
             "model": ["44", 0]
         },
-        "class_type": "ApplyFBCacheOnModel",
+        "class_type": "TeaCache",
         "_meta": {
-            "title": "Apply First Block Cache"
+            "title": "Tea Cache"
         }
     },
     "90": {

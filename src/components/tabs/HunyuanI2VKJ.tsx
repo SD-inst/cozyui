@@ -18,7 +18,7 @@ import { LLMSelectInput } from '../controls/LLMSelectInput';
 import { LoraInput } from '../controls/LoraInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
-import { TeaCacheInput } from '../controls/TeaCacheInput';
+import { HYTeaCacheInput } from '../controls/HYTeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
@@ -74,7 +74,7 @@ const Content = () => {
                             defaultValue={1}
                         />
                         <EnhanceVideoInput name='enhance_video' />
-                        <TeaCacheInput name='tea_cache' defaultValue={0.15} />
+                        <HYTeaCacheInput name='tea_cache' defaultValue={0.15} />
                         <KJHYBlockSwapInput name='block_swap' />
                     </AccordionDetails>
                 </Accordion>

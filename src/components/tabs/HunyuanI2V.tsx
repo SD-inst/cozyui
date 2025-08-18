@@ -24,7 +24,7 @@ import { TextInput } from '../controls/TextInput';
 import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
-import { WaveSpeedInput } from '../controls/WaveSpeedInput';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { WFTab } from '../WFTab';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
@@ -71,7 +71,7 @@ const Content = () => {
                             step={0.01}
                             defaultValue={1}
                         />
-                        <WaveSpeedInput />
+                        <TeaCacheInput />
                         <VirtualVRAMSliderInput name='virtual_vram' />
                         <UpscaleToggle name='allow_upscale' />
                         <CompileModelToggle />

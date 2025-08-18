@@ -54,21 +54,21 @@
                     "id": "12",
                     "field": "scheduler"
                 },
-                "wave_speed": {
+                "rel_l1_thresh": {
                     "id": "15",
-                    "field": "residual_diff_threshold"
+                    "field": "rel_l1_thresh"
                 },
-                "wave_speed_maxhit": {
+                "start_percent": {
                     "id": "15",
-                    "field": "max_consecutive_cache_hits"
+                    "field": "start_percent"
                 },
-                "wave_speed_start": {
+                "end_percent": {
                     "id": "15",
-                    "field": "start"
+                    "field": "end_percent"
                 },
-                "wave_speed_end": {
+                "cache_device": {
                     "id": "15",
-                    "field": "end"
+                    "field": "cache_device"
                 },
                 "tile_size": {
                     "id": "4",

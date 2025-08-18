@@ -18,7 +18,7 @@ import { LoraInput } from '../controls/LoraInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
-import { TeaCacheInput } from '../controls/TeaCacheInput';
+import { HYTeaCacheInput } from '../controls/HYTeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
@@ -65,7 +65,7 @@ const Content = () => {
                         <KJSchedulerSelectInput name='sampler' />
                         <KJAttentionSelectInput name='attention' />
                         <EnhanceVideoInput name='enhance_video' />
-                        <TeaCacheInput name='tea_cache' defaultValue={0.2} />
+                        <HYTeaCacheInput name='tea_cache' defaultValue={0.2} />
                         <KJHYBlockSwapInput name='block_swap' />
                     </AccordionDetails>
                 </Accordion>
