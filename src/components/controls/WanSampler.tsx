@@ -18,8 +18,10 @@ export const WanSampler = ({
                 { text: 'DEIS', value: 'deis' },
                 { text: 'LCM', value: 'lcm' },
                 { text: 'LCM/Beta', value: 'lcm/beta' },
+                { text: 'Res Multistep', value: 'res_multistep' },
                 { text: 'Flowmatch Causvid', value: 'flowmatch_causvid' },
                 { text: 'Flowmatch Distill', value: 'flowmatch_distill' },
+                { text: 'Flowmatch Pusa', value: 'flowmatch_pusa' },
             ]}
             defaultValue='unipc/beta'
             sx={{ mt: 1 }}

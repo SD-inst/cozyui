@@ -44,7 +44,7 @@ export const KJWanBlockSwapInput = ({
         },
         []
     );
-    useRegisterHandler({ name: name, handler });
+    useRegisterHandler({ name, handler });
     const {
         field: { value, onChange },
     } = useController({

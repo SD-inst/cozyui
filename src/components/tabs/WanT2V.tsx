@@ -23,6 +23,7 @@ import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WanSampler } from '../controls/WanSampler';
 import { WFTab } from '../WFTab';
 import { VideoImageResult } from '../controls/VideoImageResult';
+import { KJWanLoopInput } from '../controls/KJWanLoopInput';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -63,6 +64,7 @@ const Content = () => {
                     />
                     <WanNAG name='nag' />
                     <KJWanBlockSwapInput name='block_swap' />
+                    <KJWanLoopInput name='loop' sx={{ mt: 2 }} />
                 </AdvancedSettings>
                 <LoraInput
                     name='lora'

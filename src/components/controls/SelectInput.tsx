@@ -1,7 +1,7 @@
-import { MenuItem, SelectProps } from '@mui/material';
+import { SelectProps } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { Optional } from './optional';
-import { SelectControl } from './SelectControl';
+import { SelectInputBase } from './SelectInputBase';
 
 export type SelectInputProps = {
     defaultValue?: any;
@@ -23,7 +23,6 @@ export type CustomSelectInputProps = Optional<
 
 export const SelectInput = ({
     defaultValue = '',
-    choices,
     tooltip,
     ...props
 }: SelectInputProps) => {
@@ -33,22 +32,11 @@ export const SelectInput = ({
     });
     const { ref, ...field } = ctl.field;
     return (
-        <SelectControl
+        <SelectInputBase
             tooltip={tooltip}
-            label={`controls.${props.name}`}
             selectRef={ref}
             {...field}
             {...props}
-        >
-            {choices.map((c) => (
-                <MenuItem
-                    sx={{ whiteSpace: 'normal' }}
-                    key={JSON.stringify(c)}
-                    value={typeof c === 'object' ? c.value : c}
-                >
-                    {typeof c === 'object' ? c.text : c}
-                </MenuItem>
-            ))}
-        </SelectControl>
+        ></SelectInputBase>
     );
 };

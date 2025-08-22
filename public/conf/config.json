@@ -1492,6 +1492,10 @@
                 "block_swap": {
                     "id": "handle",
                     "loader_node_id": "22"
+                },
+                "loop": {
+                    "id": "handle",
+                    "sampler_node_id": "27"
                 }
             },
             "handler_options": {
@@ -1678,6 +1682,10 @@
                 },
                 "video_image_override": {
                     "id": "handle"
+                },
+                "loop": {
+                    "id": "handle",
+                    "sampler_node_id": "27"
                 }
             },
             "handler_options": {

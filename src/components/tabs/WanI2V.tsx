@@ -23,6 +23,7 @@ import { WFTab } from '../WFTab';
 import { WanNAG } from '../controls/WanNAG';
 import { WanSampler } from '../controls/WanSampler';
 import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
+import { KJWanLoopInput } from '../controls/KJWanLoopInput';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -56,6 +57,7 @@ const Content = () => {
                     />
                     <WanNAG name='nag' />
                     <KJWanBlockSwapInput name='block_swap' />
+                    <KJWanLoopInput name='loop' sx={{ mt: 2 }} />
                     <SliderInput
                         name='aug_strength'
                         min={0}

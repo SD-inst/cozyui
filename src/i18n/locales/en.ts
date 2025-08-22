@@ -148,6 +148,11 @@ const translation = {
         start_percent: 'TeaCache start',
         end_percent: 'TeaCache end',
         cache_device: 'TeaCache device',
+        loop: 'loop',
+        shift_skip: 'shift skip',
+        loop_start_percent: 'start percent',
+        loop_end_percent: 'end percent',
+        color_correction: 'color correction algorithm'
     },
     settings: {
         select_language: 'Select language',
