@@ -60,7 +60,7 @@ export const WSReceiver = () => {
                 return;
             }
             const j = JSON.parse(ev.data);
-            if (j.type !== 'progress') {
+            if (j.type !== 'progress' && j.type !== 'progress_state') {
                 // less spam
                 console.log(ev.data);
             }
