@@ -18,6 +18,10 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'DEIS', value: 'deis' },
                 { text: 'DEIS 2M', value: 'deis_2m' },
                 { text: 'DEIS 3M', value: 'deis_3m' },
+                { text: 'Res 2S', value: 'res_2s' },
+                { text: 'Res 3S', value: 'res_3s' },
+                { text: 'Res 2M', value: 'res_2m' },
+                { text: 'Res 3M', value: 'res_3m' },
             ]}
             defaultValue='euler'
             tooltip='sampler'

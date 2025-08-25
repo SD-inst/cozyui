@@ -177,7 +177,6 @@ export const LoraInput = ({
                 api_input_name,
                 lora_input_name,
                 clip_input_name,
-                input_node_id,
                 output_idx,
                 output_node_ids,
                 output_clip_ids,
@@ -199,6 +198,8 @@ export const LoraInput = ({
             }
             const last_node_id = getFreeNodeId(api);
             const additional_fields = { ...additional_inputs } as any;
+            const input_node_id =
+                api[output_node_ids?.[0]]?.inputs?.[api_input_name]?.[0];
             if (input_node_id && output_idx !== undefined) {
                 additional_fields[lora_input_name] = [
                     input_node_id,
@@ -315,7 +316,6 @@ export const LoraInput = ({
         [
             append,
             additional_inputs,
-            input_node_id,
             output_idx,
             class_name,
             output_node_ids,

@@ -1,4 +1,5 @@
-import { SliderInput, SliderInputProps } from './SliderInput';
+import { SliderInput } from './SliderInput';
+import { SliderInputProps } from './SliderInputBase';
 
 export const VirtualVRAMSliderInput = ({ ...props }: SliderInputProps) => {
     return (

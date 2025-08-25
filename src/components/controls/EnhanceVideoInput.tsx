@@ -2,7 +2,8 @@ import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
 import { useRegisterHandler } from '../contexts/TabContext';
-import { SliderInput, SliderInputProps } from './SliderInput';
+import { SliderInput } from './SliderInput';
+import { SliderInputProps } from './SliderInputBase';
 
 export const EnhanceVideoInput = ({ ...props }: SliderInputProps) => {
     const { handler_options } = useAPI();

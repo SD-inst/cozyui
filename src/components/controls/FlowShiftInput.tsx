@@ -1,5 +1,6 @@
 import { Optional } from './optional';
-import { SliderInput, SliderInputProps } from './SliderInput';
+import { SliderInput } from './SliderInput';
+import { SliderInputProps } from './SliderInputBase';
 
 export const FlowShiftInput = ({
     ...props

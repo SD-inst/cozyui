@@ -13,6 +13,8 @@ export const SchedulerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'DDIM Uniform', value: 'ddim_uniform' },
                 { text: 'Linear Quadratic', value: 'linear_quadratic' },
                 { text: 'KL Optimal', value: 'kl_optimal' },
+                { text: 'Bong Tangent', value: 'bong_tangent' },
+                { text: 'Beta57', value: 'beta57' },
             ]}
             defaultValue='normal'
             tooltip='scheduler'
