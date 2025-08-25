@@ -79,9 +79,9 @@
     "63": {
         "inputs": {
             "scheduler": "beta",
-            "steps": 50,
+            "steps": 26,
             "denoise": 1,
-            "model": ["70", 0]
+            "model": ["74", 0]
         },
         "class_type": "BasicScheduler",
         "_meta": {
@@ -130,29 +130,6 @@
             "title": "Empty Latent Image"
         }
     },
-    "70": {
-        "inputs": {
-            "multiplier": 0.5,
-            "model": ["73", 0]
-        },
-        "class_type": "RescaleCFG",
-        "_meta": {
-            "title": "RescaleCFG"
-        }
-    },
-    "73": {
-        "inputs": {
-            "max_shift": 1.15,
-            "base_shift": 0.5,
-            "width": ["66", 0],
-            "height": ["67", 0],
-            "model": ["74", 0]
-        },
-        "class_type": "ModelSamplingFlux",
-        "_meta": {
-            "title": "ModelSamplingFlux"
-        }
-    },
     "74": {
         "inputs": {
             "unet_name": "chroma/chroma-unlocked-v29.safetensors",
@@ -175,7 +152,7 @@
     },
     "76": {
         "inputs": {
-            "clip_name": "t5xxl_fp16.safetensors",
+            "clip_name": "t5xxl_fp8_e4m3fn_scaled.safetensors",
             "type": "chroma",
             "device": "default"
         },
@@ -187,7 +164,7 @@
     "77": {
         "inputs": {
             "min_padding": 1,
-            "min_length": 7,
+            "min_length": 0,
             "clip": ["76", 0]
         },
         "class_type": "T5TokenizerOptions",
@@ -197,8 +174,8 @@
     },
     "81": {
         "inputs": {
-            "cfg": 6,
-            "model": ["70", 0],
+            "cfg": 4,
+            "model": ["74", 0],
             "positive": ["75", 0],
             "negative": ["5", 0]
         },

@@ -1039,10 +1039,6 @@
                     "id": "81",
                     "field": "cfg"
                 },
-                "rescale_cfg": {
-                    "id": "70",
-                    "field": "multiplier"
-                },
                 "sampler": {
                     "id": "62",
                     "field": "sampler_name"
@@ -1053,7 +1049,7 @@
                 },
                 "compile_model": {
                     "id": "handle",
-                    "output_node_id": "70"
+                    "output_node_id": ["63", "81"]
                 },
                 "lora": {
                     "id": "handle"
@@ -1065,10 +1061,9 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "74",
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["70"],
+                    "output_node_ids": ["63", "81"],
                     "output_idx": 0,
                     "class_name": "LoraLoaderModelOnly",
                     "strength_field_name": "strength_model",

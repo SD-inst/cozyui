@@ -38,13 +38,6 @@ const Content = () => {
                 </Box>
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <CFGInput defaultValue={5} max={10} />
-                <SliderInput
-                    name='rescale_cfg'
-                    defaultValue={0}
-                    min={0}
-                    max={1}
-                    step={0.01}
-                />
                 <SamplerSelectInput
                     name='sampler'
                     defaultValue='res_multistep'
