@@ -73,7 +73,7 @@ const Content = () => {
                         sflora
                             ? [
                                   {
-                                      id: 'wan/Wan21_T2V_14B_lightx2v_cfg_step_distill_lora_rank32.safetensors',
+                                      id: 'wan/lightx2v_T2V_14B_cfg_step_distill_v2_lora_rank64_bf16.safetensors',
                                       label: 'Self-forcing lora',
                                       merge: mergeType.FULL,
                                       strength: 1,
