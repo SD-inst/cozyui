@@ -53,5 +53,5 @@
         "vite": "^6.0.5",
         "yet-another-react-lightbox": "^3.22.0"
     },
-    "packageManager": "yarn@4.9.2"
+    "packageManager": "yarn@4.9.4"
 }
