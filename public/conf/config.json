@@ -1143,6 +1143,98 @@
                 }
             }
         },
+        "SD Upscale": {
+            "api": "api/sd_upscale.json",
+            "controls": {
+                "image": {
+                    "id": "16",
+                    "field": "image"
+                },
+                "prompt": {
+                    "id": "6",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "7",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "4",
+                    "field": "ckpt_name"
+                },
+                "tile_width": {
+                    "id": "14",
+                    "field": "value"
+                },
+                "tile_height": {
+                    "id": "15",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "18",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "18",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "11",
+                    "field": "value"
+                },
+                "cfg": {
+                    "id": "18",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "18",
+                    "field": "sampler_name"
+                },
+                "denoise": {
+                    "id": "18",
+                    "field": "denoise"
+                },
+                "padding": {
+                    "id": "18",
+                    "field": "tile_padding"
+                },
+                "mask_blur": {
+                    "id": "18",
+                    "field": "mask_blur"
+                },
+                "upscale": {
+                    "id": "18",
+                    "field": "upscale_by"
+                },
+                "upscale_model": {
+                    "id": "handle",
+                    "node_id": "17",
+                    "field": "model_name"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": {
+                "id": "9",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "clip_input_name": "clip",
+                    "api_input_name": "model",
+                    "output_node_ids": ["18"],
+                    "output_idx": 0,
+                    "output_clip_ids": ["6", "7"],
+                    "class_name": "LoraLoader",
+                    "strength_field_name": "strength_model",
+                    "clip_strength_field_name": "strength_clip",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
         "Qwen Image": {
             "api": "api/qwen_image.json",
             "controls": {

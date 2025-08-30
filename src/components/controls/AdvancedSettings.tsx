@@ -5,7 +5,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 export const AdvancedSettings = ({ ...props }) => {
     const tr = useTranslate();
     return (
-        <Accordion>
+        <Accordion sx={{ mb: 2 }} {...props}>
             <AccordionSummary expandIcon={<ExpandMore />}>
                 {tr('controls.advanced_parameters')}
             </AccordionSummary>

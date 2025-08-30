@@ -38,6 +38,7 @@ import { ChatterboxTab } from './components/tabs/ChatterboxTTS';
 import { ChatterboxDialogTab } from './components/tabs/ChatterboxTTSDialog';
 import { SDTab } from './components/tabs/SD';
 import { QwenImageTab } from './components/tabs/QwenImage';
+import { SDUpscaleTab } from './components/tabs/SDUpscale';
 
 function App() {
     return (
@@ -70,6 +71,7 @@ function App() {
                                 {MMAudioTab}
                                 {ChatterboxTab}
                                 {ChatterboxDialogTab}
+                                {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
                             </WorkflowTabs>

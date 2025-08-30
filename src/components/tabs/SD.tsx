@@ -61,7 +61,10 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <ImageResult />
+                <ImageResult
+                    sendTargetTab='SD Upscale'
+                    sendFields={['prompt', 'neg_prompt', 'model', 'lora']}
+                />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

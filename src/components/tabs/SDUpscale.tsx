@@ -1,9 +1,6 @@
-import {
-    Box
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
-import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
 import { HYSize } from '../controls/HYSize';
@@ -18,17 +15,15 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { SwapButton } from '../controls/SwapButton';
 import { WFTab } from '../WFTab';
+import { UploadType } from '../controls/UploadType';
 
 const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' />
+                <FileUpload name='image' type={UploadType.IMAGE} />
                 <PromptInput name='prompt' />
-                <PromptInput
-                    name='neg_prompt'
-                    defaultValue='low quality, jpeg, 3d, realistic'
-                />
+                <PromptInput name='neg_prompt' />
                 <SliderInput
                     name='upscale'
                     min={1}
@@ -40,7 +35,7 @@ const Content = () => {
                     <Box display='flex' flexDirection='column' flex={1}>
                         <HYSize
                             name='tile_width'
-                            defaultValue={1024}
+                            defaultValue={832}
                             max={2048}
                         />
                         <HYSize
@@ -56,7 +51,7 @@ const Content = () => {
                         />
                     </Box>
                 </Box>
-                <SliderInput name='steps' defaultValue={10} min={1} max={50} />
+                <SliderInput name='steps' defaultValue={10} min={1} max={40} />
                 <SliderInput
                     name='denoise'
                     defaultValue={0.3}
@@ -65,14 +60,7 @@ const Content = () => {
                     step={0.01}
                 />
                 <AdvancedSettings>
-                    <CFGInput defaultValue={3} max={10} />
-                    <SliderInput
-                        name='rescale_cfg'
-                        defaultValue={0}
-                        min={0}
-                        max={1}
-                        step={0.01}
-                    />
+                    <CFGInput defaultValue={3} step={0.1} />
                     <SliderInput
                         name='padding'
                         min={0}
@@ -89,7 +77,7 @@ const Content = () => {
                     />
                     <SamplerSelectInput
                         name='sampler'
-                        defaultValue='res_multistep'
+                        defaultValue='dpmpp_3m_sde'
                     />
                     <SchedulerSelectInput
                         name='scheduler'
@@ -104,9 +92,14 @@ const Content = () => {
                         sx={{ mt: 2 }}
                     />
                 </AdvancedSettings>
-                <ModelSelectAutocomplete name='model' type='chroma' />
-                <LoraInput name='lora' type='flux' sx={{ mt: 2 }} />
-                <CompileModelToggle />
+                <ModelSelectAutocomplete
+                    component='CheckpointLoaderSimple'
+                    field='ckpt_name'
+                    name='model'
+                    type='sd'
+                    sx={{ mb: 2 }}
+                />
+                <LoraInput name='lora' type='sd' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
@@ -124,10 +117,10 @@ const Content = () => {
     );
 };
 
-export const ChromaUpscaleTab = (
+export const SDUpscaleTab = (
     <WFTab
-        label='Chroma'
-        value='Chroma Upscale'
+        label='SD'
+        value='SD Upscale'
         group='Upscale'
         receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}

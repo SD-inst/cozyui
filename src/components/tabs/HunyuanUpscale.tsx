@@ -70,7 +70,7 @@ const Content = () => {
 
 export const HunyanUpscale = (
     <WFTab
-        label='Hunyuan Upscale'
+        label='Hunyuan'
         value='Hunyuan Upscale'
         group='Upscale'
         receivers={[{ name: 'image', acceptedTypes: 'gifs' }]}

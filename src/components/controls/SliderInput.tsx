@@ -6,7 +6,10 @@ export const SliderInput = ({
     defaultValue,
     ...props
 }: SliderInputProps) => {
-    const { field } = useController({
+    const {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        field: { ref, ...field },
+    } = useController({
         name,
         defaultValue,
     });
