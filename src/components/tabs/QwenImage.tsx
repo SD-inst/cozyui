@@ -23,7 +23,7 @@ const Content = () => {
                 <WidthHeight />
                 <SliderInput name='steps' defaultValue={20} min={1} max={50} />
                 <CFGInput defaultValue={4} max={10} />
-                <FlowShiftInput defaultValue={3.1} step={0.1} />
+                <FlowShiftInput defaultValue={2} step={0.1} />
                 <SamplerSelectInput
                     name='sampler'
                     defaultValue='res_multistep'
