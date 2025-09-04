@@ -39,6 +39,7 @@ import { ChatterboxDialogTab } from './components/tabs/ChatterboxTTSDialog';
 import { SDTab } from './components/tabs/SD';
 import { QwenImageTab } from './components/tabs/QwenImage';
 import { SDUpscaleTab } from './components/tabs/SDUpscale';
+import { QwenImageEditTab } from './components/tabs/QwenImageEdit';
 
 function App() {
     return (
@@ -57,6 +58,7 @@ function App() {
                                 {SDTab}
                                 {QwenImageTab}
                                 {FluxKontextTab}
+                                {QwenImageEditTab}
                                 {WanI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
