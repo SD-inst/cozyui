@@ -107,6 +107,9 @@ export const SendResultButton = ({
     if (!icon && results.length !== 1) {
         return null;
     }
+    if (!handleSend && !menu.length) {
+        return null;
+    }
     return (
         <>
             {icon && handleSend && (
