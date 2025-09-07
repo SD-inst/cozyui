@@ -1692,6 +1692,109 @@
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
             }
         },
+        "Wan I2V InfiniteTalk": {
+            "api": "api/wan_i2v_infinitetalk.json",
+            "controls": {
+                "image": {
+                    "id": "58",
+                    "field": "image"
+                },
+                "audio": {
+                    "id": "122",
+                    "field": "audio"
+                },
+                "prompt": {
+                    "id": "16",
+                    "field": "positive_prompt"
+                },
+                "neg_prompt": {
+                    "id": "16",
+                    "field": "negative_prompt"
+                },
+                "size": {
+                    "id": "117",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "27",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "27",
+                    "field": "cfg"
+                },
+                "flow_shift": {
+                    "id": "27",
+                    "field": "shift"
+                },
+                "audio_cfg_scale": {
+                    "id": "119",
+                    "field": "audio_cfg_scale"
+                },
+                "audio_scale": {
+                    "id": "119",
+                    "field": "audio_scale"
+                },
+                "seed": {
+                    "id": "123",
+                    "field": "value"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "22",
+                    "field": "model"
+                },
+                "model_it": {
+                    "id": "handle",
+                    "node_id": "125",
+                    "field": "model"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "22"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "sampler": {
+                    "id": "27",
+                    "field": "scheduler"
+                },
+                "fps": {
+                    "id": "130",
+                    "field": "value"
+                },
+                "self_forcing_lora": {
+                    "id": "skip"
+                },
+                "block_swap": {
+                    "id": "handle",
+                    "loader_node_id": "22"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "prev_lora",
+                    "api_input_name": "lora",
+                    "output_node_ids": ["22"],
+                    "output_idx": 0,
+                    "class_name": "WanVideoLoraSelect",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora",
+                    "additional_inputs": {
+                        "merge_loras": false
+                    }
+                }
+            },
+            "result": {
+                "id": "30",
+                "type": "gifs"
+            },
+            "defaults": {
+                "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
+                "model_it": "infinitetalk/Wan2_1-InfiniTetalk-Single_fp16.safetensors"
+            }
+        },
         "Wan I2V 2S": {
             "api": "api/wan_i2v_2stage_native.json",
             "controls": {
@@ -2101,6 +2204,9 @@
         },
         "qwen": {
             "filter": "qwen/"
+        },
+        "infinitetalk": {
+            "filter": "infinitetalk/"
         }
     },
     "api": "/cui"

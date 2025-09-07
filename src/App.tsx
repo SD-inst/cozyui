@@ -42,6 +42,7 @@ import { SDUpscaleTab } from './components/tabs/SDUpscale';
 import { QwenImageEditTab } from './components/tabs/QwenImageEdit';
 import { VibeVoiceTab } from './components/tabs/VibeVoiceTTS';
 import { VibeVoiceDialogTab } from './components/tabs/VibeVoiceTTSDialog';
+import { WanI2VITTab } from './components/tabs/WanI2VIT';
 
 function App() {
     return (
@@ -62,6 +63,7 @@ function App() {
                                 {FluxKontextTab}
                                 {QwenImageEditTab}
                                 {WanI2VTab}
+                                {WanI2VITTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
                                 {FramePackI2VTab}

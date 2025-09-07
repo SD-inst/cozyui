@@ -161,6 +161,10 @@ const translation = {
         color_correction: 'color correction algorithm',
         top_p: 'top P',
         use_sampling: 'use sampling',
+        audio_cfg_scale: 'audio CFG scale',
+        audio_scale: 'audio scale',
+        fps: 'FPS',
+        model_it: 'InfiniteTalk model'
     },
     settings: {
         select_language: 'Select language',
@@ -229,6 +233,9 @@ const translation = {
             'Limiting factor to prevent the negative prompt going too far.',
         nag_sigma_end:
             'Stop applying NAG at this sigma, provides speed boost with some quality loss. Safe to leave at 0.9.',
+        audio_scale:
+            "Increase if audio conditioning is too weak, i.e. the character doesn't follow the speech.",
+        audio_cfg_scale: 'Only has effect if main CFG is enabled. Does two passes per step, allows for more motion and detail at the cost of much slower rendering.'
     },
     toasts: {
         disconnected: 'Disconnected',

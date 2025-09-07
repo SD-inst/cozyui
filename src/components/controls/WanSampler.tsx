@@ -22,6 +22,7 @@ export const WanSampler = ({
                 { text: 'Flowmatch Causvid', value: 'flowmatch_causvid' },
                 { text: 'Flowmatch Distill', value: 'flowmatch_distill' },
                 { text: 'Flowmatch Pusa', value: 'flowmatch_pusa' },
+                { text: 'Multitalk', value: 'multitalk' },
             ]}
             defaultValue='unipc/beta'
             sx={{ mt: 1 }}

@@ -8,6 +8,7 @@ import { VerticalBox } from '../VerticalBox';
 import { settings } from '../../hooks/settings';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useStringSetting } from '../../hooks/useSetting';
+import { SendResultButton } from './SendResultButton';
 
 export const AudioResult = ({
     title,
@@ -64,6 +65,7 @@ export const AudioResult = ({
                                 {tr('controls.download')}
                             </Button>
                         </a>
+                        <SendResultButton />
                     </VerticalBox>
                 );
             })}
