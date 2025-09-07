@@ -1961,6 +1961,47 @@
                 },
                 { "id": "65", "type": "latents" }
             ]
+        },
+        "VibeVoice TTS": {
+            "api":"api/vibevoice_single.json",
+            "controls": {
+                "prompt": {
+                    "id": "37",
+                    "field": "text"
+                },
+                "audio_input": {
+                    "id": "15",
+                    "field": "audio"
+                },
+                "steps": {
+                    "id": "37",
+                    "field": "diffusion_steps"
+                },
+                "cfg": {
+                    "id": "37",
+                    "field": "cfg_scale"
+                },
+                "temperature": {
+                    "id": "37",
+                    "field": "temperature"
+                },
+                "top_p": {
+                    "id": "37",
+                    "field": "top_p"
+                },
+                "use_sampling": {
+                    "id": "37",
+                    "field": "use_sampling"
+                },
+                "seed": {
+                    "id": "39",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "38",
+                "type": "audio"
+            }
         }
     },
     "models": {

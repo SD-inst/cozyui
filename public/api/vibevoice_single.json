@@ -1,0 +1,77 @@
+{
+  "15": {
+    "inputs": {
+      "audio": "audio.wav",
+      "audioUI": ""
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "LoadAudio"
+    }
+  },
+  "37": {
+    "inputs": {
+      "text": "Hello, this is a test of the VibeVoice text-to-speech system.",
+      "model": "VibeVoice-Large",
+      "attention_type": "auto",
+      "free_memory_after_generate": true,
+      "diffusion_steps": 20,
+      "seed": [
+        "39",
+        0
+      ],
+      "cfg_scale": 1.3,
+      "use_sampling": false,
+      "temperature": 0.95,
+      "top_p": 0.95,
+      "voice_to_clone": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "VibeVoiceSingleSpeakerNode",
+    "_meta": {
+      "title": "VibeVoice Single Speaker"
+    }
+  },
+  "38": {
+    "inputs": {
+      "filename_prefix": [
+        "40",
+        0
+      ],
+      "audioUI": "",
+      "audio": [
+        "37",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "SaveAudio"
+    }
+  },
+  "39": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "40": {
+    "inputs": {
+      "prefix": "VibeVoice_",
+      "suffix": "",
+      "input": [
+        "39",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  }
+}
