@@ -1963,7 +1963,7 @@
             ]
         },
         "VibeVoice TTS": {
-            "api":"api/vibevoice_single.json",
+            "api": "api/vibevoice_single.json",
             "controls": {
                 "prompt": {
                     "id": "37",
@@ -1995,6 +1995,67 @@
                 },
                 "seed": {
                     "id": "39",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "38",
+                "type": "audio"
+            }
+        },
+        "VibeVoice TTS Dialog": {
+            "api": "api/vibevoice_dialog.json",
+            "controls": {
+                "prompt": {
+                    "id": "37",
+                    "field": "text"
+                },
+                "audio_input_1": {
+                    "id": "15",
+                    "field": "audio"
+                },
+                "audio_input_2": {
+                    "id": "17",
+                    "field": "audio"
+                },
+                "audio_toggle_3": {
+                    "id": "handle",
+                    "tts_node_id": "37",
+                    "tts_field": "speaker3_voice"
+                },
+                "audio_input_3": {
+                    "id": "skip"
+                },
+                "audio_toggle_4": {
+                    "id": "handle",
+                    "tts_node_id": "37",
+                    "tts_field": "speaker4_voice"
+                },
+                "audio_input_4": {
+                    "id": "skip"
+                },
+                "steps": {
+                    "id": "37",
+                    "field": "diffusion_steps"
+                },
+                "cfg": {
+                    "id": "37",
+                    "field": "cfg_scale"
+                },
+                "temperature": {
+                    "id": "37",
+                    "field": "temperature"
+                },
+                "top_p": {
+                    "id": "37",
+                    "field": "top_p"
+                },
+                "use_sampling": {
+                    "id": "37",
+                    "field": "use_sampling"
+                },
+                "seed": {
+                    "id": "29",
                     "field": "value"
                 }
             },

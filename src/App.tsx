@@ -41,6 +41,7 @@ import { QwenImageTab } from './components/tabs/QwenImage';
 import { SDUpscaleTab } from './components/tabs/SDUpscale';
 import { QwenImageEditTab } from './components/tabs/QwenImageEdit';
 import { VibeVoiceTab } from './components/tabs/VibeVoiceTTS';
+import { VibeVoiceDialogTab } from './components/tabs/VibeVoiceTTSDialog';
 
 function App() {
     return (
@@ -75,6 +76,7 @@ function App() {
                                 {ChatterboxTab}
                                 {ChatterboxDialogTab}
                                 {VibeVoiceTab}
+                                {VibeVoiceDialogTab}
                                 {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
