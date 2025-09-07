@@ -51,6 +51,7 @@ export type GenerateButtonProps = {
     hideErrors?: boolean;
     noexec?: boolean;
     noreset?: boolean;
+    disabled?: boolean;
 };
 
 export const GenerateButton = ({
@@ -58,6 +59,7 @@ export const GenerateButton = ({
     hideErrors,
     noexec,
     noreset,
+    disabled
 }: GenerateButtonProps) => {
     const dispatch = useAppDispatch();
     const tr = useTranslate();
@@ -69,7 +71,7 @@ export const GenerateButton = ({
         (status &&
             (status === statusEnum.WAITING || status === statusEnum.RUNNING)) ||
         tabs === undefined ||
-        !connected;
+        !connected || disabled;
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
     const tab_name = useTabName();
