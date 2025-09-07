@@ -1,3 +1,4 @@
+import { useWatch } from 'react-hook-form';
 import { AudioInput } from '../controls/AudioInput';
 import { AudioResult } from '../controls/AudioResult';
 import { FileUpload } from '../controls/FileUpload';
@@ -11,6 +12,7 @@ import { UploadType } from '../controls/UploadType';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
+    const audio_input = useWatch({ name: ['audio_input_1', 'audio_input_2'] });
     return (
         <Layout>
             <GridLeft>
@@ -39,7 +41,7 @@ const Content = () => {
                     min={0}
                     max={10}
                     defaultValue={1.3}
-                    step={0.1}
+                    step={0.01}
                 />
                 <SliderInput
                     name='temperature'
@@ -62,7 +64,7 @@ const Content = () => {
                 <AudioResult loop={false} />
             </GridRight>
             <GridBottom>
-                <GenerateButton />
+                <GenerateButton disabled={!audio_input[0] || !audio_input[1]} />
             </GridBottom>
         </Layout>
     );
