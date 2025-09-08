@@ -14,11 +14,11 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useCallback, useContext, useState } from 'react';
+import { useCallback, useContext, useMemo, useState } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { FilterContext } from '../contexts/FilterContext';
 import { SelectControl } from '../controls/SelectControl';
-import { db, markEnum, TaskResult } from './db';
+import { db, markEnum } from './db';
 import { usePkFromFilter } from './filter';
 
 export const ClearHistoryButton = ({ ...props }: BoxProps) => {
@@ -54,16 +54,27 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                         return result;
                 }
             })();
-    const filterFunc = useCallback(
-        (t: TaskResult) =>
-            (newer ? t.timestamp > seconds : t.timestamp < seconds) &&
-            (filter.pinned
-                ? t.mark === markEnum.PINNED
-                : t.mark !== markEnum.PINNED),
-        [filter.pinned, newer, seconds]
-    );
+    const filterFuncs = useMemo(() => {
+        const tsFilterFunc = () => {
+            const w = db.taskResults.where('timestamp');
+            if (newer) {
+                return w.above(seconds).primaryKeys();
+            } else {
+                return w.below(seconds).primaryKeys();
+            }
+        };
+        const pinFilterFunc = () => {
+            const w = db.taskResults.where('mark');
+            if (filter.pinned) {
+                return w.equals(markEnum.PINNED).primaryKeys();
+            } else {
+                return w.notEqual(markEnum.PINNED).primaryKeys();
+            }
+        };
+        return [tsFilterFunc, pinFilterFunc];
+    }, [filter.pinned, newer, seconds]);
     const handleConfirmDelete = useCallback(async () => {
-        const coll = await pkFromFilter(filterFunc);
+        const coll = await pkFromFilter(filterFuncs);
         const cnt = coll.length;
         if (!cnt) {
             setOpenNothing(true);
@@ -71,13 +82,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             setToDelete(cnt);
             setOpenConfirm(true);
         }
-    }, [filterFunc, pkFromFilter]);
+    }, [filterFuncs, pkFromFilter]);
     const handleDelete = useCallback(async () => {
-        const coll = await pkFromFilter(filterFunc);
+        const coll = await pkFromFilter(filterFuncs);
         db.taskResults.bulkDelete(coll);
         setOpenConfirm(false);
         setTimeout(() => setOpenCleanup(false), 0);
-    }, [filterFunc, pkFromFilter]);
+    }, [filterFuncs, pkFromFilter]);
     const cmp = tr(newer ? 'settings.newer' : 'settings.older');
     return (
         <>

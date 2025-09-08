@@ -25,6 +25,7 @@ import {
 import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { FilterContext } from '../contexts/FilterContext';
+import { SelectInputBase } from '../controls/SelectInputBase';
 import { autoscrollSlotProps } from '../controls/utils';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
@@ -44,7 +45,7 @@ const HistoryPagination = ({
     const filter = useContext(FilterContext);
     const count =
         useLiveQuery(async () => {
-            if (!filter.prompt && !filter.pinned) {
+            if (filter.isEmpty()) {
                 return db.taskResults.count();
             }
             const pk_x = await pkFromFilter(filter);
@@ -73,9 +74,10 @@ const HistoryPagination = ({
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
     const [page, setPage] = useState(1);
-    const { pinned, prompt, setPinned, setPrompt } = useContext(FilterContext);
+    const { pinned, prompt, type, setPinned, setPrompt, setType, isEmpty } =
+        useContext(FilterContext);
     const results = useLiveQuery(async () => {
-        if (!prompt && !pinned) {
+        if (isEmpty()) {
             // return everything
             return db.taskResults
                 .orderBy('timestamp')
@@ -84,7 +86,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 .limit(page_size)
                 .toArray();
         }
-        const pk_x = await pkFromFilter({ prompt, pinned });
+        const pk_x = await pkFromFilter({ prompt, pinned, type });
         return db.taskResults
             .where(':id')
             .anyOf(pk_x)
@@ -92,7 +94,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             .limit(page_size)
             .reverse()
             .sortBy('timestamp');
-    }, [page, prompt, pinned]);
+    }, [isEmpty, prompt, pinned, type, page]);
     const ref = useRef<HTMLElement>(null);
     return (
         <Accordion
@@ -111,17 +113,13 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             <AccordionDetails ref={ref} sx={{ p: { xs: 0, md: 2 } }}>
                 <CompareContextProvider>
                     <VerticalBox>
-                        <Box
-                            width='100%'
-                            display='flex'
-                            flexWrap={{ xs: 'wrap', lg: 'nowrap' }}
-                        >
+                        <Box width='100%' display='flex' flexWrap='wrap'>
                             <OutlinedInput
                                 placeholder={tr('controls.filter')}
                                 size='small'
                                 value={prompt}
                                 onChange={(e) => setPrompt(e.target.value)}
-                                sx={{ ml: { xs: 1, lg: 0 }, mr: 1 }}
+                                sx={{ ml: { xs: 1, lg: 0 }, mb: 2 }}
                                 endAdornment={
                                     <Button
                                         size='small'
@@ -137,6 +135,32 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                 }
                                 fullWidth
                             />
+                            <SelectInputBase
+                                size='small'
+                                choices={[
+                                    {
+                                        text: tr('controls.type_any'),
+                                        value: '',
+                                    },
+                                    {
+                                        text: tr('controls.type_video'),
+                                        value: 'gifs',
+                                    },
+                                    {
+                                        text: tr('controls.type_audio'),
+                                        value: 'audio',
+                                    },
+                                    {
+                                        text: tr('controls.type_image'),
+                                        value: 'images',
+                                    },
+                                ]}
+                                name='type'
+                                value={type}
+                                onChange={(e) =>
+                                    setType(e.target.value as string)
+                                }
+                            />
                             <FormControlLabel
                                 label={tr('controls.pinned')}
                                 control={
@@ -145,7 +169,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                         onChange={(_, c) => setPinned(c)}
                                     />
                                 }
-                                sx={{ ml: 0 }}
+                                sx={{ ml: -1 }}
                             />
                         </Box>
                         <HistoryPagination page={page} setPage={setPage} />

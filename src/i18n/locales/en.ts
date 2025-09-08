@@ -164,7 +164,12 @@ const translation = {
         audio_cfg_scale: 'audio CFG scale',
         audio_scale: 'audio scale',
         fps: 'FPS',
-        model_it: 'InfiniteTalk model'
+        model_it: 'InfiniteTalk model',
+        type: 'Content type',
+        type_any: 'Any',
+        type_video: 'Video',
+        type_audio: 'Audio',
+        type_image: 'Image',
     },
     settings: {
         select_language: 'Select language',
@@ -235,7 +240,8 @@ const translation = {
             'Stop applying NAG at this sigma, provides speed boost with some quality loss. Safe to leave at 0.9.',
         audio_scale:
             "Increase if audio conditioning is too weak, i.e. the character doesn't follow the speech.",
-        audio_cfg_scale: 'Only has effect if main CFG is enabled. Does two passes per step, allows for more motion and detail at the cost of much slower rendering.'
+        audio_cfg_scale:
+            'Only has effect if main CFG is enabled. Does two passes per step, allows for more motion and detail at the cost of much slower rendering.',
     },
     toasts: {
         disconnected: 'Disconnected',

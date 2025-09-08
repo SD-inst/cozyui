@@ -164,6 +164,11 @@ const translation = {
         audio_scale: 'сила аудио',
         fps: 'кадров/сек',
         model_it: 'модель InfiniteTalk',
+        type: 'Тип контента',
+        type_any: 'Любой',
+        type_video: 'Видео',
+        type_audio: 'Аудио',
+        type_image: 'Изображение',
     },
     settings: {
         select_language: 'Выбор языка',

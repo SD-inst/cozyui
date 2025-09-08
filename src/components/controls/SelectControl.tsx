@@ -26,7 +26,9 @@ export const SelectControl = <T,>({
                 ...props.sx,
             }}
         >
-            <InputLabel>{tr(label)}</InputLabel>
+            <InputLabel size={props.size === 'small' ? 'small' : undefined}>
+                {tr(label)}
+            </InputLabel>
             <Select
                 label={tr(label)}
                 sx={{
