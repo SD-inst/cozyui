@@ -170,6 +170,7 @@ const translation = {
         type_video: 'Video',
         type_audio: 'Audio',
         type_image: 'Image',
+        merge_loras: 'merge LoRAs',
     },
     settings: {
         select_language: 'Select language',

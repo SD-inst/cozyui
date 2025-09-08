@@ -169,6 +169,7 @@ const translation = {
         type_video: 'Видео',
         type_audio: 'Аудио',
         type_image: 'Изображение',
+        merge_loras: 'объединить LoRA',
     },
     settings: {
         select_language: 'Выбор языка',

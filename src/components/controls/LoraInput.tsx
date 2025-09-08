@@ -146,12 +146,14 @@ export const LoraInput = ({
     append,
     sx,
     type,
+    overrideInputs,
     ...props
 }: {
     name: string;
     type: string;
     label?: string;
     append?: valueType[];
+    overrideInputs?: any;
 } & Omit<
     AutocompleteProps<valueType, true, any, any>,
     'renderInput' | 'options'
@@ -197,7 +199,10 @@ export const LoraInput = ({
                 return;
             }
             const last_node_id = getFreeNodeId(api);
-            const additional_fields = { ...additional_inputs } as any;
+            const additional_fields = {
+                ...additional_inputs,
+                ...overrideInputs,
+            } as any;
             const input_node_id =
                 api[output_node_ids?.[0]]?.inputs?.[api_input_name]?.[0];
             if (input_node_id && output_idx !== undefined) {
@@ -316,16 +321,17 @@ export const LoraInput = ({
         [
             append,
             additional_inputs,
+            overrideInputs,
+            output_node_ids,
+            api_input_name,
             output_idx,
             class_name,
-            output_node_ids,
             output_clip_ids,
             lora_input_name,
             clip_input_name,
             name_field_name,
             strength_field_name,
             clip_strength_field_name,
-            api_input_name,
         ]
     );
     useRegisterHandler({ name: props.name, handler });

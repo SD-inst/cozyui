@@ -27,6 +27,7 @@ import { KJWanLoopInput } from '../controls/KJWanLoopInput';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
+    const mergeLoras = useWatch({ name: 'merge_loras' });
     return (
         <Layout>
             <GridLeft>
@@ -57,7 +58,7 @@ const Content = () => {
                     />
                     <WanNAG name='nag' />
                     <KJWanBlockSwapInput name='block_swap' />
-                    <KJWanLoopInput name='loop' sx={{ mt: 2 }} />
+                    <KJWanLoopInput name='loop' sx={{ mt: 2, mb: 2 }} />
                     <SliderInput
                         name='aug_strength'
                         min={0}
@@ -79,6 +80,7 @@ const Content = () => {
                         step={0.01}
                         defaultValue={1}
                     />
+                    <ToggleInput name='merge_loras' />
                 </AdvancedSettings>
                 <LoraInput
                     name='lora'
@@ -94,6 +96,9 @@ const Content = () => {
                                   },
                               ]
                             : undefined
+                    }
+                    overrideInputs={
+                        mergeLoras ? { merge_loras: true } : undefined
                     }
                     sx={{ mt: 1 }}
                 />

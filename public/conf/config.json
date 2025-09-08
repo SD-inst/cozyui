@@ -1668,6 +1668,9 @@
                 "loop": {
                     "id": "handle",
                     "sampler_node_id": "27"
+                },
+                "merge_loras": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -1961,6 +1964,9 @@
                 "loop": {
                     "id": "handle",
                     "sampler_node_id": "27"
+                },
+                "merge_loras": {
+                    "id": "skip"
                 }
             },
             "handler_options": {

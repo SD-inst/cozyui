@@ -28,8 +28,8 @@
         "inputs": {
             "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
             "base_precision": "fp16_fast",
-            "quantization": "fp8_e4m3fn",
-            "load_device": "main_device",
+            "quantization": "disabled",
+            "load_device": "offload_device",
             "attention_mode": "sageattn"
         },
         "class_type": "WanVideoModelLoader",
