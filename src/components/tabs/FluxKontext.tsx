@@ -10,7 +10,6 @@ import { useRegisterHandler } from '../contexts/TabContext';
 import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
-import { HYSize } from '../controls/HYSize';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
@@ -19,8 +18,8 @@ import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
-import { SwapButton } from '../controls/SwapButton';
 import { ToggleInput } from '../controls/ToggleInput';
+import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const useLatents = (name: string) => {
@@ -179,18 +178,7 @@ const Content = () => {
                 <LoadLatents name='latents' />
                 <AppendImage name='append_image' upload_name='second_image' />
                 <PromptInput name='prompt' />
-                <Box display='flex' flexDirection='row' width='100%'>
-                    <Box display='flex' flexDirection='column' flex={1}>
-                        <HYSize name='width' defaultValue={832} max={2048} />
-                        <HYSize name='height' defaultValue={1280} max={2048} />
-                    </Box>
-                    <Box display='flex' alignItems='center'>
-                        <SwapButton
-                            names={['width', 'height']}
-                            sx={{ mt: 3 }}
-                        />
-                    </Box>
-                </Box>
+                <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={40} />
                 <GuidanceInput defaultValue={2.5} step={0.1} />
                 <SamplerSelectInput name='sampler' defaultValue='dpmpp_2m' />

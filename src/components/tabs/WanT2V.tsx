@@ -1,29 +1,27 @@
-import { Box } from '@mui/material';
 import { useWatch } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
-import { HYSize } from '../controls/HYSize';
 import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
 import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
+import { KJWanLoopInput } from '../controls/KJWanLoopInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
-import { SwapButton } from '../controls/SwapButton';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoImageOverride } from '../controls/VideoImageOverride';
+import { VideoImageResult } from '../controls/VideoImageResult';
 import { WanLengthInput } from '../controls/WanLengthInput';
 import { WanNAG } from '../controls/WanNAG';
 import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WanSampler } from '../controls/WanSampler';
+import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
-import { VideoImageResult } from '../controls/VideoImageResult';
-import { KJWanLoopInput } from '../controls/KJWanLoopInput';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -32,18 +30,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
-                <Box display='flex' flexDirection='row' width='100%'>
-                    <Box display='flex' flexDirection='column' flex={1}>
-                        <HYSize name='width' defaultValue={720} max={2048} />
-                        <HYSize name='height' defaultValue={480} max={2048} />
-                    </Box>
-                    <Box display='flex' alignItems='center'>
-                        <SwapButton
-                            names={['width', 'height']}
-                            sx={{ mt: 3 }}
-                        />
-                    </Box>
-                </Box>
+                <WidthHeight defaultWidth={848} defaultHeight={480} />
                 <WanLengthInput />
                 <SliderInput name='steps' defaultValue={10} min={1} max={50} />
                 <FlowShiftInput defaultValue={8} />

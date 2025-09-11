@@ -1,6 +1,5 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { Box } from '@mui/system';
 import { useTranslate } from '../../i18n/I18nContext';
 import { CFGInput } from '../controls/CFGInput';
 import { DescribeButton } from '../controls/DescribeButton';
@@ -12,9 +11,9 @@ import { LLMSelectInput } from '../controls/LLMSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SelectInput } from '../controls/SelectInput';
 import { SliderInput } from '../controls/SliderInput';
-import { SwapButton } from '../controls/SwapButton';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
+import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
@@ -36,30 +35,15 @@ const Content = () => {
                 <LLMSelectInput name='llm' />
                 <DescribeButton />
                 <TextInput name='prompt' multiline />
-                <Box display='flex' flexDirection='row' width='100%' mt={2}>
-                    <Box display='flex' flexDirection='column' flex={1}>
-                        <SliderInput
-                            name='max_width'
-                            defaultValue={800}
-                            min={128}
-                            max={1280}
-                            step={32}
-                        />
-                        <SliderInput
-                            name='max_height'
-                            defaultValue={800}
-                            min={128}
-                            max={1280}
-                            step={32}
-                        />
-                    </Box>
-                    <Box display='flex' alignItems='center'>
-                        <SwapButton
-                            names={['width', 'height']}
-                            sx={{ mt: 3 }}
-                        />
-                    </Box>
-                </Box>
+                <WidthHeight
+                    widthName='max_width'
+                    heightName='max_height'
+                    defaultWidth={800}
+                    defaultHeight={800}
+                    step={32}
+                    maxWidth={1280}
+                    maxHeight={1280}
+                />
                 <LengthInput
                     name='length'
                     min={9}

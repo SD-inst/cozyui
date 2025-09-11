@@ -20,7 +20,7 @@ const Content = () => {
             <GridLeft>
                 <PromptInput name='prompt' />
                 <PromptInput name='neg_prompt' defaultValue='' />
-                <WidthHeight />
+                <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={50} />
                 <CFGInput defaultValue={4} max={10} />
                 <FlowShiftInput defaultValue={2} step={0.1} />

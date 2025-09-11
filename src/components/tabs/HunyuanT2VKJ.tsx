@@ -1,15 +1,14 @@
 import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { Box } from '@mui/system';
 import { useTranslate } from '../../i18n/I18nContext';
-import { KJHYBlockSwapInput } from '../controls/KJHYBlockSwapInput';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
-import { HYSize } from '../controls/HYSize';
+import { HYTeaCacheInput } from '../controls/HYTeaCacheInput';
 import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
+import { KJHYBlockSwapInput } from '../controls/KJHYBlockSwapInput';
 import { KJHYCFG } from '../controls/KJHYCFG';
 import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -17,10 +16,9 @@ import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
-import { SwapButton } from '../controls/SwapButton';
-import { HYTeaCacheInput } from '../controls/HYTeaCacheInput';
 import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
+import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
@@ -29,18 +27,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <TextInput name='prompt' multiline sx={{ mb: 2 }} />
-                <Box display='flex' flexDirection='row' width='100%'>
-                    <Box display='flex' flexDirection='column' flex={1}>
-                        <HYSize name='width' defaultValue={512} />
-                        <HYSize name='height' defaultValue={320} />
-                    </Box>
-                    <Box display='flex' alignItems='center'>
-                        <SwapButton
-                            names={['width', 'height']}
-                            sx={{ mt: 3 }}
-                        />
-                    </Box>
-                </Box>
+                <WidthHeight defaultWidth={848} defaultHeight={480} />
                 <LengthInput
                     min={5}
                     max={201}
