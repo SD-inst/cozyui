@@ -4,6 +4,25 @@ import { useCallback, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { SliderInputBase } from './SliderInputBase';
 
+const gcd = (a: number, b: number) => {
+    if (b === 0) {
+        return a;
+    }
+    return gcd(b, a % b);
+};
+
+const calcAspect = (a: number, b: number) => {
+    const aspect = a / b;
+    const r = gcd(a, b);
+    a = a / r;
+    b = b / r;
+    while (a > 100 || b > 100) {
+        a = Math.round(a / 10);
+        b = Math.round(b / 10);
+    }
+    return { aspect, str: a > 0 && b > 0 ? `${a}:${b}` : '' };
+};
+
 export const WidthHeight = ({
     widthName = 'width',
     heightName = 'height',
@@ -21,14 +40,14 @@ export const WidthHeight = ({
     maxHeight?: number;
     step?: number;
 }) => {
-    const [aspect, setAspect] = useState(0);
+    const [{ aspect, str }, setAspect] = useState({ aspect: 0, str: '' });
     const { getValues, setValue } = useFormContext();
     const handleSwap = useCallback(() => {
         const vals = getValues([widthName, heightName]);
         setValue(widthName, vals[1]);
         setValue(heightName, vals[0]);
         if (aspect && vals[0]) {
-            setAspect(vals[1] / vals[0]);
+            setAspect(calcAspect(vals[1], vals[0]));
         }
     }, [aspect, getValues, heightName, setValue, widthName]);
     const {
@@ -115,15 +134,17 @@ export const WidthHeight = ({
                     color='primary'
                     onClick={() => {
                         if (aspect || !heightField.value) {
-                            setAspect(0);
+                            setAspect({ aspect: 0, str: '' });
                         } else {
-                            setAspect(widthField.value / heightField.value);
+                            setAspect(
+                                calcAspect(widthField.value, heightField.value)
+                            );
                         }
                     }}
                 >
                     {aspect ? (
                         <Box display='flex' gap={1}>
-                            <Lock /> {aspect.toFixed(2)}
+                            <Lock /> {str || aspect.toFixed(2)}
                         </Box>
                     ) : (
                         <LockOpen />
