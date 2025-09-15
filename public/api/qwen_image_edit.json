@@ -8,8 +8,8 @@
             "scheduler": "simple",
             "denoise": 1,
             "model": ["66", 0],
-            "positive": ["6", 0],
-            "negative": ["7", 0],
+            "positive": ["74", 0],
+            "negative": ["72", 0],
             "latent_image": ["58", 0]
         },
         "class_type": "KSampler",
@@ -21,7 +21,6 @@
         "inputs": {
             "prompt": "prompt",
             "clip": ["38", 0],
-            "vae": ["39", 0],
             "image": ["41", 0]
         },
         "class_type": "TextEncodeQwenImageEdit",
@@ -33,7 +32,6 @@
         "inputs": {
             "prompt": "negative prompt",
             "clip": ["38", 0],
-            "vae": ["39", 0],
             "image": ["41", 0]
         },
         "class_type": "TextEncodeQwenImageEdit",
@@ -148,6 +146,36 @@
         "class_type": "SomethingToString",
         "_meta": {
             "title": "Something To String"
+        }
+    },
+    "72": {
+        "inputs": {
+            "conditioning": ["7", 0],
+            "latent": ["73", 0]
+        },
+        "class_type": "ReferenceLatent",
+        "_meta": {
+            "title": "ReferenceLatent"
+        }
+    },
+    "73": {
+        "inputs": {
+            "pixels": ["41", 0],
+            "vae": ["39", 0]
+        },
+        "class_type": "VAEEncode",
+        "_meta": {
+            "title": "VAE Encode"
+        }
+    },
+    "74": {
+        "inputs": {
+            "conditioning": ["6", 0],
+            "latent": ["73", 0]
+        },
+        "class_type": "ReferenceLatent",
+        "_meta": {
+            "title": "ReferenceLatent"
         }
     }
 }
