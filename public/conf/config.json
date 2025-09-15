@@ -86,9 +86,6 @@
                     "id": "4",
                     "field": "temporal_overlap"
                 },
-                "allow_upscale": {
-                    "id": "handle"
-                },
                 "clip_model": {
                     "id": "10",
                     "field": "clip_name2"
@@ -653,9 +650,6 @@
                 "temporal_overlap": {
                     "id": "57",
                     "field": "temporal_overlap"
-                },
-                "allow_upscale": {
-                    "id": "handle"
                 },
                 "clip_model": {
                     "id": "47",

@@ -30,7 +30,7 @@ const Content = () => {
                     name='upscale'
                     defaultValue={2}
                     min={1}
-                    max={3}
+                    max={4}
                     step={0.1}
                 />
                 <SliderInput name='steps' defaultValue={10} min={1} max={50} />

@@ -2,14 +2,15 @@ import { ExpandMore } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { mergeType } from '../../api/mergeType';
 import { useTranslate } from '../../i18n/I18nContext';
-import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
+import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYLengthInput } from '../controls/HYLengthInput';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYSize } from '../controls/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LLMSelectInput } from '../controls/LLMSelectInput';
@@ -18,16 +19,12 @@ import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
-import { SendResultButton } from '../controls/SendResultButton';
 import { SliderInput } from '../controls/SliderInput';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
-import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
-import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { WFTab } from '../WFTab';
-import { CompileModelToggle } from '../controls/CompileModelToggle';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 
 const Content = () => {
     const tr = useTranslate();
@@ -73,7 +70,6 @@ const Content = () => {
                         />
                         <TeaCacheInput />
                         <VirtualVRAMSliderInput name='virtual_vram' />
-                        <UpscaleToggle name='allow_upscale' />
                         <CompileModelToggle />
                     </AccordionDetails>
                 </Accordion>
@@ -98,13 +94,10 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoResult />
-                <ResultOverrideContextProvider value={{ index: 1 }}>
-                    <SendResultButton
-                        targetTab='Hunyuan Upscale'
-                        fields={['prompt', 'model', 'lora']}
-                    />
-                </ResultOverrideContextProvider>
+                <VideoResult
+                    sendTargetTab='Hunyuan Upscale'
+                    sendFields={['prompt', 'model', 'lora']}
+                />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

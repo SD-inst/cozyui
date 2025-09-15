@@ -1,4 +1,3 @@
-import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
@@ -15,10 +14,8 @@ import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
-import { SendResultButton } from '../controls/SendResultButton';
 import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
-import { UpscaleToggle } from '../controls/UpscaleToggle';
 import { VideoImageOverride } from '../controls/VideoImageOverride';
 import { VideoImageResult } from '../controls/VideoImageResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
@@ -30,10 +27,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
-                <WidthHeight
-                    defaultWidth={848}
-                    defaultHeight={480}
-                />
+                <WidthHeight defaultWidth={848} defaultHeight={480} />
                 <HYLengthInput />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput />
@@ -47,7 +41,6 @@ const Content = () => {
                     <TeaCacheInput />
                     <HYNAG name='nag' />
                     <HYRiflexInput name='riflex' />
-                    <UpscaleToggle name='allow_upscale' />
                     <CompileModelToggle />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
@@ -60,13 +53,10 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoImageResult />
-                <ResultOverrideContextProvider value={{ index: 1 }}>
-                    <SendResultButton
-                        targetTab='Hunyuan Upscale'
-                        fields={['prompt', 'model', 'lora']}
-                    />
-                </ResultOverrideContextProvider>
+                <VideoImageResult
+                    sendTargetTab='Hunyuan Upscale'
+                    sendFields={['prompt', 'model', 'lora']}
+                />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

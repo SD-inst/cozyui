@@ -13,12 +13,20 @@ export type VideoResultProps = {
     title?: string;
     rate_override?: number;
     fps?: number;
+    sendTargetTab?: string;
+    sendFields?: string[];
+    sendLabel?: string;
+    sendOnClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export const VideoResult = ({
     title,
     rate_override,
     fps,
+    sendTargetTab,
+    sendFields,
+    sendLabel,
+    sendOnClick,
 }: VideoResultProps) => {
     const results = useResult();
     const tr = useTranslate();
@@ -66,7 +74,12 @@ export const VideoResult = ({
                 );
             })}
             <VideoPreview size={300} rate_override={rate_override} fps={fps} />
-            <SendResultButton />
+            <SendResultButton
+                targetTab={sendTargetTab}
+                fields={sendFields}
+                label={sendLabel}
+                onClick={sendOnClick}
+            />
         </VerticalBox>
     );
 };

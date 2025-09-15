@@ -191,19 +191,5 @@
         "_meta": {
             "title": "INT Constant"
         }
-    },
-    "20": {
-        "inputs": {
-            "filename_prefix": ["18", 0],
-            "fps": 24,
-            "lossless": true,
-            "quality": 80,
-            "method": "default",
-            "images": ["4", 0]
-        },
-        "class_type": "SaveAnimatedWEBP",
-        "_meta": {
-            "title": "SaveAnimatedWEBP"
-        }
     }
 }
