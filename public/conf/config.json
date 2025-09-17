@@ -54,9 +54,9 @@
                     "id": "12",
                     "field": "scheduler"
                 },
-                "rel_l1_thresh": {
+                "reuse_threshold": {
                     "id": "15",
-                    "field": "rel_l1_thresh"
+                    "field": "reuse_threshold"
                 },
                 "start_percent": {
                     "id": "15",
@@ -65,10 +65,6 @@
                 "end_percent": {
                     "id": "15",
                     "field": "end_percent"
-                },
-                "cache_device": {
-                    "id": "15",
-                    "field": "cache_device"
                 },
                 "tile_size": {
                     "id": "4",
@@ -619,21 +615,17 @@
                     "id": "74",
                     "field": "strength"
                 },
-                "wave_speed": {
+                "reuse_threshold": {
                     "id": "87",
-                    "field": "residual_diff_threshold"
+                    "field": "reuse_threshold"
                 },
-                "wave_speed_maxhit": {
+                "start_percent": {
                     "id": "87",
-                    "field": "max_consecutive_cache_hits"
+                    "field": "start_percent"
                 },
-                "wave_speed_start": {
+                "end_percent": {
                     "id": "87",
-                    "field": "start"
-                },
-                "wave_speed_end": {
-                    "id": "87",
-                    "field": "end"
+                    "field": "end_percent"
                 },
                 "tile_size": {
                     "id": "57",

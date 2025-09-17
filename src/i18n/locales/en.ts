@@ -150,10 +150,10 @@ const translation = {
         exaggeration: 'exaggeration',
         temperature: 'temperature',
         send_to: 'Send to...',
-        rel_l1_thresh: 'TeaCache threshold',
-        start_percent: 'TeaCache start',
-        end_percent: 'TeaCache end',
-        cache_device: 'TeaCache device',
+        reuse_threshold: 'cache threshold',
+        start_percent: 'cache start',
+        end_percent: 'cache end',
+        cache_device: 'cache device',
         loop: 'loop',
         shift_skip: 'shift skip',
         loop_start_percent: 'start percent',
@@ -219,9 +219,9 @@ const translation = {
         wave_speed_maxhit:
             'This many consecutive steps can use the caching trick, after which a full calculation will be forced. 0 disables caching (every step will be fully calculated), -1 allows unlimited consecutive steps being cached. If you get floaty background that follows other movements, try reducing this. If you want to accelerate render, set to a higher value or -1.',
         tea_cache_start:
-            'TeaCache caching becomes active at this step (as a fraction of all steps). Increase the value if you get motion artifacts, so that more steps in the beginning are calculated without shortcuts. Early steps define the overall structure of the video while late steps improve fine details.',
+            'Caching becomes active at this step (as a fraction of all steps). Increase the value if you get motion artifacts, so that more steps in the beginning are calculated without shortcuts. Early steps define the overall structure of the video while late steps improve fine details.',
         tea_cache_end:
-            'TeaCache caching stops working at this step (as a fraction of all steps). Lower the value if you need more details. Early steps define the overall structure of the video while late steps improve fine details.',
+            'Caching stops working at this step (as a fraction of all steps). Lower the value if you need more details. Early steps define the overall structure of the video while late steps improve fine details.',
         guidance:
             "Prompt weight, if the result doesn't follow the prompt well, or if you see disappearing limbs and objects, increase this.",
         seed: "Seed is the reproduction number. To get a new result for the same parameters pick another seed. They're not correlated and even if you change it by just 1 the result would be unpredictably different. Same seed always produces the same result (if the other parameters are unchanged).",

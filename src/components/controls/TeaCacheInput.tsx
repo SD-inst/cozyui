@@ -1,4 +1,3 @@
-import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
 
 export const TeaCacheInput = () => {
@@ -9,14 +8,14 @@ export const TeaCacheInput = () => {
                 max={1}
                 step={0.01}
                 defaultValue={0.1}
-                name='rel_l1_thresh'
+                name='reuse_threshold'
                 tooltip='tea_cache'
             />
             <SliderInput
                 min={0}
                 max={1}
                 step={0.05}
-                defaultValue={0.3}
+                defaultValue={0.15}
                 name='start_percent'
                 tooltip='tea_cache_start'
             />
@@ -24,17 +23,9 @@ export const TeaCacheInput = () => {
                 min={0}
                 max={1}
                 step={0.05}
-                defaultValue={0.8}
+                defaultValue={0.95}
                 name='end_percent'
                 tooltip='tea_cache_end'
-            />
-            <SelectInput
-                name='cache_device'
-                defaultValue='cuda'
-                choices={[
-                    { text: 'GPU', value: 'cuda' },
-                    { text: 'RAM', value: 'cpu' },
-                ]}
             />
         </>
     );
