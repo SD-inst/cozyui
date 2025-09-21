@@ -9,16 +9,21 @@ import { LightboxSendResultButton } from '../controls/LightboxSendResultButton';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 
 export const HistoryCardContent = ({
+    params,
     url,
     type,
     filename,
 }: {
+    params?: string;
     url: string;
     type: string;
     filename: string;
 }) => {
     const tr = useTranslate();
     const [open, setOpen] = useState(false);
+    const p = params ? JSON.parse(params) : null;
+    console.log(p);
+
     switch (type) {
         case 'gifs':
             return (
@@ -34,7 +39,18 @@ export const HistoryCardContent = ({
             );
         case 'audio':
             return (
-                <Box sx={{ display: 'flex', width: '100%' }}>
+                <Box
+                    sx={{
+                        display: 'flex',
+                        width: '100%',
+                        flexDirection: 'column',
+                    }}
+                >
+                    {p && p.values.prompt && (
+                        <Typography variant='body2' sx={{ ml: 1 }}>
+                            {p.values.prompt}
+                        </Typography>
+                    )}
                     <audio
                         style={{
                             width: '100%',
@@ -42,7 +58,6 @@ export const HistoryCardContent = ({
                         }}
                         src={url}
                         controls
-                        loop
                     />
                 </Box>
             );

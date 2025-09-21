@@ -82,6 +82,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
                     <HistoryCardContent
+                        params={output.params}
                         type={output.type}
                         url={url}
                         filename={filename}
