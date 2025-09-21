@@ -1,9 +1,7 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
-import { useTranslate } from '../../i18n/I18nContext';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
@@ -19,7 +17,6 @@ import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const tr = useTranslate();
     const handler = useCallback((api: any, value: string) => {
         if (!value) {
             return;
@@ -59,28 +56,23 @@ const Content = () => {
                 <LengthInput name='length' min={1} max={49} defaultValue={49} />
                 <SliderInput name='steps' defaultValue={25} min={5} max={50} />
                 <CFGInput defaultValue={3} />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <TextInput
-                            name='neg_prompt'
-                            defaultValue='Blurring, mutation, deformation, distortion, dark and solid, comics.'
-                            multiline
-                        />
-                        <SelectInput
-                            name='sampler'
-                            choices={[
-                                { text: 'Flow', value: 'Flow' },
-                                { text: 'Euler', value: 'Euler' },
-                                { text: 'Euler a', value: 'Euler A' },
-                                { text: 'DPM++ 2M', value: 'DPM++' },
-                            ]}
-                            defaultValue={'Flow'}
-                        />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <TextInput
+                        name='neg_prompt'
+                        defaultValue='Blurring, mutation, deformation, distortion, dark and solid, comics.'
+                        multiline
+                    />
+                    <SelectInput
+                        name='sampler'
+                        choices={[
+                            { text: 'Flow', value: 'Flow' },
+                            { text: 'Euler', value: 'Euler' },
+                            { text: 'Euler a', value: 'Euler A' },
+                            { text: 'DPM++ 2M', value: 'DPM++' },
+                        ]}
+                        defaultValue={'Flow'}
+                    />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>

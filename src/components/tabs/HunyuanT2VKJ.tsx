@@ -1,6 +1,4 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { useTranslate } from '../../i18n/I18nContext';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { EnhanceVideoInput } from '../controls/EnhanceVideoInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -22,7 +20,6 @@ import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -39,23 +36,18 @@ const Content = () => {
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput />
                 <FlowShiftInput />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <HYModelSelectInput
-                            name='model'
-                            filter={(m) => !m.path.endsWith('gguf')}
-                        />
-                        <KJHYCFG name='neg_prompt' />
-                        <KJSchedulerSelectInput name='sampler' />
-                        <KJAttentionSelectInput name='attention' />
-                        <EnhanceVideoInput name='enhance_video' />
-                        <HYTeaCacheInput name='tea_cache' defaultValue={0.2} />
-                        <KJHYBlockSwapInput name='block_swap' />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <HYModelSelectInput
+                        name='model'
+                        filter={(m) => !m.path.endsWith('gguf')}
+                    />
+                    <KJHYCFG name='neg_prompt' />
+                    <KJSchedulerSelectInput name='sampler' />
+                    <KJAttentionSelectInput name='attention' />
+                    <EnhanceVideoInput name='enhance_video' />
+                    <HYTeaCacheInput name='tea_cache' defaultValue={0.2} />
+                    <KJHYBlockSwapInput name='block_swap' />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' type='hunyuan' />
             </GridLeft>

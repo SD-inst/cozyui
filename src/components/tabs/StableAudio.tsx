@@ -1,6 +1,6 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { AudioResult } from '../controls/AudioResult';
+import { CFGInput } from '../controls/CFGInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
@@ -9,11 +9,8 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
 import { WFTab } from '../WFTab';
-import { CFGInput } from '../controls/CFGInput';
-import { useTranslate } from '../../i18n/I18nContext';
 
 const Content = () => {
-    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -32,24 +29,19 @@ const Content = () => {
                     max={300}
                 />
                 <CFGInput />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <TextInput
-                            name='neg_prompt'
-                            defaultValue='low quality'
-                            multiline
-                            sx={{ mb: 2 }}
-                        />
-                        <SamplerSelectInput
-                            name='sampler'
-                            defaultValue='dpmpp_3m_sde'
-                        />
-                        <SchedulerSelectInput name='scheduler' />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <TextInput
+                        name='neg_prompt'
+                        defaultValue='low quality'
+                        multiline
+                        sx={{ mb: 2 }}
+                    />
+                    <SamplerSelectInput
+                        name='sampler'
+                        defaultValue='dpmpp_3m_sde'
+                    />
+                    <SchedulerSelectInput name='scheduler' />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>

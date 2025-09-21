@@ -1,10 +1,10 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { useTranslate } from '../../i18n/I18nContext';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
+import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { PromptInput } from '../controls/PromptInput';
@@ -16,11 +16,8 @@ import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../WFTab';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
-import { CompileModelToggle } from '../controls/CompileModelToggle';
 
 const Content = () => {
-    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -43,18 +40,13 @@ const Content = () => {
                 />
                 <GuidanceInput />
                 <FlowShiftInput />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <HYModelSelectInput name='model' />
-                        <SamplerSelectInput name='sampler' />
-                        <SchedulerSelectInput name='scheduler' />
-                        <VirtualVRAMSliderInput name='virtual_vram' />
-                        <CompileModelToggle />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <HYModelSelectInput name='model' />
+                    <SamplerSelectInput name='sampler' />
+                    <SchedulerSelectInput name='scheduler' />
+                    <VirtualVRAMSliderInput name='virtual_vram' />
+                    <CompileModelToggle />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' type='hunyuan' />
             </GridLeft>

@@ -1,7 +1,5 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
 import { mergeType } from '../../api/mergeType';
-import { useTranslate } from '../../i18n/I18nContext';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { DescribeButton } from '../controls/DescribeButton';
@@ -27,7 +25,6 @@ import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -45,34 +42,29 @@ const Content = () => {
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <GuidanceInput defaultValue={10} />
                 <FlowShiftInput defaultValue={10} />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <HYModelSelectInput name='model' />
-                        <ClipSelectInput name='clip_model' />
-                        <SamplerSelectInput name='sampler' />
-                        <SchedulerSelectInput name='scheduler' />
-                        <SliderInput
-                            name='aug_strength'
-                            min={0}
-                            max={1}
-                            step={0.01}
-                            defaultValue={0}
-                        />
-                        <SliderInput
-                            name='latent_strength'
-                            min={0}
-                            max={1}
-                            step={0.01}
-                            defaultValue={1}
-                        />
-                        <TeaCacheInput />
-                        <VirtualVRAMSliderInput name='virtual_vram' />
-                        <CompileModelToggle />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <HYModelSelectInput name='model' />
+                    <ClipSelectInput name='clip_model' />
+                    <SamplerSelectInput name='sampler' />
+                    <SchedulerSelectInput name='scheduler' />
+                    <SliderInput
+                        name='aug_strength'
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        defaultValue={0}
+                    />
+                    <SliderInput
+                        name='latent_strength'
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        defaultValue={1}
+                    />
+                    <TeaCacheInput />
+                    <VirtualVRAMSliderInput name='virtual_vram' />
+                    <CompileModelToggle />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput
                     name='lora'

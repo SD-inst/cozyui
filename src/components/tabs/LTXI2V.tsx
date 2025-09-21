@@ -1,6 +1,4 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-import { useTranslate } from '../../i18n/I18nContext';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { DescribeButton } from '../controls/DescribeButton';
 import { FileUpload } from '../controls/FileUpload';
@@ -17,7 +15,6 @@ import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -54,56 +51,51 @@ const Content = () => {
                 />
                 <SliderInput name='steps' defaultValue={25} min={5} max={50} />
                 <CFGInput defaultValue={3} />
-                <Accordion>
-                    <AccordionSummary expandIcon={<ExpandMore />}>
-                        {tr('controls.advanced_parameters')}
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        <TextInput
-                            name='neg_prompt'
-                            defaultValue='low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly'
-                            multiline
-                        />
-                        <SliderInput
-                            name='stg'
-                            defaultValue={1}
-                            min={0}
-                            max={5}
-                            step={0.05}
-                        />
-                        <SliderInput
-                            name='stg_rescale'
-                            defaultValue={0.75}
-                            min={0}
-                            max={1}
-                            step={0.05}
-                        />
-                        <SelectInput
-                            name='stg_mode'
-                            choices={[
-                                { text: 'Attention', value: 'attention' },
-                                { text: 'Residual', value: 'residual' },
-                            ]}
-                            defaultValue='attention'
-                        />
-                        <SliderInput
-                            name='compression'
-                            defaultValue={29}
-                            min={1}
-                            max={50}
-                        />
-                        <SelectInput
-                            name='sampler'
-                            choices={[
-                                { text: 'Euler', value: 'euler' },
-                                { text: 'Euler a', value: 'euler_ancestral' },
-                                { text: 'DPM++ 2M', value: 'dpmpp_2m' },
-                                { text: 'DPM++ 3M SDE', value: 'dpmpp_3m_sde' },
-                            ]}
-                            defaultValue={'euler'}
-                        />
-                    </AccordionDetails>
-                </Accordion>
+                <AdvancedSettings>
+                    <TextInput
+                        name='neg_prompt'
+                        defaultValue='low quality, worst quality, deformed, distorted, disfigured, motion smear, motion artifacts, fused fingers, bad anatomy, weird hand, ugly'
+                        multiline
+                    />
+                    <SliderInput
+                        name='stg'
+                        defaultValue={1}
+                        min={0}
+                        max={5}
+                        step={0.05}
+                    />
+                    <SliderInput
+                        name='stg_rescale'
+                        defaultValue={0.75}
+                        min={0}
+                        max={1}
+                        step={0.05}
+                    />
+                    <SelectInput
+                        name='stg_mode'
+                        choices={[
+                            { text: 'Attention', value: 'attention' },
+                            { text: 'Residual', value: 'residual' },
+                        ]}
+                        defaultValue='attention'
+                    />
+                    <SliderInput
+                        name='compression'
+                        defaultValue={29}
+                        min={1}
+                        max={50}
+                    />
+                    <SelectInput
+                        name='sampler'
+                        choices={[
+                            { text: 'Euler', value: 'euler' },
+                            { text: 'Euler a', value: 'euler_ancestral' },
+                            { text: 'DPM++ 2M', value: 'dpmpp_2m' },
+                            { text: 'DPM++ 3M SDE', value: 'dpmpp_3m_sde' },
+                        ]}
+                        defaultValue={'euler'}
+                    />
+                </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>
