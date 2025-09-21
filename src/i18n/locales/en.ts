@@ -171,6 +171,9 @@ const translation = {
         type_audio: 'Audio',
         type_image: 'Image',
         merge_loras: 'merge LoRAs',
+        lyrics: 'lyrics',
+        lyrics_strength: 'lyrics strength',
+        vocal_volume: 'vocal volume',
     },
     settings: {
         select_language: 'Select language',

@@ -170,6 +170,9 @@ const translation = {
         type_audio: 'Аудио',
         type_image: 'Изображение',
         merge_loras: 'объединить LoRA',
+        lyrics: 'слова',
+        lyrics_strength: 'сила слов',
+        vocal_volume: 'громкость вокала',
     },
     settings: {
         select_language: 'Выбор языка',

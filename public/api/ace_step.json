@@ -1,0 +1,175 @@
+{
+  "14": {
+    "inputs": {
+      "tags": "funk, pop, soul, rock, melodic, guitar, drums, bass, keyboard, percussion, 105 BPM, energetic, upbeat, groovy, vibrant, dynamic",
+      "lyrics": "[intro]\n\n[verse]\nNeon lights they flicker bright\nCity hums in dead of night\nRhythms pulse through concrete veins\nLost in echoes of refrains\n\n[verse]\nBassline groovin' in my chest\nHeartbeats match the city's zest\nElectric whispers fill the air\nSynthesized dreams everywhere\n\n[breakdown]\n\n[chorus]\nTurn it up and let it flow\nFeel the fire let it grow\nIn this rhythm we belong\nHear the night sing out our song\n\n[guitar solo]\n\n[verse]\nGuitar strings they start to weep\nWake the soul from silent sleep\nEvery note a story told\nIn this night we’re bold and gold\n\n[bridge]\nVoices blend in harmony\nLost in pure cacophony\nTimeless echoes timeless cries\nSoulful shouts beneath the skies\n\n[verse]\nKeyboard dances on the keys\nMelodies on evening breeze\nCatch the tune and hold it tight\nIn this moment we take flight\n\n[outro]",
+      "lyrics_strength": 0.9,
+      "clip": [
+        "40",
+        1
+      ]
+    },
+    "class_type": "TextEncodeAceStepAudio",
+    "_meta": {
+      "title": "TextEncodeAceStepAudio"
+    }
+  },
+  "17": {
+    "inputs": {
+      "seconds": 170,
+      "batch_size": 1
+    },
+    "class_type": "EmptyAceStepLatentAudio",
+    "_meta": {
+      "title": "EmptyAceStepLatentAudio"
+    }
+  },
+  "18": {
+    "inputs": {
+      "samples": [
+        "52",
+        0
+      ],
+      "vae": [
+        "40",
+        2
+      ]
+    },
+    "class_type": "VAEDecodeAudio",
+    "_meta": {
+      "title": "VAEDecodeAudio"
+    }
+  },
+  "40": {
+    "inputs": {
+      "ckpt_name": "audio/ace_step_v1_3.5b.safetensors"
+    },
+    "class_type": "CheckpointLoaderSimple",
+    "_meta": {
+      "title": "Load Checkpoint"
+    }
+  },
+  "44": {
+    "inputs": {
+      "conditioning": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "ConditioningZeroOut",
+    "_meta": {
+      "title": "ConditioningZeroOut"
+    }
+  },
+  "49": {
+    "inputs": {
+      "model": [
+        "51",
+        0
+      ],
+      "operation": [
+        "50",
+        0
+      ]
+    },
+    "class_type": "LatentApplyOperationCFG",
+    "_meta": {
+      "title": "LatentApplyOperationCFG"
+    }
+  },
+  "50": {
+    "inputs": {
+      "multiplier": 0.3
+    },
+    "class_type": "LatentOperationTonemapReinhard",
+    "_meta": {
+      "title": "LatentOperationTonemapReinhard"
+    }
+  },
+  "51": {
+    "inputs": {
+      "shift": 5,
+      "model": [
+        "40",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingSD3",
+    "_meta": {
+      "title": "ModelSamplingSD3"
+    }
+  },
+  "52": {
+    "inputs": {
+      "seed": [
+        "74",
+        0
+      ],
+      "steps": 50,
+      "cfg": 5,
+      "sampler_name": "res_multistep",
+      "scheduler": "simple",
+      "denoise": 1,
+      "model": [
+        "49",
+        0
+      ],
+      "positive": [
+        "14",
+        0
+      ],
+      "negative": [
+        "44",
+        0
+      ],
+      "latent_image": [
+        "17",
+        0
+      ]
+    },
+    "class_type": "KSampler",
+    "_meta": {
+      "title": "KSampler"
+    }
+  },
+  "60": {
+    "inputs": {
+      "filename_prefix": [
+        "75",
+        0
+      ],
+      "audioUI": "",
+      "audio": [
+        "18",
+        0
+      ]
+    },
+    "class_type": "SaveAudio",
+    "_meta": {
+      "title": "SaveAudio"
+    }
+  },
+  "74": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "INT Constant"
+    }
+  },
+  "75": {
+    "inputs": {
+      "prefix": "ACEStep_",
+      "suffix": "",
+      "input": [
+        "74",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  }
+}

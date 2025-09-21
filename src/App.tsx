@@ -43,6 +43,7 @@ import { WanI2V2STab } from './components/tabs/WanI2V2S';
 import { WanI2VITTab } from './components/tabs/WanI2VIT';
 import { WanT2VTab } from './components/tabs/WanT2V';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
+import { ACEStepTab } from './components/tabs/ACEStep';
 
 function App() {
     return (
@@ -82,6 +83,7 @@ function App() {
                                 {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
+                                {ACEStepTab}
                             </WorkflowTabs>
                             <Progress />
                             <InterruptButton />

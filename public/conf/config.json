@@ -722,6 +722,59 @@
                 "type": "audio"
             }
         },
+        "ACE Step": {
+            "api": "api/ace_step.json",
+            "controls": {
+                "prompt": {
+                    "id": "14",
+                    "field": "tags"
+                },
+                "lyrics": {
+                    "id": "14",
+                    "field": "lyrics"
+                },
+                "lyrics_strength": {
+                    "id": "14",
+                    "field": "lyrics_strength"
+                },
+                "length": {
+                    "id": "17",
+                    "field": "seconds"
+                },
+                "vocal_volume": {
+                    "id": "50",
+                    "field": "multiplier"
+                },
+                "flow_shift": {
+                    "id": "51",
+                    "field": "shift"
+                },
+                "steps": {
+                    "id": "52",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "52",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "52",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "52",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "74",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "60",
+                "type": "audio"
+            }
+        },
         "MM Audio": {
             "api": "api/mmaudio.json",
             "controls": {

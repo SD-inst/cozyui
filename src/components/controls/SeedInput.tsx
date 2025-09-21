@@ -7,6 +7,7 @@ import { HelpButton } from './HelpButton';
 
 export const SeedInput = ({
     seedLength = 13,
+    defaultValue = 1024,
     ...props
 }: {
     name: string;
@@ -27,7 +28,12 @@ export const SeedInput = ({
     return (
         <Box display='flex' position='relative' gap={1} mt={1} mb={1}>
             <HelpButton title='seed' sx={{ right: 80 }} />
-            <TextInput type='number' fullWidth {...props} />
+            <TextInput
+                type='number'
+                defaultValue={defaultValue}
+                fullWidth
+                {...props}
+            />
             <Tooltip arrow title={tr('controls.randomize_seed')}>
                 <Button
                     variant='outlined'
