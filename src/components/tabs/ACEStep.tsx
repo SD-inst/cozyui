@@ -4,6 +4,7 @@ import { CFGInput } from '../controls/CFGInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
+import { LengthInput } from '../controls/LengthSlider';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -69,12 +70,13 @@ In this moment we take flight
 
 [outro]`}
                 />
-                <SliderInput
+                <LengthInput
                     min={1}
                     max={300}
                     step={0.1}
                     name='length'
                     defaultValue={170}
+                    fps={1}
                 />
                 <SliderInput name='steps' defaultValue={50} min={1} max={100} />
                 <CFGInput defaultValue={5} />
