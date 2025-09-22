@@ -22,7 +22,6 @@ export const HistoryCardContent = ({
     const tr = useTranslate();
     const [open, setOpen] = useState(false);
     const p = params ? JSON.parse(params) : null;
-    console.log(p);
 
     switch (type) {
         case 'gifs':
