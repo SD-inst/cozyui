@@ -56,7 +56,7 @@ export const VibeVoiceTab = (
     <WFTab
         label='VibeVoice TTS'
         value='VibeVoice TTS'
-        group='Audio'
+        group='TTS'
         content={<Content />}
     />
 );

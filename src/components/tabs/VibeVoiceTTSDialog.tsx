@@ -74,7 +74,7 @@ export const VibeVoiceDialogTab = (
     <WFTab
         label='VibeVoice TTS Dialog'
         value='VibeVoice TTS Dialog'
-        group='Audio'
+        group='TTS'
         content={<Content />}
     />
 );

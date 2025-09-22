@@ -67,7 +67,7 @@ export const ChatterboxDialogTab = (
     <WFTab
         label='Chatterbox TTS Dialog'
         value='Chatterbox TTS Dialog'
-        group='Audio'
+        group='TTS'
         content={<Content />}
     />
 );

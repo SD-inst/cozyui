@@ -80,10 +80,10 @@ function App() {
                                 {ChatterboxDialogTab}
                                 {VibeVoiceTab}
                                 {VibeVoiceDialogTab}
+                                {ACEStepTab}
                                 {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
-                                {ACEStepTab}
                             </WorkflowTabs>
                             <Progress />
                             <InterruptButton />
