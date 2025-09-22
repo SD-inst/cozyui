@@ -46,8 +46,14 @@ export const HistoryCardContent = ({
                     }}
                 >
                     {p && p.values.prompt && (
-                        <Typography variant='body2' sx={{ ml: 1 }}>
+                        <Typography variant='body1' sx={{ ml: 1 }}>
                             {p.values.prompt}
+                        </Typography>
+                    )}
+                    {p && p.values.lyrics && (
+                        <Typography variant='body2' sx={{ ml: 1, mt: 1 }}>
+                            {(p.values.lyrics as string).slice(0, 100) +
+                                (p.values.lyrics.length > 100 ? '...' : '')}
                         </Typography>
                     )}
                     <audio
