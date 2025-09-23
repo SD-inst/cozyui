@@ -2,12 +2,12 @@
     "3": {
         "inputs": {
             "seed": ["69", 0],
-            "steps": 15,
-            "cfg": 1,
+            "steps": 20,
+            "cfg": 4,
             "sampler_name": "res_multistep",
             "scheduler": "simple",
             "denoise": 1,
-            "model": ["66", 0],
+            "model": ["67", 0],
             "positive": ["6", 0],
             "negative": ["7", 0],
             "latent_image": ["58", 0]
@@ -128,6 +128,16 @@
         "class_type": "ModelSamplingAuraFlow",
         "_meta": {
             "title": "ModelSamplingAuraFlow"
+        }
+    },
+    "67": {
+        "inputs": {
+            "strength": 1,
+            "model": ["66", 0]
+        },
+        "class_type": "CFGNorm",
+        "_meta": {
+            "title": "CFGNorm"
         }
     },
     "69": {

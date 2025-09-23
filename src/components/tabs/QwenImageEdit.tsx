@@ -106,10 +106,10 @@ const Content = () => {
                 <AppendImage name='append_image' upload_name='second_image' />
                 <PromptInput name='prompt' />
                 <PromptInput name='neg_prompt' defaultValue='' />
-                <WidthHeight />
+                <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={40} />
                 <CFGInput defaultValue={4} max={10} />
-                <FlowShiftInput defaultValue={2} step={0.1} />
+                <FlowShiftInput defaultValue={3.1} step={0.1} />
                 <SamplerSelectInput
                     name='sampler'
                     defaultValue='res_multistep'
