@@ -20,6 +20,7 @@ import { SliderInput } from '../controls/SliderInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 
 const AppendImage = ({
     name,
@@ -119,6 +120,13 @@ const Content = () => {
                     min={1}
                     max={9}
                     defaultValue={1}
+                />
+                <ModelSelectAutocomplete
+                    name='model'
+                    type='qwen'
+                    extraFilter={(v) => v.includes('_edit_')}
+                    defaultValue='qwen/qwen_image_edit_fp8_e4m3fn.safetensors'
+                    sx={{ mb: 2, mt: 2 }}
                 />
                 <LoraInput name='lora' type='qwen' />
                 <CompileModelToggle />

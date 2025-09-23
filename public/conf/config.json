@@ -1417,6 +1417,11 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "37",
+                    "field": "unet_name"
                 }
             },
             "result": {
