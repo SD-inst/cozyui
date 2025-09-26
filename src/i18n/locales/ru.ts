@@ -173,6 +173,9 @@ const translation = {
         lyrics: 'слова',
         lyrics_strength: 'сила слов',
         vocal_volume: 'громкость вокала',
+        audio_len: 'длительность аудио-сэмпла',
+        top_k: 'топ K',
+        diff_temp: 'температура диффузии',
     },
     settings: {
         select_language: 'Выбор языка',

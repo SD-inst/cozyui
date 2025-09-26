@@ -1,0 +1,96 @@
+{
+  "3": {
+    "inputs": {
+      "audio": "audio.flac",
+      "audioUI": ""
+    },
+    "class_type": "LoadAudio",
+    "_meta": {
+      "title": "LoadAudio"
+    }
+  },
+  "42": {
+    "inputs": {
+      "filename_prefix": [
+        "128",
+        0
+      ],
+      "quality": "V0",
+      "audioUI": "",
+      "audio": [
+        "117",
+        0
+      ]
+    },
+    "class_type": "SaveAudioMP3",
+    "_meta": {
+      "title": "Save Audio (MP3)"
+    }
+  },
+  "117": {
+    "inputs": {
+      "lyrics": "[intro] [intro] [intro] [intro] [intro] [intro] [intro] [intro]\n\n[verse]\nSunlight spills on the dusty ground.\nShadows stretch but make no sound.\nThe creak of the porch as we sway in tune.\nChasing whispers of an afternoon.\n\n[chorus]\nOh those sunny old days never fade.\nCarved in gold like a hand-made braid.\nWe'd run through the fields where the wild winds play.\nLost in the warmth of those sunny old days.\n\n[inst] [chorus] [inst] [chorus] [inst] [chorus] [inst] [chorus] \n\n[verse]\nBarefoot steps on the gravel trail.\nThe scent of rain in the summer gale.\nLaughter echoes where the tall grass bends.\nStories we swore would never end.\n\n[chorus]\nOh those sunny old days never fade.\nCarved in gold like a hand-made braid.\nWe'd run through the fields where the wild winds play.\nLost in the warmth of those sunny old days.\n\n[bridge]\nThe years may pull us far from here.\nBut in my heart they're always near.\nThe sky still holds that endless hue.\nAnd every sunbeam whispers you.\n\n[chorus]\nOh those sunny old days never fade.\nCarved in gold like a hand-made braid.\nWe'd run through the fields where the wild winds play.\nLost in the warmth of those sunny old days.\n\n[outro] [outro] [outro] [outro] [outro] [outro] [outro] [outro]",
+      "cfg_coef": 1.3,
+      "temperature": 1.05,
+      "diff_temp": 0.9,
+      "steps": 25,
+      "use_sampling": true,
+      "sampler": "spiral",
+      "dit_cfg_type": "h",
+      "top_k": 150,
+      "max_duration": 250,
+      "seed": [
+        "127",
+        0
+      ],
+      "force_offload": "true",
+      "model": [
+        "124",
+        0
+      ],
+      "audio": [
+        "3",
+        0
+      ]
+    },
+    "class_type": "SongBloomGenerate",
+    "_meta": {
+      "title": "SongBloom Generate Audio"
+    }
+  },
+  "124": {
+    "inputs": {
+      "checkpoint": "songbloom_full_150s_dpo.safetensors",
+      "dtype": "bfloat16",
+      "audio_len": 10,
+      "force_offload": true
+    },
+    "class_type": "SongBloomModelLoader",
+    "_meta": {
+      "title": "SongBloom Model Loader"
+    }
+  },
+  "127": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "INTConstant",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "128": {
+    "inputs": {
+      "prefix": "SongBloom_",
+      "suffix": "",
+      "input": [
+        "127",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  }
+}

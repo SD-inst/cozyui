@@ -191,6 +191,7 @@ export const FileUpload = ({
                         <Link
                             sx={{
                                 cursor: 'pointer',
+                                textAlign: 'center',
                             }}
                         >
                             {tr('controls.drop_files_desc')}
@@ -199,9 +200,16 @@ export const FileUpload = ({
                     {field.value &&
                         (filetype === UploadType.IMAGE ? (
                             <img style={style} src={imageURL} />
-                        ) : (
+                        ) : filetype === UploadType.VIDEO ||
+                          filetype === UploadType.BOTH ? (
                             <video
                                 style={{ ...style, width: 200 }}
+                                src={imageURL}
+                                controls
+                            />
+                        ) : (
+                            <audio
+                                style={{ ...style, minWidth: 300 }}
                                 src={imageURL}
                                 controls
                             />

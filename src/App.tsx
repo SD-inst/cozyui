@@ -44,6 +44,7 @@ import { WanI2VITTab } from './components/tabs/WanI2VIT';
 import { WanT2VTab } from './components/tabs/WanT2V';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { ACEStepTab } from './components/tabs/ACEStep';
+import { SongBloomTab } from './components/tabs/SongBloom';
 
 function App() {
     return (
@@ -81,6 +82,7 @@ function App() {
                                 {VibeVoiceTab}
                                 {VibeVoiceDialogTab}
                                 {ACEStepTab}
+                                {SongBloomTab}
                                 {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}

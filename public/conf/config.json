@@ -775,6 +775,59 @@
                 "type": "audio"
             }
         },
+        "SongBloom": {
+            "api": "api/songbloom.json",
+            "controls": {
+                "audio": {
+                    "id": "3",
+                    "field": "audio"
+                },
+                "audio_len": {
+                    "id": "124",
+                    "field": "audio_len"
+                },
+                "lyrics": {
+                    "id": "117",
+                    "field": "lyrics"
+                },
+                "cfg": {
+                    "id": "117",
+                    "field": "cfg_coef"
+                },
+                "temperature": {
+                    "id": "117",
+                    "field": "temperature"
+                },
+                "diff_temp": {
+                    "id": "117",
+                    "field": "diff_temp"
+                },
+                "steps": {
+                    "id": "117",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "117",
+                    "field": "sampler"
+                },
+                "top_k": {
+                    "id": "117",
+                    "field": "top_k"
+                },
+                "length": {
+                    "id": "117",
+                    "field": "max_duration"
+                },
+                "seed": {
+                    "id": "127",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "42",
+                "type": "audio"
+            }
+        },
         "MM Audio": {
             "api": "api/mmaudio.json",
             "controls": {

@@ -174,6 +174,9 @@ const translation = {
         lyrics: 'lyrics',
         lyrics_strength: 'lyrics strength',
         vocal_volume: 'vocal volume',
+        audio_len: 'audio sample length',
+        top_k: 'top K',
+        diff_temp: 'diffusion temperature'
     },
     settings: {
         select_language: 'Select language',
