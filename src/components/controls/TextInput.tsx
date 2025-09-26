@@ -8,7 +8,11 @@ export type TextInputProps = {
     tooltip?: string;
 } & TextFieldProps;
 
-export const TextInput = ({ defaultValue = '', sx, ...props }: TextInputProps) => {
+export const TextInput = ({
+    defaultValue = '',
+    sx,
+    ...props
+}: TextInputProps) => {
     const {
         field: { ref, ...rest },
     } = useController({
@@ -19,7 +23,10 @@ export const TextInput = ({ defaultValue = '', sx, ...props }: TextInputProps) =
         <TextInputBase
             sx={{
                 mb: 1,
-                ...sx
+                ...(props.multiline
+                    ? { maxHeight: 300, overflowY: 'auto' }
+                    : {}),
+                ...sx,
             }}
             baseRef={ref}
             variant='filled'

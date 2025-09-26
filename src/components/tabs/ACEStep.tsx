@@ -25,7 +25,7 @@ const Content = () => {
                 <TextInput
                     name='lyrics'
                     multiline
-                    sx={{ mb: 2, maxHeight: 300, overflowY: 'scroll' }}
+                    sx={{ mb: 2 }}
                     defaultValue={`[intro]
 
 [verse]
