@@ -1,9 +1,8 @@
-import { Tab, Tabs } from '@mui/material';
+import { Tab, Tabs, useEventCallback } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { get } from 'lodash';
 import React, {
     Children,
-    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -21,9 +20,9 @@ import { useHiddenTabs } from '../hooks/useHiddenTabs';
 import { useSetDefaults } from '../hooks/useSetDefaults';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
-import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
+import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { db } from './history/db';
 import { VerticalBox } from './VerticalBox';
 
@@ -33,20 +32,17 @@ const useRestoreValues = () => {
         get(s, ['config', 'tabs', tab_name], null)
     );
     const { setValue } = useFormContext();
-    return useCallback(
-        (key: string, value: any) => {
-            if (!api) {
-                console.log(
-                    `Trying to set ${key} to ${value} but tab ${tab_name} isn't loaded yet`
-                );
-                return;
-            }
-            if (api.controls[key]) {
-                setValue(key, value, { shouldDirty: false });
-            }
-        },
-        [api, setValue, tab_name]
-    );
+    return useEventCallback((key: string, value: any) => {
+        if (!api) {
+            console.log(
+                `Trying to set ${key} to ${value} but tab ${tab_name} isn't loaded yet`
+            );
+            return;
+        }
+        if (api.controls[key]) {
+            setValue(key, value, { shouldDirty: false });
+        }
+    });
 };
 
 const ValuesRestore = () => {

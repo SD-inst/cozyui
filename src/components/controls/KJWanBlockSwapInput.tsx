@@ -1,5 +1,4 @@
-import { Box, BoxProps } from '@mui/material';
-import { useCallback } from 'react';
+import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { replaceNodeConnection } from '../../api/utils';
 import { controlType } from '../../redux/config';
@@ -19,7 +18,7 @@ export const KJWanBlockSwapInput = ({
     name,
     ...props
 }: BoxProps & { name: string }) => {
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: valueType, control?: controlType) => {
             const { enabled, ...inputs } = value;
             if (!enabled || !control || !control.loader_node_id) {
@@ -41,8 +40,7 @@ export const KJWanBlockSwapInput = ({
                 'block_swap_args',
                 block_swap_node
             );
-        },
-        []
+        }
     );
     useRegisterHandler({ name, handler });
     const {

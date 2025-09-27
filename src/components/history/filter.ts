@@ -1,4 +1,5 @@
-import { useCallback, useContext } from 'react';
+import { useEventCallback } from '@mui/material';
+import { useContext } from 'react';
 import { FilterContext } from '../contexts/FilterContext';
 import { FilterType } from '../contexts/filterType';
 import { db, markEnum } from './db';
@@ -54,8 +55,7 @@ export const pkFromFilter = async (
 
 export const usePkFromFilter = () => {
     const filter = useContext(FilterContext);
-    return useCallback(
-        (f: Parameters<typeof pkFromFilter>[1]) => pkFromFilter(filter, f),
-        [filter]
+    return useEventCallback((f: Parameters<typeof pkFromFilter>[1]) =>
+        pkFromFilter(filter, f)
     );
 };

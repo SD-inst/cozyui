@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEventCallback } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
 
 export const useWebSocket = (
     url: string,
@@ -11,35 +12,32 @@ export const useWebSocket = (
     const s = useRef<WebSocket>();
     const last_state = useRef(false);
     const reconnectTimeout = useRef<number>();
-    const initSocket = useCallback(
-        (url: string) => {
-            s.current = new WebSocket(
-                new URL(url, location.href).href.replace(/^http/, 'ws')
-            );
-            s.current.binaryType = 'arraybuffer';
-            s.current.onclose = () => {
-                if (onClose && last_state.current) {
-                    // only call onClose once until we reconnect
-                    onClose();
-                }
-                last_state.current = false;
-                reconnectTimeout.current = window.setTimeout(() => {
-                    initSocket(url);
-                }, 1000);
-            };
-            if (onMessage) {
-                s.current.onmessage = onMessage;
+    const initSocket = useEventCallback((url: string) => {
+        s.current = new WebSocket(
+            new URL(url, location.href).href.replace(/^http/, 'ws')
+        );
+        s.current.binaryType = 'arraybuffer';
+        s.current.onclose = () => {
+            if (onClose && last_state.current) {
+                // only call onClose once until we reconnect
+                onClose();
             }
-            s.current.onopen = (e) => {
-                last_state.current = true;
-                if (onOpen) {
-                    onOpen(e);
-                }
-            };
-            setSocket(s.current);
-        },
-        [onClose, onMessage, onOpen]
-    );
+            last_state.current = false;
+            reconnectTimeout.current = window.setTimeout(() => {
+                initSocket(url);
+            }, 1000);
+        };
+        if (onMessage) {
+            s.current.onmessage = onMessage;
+        }
+        s.current.onopen = (e) => {
+            last_state.current = true;
+            if (onOpen) {
+                onOpen(e);
+            }
+        };
+        setSocket(s.current);
+    });
     useEffect(() => {
         if (!enabled) {
             return;

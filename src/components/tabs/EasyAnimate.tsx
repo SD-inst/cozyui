@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useEventCallback } from '@mui/material';
 import { getFreeNodeId } from '../../api/utils';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
@@ -17,7 +17,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const handler = useCallback((api: any, value: string) => {
+    const handler = useEventCallback((api: any, value: string) => {
         if (!value) {
             return;
         }
@@ -33,7 +33,7 @@ const Content = () => {
             },
         };
         api['82'].inputs['end_img'] = ['' + id, 0];
-    }, []);
+    });
     useRegisterHandler({ name: 'image_end', handler });
     return (
         <Layout>

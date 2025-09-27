@@ -1,6 +1,6 @@
 import { Lock, LockOpen, SwapVert } from '@mui/icons-material';
-import { Box, Button } from '@mui/material';
-import { useCallback, useState } from 'react';
+import { Box, Button, useEventCallback } from '@mui/material';
+import { useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { SliderInputBase } from './SliderInputBase';
 
@@ -42,14 +42,14 @@ export const WidthHeight = ({
 }) => {
     const [{ aspect, str }, setAspect] = useState({ aspect: 0, str: '' });
     const { getValues, setValue } = useFormContext();
-    const handleSwap = useCallback(() => {
+    const handleSwap = useEventCallback(() => {
         const vals = getValues([widthName, heightName]);
         setValue(widthName, vals[1]);
         setValue(heightName, vals[0]);
         if (aspect && vals[0]) {
             setAspect(calcAspect(vals[1], vals[0]));
         }
-    }, [aspect, getValues, heightName, setValue, widthName]);
+    });
     const {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         field: { ref: wRef, onChange: onWidthChangeCtl, ...widthField },
@@ -64,32 +64,26 @@ export const WidthHeight = ({
         name: heightName,
         defaultValue: defaultHeight,
     });
-    const onWidthChange = useCallback(
-        (v: number) => {
-            if (aspect) {
-                const h = Math.min(v / aspect, maxHeight);
-                onHeightChangeCtl(h - (h % step));
-                if (h === maxHeight) {
-                    v = maxHeight * aspect - ((maxHeight * aspect) % step);
-                }
+    const onWidthChange = useEventCallback((v: number) => {
+        if (aspect) {
+            const h = Math.min(v / aspect, maxHeight);
+            onHeightChangeCtl(h - (h % step));
+            if (h === maxHeight) {
+                v = maxHeight * aspect - ((maxHeight * aspect) % step);
             }
-            onWidthChangeCtl(v);
-        },
-        [aspect, maxHeight, onHeightChangeCtl, onWidthChangeCtl, step]
-    );
-    const onHeightChange = useCallback(
-        (v: number) => {
-            if (aspect) {
-                const w = Math.min(v * aspect, maxWidth);
-                onWidthChangeCtl(w - (w % step));
-                if (w === maxWidth) {
-                    v = maxWidth / aspect - ((maxWidth / aspect) % step);
-                }
+        }
+        onWidthChangeCtl(v);
+    });
+    const onHeightChange = useEventCallback((v: number) => {
+        if (aspect) {
+            const w = Math.min(v * aspect, maxWidth);
+            onWidthChangeCtl(w - (w % step));
+            if (w === maxWidth) {
+                v = maxWidth / aspect - ((maxWidth / aspect) % step);
             }
-            onHeightChangeCtl(v);
-        },
-        [aspect, maxWidth, onHeightChangeCtl, onWidthChangeCtl, step]
-    );
+        }
+        onHeightChangeCtl(v);
+    });
     return (
         <Box
             display='flex'

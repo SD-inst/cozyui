@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+import { useEventCallback } from '@mui/material';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { ToggleInput, ToggleInputProps } from './ToggleInput';
 
 export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: any, control?: controlType) => {
             if (!control || !value) {
                 return;
@@ -22,8 +22,7 @@ export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
                 },
             };
             insertNode(api, control.output_node_id, 'model', riflex_node);
-        },
-        []
+        }
     );
     useRegisterHandler({ name: props.name, handler });
     return <ToggleInput tooltip='riflex' {...props} />;

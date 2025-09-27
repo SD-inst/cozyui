@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEventCallback } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
 import { useAppSelector } from '../redux/hooks';
 import { statusEnum } from '../redux/progress';
 
@@ -13,10 +14,10 @@ export const formatDuration = (dur: number) => {
 export const useTaskDuration = () => {
     const [duration, setDuration] = useState('');
     const { start_ts, end_ts } = useAppSelector((s) => s.progress);
-    const updateDuration = useCallback((start: number, end: number) => {
+    const updateDuration = useEventCallback((start: number, end: number) => {
         const dur = (end - start) / 1000;
         setDuration(formatDuration(dur));
-    }, []);
+    });
     useEffect(() => {
         if (!start_ts) {
             setDuration('');

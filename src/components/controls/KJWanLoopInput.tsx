@@ -1,5 +1,4 @@
-import { Box, BoxProps } from '@mui/material';
-import { useCallback } from 'react';
+import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { insertNode, replaceNodeConnection } from '../../api/utils';
 import { useResultParam } from '../../hooks/useResult';
@@ -22,7 +21,7 @@ export const KJWanLoopInput = ({
     ...props
 }: BoxProps & { name: string }) => {
     const { id } = useResultParam();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: valueType, control?: controlType) => {
             const { enabled, color_correction, ...inputs } = value;
             if (!enabled || !control || !control.sampler_node_id) {
@@ -70,8 +69,7 @@ export const KJWanLoopInput = ({
                 'loop_args',
                 loopArgsNode
             );
-        },
-        [id]
+        }
     );
     useRegisterHandler({ name: name, handler });
     const {

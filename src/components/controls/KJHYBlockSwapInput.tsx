@@ -1,10 +1,15 @@
-import { Box, FormControlLabel, Switch, TextField } from '@mui/material';
+import {
+    Box,
+    FormControlLabel,
+    Switch,
+    TextField,
+    useEventCallback,
+} from '@mui/material';
 import { useController } from 'react-hook-form';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { useCallback } from 'react';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useRegisterHandler } from '../contexts/TabContext';
 
 type valueType = {
     enabled: boolean;
@@ -17,26 +22,25 @@ type valueType = {
 export const KJHYBlockSwapInput = ({ ...props }) => {
     const { handler_options } = useAPI();
     const tr = useTranslate();
-    const handler = useCallback(
-        (api: any, value: valueType) => {
-            const { enabled, ...inputs } = value;
-            if (!enabled) {
-                return;
-            }
-            const block_swap_node = {
-                inputs,
-                class_type: 'HyVideoBlockSwap',
-                _meta: {
-                    title: 'HunyuanVideo BlockSwap',
-                },
-            };
-            const idx = getFreeNodeId(api);
-            api[idx] = block_swap_node;
-            api[handler_options.node_params.loader_id].inputs.block_swap_args =
-                ['' + idx, 0];
-        },
-        [handler_options.node_params.loader_id]
-    );
+    const handler = useEventCallback((api: any, value: valueType) => {
+        const { enabled, ...inputs } = value;
+        if (!enabled) {
+            return;
+        }
+        const block_swap_node = {
+            inputs,
+            class_type: 'HyVideoBlockSwap',
+            _meta: {
+                title: 'HunyuanVideo BlockSwap',
+            },
+        };
+        const idx = getFreeNodeId(api);
+        api[idx] = block_swap_node;
+        api[handler_options.node_params.loader_id].inputs.block_swap_args = [
+            '' + idx,
+            0,
+        ];
+    });
     useRegisterHandler({ name: props.name, handler });
     const {
         field: { value, onChange },

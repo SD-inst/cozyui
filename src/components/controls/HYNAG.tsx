@@ -1,5 +1,4 @@
-import { Box } from '@mui/material';
-import { useCallback } from 'react';
+import { Box, useEventCallback } from '@mui/material';
 import { useController, useFormContext } from 'react-hook-form';
 import { insertNode, replaceNodeConnection } from '../../api/utils';
 import { controlType } from '../../redux/config';
@@ -37,7 +36,7 @@ export const HYNAG = ({
         },
     });
     const { getValues } = useFormContext();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: valueType, control?: controlType) => {
             if (
                 !value.enabled ||
@@ -97,8 +96,7 @@ export const HYNAG = ({
                 'guider',
                 NEGNode
             );
-        },
-        [getValues, neg_prompt_field]
+        }
     );
     useRegisterHandler({ name, handler });
     return (

@@ -1,5 +1,4 @@
-import { Box, BoxProps } from '@mui/material';
-import { useCallback } from 'react';
+import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { replaceNodeConnection } from '../../api/utils';
 import { controlType } from '../../redux/config';
@@ -17,7 +16,7 @@ export const AudioInput = ({
     audioName: string;
 }) => {
     const { watch, getValues } = useFormContext();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             const audio = getValues(audioName);
             if (
@@ -44,8 +43,7 @@ export const AudioInput = ({
                 control.tts_field,
                 audioNode
             );
-        },
-        [audioName, getValues]
+        }
     );
     useRegisterHandler({ name: toggleName, handler });
     return (

@@ -5,6 +5,7 @@ import {
     Button,
     CircularProgress,
     Typography,
+    useEventCallback,
 } from '@mui/material';
 import {
     exportDB,
@@ -12,24 +13,23 @@ import {
     importInto,
 } from '@rkfg/dexie-export-import';
 import { ImportProgress } from '@rkfg/dexie-export-import/dist/import';
-import { useCallback, useRef, useState } from 'react';
-import { db } from './db';
+import { useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
+import { db } from './db';
 
 export const ImportExport = () => {
     const tr = useTranslate();
     const [progress, setProgress] = useState(0);
     const interrupt = useRef(false);
-    const progressCallback = useCallback(
+    const progressCallback = useEventCallback(
         (p: ImportProgress | ExportProgress) => {
             setProgress((p.completedRows * 100) / (p.totalRows ?? 1));
             if (interrupt.current) {
                 throw tr('errors.interrupted');
             }
             return false;
-        },
-        [tr]
+        }
     );
     const handleExport = async () => {
         interrupt.current = false;

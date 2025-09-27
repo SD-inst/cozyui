@@ -1,14 +1,20 @@
-import { Autocomplete, AutocompleteProps, Box, TextField } from '@mui/material';
+import {
+    Autocomplete,
+    AutocompleteProps,
+    Box,
+    TextField,
+    useEventCallback,
+} from '@mui/material';
 import { get } from 'lodash';
+import { useEffect } from 'react';
 import { useController } from 'react-hook-form';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useTranslate } from '../../i18n/I18nContext';
+import { controlType } from '../../redux/config';
 import { useAppSelector } from '../../redux/hooks';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { ModelOption } from './ModelOption';
 import { ObjectReloadButton } from './ObjectReloadButton';
-import { useCallback, useEffect } from 'react';
-import { controlType } from '../../redux/config';
 
 const emptyFilter = '';
 
@@ -67,14 +73,13 @@ export const ModelSelectAutocomplete = ({
             ctl.field.onChange(opts.find((v) => v.id === ctl.field.value));
         }
     }, [opts, ctl.field]);
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: valueType, control?: controlType) => {
             if (!value || !control || !control.node_id) {
                 return;
             }
             api[control.node_id].inputs[control.field] = value.id;
-        },
-        []
+        }
     );
     useRegisterHandler({ name: props.name, handler });
     return (

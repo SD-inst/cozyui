@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useEventCallback } from '@mui/material';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -9,7 +9,7 @@ export const KJCompileModelToggle = ({
     classType,
     ...props
 }: Optional<ToggleInputProps, 'name'> & { classType: string }) => {
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (!value || !control) {
                 return;
@@ -37,8 +37,7 @@ export const KJCompileModelToggle = ({
                 'compile_args',
                 compile_node
             );
-        },
-        [classType]
+        }
     );
     useRegisterHandler({ name: props.name || 'compile_model', handler });
     return <ToggleInput name='compile_model' {...props} />;

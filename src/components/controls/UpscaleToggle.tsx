@@ -1,5 +1,5 @@
+import { useEventCallback } from '@mui/material';
 import { get } from 'lodash';
-import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { delResult } from '../../redux/tab';
 import { useRegisterHandler, useTabName } from '../contexts/TabContext';
@@ -11,16 +11,13 @@ export const UpscaleToggle = ({ ...props }: ToggleInputProps) => {
         get(s, ['config', 'tabs', tab_name, 'result', 1, 'id'], null)
     );
     const dispatch = useAppDispatch();
-    const handler = useCallback(
-        (api: any, val: boolean) => {
-            if (val || !webp_node_id) {
-                return;
-            }
-            delete api[webp_node_id];
-            dispatch(delResult({ tab_name, id: webp_node_id }));
-        },
-        [dispatch, tab_name, webp_node_id]
-    );
+    const handler = useEventCallback((api: any, val: boolean) => {
+        if (val || !webp_node_id) {
+            return;
+        }
+        delete api[webp_node_id];
+        dispatch(delResult({ tab_name, id: webp_node_id }));
+    });
     useRegisterHandler({ name: props.name, handler });
     return <ToggleInput tooltip='upscale' {...props} />;
 };

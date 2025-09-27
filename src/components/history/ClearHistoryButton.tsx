@@ -13,8 +13,9 @@ import {
     MenuItem,
     TextField,
     Typography,
+    useEventCallback,
 } from '@mui/material';
-import { useCallback, useContext, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { FilterContext } from '../contexts/FilterContext';
 import { SelectControl } from '../controls/SelectControl';
@@ -73,7 +74,7 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
         };
         return [tsFilterFunc, pinFilterFunc];
     }, [filter.pinned, newer, seconds]);
-    const handleConfirmDelete = useCallback(async () => {
+    const handleConfirmDelete = useEventCallback(async () => {
         const coll = await pkFromFilter(filterFuncs);
         const cnt = coll.length;
         if (!cnt) {
@@ -82,13 +83,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
             setToDelete(cnt);
             setOpenConfirm(true);
         }
-    }, [filterFuncs, pkFromFilter]);
-    const handleDelete = useCallback(async () => {
+    });
+    const handleDelete = useEventCallback(async () => {
         const coll = await pkFromFilter(filterFuncs);
         db.taskResults.bulkDelete(coll);
         setOpenConfirm(false);
         setTimeout(() => setOpenCleanup(false), 0);
-    }, [filterFuncs, pkFromFilter]);
+    });
     const cmp = tr(newer ? 'settings.newer' : 'settings.older');
     return (
         <>

@@ -1,5 +1,4 @@
-import { Box } from '@mui/material';
-import { useCallback } from 'react';
+import { Box, useEventCallback } from '@mui/material';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { replaceNodeConnection } from '../../api/utils';
 import { controlType } from '../../redux/config';
@@ -12,6 +11,7 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
@@ -20,7 +20,6 @@ import { SliderInput } from '../controls/SliderInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
-import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 
 const AppendImage = ({
     name,
@@ -30,7 +29,7 @@ const AppendImage = ({
     upload_name: string;
 }) => {
     const { getValues } = useFormContext();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (
                 !value ||
@@ -59,8 +58,7 @@ const AppendImage = ({
                 replaceNodeConnection(api, id, 'image', concatNode)
             );
             api[control.image_2_id].inputs.image = getValues(upload_name);
-        },
-        [getValues, upload_name]
+        }
     );
     useRegisterHandler({ name, handler });
     const enabled = useWatch({ name });
@@ -74,26 +72,23 @@ const AppendImage = ({
 
 const Content = () => {
     const { setValue } = useFormContext();
-    const updateSize = useCallback(
-        async (file: File) => {
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            img.onload = () => {
-                let width = img.width;
-                let height = img.height;
-                const size = width * height;
-                if (size > 1500000 || size < 1000000) {
-                    [width, height] = [
-                        (width / Math.sqrt(size)) * Math.sqrt(1000000),
-                        (height / Math.sqrt(size)) * Math.sqrt(1000000),
-                    ];
-                }
-                setValue('width', Math.ceil(width - (width % 16)));
-                setValue('height', Math.ceil(height - (height % 16)));
-            };
-        },
-        [setValue]
-    );
+    const updateSize = useEventCallback(async (file: File) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            const size = width * height;
+            if (size > 1500000 || size < 1000000) {
+                [width, height] = [
+                    (width / Math.sqrt(size)) * Math.sqrt(1000000),
+                    (height / Math.sqrt(size)) * Math.sqrt(1000000),
+                ];
+            }
+            setValue('width', Math.ceil(width - (width % 16)));
+            setValue('height', Math.ceil(height - (height % 16)));
+        };
+    });
     return (
         <Layout>
             <GridLeft>

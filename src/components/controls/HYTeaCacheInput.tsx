@@ -1,4 +1,5 @@
-import { useCallback, useEffect } from 'react';
+import { useEventCallback } from '@mui/material';
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
@@ -18,29 +19,27 @@ export const HYTeaCacheInput = ({ ...props }: SliderInputProps) => {
             setValue('sampler', 'DPMSolverMultistepScheduler');
         }
     }, [getValues, setValue, v]);
-    const handler = useCallback(
-        (api: any, value: number) => {
-            if (!value) {
-                return;
-            }
-            const tc_node_idx = getFreeNodeId(api);
-            const tc_node = {
-                inputs: {
-                    rel_l1_thresh: value,
-                    cache_device: 'offload_device',
-                },
-                class_type: 'HyVideoTeaCache',
-                _meta: {
-                    title: 'HunyuanVideo TeaCache',
-                },
-            };
-            api['' + tc_node_idx] = tc_node;
-            api[handler_options.node_params.sampler_id].inputs[
-                'teacache_args'
-            ] = ['' + tc_node_idx, 0];
-        },
-        [handler_options.node_params.sampler_id]
-    );
+    const handler = useEventCallback((api: any, value: number) => {
+        if (!value) {
+            return;
+        }
+        const tc_node_idx = getFreeNodeId(api);
+        const tc_node = {
+            inputs: {
+                rel_l1_thresh: value,
+                cache_device: 'offload_device',
+            },
+            class_type: 'HyVideoTeaCache',
+            _meta: {
+                title: 'HunyuanVideo TeaCache',
+            },
+        };
+        api['' + tc_node_idx] = tc_node;
+        api[handler_options.node_params.sampler_id].inputs['teacache_args'] = [
+            '' + tc_node_idx,
+            0,
+        ];
+    });
     useRegisterHandler({ name: props.name, handler });
     return <SliderInput min={0} max={1} step={0.01} {...props} />;
 };

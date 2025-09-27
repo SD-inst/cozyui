@@ -1,6 +1,6 @@
-import { Box, Button, Link, Typography } from '@mui/material';
+import { Box, Button, Link, Typography, useEventCallback } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -72,7 +72,7 @@ export const FileUpload = ({
         }
         return UploadType.IMAGE;
     }, [field.value]);
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, val: string, control?: controlType) => {
             if (!control) {
                 return;
@@ -82,8 +82,7 @@ export const FileUpload = ({
                 return;
             }
             api[control.node_id] = video_node(val);
-        },
-        [filetype]
+        }
     );
     useRegisterHandler({ name: props.name, handler });
     const { mutate } = useMutation({
@@ -112,9 +111,8 @@ export const FileUpload = ({
             }
         },
     });
-    const onDrop = useCallback(
-        (acceptedFiles: any) => mutate(acceptedFiles),
-        [mutate]
+    const onDrop = useEventCallback((acceptedFiles: any) =>
+        mutate(acceptedFiles)
     );
     const accept = useMemo(() => {
         switch (type) {
@@ -143,23 +141,20 @@ export const FileUpload = ({
         onDrop,
         accept,
     });
-    const handlePaste = useCallback(
-        (e: ClipboardEvent) => {
-            const items = e.clipboardData?.items;
-            if (!items) {
+    const handlePaste = useEventCallback((e: ClipboardEvent) => {
+        const items = e.clipboardData?.items;
+        if (!items) {
+            return;
+        }
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            if (item.kind === 'file' && item.type.startsWith('image/')) {
+                const file = item.getAsFile();
+                onDrop([file]);
                 return;
             }
-            for (let i = 0; i < items.length; i++) {
-                const item = items[i];
-                if (item.kind === 'file' && item.type.startsWith('image/')) {
-                    const file = item.getAsFile();
-                    onDrop([file]);
-                    return;
-                }
-            }
-        },
-        [onDrop]
-    );
+        }
+    });
     const isCurrentTab = useIsCurrentTab();
     useEffect(() => {
         if (isCurrentTab) {

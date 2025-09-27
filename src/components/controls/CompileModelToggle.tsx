@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useEventCallback } from '@mui/material';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -8,7 +8,7 @@ import { ToggleInput, ToggleInputProps } from './ToggleInput';
 export const CompileModelToggle = ({
     ...props
 }: Optional<ToggleInputProps, 'name'>) => {
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (!value || !control) {
                 return;
@@ -23,14 +23,8 @@ export const CompileModelToggle = ({
                     title: 'TorchCompileModel',
                 },
             };
-            insertNode(
-                api,
-                control['output_node_id'],
-                'model',
-                compile_node
-            );
-        },
-        []
+            insertNode(api, control['output_node_id'], 'model', compile_node);
+        }
     );
     useRegisterHandler({ name: props.name || 'compile_model', handler });
     return <ToggleInput name='compile_model' {...props} />;

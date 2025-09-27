@@ -1,5 +1,12 @@
-import { Box, Slider, SliderProps, TextField, Typography } from '@mui/material';
-import { useCallback, useState } from 'react';
+import {
+    Box,
+    Slider,
+    SliderProps,
+    TextField,
+    Typography,
+    useEventCallback,
+} from '@mui/material';
+import { useState } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { HelpButton } from './HelpButton';
 
@@ -24,10 +31,10 @@ export const SliderInputBase = ({
 }) => {
     const [edit, setEdit] = useState(false);
     const tr = useTranslate();
-    const commitValue = useCallback(() => {
+    const commitValue = useEventCallback(() => {
         onChange(value - (value % (props.step || 1)));
         setEdit(false);
-    }, [props.step, onChange, value]);
+    });
     return (
         <Box width='100%' sx={{ position: 'relative', ...sx }}>
             {/* relative position to align the help elements inside the box */}

@@ -11,9 +11,10 @@ import {
     DialogTitle,
     MenuItem,
     TextField,
+    useEventCallback,
 } from '@mui/material';
 import { get } from 'lodash';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
 import { getFreeNodeId } from '../../api/utils';
@@ -190,150 +191,130 @@ export const LoraInput = ({
             },
         },
     } = useAPI();
-    const handler = useCallback(
-        (api: any, values: valueType[]) => {
-            if (append) {
-                values = values.concat(append);
-            }
-            if (!values.length) {
-                return;
-            }
-            const last_node_id = getFreeNodeId(api);
-            const additional_fields = {
-                ...additional_inputs,
-                ...overrideInputs,
-            } as any;
-            const input_node_id =
-                api[output_node_ids?.[0]]?.inputs?.[api_input_name]?.[0];
-            if (input_node_id && output_idx !== undefined) {
-                additional_fields[lora_input_name] = [
+    const handler = useEventCallback((api: any, values: valueType[]) => {
+        if (append) {
+            values = values.concat(append);
+        }
+        if (!values.length) {
+            return;
+        }
+        const last_node_id = getFreeNodeId(api);
+        const additional_fields = {
+            ...additional_inputs,
+            ...overrideInputs,
+        } as any;
+        const input_node_id =
+            api[output_node_ids?.[0]]?.inputs?.[api_input_name]?.[0];
+        if (input_node_id && output_idx !== undefined) {
+            additional_fields[lora_input_name] = [input_node_id, output_idx];
+            if (clip_input_name) {
+                additional_fields[clip_input_name] = [
                     input_node_id,
+                    output_idx + 1,
+                ];
+            }
+        }
+        const loraNodes = values.map((v) => ({
+            inputs: {
+                [name_field_name]: v.id,
+                [strength_field_name]: v.strength,
+                ...(clip_strength_field_name
+                    ? { [clip_strength_field_name]: v.strength }
+                    : {}),
+                ...additional_fields,
+            },
+            class_type: class_name,
+            _meta: {
+                title: class_name,
+            },
+        }));
+        if (class_name === 'HunyuanVideoLoraLoader') {
+            loraNodes.forEach((n, i) => {
+                n.inputs.blocks_type =
+                    values[i].merge === mergeType.DOUBLE
+                        ? 'double_blocks'
+                        : values[i].merge === mergeType.SINGLE
+                        ? 'single_blocks'
+                        : 'all';
+            });
+        }
+        output_node_ids.forEach(
+            (id) =>
+                (api[id].inputs[api_input_name] = [
+                    '' + last_node_id,
+                    output_idx,
+                ])
+        );
+        if (output_clip_ids) {
+            output_clip_ids.forEach(
+                (id) => (api[id].inputs['clip'] = ['' + last_node_id, 1])
+            );
+        }
+        loraNodes.forEach((n, i) => {
+            api['' + (last_node_id + i)] = n;
+            if (i < loraNodes.length - 1) {
+                (n.inputs as any)[lora_input_name] = [
+                    '' + (last_node_id + i + 1),
                     output_idx,
                 ];
-                if (clip_input_name) {
-                    additional_fields[clip_input_name] = [
-                        input_node_id,
+                if (clip_input_name && output_idx !== undefined) {
+                    (n.inputs as any)[clip_input_name] = [
+                        '' + (last_node_id + i + 1),
                         output_idx + 1,
                     ];
                 }
             }
-            const loraNodes = values.map((v) => ({
-                inputs: {
-                    [name_field_name]: v.id,
-                    [strength_field_name]: v.strength,
-                    ...(clip_strength_field_name
-                        ? { [clip_strength_field_name]: v.strength }
-                        : {}),
-                    ...additional_fields,
-                },
-                class_type: class_name,
-                _meta: {
-                    title: class_name,
-                },
-            }));
-            if (class_name === 'HunyuanVideoLoraLoader') {
-                loraNodes.forEach((n, i) => {
-                    n.inputs.blocks_type =
-                        values[i].merge === mergeType.DOUBLE
-                            ? 'double_blocks'
-                            : values[i].merge === mergeType.SINGLE
-                            ? 'single_blocks'
-                            : 'all';
-                });
-            }
-            output_node_ids.forEach(
-                (id) =>
-                    (api[id].inputs[api_input_name] = [
-                        '' + last_node_id,
-                        output_idx,
-                    ])
+        });
+
+        const block_edit_idx = getFreeNodeId(api);
+        if (class_name === 'HyVideoLoraSelect') {
+            const createBlockEdit = (
+                block_edit_idx: number,
+                name: string,
+                single: boolean
+            ) => {
+                const block_edit = {
+                    ['' + block_edit_idx]: {
+                        inputs: {} as any,
+                        class_type: 'HyVideoLoraBlockEdit',
+                        _meta: {
+                            title: name,
+                        },
+                    },
+                };
+                for (let i = 0; i <= 19; i++) {
+                    block_edit['' + block_edit_idx].inputs[
+                        `double_blocks.${i}.`
+                    ] = !single;
+                }
+                for (let i = 0; i <= 39; i++) {
+                    block_edit['' + block_edit_idx].inputs[
+                        `single_blocks.${i}.`
+                    ] = single;
+                }
+                return block_edit;
+            };
+            const single_only = createBlockEdit(
+                block_edit_idx,
+                'Single only',
+                true
             );
-            if (output_clip_ids) {
-                output_clip_ids.forEach(
-                    (id) => (api[id].inputs['clip'] = ['' + last_node_id, 1])
-                );
-            }
+            const double_only = createBlockEdit(
+                block_edit_idx + 1,
+                'Double only',
+                false
+            );
+            Object.assign(api, single_only, double_only);
             loraNodes.forEach((n, i) => {
-                api['' + (last_node_id + i)] = n;
-                if (i < loraNodes.length - 1) {
-                    (n.inputs as any)[lora_input_name] = [
-                        '' + (last_node_id + i + 1),
-                        output_idx,
+                if (values[i].merge < mergeType.FULL) {
+                    (n.inputs as any).blocks = [
+                        '' + (block_edit_idx + values[i].merge),
+                        0,
                     ];
-                    if (clip_input_name && output_idx !== undefined) {
-                        (n.inputs as any)[clip_input_name] = [
-                            '' + (last_node_id + i + 1),
-                            output_idx + 1,
-                        ];
-                    }
                 }
             });
-
-            const block_edit_idx = getFreeNodeId(api);
-            if (class_name === 'HyVideoLoraSelect') {
-                const createBlockEdit = (
-                    block_edit_idx: number,
-                    name: string,
-                    single: boolean
-                ) => {
-                    const block_edit = {
-                        ['' + block_edit_idx]: {
-                            inputs: {} as any,
-                            class_type: 'HyVideoLoraBlockEdit',
-                            _meta: {
-                                title: name,
-                            },
-                        },
-                    };
-                    for (let i = 0; i <= 19; i++) {
-                        block_edit['' + block_edit_idx].inputs[
-                            `double_blocks.${i}.`
-                        ] = !single;
-                    }
-                    for (let i = 0; i <= 39; i++) {
-                        block_edit['' + block_edit_idx].inputs[
-                            `single_blocks.${i}.`
-                        ] = single;
-                    }
-                    return block_edit;
-                };
-                const single_only = createBlockEdit(
-                    block_edit_idx,
-                    'Single only',
-                    true
-                );
-                const double_only = createBlockEdit(
-                    block_edit_idx + 1,
-                    'Double only',
-                    false
-                );
-                Object.assign(api, single_only, double_only);
-                loraNodes.forEach((n, i) => {
-                    if (values[i].merge < mergeType.FULL) {
-                        (n.inputs as any).blocks = [
-                            '' + (block_edit_idx + values[i].merge),
-                            0,
-                        ];
-                    }
-                });
-            }
-        },
-        [
-            append,
-            additional_inputs,
-            overrideInputs,
-            output_node_ids,
-            api_input_name,
-            output_idx,
-            class_name,
-            output_clip_ids,
-            lora_input_name,
-            clip_input_name,
-            name_field_name,
-            strength_field_name,
-            clip_strength_field_name,
-        ]
-    );
+        }
+    });
     useRegisterHandler({ name: props.name, handler });
     const ctl = useController({
         name: props.name,

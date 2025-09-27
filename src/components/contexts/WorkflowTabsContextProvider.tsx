@@ -1,10 +1,11 @@
-import { PropsWithChildren, useCallback, useState } from 'react';
+import { useEventCallback } from '@mui/material';
+import { PropsWithChildren, useState } from 'react';
 import {
     defaultValue,
     groupType,
+    receiverType,
     WorkflowTabsContext,
     WorkflowTabsType,
-    receiverType
 } from './WorkflowTabsContext';
 
 export const WorkflowTabsContextProvider = ({
@@ -14,21 +15,19 @@ export const WorkflowTabsContextProvider = ({
     value?: WorkflowTabsType;
 } & PropsWithChildren) => {
     const [state, setState] = useState<WorkflowTabsType>(defaultValue);
-    const setWorkflowTabs = useCallback(
-        (workflowTabs: string[]) => setState((v) => ({ ...v, workflowTabs })),
-        []
+    const setWorkflowTabs = useEventCallback((workflowTabs: string[]) =>
+        setState((v) => ({ ...v, workflowTabs }))
     );
-    const setWorkflowTabGroups = useCallback(
+    const setWorkflowTabGroups = useEventCallback(
         (workflowTabGroups: groupType) =>
-            setState((v) => ({ ...v, workflowTabGroups })),
-        []
+            setState((v) => ({ ...v, workflowTabGroups }))
     );
-    const setReceivers = useCallback((receivers: receiverType) => {
+    const setReceivers = useEventCallback((receivers: receiverType) => {
         setState((v) => ({
             ...v,
             receivers,
         }));
-    }, []);
+    });
     return (
         <WorkflowTabsContext.Provider
             value={{

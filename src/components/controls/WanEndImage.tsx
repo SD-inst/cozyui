@@ -1,12 +1,11 @@
-import { Box } from '@mui/material';
-import { useCallback } from 'react';
+import { Box, useEventCallback } from '@mui/material';
+import { cloneDeep } from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
-import { ToggleInput } from './ToggleInput';
 import { FileUpload } from './FileUpload';
-import { cloneDeep } from 'lodash';
+import { ToggleInput } from './ToggleInput';
 
 export const WanEndImage = ({
     name,
@@ -17,7 +16,7 @@ export const WanEndImage = ({
 }) => {
     const useEndImage = useWatch({ name });
     const { getValues } = useFormContext();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (
                 !control ||
@@ -46,7 +45,6 @@ export const WanEndImage = ({
             api[control.image_node_id].inputs.image =
                 getValues(imageUploadName);
         },
-        [getValues, imageUploadName]
     );
     useRegisterHandler({ name, handler });
     return (

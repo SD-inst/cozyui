@@ -1,6 +1,6 @@
 import { Cancel } from '@mui/icons-material';
-import { Box, Button, Typography } from '@mui/material';
-import { useCallback, useEffect } from 'react';
+import { Box, Button, Typography, useEventCallback } from '@mui/material';
+import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { replaceNodeConnection } from '../../api/utils';
 import { useResult } from '../../hooks/useResult';
@@ -25,16 +25,13 @@ import { WFTab } from '../WFTab';
 const useLatents = (name: string) => {
     const latents = useResult({ index: 1 });
     const { setValue } = useFormContext();
-    const setLatents = useCallback(() => {
+    const setLatents = useEventCallback(() => {
         if (!latents || latents.length != 1) {
             return;
         }
         setValue(name, latents[0].filename + ' [output]');
-    }, [latents, name, setValue]);
-    const resetLatents = useCallback(
-        () => setValue(name, ''),
-        [name, setValue]
-    );
+    });
+    const resetLatents = useEventCallback(() => setValue(name, ''));
     return { setLatents, resetLatents };
 };
 
@@ -47,7 +44,7 @@ const AppendImage = ({
 }) => {
     const { getValues } = useFormContext();
     const { resetLatents } = useLatents('latents');
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (
                 !value ||
@@ -74,8 +71,7 @@ const AppendImage = ({
             };
             replaceNodeConnection(api, control.scale_id, 'image', concatNode);
             api[control.image_2_id].inputs.image = getValues(upload_name);
-        },
-        [getValues, upload_name]
+        }
     );
     useRegisterHandler({ name, handler });
     const enabled = useWatch({ name });
@@ -90,7 +86,7 @@ const AppendImage = ({
 };
 
 const LoadLatents = ({ name }: { name: string }) => {
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: boolean, control?: controlType) => {
             if (!value || !control || !control.reference_node_id) {
                 return;
@@ -110,8 +106,7 @@ const LoadLatents = ({ name }: { name: string }) => {
                 'latent',
                 loadLatentNode
             );
-        },
-        []
+        }
     );
     useRegisterHandler({ name, handler });
     const { watch, setValue } = useFormContext();
@@ -145,26 +140,23 @@ const LoadLatents = ({ name }: { name: string }) => {
 const Content = () => {
     const { setLatents, resetLatents } = useLatents('latents');
     const { setValue } = useFormContext();
-    const updateSize = useCallback(
-        async (file: File) => {
-            const img = new Image();
-            img.src = URL.createObjectURL(file);
-            img.onload = () => {
-                let width = img.width;
-                let height = img.height;
-                const size = width * height;
-                if (size > 1500000 || size < 1000000) {
-                    [width, height] = [
-                        (width / Math.sqrt(size)) * Math.sqrt(1000000),
-                        (height / Math.sqrt(size)) * Math.sqrt(1000000),
-                    ];
-                }
-                setValue('width', Math.ceil(width - (width % 16)));
-                setValue('height', Math.ceil(height - (height % 16)));
-            };
-        },
-        [setValue]
-    );
+    const updateSize = useEventCallback(async (file: File) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(file);
+        img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            const size = width * height;
+            if (size > 1500000 || size < 1000000) {
+                [width, height] = [
+                    (width / Math.sqrt(size)) * Math.sqrt(1000000),
+                    (height / Math.sqrt(size)) * Math.sqrt(1000000),
+                ];
+            }
+            setValue('width', Math.ceil(width - (width % 16)));
+            setValue('height', Math.ceil(height - (height % 16)));
+        };
+    });
     return (
         <Layout>
             <GridLeft>

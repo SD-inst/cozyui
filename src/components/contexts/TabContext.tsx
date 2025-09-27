@@ -1,3 +1,4 @@
+import { useEventCallback } from '@mui/material';
 import { cloneDeep } from 'lodash';
 import {
     createContext,
@@ -5,12 +6,11 @@ import {
     KeyboardEvent,
     KeyboardEventHandler,
     SetStateAction,
-    useCallback,
     useContext,
-    useEffect,
+    useEffect
 } from 'react';
-import { controlType } from '../../redux/config';
 import { useCurrentTab } from '../../hooks/useCurrentTab';
+import { controlType } from '../../redux/config';
 
 export type handlerType = {
     [control_name: string]: (
@@ -45,14 +45,11 @@ export const TabContext = createContext(tabContextdefaultValue);
 
 export const useCtrlEnter = () => {
     const ctx = useContext(TabContext);
-    return useCallback(
-        (e: KeyboardEvent) => {
-            if (ctx.handleCtrlEnter) {
-                ctx.handleCtrlEnter(e);
-            }
-        },
-        [ctx]
-    );
+    return useEventCallback((e: KeyboardEvent) => {
+        if (ctx.handleCtrlEnter) {
+            ctx.handleCtrlEnter(e);
+        }
+    });
 };
 
 export const useTabName = () => {

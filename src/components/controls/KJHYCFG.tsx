@@ -1,5 +1,9 @@
-import { Box, TextField, TextFieldProps } from '@mui/material';
-import { useCallback } from 'react';
+import {
+    Box,
+    TextField,
+    TextFieldProps,
+    useEventCallback,
+} from '@mui/material';
 import { useController } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
@@ -17,7 +21,7 @@ export const KJHYCFG = ({
 } & TextFieldProps) => {
     const tr = useTranslate();
     const { handler_options } = useAPI();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, value: { neg_prompt: string; cfg: string }) => {
             const cfg = parseFloat(value.cfg);
             if (!cfg) {
@@ -40,8 +44,7 @@ export const KJHYCFG = ({
             api[handler_options.node_params.text_encode_id].inputs[
                 'hyvid_cfg'
             ] = ['' + hycfg_node_idx, 0];
-        },
-        [handler_options.node_params.text_encode_id]
+        }
     );
     useRegisterHandler({ name: props.name, handler });
     const ctl = useController({

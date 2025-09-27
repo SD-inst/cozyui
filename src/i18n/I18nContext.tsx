@@ -1,5 +1,6 @@
+import { useEventCallback } from '@mui/material';
 import Polyglot from 'node-polyglot';
-import { createContext, useCallback, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import en from './locales/en';
 
 export type I18nContextType = {
@@ -28,11 +29,10 @@ export const I18nContext = createContext<I18nContextType>(defaultValue);
 
 export const useTranslate = () => {
     const polyglot = useContext(I18nContext).polyglot;
-    return useCallback(
+    return useEventCallback(
         (phrase: string, options?: number | Polyglot.InterpolationOptions) => {
             return polyglot.t(phrase, options);
-        },
-        [polyglot]
+        }
     );
 };
 

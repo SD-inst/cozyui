@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useEventCallback } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -6,7 +6,7 @@ import { SelectInput, SelectInputProps } from './SelectInput';
 
 export const ModelSelectInput = ({ ...props }: SelectInputProps) => {
     const { getValues } = useFormContext();
-    const handler = useCallback(
+    const handler = useEventCallback(
         (api: any, val: string, control?: controlType) => {
             if (!control || !control['node_id']) {
                 throw 'control undefined';
@@ -52,7 +52,6 @@ export const ModelSelectInput = ({ ...props }: SelectInputProps) => {
                 };
             }
         },
-        [getValues]
     );
     useRegisterHandler({ name: props.name, handler });
     return <SelectInput {...props} />;

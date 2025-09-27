@@ -1,17 +1,18 @@
-import { Button, FormControl, FormHelperText } from '@mui/material';
-import { cloneDeep } from 'lodash';
 import {
-    KeyboardEvent,
-    useCallback,
-    useContext,
-    useEffect,
-    useState,
-} from 'react';
+    Button,
+    FormControl,
+    FormHelperText,
+    useEventCallback,
+} from '@mui/material';
+import { cloneDeep } from 'lodash';
+import { KeyboardEvent, useContext, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useApiURL } from '../../hooks/useApiURL';
+import { settings } from '../../hooks/settings';
 import { useAPI } from '../../hooks/useAPI';
+import { useApiURL } from '../../hooks/useApiURL';
 import { useGet } from '../../hooks/useGet';
+import { useBooleanSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import {
@@ -29,8 +30,6 @@ import {
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
-import { settings } from '../../hooks/settings';
-import { useBooleanSetting } from '../../hooks/useSetting';
 
 type error = {
     controls: string[];
@@ -68,11 +67,15 @@ export const GenerateButton = ({
         name: (requiredControls as any) ?? '',
         disabled: !requiredControls,
     });
-    const missingValues = requiredControls
-        ? !watchedControls // one parameter and it's unset?
-            ? true // then it's missing!
-            : Object.keys(watchedControls).some((k) => !watchedControls[k]) // many parameters or one and it's set? Check the fields if any are unset
-        : false; // otherwise we're good
+    const missingValues = useMemo(() => {
+        if (!requiredControls) {
+            return false;
+        }
+        if (!watchedControls) {
+            return true;
+        }
+        return Object.keys(watchedControls).some((k) => !watchedControls[k]);
+    }, [requiredControls, watchedControls]);
     const dispatch = useAppDispatch();
     const tr = useTranslate();
     const client_id = useAppSelector((s) => s.config.client_id);
@@ -99,7 +102,7 @@ export const GenerateButton = ({
     });
     const handlers = useHandlers();
     const enable_previews = useBooleanSetting(settings.enable_previews);
-    const sendPrompt = useCallback(() => {
+    const sendPrompt = useEventCallback(() => {
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
 
@@ -218,32 +221,17 @@ export const GenerateButton = ({
                 );
             }
         });
-    }, [
-        dispatch,
-        client_id,
-        apiData,
-        enable_previews,
-        getValues,
-        noexec,
-        apiUrl,
-        controls,
-        handlers,
-        tr,
-        tab_name,
-    ]);
-    const handleCtrlEnter = useCallback(
-        (e: KeyboardEvent) => {
-            if (
-                !generation_disabled &&
-                apiSuccess &&
-                e.ctrlKey &&
-                e.key === 'Enter'
-            ) {
-                sendPrompt();
-            }
-        },
-        [apiSuccess, generation_disabled, sendPrompt]
-    );
+    });
+    const handleCtrlEnter = useEventCallback((e: KeyboardEvent) => {
+        if (
+            !generation_disabled &&
+            apiSuccess &&
+            e.ctrlKey &&
+            e.key === 'Enter'
+        ) {
+            sendPrompt();
+        }
+    });
     useEffect(() => {
         setValue((s) => ({
             ...s,
