@@ -1,4 +1,5 @@
 import { AudioResult } from '../controls/AudioResult';
+import { CFGInput } from '../controls/CFGInput';
 import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -16,13 +17,7 @@ const Content = () => {
                 <TextInput name='prompt' multiline sx={{ mb: 2 }} />
                 <FileUpload name='audio_input' type={UploadType.AUDIO} />
                 <SliderInput min={1} max={100} name='steps' defaultValue={20} />
-                <SliderInput
-                    name='cfg'
-                    min={0}
-                    max={10}
-                    defaultValue={1.3}
-                    step={0.01}
-                />
+                <CFGInput max={10} defaultValue={1.3} step={0.01} />
                 <SliderInput
                     name='temperature'
                     min={0}
