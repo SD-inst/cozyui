@@ -45,6 +45,7 @@ import { WanT2VTab } from './components/tabs/WanT2V';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { ACEStepTab } from './components/tabs/ACEStep';
 import { SongBloomTab } from './components/tabs/SongBloom';
+import { VideoInterpolationTab } from './components/tabs/VideoInterpolation';
 
 function App() {
     return (
@@ -86,6 +87,7 @@ function App() {
                                 {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
+                                {VideoInterpolationTab}
                             </WorkflowTabs>
                             <Progress />
                             <InterruptButton />

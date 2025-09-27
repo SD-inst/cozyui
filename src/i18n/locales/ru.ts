@@ -176,6 +176,7 @@ const translation = {
         audio_len: 'длительность аудио-сэмпла',
         top_k: 'топ K',
         diff_temp: 'температура диффузии',
+        multiplier: 'множитель',
     },
     settings: {
         select_language: 'Выбор языка',

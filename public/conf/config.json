@@ -2269,6 +2269,28 @@
                 "id": "38",
                 "type": "audio"
             }
+        },
+        "Video interpolation": {
+            "api": "api/video_interpolation.json",
+            "controls": {
+                "video": {
+                    "id": "4",
+                    "field": "video"
+                },
+                "multiplier": {
+                    "id": "9",
+                    "field": "value"
+                },
+                "randomizer": {
+                    "id": "handle",
+                    "node_id": "5",
+                    "prefix": "interp_"
+                }
+            },
+            "result": {
+                "id": "5",
+                "type": "gifs"
+            }
         }
     },
     "models": {

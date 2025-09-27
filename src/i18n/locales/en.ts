@@ -176,7 +176,8 @@ const translation = {
         vocal_volume: 'vocal volume',
         audio_len: 'audio sample length',
         top_k: 'top K',
-        diff_temp: 'diffusion temperature'
+        diff_temp: 'diffusion temperature',
+        multiplier: 'multiplier',
     },
     settings: {
         select_language: 'Select language',
