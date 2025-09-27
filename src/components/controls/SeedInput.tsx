@@ -1,9 +1,10 @@
 import { Casino } from '@mui/icons-material';
 import { Box, Button, TextFieldProps, Tooltip } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
-import { TextInput } from './TextInput';
+import { bigRandom } from '../../api/utils';
 import { useTranslate } from '../../i18n/I18nContext';
 import { HelpButton } from './HelpButton';
+import { TextInput } from './TextInput';
 
 export const SeedInput = ({
     seedLength = 13,
@@ -17,13 +18,8 @@ export const SeedInput = ({
     const { setValue } = useFormContext();
     const tr = useTranslate();
     const randomize = () => {
-        const hexString = Array(seedLength)
-            .fill(0)
-            .map(() => Math.round(Math.random() * 0xf).toString(16))
-            .join('');
-
-        const randomBigInt = BigInt(`0x${hexString}`);
-        setValue(props.name, parseInt(randomBigInt.toString()));
+        const randomBigInt = bigRandom(seedLength);
+        setValue(props.name, parseInt(randomBigInt));
     };
     return (
         <Box display='flex' position='relative' gap={1} mt={1} mb={1}>

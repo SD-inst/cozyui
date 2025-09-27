@@ -1,4 +1,3 @@
-import { useWatch } from 'react-hook-form';
 import { AudioResult } from '../controls/AudioResult';
 import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -11,7 +10,6 @@ import { UploadType } from '../controls/UploadType';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const audio_input = useWatch({ name: 'audio_input' });
     return (
         <Layout>
             <GridLeft>
@@ -46,7 +44,7 @@ const Content = () => {
                 <AudioResult loop={false} />
             </GridRight>
             <GridBottom>
-                <GenerateButton disabled={!audio_input} />
+                <GenerateButton requiredControls={['audio_input', 'prompt']} />
             </GridBottom>
         </Layout>
     );

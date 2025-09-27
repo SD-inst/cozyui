@@ -7,7 +7,7 @@ import {
     useEffect,
     useState,
 } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useAPI } from '../../hooks/useAPI';
@@ -52,6 +52,7 @@ export type GenerateButtonProps = {
     noexec?: boolean;
     noreset?: boolean;
     disabled?: boolean;
+    requiredControls?: string | readonly string[];
 };
 
 export const GenerateButton = ({
@@ -59,8 +60,19 @@ export const GenerateButton = ({
     hideErrors,
     noexec,
     noreset,
-    disabled
+    disabled,
+    requiredControls,
 }: GenerateButtonProps) => {
+    // https://github.com/microsoft/TypeScript/issues/14107
+    const watchedControls: any | { [key: string]: any } = useWatch({
+        name: (requiredControls as any) ?? '',
+        disabled: !requiredControls,
+    });
+    const missingValues = requiredControls
+        ? !watchedControls // one parameter and it's unset?
+            ? true // then it's missing!
+            : Object.keys(watchedControls).some((k) => !watchedControls[k]) // many parameters or one and it's set? Check the fields if any are unset
+        : false; // otherwise we're good
     const dispatch = useAppDispatch();
     const tr = useTranslate();
     const client_id = useAppSelector((s) => s.config.client_id);
@@ -71,7 +83,9 @@ export const GenerateButton = ({
         (status &&
             (status === statusEnum.WAITING || status === statusEnum.RUNNING)) ||
         tabs === undefined ||
-        !connected || disabled;
+        !connected ||
+        disabled ||
+        missingValues;
     const [errors, setErrors] = useState<error>(noErrors);
     const { getValues } = useFormContext();
     const tab_name = useTabName();

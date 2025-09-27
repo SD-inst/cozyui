@@ -1,4 +1,3 @@
-import { useWatch } from 'react-hook-form';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { AudioResult } from '../controls/AudioResult';
 import { CFGInput } from '../controls/CFGInput';
@@ -14,7 +13,6 @@ import { UploadType } from '../controls/UploadType';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const audio = useWatch({ name: 'audio' });
     return (
         <Layout>
             <GridLeft>
@@ -37,7 +35,7 @@ Carved in gold like a hand-made braid.
 We'd run through the fields where the wild winds play.
 Lost in the warmth of those sunny old days.
 
-[inst] [chorus] [inst] [chorus] [inst] [chorus] [inst] [chorus] 
+[inst] [chorus] [inst] [chorus] [inst] [chorus] [inst] [chorus]
 
 [verse]
 Barefoot steps on the gravel trail.
@@ -118,7 +116,7 @@ Lost in the warmth of those sunny old days.
                 <AudioResult loop={false} />
             </GridRight>
             <GridBottom>
-                <GenerateButton disabled={!audio} />
+                <GenerateButton requiredControls={['audio', 'lyrics']} />
             </GridBottom>
         </Layout>
     );

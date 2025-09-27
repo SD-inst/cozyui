@@ -59,3 +59,12 @@ export const makeOutputUrl = (apiUrl: string, r: any) => {
     }
     return `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
 };
+
+export const bigRandom = (len: number) => {
+    const hexString = Array(len)
+        .fill(0)
+        .map(() => Math.round(Math.random() * 0xf).toString(16))
+        .join('');
+
+    return BigInt(`0x${hexString}`).toString();
+};
