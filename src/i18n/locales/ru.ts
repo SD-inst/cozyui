@@ -177,6 +177,7 @@ const translation = {
         top_k: 'топ K',
         diff_temp: 'температура диффузии',
         multiplier: 'множитель',
+        interpolation_multiplier: 'множитель сглаживания',
     },
     settings: {
         select_language: 'Выбор языка',

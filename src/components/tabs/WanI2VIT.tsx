@@ -19,6 +19,7 @@ import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { WanSampler } from '../controls/WanSampler';
 import { WFTab } from '../WFTab';
+import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -68,6 +69,7 @@ const Content = () => {
                         defaultValue='过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走'
                     />
                     <KJWanBlockSwapInput name='block_swap' mb={2} />
+                    <VideoInterpolationSlider />
                 </AdvancedSettings>
                 <LoraInput
                     name='lora'

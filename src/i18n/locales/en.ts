@@ -178,6 +178,7 @@ const translation = {
         top_k: 'top K',
         diff_temp: 'diffusion temperature',
         multiplier: 'multiplier',
+        interpolation_multiplier: 'interpolation multiplier',
     },
     settings: {
         select_language: 'Select language',

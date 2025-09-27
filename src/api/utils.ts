@@ -20,22 +20,36 @@ export const getFreeNodeId = (api: any) =>
         .map((k) => parseInt(k))
         .reduce((a, k) => Math.max(a, k)) + 1;
 
+/**
+ * Inserts a node between input_node and output_node(s),
+ * the graph will look like this: input_node => node => output_node
+ *
+ * @param api ComfyUI API object
+ * @param output_node_ids id or array of ids of the output node(s)
+ * @param field field name in our node where the input node (before our node) will connect, also the output node field unless overridden (see below)
+ * @param node our node object being inserted
+ * @param node_output_index our node's output index, 0 by default
+ * @param node_field_override our node's input field override
+ * if it's different (rarely needed)
+ * @returns our node id
+ */
 export const insertNode = (
     api: any,
-    target_node_ids: string | string[],
-    target_field: string,
+    output_node_ids: string | string[],
+    field: string,
     node: any,
-    output_index: number = 0
+    node_output_index: number = 0,
+    node_field_override?: string
 ): string => {
     const new_node_id = getFreeNodeId(api) + '';
     api[new_node_id] = node;
 
     const ids =
-        target_node_ids instanceof Array ? target_node_ids : [target_node_ids];
+        output_node_ids instanceof Array ? output_node_ids : [output_node_ids];
     ids.forEach((id) => {
-        const input_node = api[id].inputs[target_field];
-        node.inputs[target_field] = input_node;
-        api[id].inputs[target_field] = [new_node_id, output_index];
+        const input_node = api[id].inputs[field];
+        node.inputs[node_field_override || field] = input_node;
+        api[id].inputs[field] = [new_node_id, node_output_index];
     });
     return new_node_id;
 };

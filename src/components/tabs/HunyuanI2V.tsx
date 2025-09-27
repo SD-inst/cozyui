@@ -20,6 +20,7 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { TextInput } from '../controls/TextInput';
+import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../WFTab';
@@ -63,6 +64,7 @@ const Content = () => {
                     />
                     <TeaCacheInput />
                     <VirtualVRAMSliderInput name='virtual_vram' />
+                    <VideoInterpolationSlider />
                     <CompileModelToggle />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />

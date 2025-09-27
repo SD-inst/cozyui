@@ -18,6 +18,7 @@ import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { VideoImageOverride } from '../controls/VideoImageOverride';
 import { VideoImageResult } from '../controls/VideoImageResult';
+import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
@@ -41,6 +42,7 @@ const Content = () => {
                     <TeaCacheInput />
                     <HYNAG name='nag' />
                     <HYRiflexInput name='riflex' />
+                    <VideoInterpolationSlider />
                     <CompileModelToggle />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />

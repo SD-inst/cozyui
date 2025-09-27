@@ -23,7 +23,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'Res 2M', value: 'res_2m' },
                 { text: 'Res 3M', value: 'res_3m' },
             ]}
-            defaultValue='euler'
+            defaultValue='res_multistep'
             tooltip='sampler'
             {...props}
         />

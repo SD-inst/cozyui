@@ -108,6 +108,9 @@
                 },
                 "video_image_override": {
                     "id": "handle"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -653,6 +656,9 @@
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "54"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -1768,6 +1774,9 @@
                 },
                 "merge_loras": {
                     "id": "skip"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -1870,6 +1879,9 @@
                 "block_swap": {
                     "id": "handle",
                     "loader_node_id": "22"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -2064,6 +2076,9 @@
                 },
                 "merge_loras": {
                     "id": "skip"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {

@@ -24,7 +24,7 @@ export const WanSampler = ({
                 { text: 'Flowmatch Pusa', value: 'flowmatch_pusa' },
                 { text: 'Multitalk', value: 'multitalk' },
             ]}
-            defaultValue='unipc/beta'
+            defaultValue='res_multistep'
             sx={{ mt: 1 }}
             fullWidth
             {...props}

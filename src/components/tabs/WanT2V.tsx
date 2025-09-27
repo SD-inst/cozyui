@@ -22,6 +22,7 @@ import { WanRiflexToggle } from '../controls/WanRiflexToggle';
 import { WanSampler } from '../controls/WanSampler';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
+import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -53,6 +54,7 @@ const Content = () => {
                     <WanNAG name='nag' />
                     <KJWanBlockSwapInput name='block_swap' />
                     <KJWanLoopInput name='loop' sx={{ mt: 2 }} />
+                    <VideoInterpolationSlider />
                     <ToggleInput name='merge_loras' />
                 </AdvancedSettings>
                 <LoraInput

@@ -24,6 +24,7 @@ import { WanNAG } from '../controls/WanNAG';
 import { WanSampler } from '../controls/WanSampler';
 import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
 import { KJWanLoopInput } from '../controls/KJWanLoopInput';
+import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 
 const Content = () => {
     const sflora = useWatch({ name: 'self_forcing_lora', defaultValue: true });
@@ -80,6 +81,7 @@ const Content = () => {
                         step={0.01}
                         defaultValue={1}
                     />
+                    <VideoInterpolationSlider />
                     <ToggleInput name='merge_loras' />
                 </AdvancedSettings>
                 <LoraInput
