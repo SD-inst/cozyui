@@ -130,7 +130,7 @@ export const WidthHeight = ({
                     <SwapVert />
                 </Button>
                 <Button
-                    variant='outlined'
+                    variant={aspect ? 'contained' : 'outlined'}
                     color='primary'
                     onClick={() => {
                         if (aspect || !heightField.value) {
