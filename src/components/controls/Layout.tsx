@@ -1,4 +1,5 @@
 import { Grid2 as Grid, Grid2Props } from '@mui/material';
+import { useIsCurrentTab } from '../contexts/TabContext';
 
 export const Layout = ({ ...props }: Grid2Props) => {
     return (
@@ -9,6 +10,10 @@ export const Layout = ({ ...props }: Grid2Props) => {
 };
 
 export const GridLeft = ({ ...props }: Grid2Props) => {
+    const isCurrent = useIsCurrentTab();
+    if (!isCurrent) {
+        return null;
+    }
     return (
         <Grid size={{ xs: 12, md: 8 }} {...props}>
             {props.children}

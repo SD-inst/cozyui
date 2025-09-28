@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { makeOutputUrl } from '../api/utils';
 import { useAppDispatch } from '../redux/hooks';
-import { setParams, actionEnum } from '../redux/tab';
+import { setParams, actionEnum, setTab } from '../redux/tab';
 import { useApiURL } from './useApiURL';
 import { useResult } from './useResult';
 import { useTranslate } from '../i18n/I18nContext';
@@ -46,6 +46,7 @@ export const useSendResult = ({
                 values: { ...values, [fileField]: image },
             })
         );
+        dispatch(setTab(targetTab!));
     };
     if (index >= result.length || !targetTab || !fields) {
         return null;

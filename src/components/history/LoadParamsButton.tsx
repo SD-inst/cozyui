@@ -1,7 +1,7 @@
 import { Refresh } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { useAppDispatch } from '../../redux/hooks';
-import { actionEnum, setParams } from '../../redux/tab';
+import { actionEnum, setParams, setTab } from '../../redux/tab';
 import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
 
@@ -15,6 +15,7 @@ export const LoadParamsButton = ({ params }: { params?: string }) => {
         }
         const values = JSON.parse(params);
         dispatch(setParams({ action: actionEnum.RESTORE, ...values }));
+        dispatch(setTab(values.tab));
         toast.success(tr('toasts.params_restored'));
     };
     return (

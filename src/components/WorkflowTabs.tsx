@@ -61,17 +61,16 @@ const ValuesRestore = () => {
     );
     const setValue = useRestoreValues();
     useEffect(() => {
-        if (tab !== tab_name || action !== actionEnum.RESTORE) {
+        if (!initialized || tab !== tab_name || action !== actionEnum.RESTORE) {
             return;
         }
         Object.keys(values).forEach((k) => setValue(k, values[k]));
         dispatch(setParams({}));
-        dispatch(setTab(tab_name));
         setTimeout(
             () => ref.current?.scrollIntoView({ behavior: 'smooth' }),
             0
         );
-    }, [action, dispatch, setValue, tab, tab_name, values]);
+    }, [action, dispatch, initialized, setValue, tab, tab_name, values]);
     useEffect(() => {
         if (initialized || idb === undefined || !isLoaded) {
             // not loaded yet or already applied
@@ -333,23 +332,8 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                 variant='scrollable'
                 sx={{ width: '100%' }}
             >
-                {React.Children.map(props.children, (c, i) => {
-                    if (!React.isValidElement(c)) {
-                        return;
-                    }
-                    const { label, value, group } = c.props;
-                    if (hiddenTabs?.includes(value) || group) {
-                        return;
-                    }
-                    return <Tab label={label} value={value || i} />;
-                })}
                 {GroupTabs({ groups })}
             </Tabs>
-            {React.Children.map(props.children, (c) =>
-                (c as React.ReactElement).props.group ? null : (
-                    <TabContent>{c}</TabContent>
-                )
-            )}
             <GroupTabContents groups={groups} />
         </>
     );
