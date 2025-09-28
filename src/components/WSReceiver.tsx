@@ -26,7 +26,7 @@ export type WSHandlers = {
 };
 
 export const WSReceiver = () => {
-    const lastProgressUpdate = useRef<any>(null);
+    const lastProgressUpdate = useRef<any>({});
     const lastProgressUpdateTO = useRef(0);
     const tr = useTranslate();
     const tr_ready = useTranslateReady();
@@ -43,6 +43,7 @@ export const WSReceiver = () => {
     const client_id = useAppSelector((s) => s.config.client_id);
     const apiUrl = useAppSelector((s) => s.config.api);
     const status = useAppSelector((s) => s.progress.status);
+    lastProgressUpdate.current.status = status;
     const handleMessage = useEventCallback((ev: MessageEvent) => {
         if (ev.data instanceof ArrayBuffer) {
             const dv = new DataView(ev.data.slice(0, 16));
@@ -91,13 +92,22 @@ export const WSReceiver = () => {
             case 'progress':
                 // rate limit progress updates to not trigger React
                 // store the latest progress in ref, update once in 100 ms
-                lastProgressUpdate.current = j.data;
+                lastProgressUpdate.current = {
+                    ...lastProgressUpdate.current,
+                    ...j.data,
+                };
                 if (lastProgressUpdateTO.current) {
                     break;
                 }
                 lastProgressUpdateTO.current = window.setTimeout(() => {
                     lastProgressUpdateTO.current = 0;
-                    if (status !== statusEnum.RUNNING) {
+                    if (
+                        lastProgressUpdate.current.status !== statusEnum.RUNNING
+                    ) {
+                        setProgress({
+                            max: 0,
+                            value: 0,
+                        });
                         return;
                     }
                     dispatch(
