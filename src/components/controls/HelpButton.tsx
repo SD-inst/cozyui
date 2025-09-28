@@ -7,7 +7,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 export const HelpButton = ({
     ...props
 }: { title: string } & Omit<TooltipProps, 'children'>) => {
-    const disable_help = useBooleanSetting(settings.disable_help);
+    const disable_help = useBooleanSetting(settings.disable_help, true) ?? true;
     const tr = useTranslate();
     return (
         <Tooltip arrow {...props} title={tr(`help.${props.title}`)}>

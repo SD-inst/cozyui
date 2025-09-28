@@ -384,7 +384,10 @@ export const LoraInput = ({
                             label={tr(`controls.${props.name}`)}
                             {...params}
                         />
-                        <HelpButton title='lora' sx={{ right: 80, mt: -1 }} />
+                        <HelpButton
+                            title='lora'
+                            sx={{ right: { xs: 10, sm: 80 }, mt: -1 }}
+                        />
                     </>
                 )}
                 renderOption={(props, option, _, ownerState) => {

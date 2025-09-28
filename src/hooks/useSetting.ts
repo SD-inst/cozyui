@@ -2,13 +2,16 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../components/history/db';
 import { settings } from './settings';
 
-export const useBooleanSetting = (name: settings) => {
+export const useBooleanSetting = (
+    name: settings,
+    undefinedAwait: boolean = false
+) => {
     return (
         useLiveQuery(async () => {
             return (
                 (await db.settings.where({ name }).first())?.value === 'true'
             );
-        }, [name]) ?? false
+        }, [name]) ?? (undefinedAwait ? undefined : false)
     );
 };
 
