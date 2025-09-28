@@ -63,6 +63,14 @@ Lost in the warmth of those sunny old days.
 
 [outro] [outro] [outro] [outro] [outro] [outro] [outro] [outro]`}
                 />
+                <LengthInput
+                    min={1}
+                    max={250}
+                    step={1}
+                    name='length'
+                    defaultValue={250}
+                    fps={1}
+                />
                 <SliderInput name='steps' defaultValue={25} min={1} max={50} />
                 <CFGInput defaultValue={1.3} max={10} step={0.01} />
                 <AdvancedSettings>
@@ -74,14 +82,6 @@ Lost in the warmth of those sunny old days.
                             { text: 'Pingpong', value: 'pingpong' },
                         ]}
                         defaultValue='spiral'
-                    />
-                    <LengthInput
-                        min={1}
-                        max={250}
-                        step={1}
-                        name='length'
-                        defaultValue={250}
-                        fps={1}
                     />
                     <SliderInput
                         name='audio_len'
