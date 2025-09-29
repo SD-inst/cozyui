@@ -50,9 +50,6 @@ const ValuesRestore = () => {
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const dispatch = useAppDispatch();
     const tab_name = useTabName();
-    const defaults = useAppSelector((s) =>
-        get(s, ['config', 'tabs', tab_name, 'defaults'], null)
-    );
     const { isLoaded, setDefaults } = useSetDefaults();
     const [initialized, setInitialized] = useState(false);
     const idb = useLiveQuery(
@@ -89,7 +86,7 @@ const ValuesRestore = () => {
             });
         }
         setInitialized(true);
-    }, [defaults, setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
+    }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
     const vals = useWatch();
     useEffect(() => {
         if (!initialized) {
@@ -103,10 +100,19 @@ const ValuesRestore = () => {
 const TabContent = ({ ...props }) => {
     const current_tab = useCurrentTab();
     const form = useForm();
+    const { value, content } = (props.children.props as any) ?? {};
+    // workaround to fix form reset after switching to another tab and back
+    // we use IDB for form persistence and controls are removed from DOM
+    // on tab switch. Need to reset the form as well or else default values
+    // get lost
+    useEffect(() => {
+        if (current_tab !== value) {
+            form.reset();
+        }
+    }, [current_tab, form, value]);
     if (!React.isValidElement(props.children)) {
         return;
     }
-    const { value, content } = props.children.props as any;
     return (
         <TabContextProvider value={{ tab_name: value }}>
             <VerticalBox
