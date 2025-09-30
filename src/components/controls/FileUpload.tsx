@@ -217,7 +217,7 @@ export const FileUpload = ({
                     onClick={() => field.onChange(null)}
                     sx={{ mt: 2, width: 100, alignSelf: 'center' }}
                 >
-                    {tr('controls.reset_form')}
+                    {tr('controls.reset')}
                 </Button>
             )}
         </Box>
