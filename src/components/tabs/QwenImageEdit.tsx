@@ -94,7 +94,11 @@ export const QwenImageEditTab = (
         label='Qwen Image Edit'
         value='Qwen Image Edit'
         group='I2I'
-        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
+        receivers={[
+            { name: 'image', acceptedTypes: 'images', weight: 90 },
+            { name: 'second_image', acceptedTypes: 'images', weight: 89 },
+            { name: 'third_image', acceptedTypes: 'images', weight: 88 },
+        ]}
         content={<Content />}
     />
 );
