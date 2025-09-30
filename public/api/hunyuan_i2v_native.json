@@ -193,7 +193,7 @@
             "start_percent": 0,
             "end_percent": 1,
             "strength": 0.8,
-            "model": ["87", 0],
+            "model": ["44", 0],
             "latent": ["64", 0]
         },
         "class_type": "LeapfusionHunyuanI2VPatcher",
@@ -221,19 +221,6 @@
         "class_type": "ImageNoiseAugmentation",
         "_meta": {
             "title": "Image Noise Augmentation"
-        }
-    },
-    "87": {
-        "inputs": {
-            "reuse_threshold": 0.2,
-            "start_percent": 0.15,
-            "end_percent": 0.95,
-            "verbose": false,
-            "model": ["44", 0]
-        },
-        "class_type": "EasyCache",
-        "_meta": {
-            "title": "Easy Cache"
         }
     },
     "90": {

@@ -8,3 +8,12 @@ export const useWatchForm = (name: string) => {
         }) || getValues(name)
     );
 };
+
+export const useWatchFormMany = (names: string[]) => {
+    const { getValues } = useFormContext();
+    return (
+        useWatch({
+            name: names,
+        }) || names.map((n) => getValues(n))
+    );
+};

@@ -20,7 +20,6 @@ export type tabConfigType = {
     defaults?: Record<string, any>;
     handler_options: {
         lora_params: {
-            input_node_id?: string;
             lora_input_name: string;
             clip_input_name?: string;
             api_input_name: string;

@@ -57,7 +57,7 @@
     "6": {
         "inputs": {
             "shift": 10,
-            "model": ["15", 0]
+            "model": ["13", 0]
         },
         "class_type": "ModelSamplingSD3",
         "_meta": {
@@ -137,19 +137,6 @@
         "class_type": "EmptyHunyuanLatentVideo",
         "_meta": {
             "title": "EmptyHunyuanLatentVideo"
-        }
-    },
-    "15": {
-        "inputs": {
-            "reuse_threshold": 0.2,
-            "start_percent": 0.15,
-            "end_percent": 0.95,
-            "verbose": false,
-            "model": ["13", 0]
-        },
-        "class_type": "EasyCache",
-        "_meta": {
-            "title": "Easy Cache"
         }
     },
     "16": {

@@ -7,7 +7,7 @@ import {
     KeyboardEventHandler,
     SetStateAction,
     useContext,
-    useEffect
+    useEffect,
 } from 'react';
 import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { controlType } from '../../redux/config';

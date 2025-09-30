@@ -1,8 +1,6 @@
-import { Box, useEventCallback } from '@mui/material';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { replaceNodeConnection } from '../../api/utils';
+import { useEventCallback } from '@mui/material';
 import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FileUpload } from '../controls/FileUpload';
@@ -17,112 +15,57 @@ import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
-import { ToggleInput } from '../controls/ToggleInput';
-import { WidthHeight } from '../controls/WidthHeightInput';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { WFTab } from '../WFTab';
 
-const AppendImage = ({
-    name,
-    upload_name,
-}: {
-    name: string;
-    upload_name: string;
-}) => {
-    const { getValues } = useFormContext();
+const Content = () => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
-            if (
-                !value ||
-                !control ||
-                !control.image_1_id ||
-                !control.image_2_id ||
-                !control.output_ids
-            ) {
+        (api: any, value: string, control?: controlType) => {
+            if (!value || !control || !control.node_id || !control.connect) {
                 return;
             }
-            const concatNode = {
-                inputs: {
-                    direction: 'right',
-                    match_image_size: true,
-                    spacing_width: 0,
-                    spacing_color: 'white',
-                    image1: [control.image_1_id, 0],
-                    image2: [control.image_2_id, 0],
-                },
-                class_type: 'ImageStitch',
-                _meta: {
-                    title: 'Image Stitch',
-                },
-            };
-            (control.output_ids as string[]).forEach((id) =>
-                replaceNodeConnection(api, id, 'image', concatNode)
+            (control.connect as string[][]).forEach(
+                (n) => (api[n[0]].inputs[n[1]] = [control.node_id, 0])
             );
-            api[control.image_2_id].inputs.image = getValues(upload_name);
         }
     );
-    useRegisterHandler({ name, handler });
-    const enabled = useWatch({ name });
-    return (
-        <Box>
-            <ToggleInput name={name} />
-            {enabled && <FileUpload name={upload_name} />}
-        </Box>
-    );
-};
-
-const Content = () => {
-    const { setValue } = useFormContext();
-    const updateSize = useEventCallback(async (file: File) => {
-        const img = new Image();
-        img.src = URL.createObjectURL(file);
-        img.onload = () => {
-            let width = img.width;
-            let height = img.height;
-            const size = width * height;
-            if (size > 1500000 || size < 1000000) {
-                [width, height] = [
-                    (width / Math.sqrt(size)) * Math.sqrt(1000000),
-                    (height / Math.sqrt(size)) * Math.sqrt(1000000),
-                ];
-            }
-            setValue('width', Math.ceil(width - (width % 16)));
-            setValue('height', Math.ceil(height - (height % 16)));
-        };
-    });
     return (
         <Layout>
             <GridLeft>
-                <FileUpload
-                    name='image'
-                    onUpload={(file: File) => {
-                        updateSize(file);
-                    }}
-                />
-                <AppendImage name='append_image' upload_name='second_image' />
+                <FileUpload name='image' />
+                <FileUpload name='second_image' extraHandler={handler} />
+                <FileUpload name='third_image' extraHandler={handler} />
                 <PromptInput name='prompt' />
                 <PromptInput name='neg_prompt' defaultValue='' />
-                <WidthHeight maxWidth={2048} maxHeight={2048} />
+                <SliderInput
+                    name='size'
+                    label='size_mp'
+                    defaultValue={1}
+                    min={0.1}
+                    max={4}
+                    step={0.1}
+                />
                 <SliderInput name='steps' defaultValue={20} min={1} max={40} />
                 <CFGInput defaultValue={4} max={10} />
-                <FlowShiftInput defaultValue={3.1} step={0.1} />
-                <SamplerSelectInput
-                    name='sampler'
-                    defaultValue='res_multistep'
-                />
-                <SchedulerSelectInput name='scheduler' defaultValue='simple' />
-                <SliderInput
-                    name='batch_size'
-                    min={1}
-                    max={9}
-                    defaultValue={1}
-                />
-                <ModelSelectAutocomplete
-                    name='model'
-                    type='qwen'
-                    extraFilter={(v) => v.includes('_edit_')}
-                    defaultValue='qwen/qwen_image_edit_fp8_e4m3fn.safetensors'
-                    sx={{ mb: 2, mt: 2 }}
-                />
+                <AdvancedSettings>
+                    <FlowShiftInput defaultValue={3.1} step={0.1} />
+                    <SamplerSelectInput
+                        name='sampler'
+                        defaultValue='res_multistep'
+                    />
+                    <SchedulerSelectInput
+                        name='scheduler'
+                        defaultValue='simple'
+                    />
+                    <ModelSelectAutocomplete
+                        name='model'
+                        type='qwen'
+                        extraFilter={(v) => v.includes('_edit_')}
+                        defaultValue='qwen/qwen_image_edit_2509_fp8_e4m3fn.safetensors'
+                        sx={{ mb: 2, mt: 2 }}
+                    />
+                    <TeaCacheInput />
+                </AdvancedSettings>
                 <LoraInput name='lora' type='qwen' />
                 <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />

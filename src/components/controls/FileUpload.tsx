@@ -9,6 +9,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
 import { useIsCurrentTab, useRegisterHandler } from '../contexts/TabContext';
 import { UploadType } from './UploadType';
+import { useImageURL } from '../../hooks/useImageURL';
 
 const style = {
     maxWidth: 200,
@@ -44,23 +45,19 @@ const video_node = (video: string) => ({
 export const FileUpload = ({
     type = UploadType.IMAGE,
     onUpload,
+    extraHandler,
     ...props
 }: {
     name: string;
     label?: string;
     type?: UploadType;
     onUpload?: (file: File) => void;
+    extraHandler?: (api: any, value: string, control?: controlType) => void;
 }) => {
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
-    const imageURL = useMemo(() => {
-        const params = new URLSearchParams();
-        params.set('subfolder', '');
-        params.set('type', 'input');
-        params.set('filename', field.value);
-        return apiUrl + '/api/view?' + params.toString();
-    }, [apiUrl, field.value]);
+    const imageURL = useImageURL(field.value);
     const filetype = useMemo(() => {
         if (!field.value) {
             return UploadType.IMAGE;
@@ -79,9 +76,12 @@ export const FileUpload = ({
             }
             if (filetype === UploadType.IMAGE) {
                 api[control.node_id].inputs[control.field] = val;
-                return;
+            } else {
+                api[control.node_id] = video_node(val);
             }
-            api[control.node_id] = video_node(val);
+            if (extraHandler) {
+                extraHandler(api, val, control);
+            }
         }
     );
     useRegisterHandler({ name: props.name, handler });

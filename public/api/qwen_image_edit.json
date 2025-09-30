@@ -19,26 +19,26 @@
     },
     "6": {
         "inputs": {
-            "prompt": "prompt",
+            "prompt": "positive prompt",
             "clip": ["38", 0],
             "vae": ["39", 0],
-            "image": ["41", 0]
+            "image1": ["75", 0]
         },
-        "class_type": "TextEncodeQwenImageEdit",
+        "class_type": "TextEncodeQwenImageEditPlus",
         "_meta": {
-            "title": "TextEncodeQwenImageEdit (Positive)"
+            "title": "TextEncodeQwenImageEditPlus (Positive)"
         }
     },
     "7": {
         "inputs": {
-            "prompt": "negative prompt",
+            "prompt": "",
             "clip": ["38", 0],
             "vae": ["39", 0],
-            "image": ["41", 0]
+            "image1": ["75", 0]
         },
-        "class_type": "TextEncodeQwenImageEdit",
+        "class_type": "TextEncodeQwenImageEditPlus",
         "_meta": {
-            "title": "TextEncodeQwenImageEdit (Negative)"
+            "title": "TextEncodeQwenImageEditPlus (Negative)"
         }
     },
     "8": {
@@ -53,7 +53,7 @@
     },
     "37": {
         "inputs": {
-            "unet_name": "qwen/qwen_image_edit_fp8_e4m3fn.safetensors",
+            "unet_name": "qwen/qwen_image_edit_2509_fp8_e4m3fn.safetensors",
             "weight_dtype": "default"
         },
         "class_type": "UNETLoader",
@@ -83,7 +83,7 @@
     },
     "41": {
         "inputs": {
-            "image": ""
+            "image": "image.png"
         },
         "class_type": "LoadImage",
         "_meta": {
@@ -92,13 +92,12 @@
     },
     "58": {
         "inputs": {
-            "width": 832,
-            "height": 1280,
-            "batch_size": 1
+            "pixels": ["75", 0],
+            "vae": ["39", 0]
         },
-        "class_type": "EmptySD3LatentImage",
+        "class_type": "VAEEncode",
         "_meta": {
-            "title": "EmptySD3LatentImage"
+            "title": "VAE Encode"
         }
     },
     "60": {
@@ -113,11 +112,20 @@
     },
     "64": {
         "inputs": {
-            "image": "undefined"
+            "image": ""
         },
         "class_type": "LoadImage",
         "_meta": {
             "title": "Load Second Image"
+        }
+    },
+    "65": {
+        "inputs": {
+            "image": ""
+        },
+        "class_type": "LoadImage",
+        "_meta": {
+            "title": "Load Third Image"
         }
     },
     "66": {
@@ -158,6 +166,31 @@
         "class_type": "SomethingToString",
         "_meta": {
             "title": "Something To String"
+        }
+    },
+    "74": {
+        "inputs": {
+            "noise_mask": true,
+            "positive": ["6", 0],
+            "negative": ["7", 0],
+            "vae": ["39", 0],
+            "pixels": ["75", 0],
+            "mask": ["41", 1]
+        },
+        "class_type": "InpaintModelConditioning",
+        "_meta": {
+            "title": "InpaintModelConditioning"
+        }
+    },
+    "75": {
+        "inputs": {
+            "upscale_method": "lanczos",
+            "megapixels": 1,
+            "image": ["41", 0]
+        },
+        "class_type": "ImageScaleToTotalPixels",
+        "_meta": {
+            "title": "Scale Image to Total Pixels"
         }
     }
 }

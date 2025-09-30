@@ -158,7 +158,7 @@ export const GenerateButton = ({
                 if (params.prompt[id] === undefined) {
                     setErrors((e) => ({
                         ...e,
-                        ids: [...e.ids, id],
+                        ids: [...e.ids, id + ` [${name}]`],
                     }));
                     return;
                 }

@@ -55,16 +55,14 @@
                     "field": "scheduler"
                 },
                 "reuse_threshold": {
-                    "id": "15",
-                    "field": "reuse_threshold"
+                    "id": "handle",
+                    "node_id": "6"
                 },
                 "start_percent": {
-                    "id": "15",
-                    "field": "start_percent"
+                    "id": "skip"
                 },
                 "end_percent": {
-                    "id": "15",
-                    "field": "end_percent"
+                    "id": "skip"
                 },
                 "tile_size": {
                     "id": "4",
@@ -104,7 +102,7 @@
                     "prompt_node_id": "8",
                     "guidance_node_id": "7",
                     "latent_node_id": "14",
-                    "model_node_id": "15"
+                    "model_node_id": "6"
                 },
                 "video_image_override": {
                     "id": "handle"
@@ -115,10 +113,9 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "13",
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["15"],
+                    "output_node_ids": ["6"],
                     "output_idx": 0,
                     "class_name": "HunyuanVideoLoraLoader",
                     "strength_field_name": "strength",
@@ -220,7 +217,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "8",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["14"],
@@ -619,16 +615,14 @@
                     "field": "strength"
                 },
                 "reuse_threshold": {
-                    "id": "87",
-                    "field": "reuse_threshold"
+                    "id": "handle",
+                    "node_id": "54"
                 },
                 "start_percent": {
-                    "id": "87",
-                    "field": "start_percent"
+                    "id": "skip"
                 },
                 "end_percent": {
-                    "id": "87",
-                    "field": "end_percent"
+                    "id": "skip"
                 },
                 "tile_size": {
                     "id": "57",
@@ -663,10 +657,9 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "44",
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["87"],
+                    "output_node_ids": ["54"],
                     "output_idx": 0,
                     "class_name": "HunyuanVideoLoraLoader",
                     "strength_field_name": "strength",
@@ -1021,7 +1014,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "171",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["183", "190"],
@@ -1082,7 +1074,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "12",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["17", "22"],
@@ -1151,6 +1142,16 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": ["63", "81"]
+                },
+                "start_percent": {
+                    "id": "skip"
+                },
+                "end_percent": {
+                    "id": "skip"
                 }
             },
             "result": {
@@ -1227,7 +1228,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "4",
                     "lora_input_name": "model",
                     "clip_input_name": "clip",
                     "api_input_name": "model",
@@ -1391,6 +1391,16 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": "66"
+                },
+                "start_percent": {
+                    "id": "skip"
+                },
+                "end_percent": {
+                    "id": "skip"
                 }
             },
             "result": {
@@ -1399,7 +1409,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "37",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["66"],
@@ -1418,13 +1427,22 @@
                     "field": "image"
                 },
                 "second_image": {
-                    "id": "skip"
-                },
-                "append_image": {
                     "id": "handle",
-                    "image_1_id": "41",
-                    "image_2_id": "64",
-                    "output_ids": ["6", "7"]
+                    "field": "image",
+                    "node_id": "64",
+                    "connect": [
+                        ["6", "image2"],
+                        ["7", "image2"]
+                    ]
+                },
+                "third_image": {
+                    "id": "handle",
+                    "field": "image",
+                    "node_id": "65",
+                    "connect": [
+                        ["6", "image3"],
+                        ["7", "image3"]
+                    ]
                 },
                 "prompt": {
                     "id": "6",
@@ -1434,13 +1452,9 @@
                     "id": "7",
                     "field": "prompt"
                 },
-                "width": {
-                    "id": "58",
-                    "field": "width"
-                },
-                "height": {
-                    "id": "58",
-                    "field": "height"
+                "size": {
+                    "id": "75",
+                    "field": "megapixels"
                 },
                 "steps": {
                     "id": "3",
@@ -1466,10 +1480,6 @@
                     "id": "3",
                     "field": "sampler_name"
                 },
-                "batch_size": {
-                    "id": "58",
-                    "field": "batch_size"
-                },
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "3"
@@ -1481,6 +1491,16 @@
                     "id": "handle",
                     "node_id": "37",
                     "field": "unet_name"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": "66"
+                },
+                "start_percent": {
+                    "id": "skip"
+                },
+                "end_percent": {
+                    "id": "skip"
                 }
             },
             "result": {
@@ -1489,7 +1509,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "37",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["66"],
@@ -1587,7 +1606,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "74",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["70"],
@@ -1977,7 +1995,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "72",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["54"],
@@ -2165,7 +2182,6 @@
             },
             "handler_options": {
                 "lora_params": {
-                    "input_node_id": "12",
                     "lora_input_name": "model",
                     "api_input_name": "model",
                     "output_node_ids": ["30"],

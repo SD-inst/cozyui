@@ -1,3 +1,4 @@
+import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
@@ -11,6 +12,7 @@ import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
+import { TeaCacheInput } from '../controls/TeaCacheInput';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
@@ -23,23 +25,29 @@ const Content = () => {
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={50} />
                 <CFGInput defaultValue={4} max={10} />
-                <FlowShiftInput defaultValue={2} step={0.1} />
-                <SamplerSelectInput
-                    name='sampler'
-                    defaultValue='res_multistep'
-                />
-                <SchedulerSelectInput name='scheduler' defaultValue='simple' />
-                <SliderInput
-                    name='batch_size'
-                    min={1}
-                    max={9}
-                    defaultValue={1}
-                />
-                <ModelSelectAutocomplete
-                    name='model'
-                    type='qwen'
-                    defaultValue='qwen/qwen_image_fp8_e4m3fn.safetensors'
-                />
+                <AdvancedSettings>
+                    <FlowShiftInput defaultValue={2} step={0.1} />
+                    <SamplerSelectInput
+                        name='sampler'
+                        defaultValue='res_multistep'
+                    />
+                    <SchedulerSelectInput
+                        name='scheduler'
+                        defaultValue='simple'
+                    />
+                    <TeaCacheInput />
+                    <SliderInput
+                        name='batch_size'
+                        min={1}
+                        max={9}
+                        defaultValue={1}
+                    />
+                    <ModelSelectAutocomplete
+                        name='model'
+                        type='qwen'
+                        defaultValue='qwen/qwen_image_fp8_e4m3fn.safetensors'
+                    />
+                </AdvancedSettings>
                 <LoraInput name='lora' type='qwen' sx={{ mt: 2 }} />
                 <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />

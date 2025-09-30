@@ -129,6 +129,7 @@ const translation = {
         send_back: 'Send back',
         append_image: 'Append image',
         second_image: 'Second image',
+        third_image: 'Third image',
         latents_loaded: 'Using latents, not image (better quality)',
         full_steps: 'full steps',
         refine_steps: 'refine steps',
@@ -179,6 +180,7 @@ const translation = {
         diff_temp: 'diffusion temperature',
         multiplier: 'multiplier',
         interpolation_multiplier: 'interpolation multiplier',
+        size_mp: 'size in megapixels',
     },
     settings: {
         select_language: 'Select language',

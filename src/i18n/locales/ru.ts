@@ -128,6 +128,7 @@ const translation = {
         send_back: 'Отправить назад',
         append_image: 'Добавить изображение',
         second_image: 'Второе изображение',
+        third_image: 'Третье изображение',
         latents_loaded: 'Используются латенты, не изображение (выше качество)',
         full_steps: 'полных шагов',
         refine_steps: 'улучшающих шагов',
@@ -178,6 +179,7 @@ const translation = {
         diff_temp: 'температура диффузии',
         multiplier: 'множитель',
         interpolation_multiplier: 'множитель сглаживания',
+        size_mp: 'размер в мегапикселах',
     },
     settings: {
         select_language: 'Выбор языка',
