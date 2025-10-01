@@ -11,9 +11,7 @@ export const useWatchForm = (name: string) => {
 
 export const useWatchFormMany = (names: string[]) => {
     const { getValues } = useFormContext();
-    return (
-        useWatch({
+    return useWatch({
             name: names,
-        }) || names.map((n) => getValues(n))
-    );
+        }).map((v, i) => v || getValues(names[i]));
 };
