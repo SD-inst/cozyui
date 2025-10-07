@@ -22,11 +22,16 @@ const Content = () => {
             <GridLeft>
                 <PromptInput name='prompt' />
                 <PromptInput name='neg_prompt' defaultValue='' />
-                <WidthHeight maxWidth={2048} maxHeight={2048} />
+                <WidthHeight
+                    maxWidth={2048}
+                    maxHeight={2048}
+                    defaultWidth={1328}
+                    defaultHeight={1328}
+                />
                 <SliderInput name='steps' defaultValue={20} min={1} max={50} />
                 <CFGInput defaultValue={4} max={10} />
                 <AdvancedSettings>
-                    <FlowShiftInput defaultValue={2} step={0.1} />
+                    <FlowShiftInput defaultValue={2.6} step={0.1} />
                     <SamplerSelectInput
                         name='sampler'
                         defaultValue='res_multistep'
