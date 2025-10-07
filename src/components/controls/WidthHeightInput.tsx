@@ -1,4 +1,9 @@
-import { Lock, LockOpen, SwapVert } from '@mui/icons-material';
+import {
+    Lock,
+    LockOpen,
+    PhotoSizeSelectLarge,
+    SwapVert,
+} from '@mui/icons-material';
 import { Box, Button, useEventCallback } from '@mui/material';
 import { useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
@@ -41,6 +46,7 @@ export const WidthHeight = ({
     step?: number;
 }) => {
     const [{ aspect, str }, setAspect] = useState({ aspect: 0, str: '' });
+    const [size, setSize] = useState(0);
     const { getValues, setValue } = useFormContext();
     const handleSwap = useEventCallback(() => {
         const vals = getValues([widthName, heightName]);
@@ -72,6 +78,13 @@ export const WidthHeight = ({
                 v = maxHeight * aspect - ((maxHeight * aspect) % step);
             }
         }
+        if (size) {
+            const h = Math.min(size / v, maxHeight);
+            onHeightChangeCtl(h - (h % step));
+            if (h === maxHeight) {
+                v = size / maxHeight - ((size / maxHeight) % step);
+            }
+        }
         onWidthChangeCtl(v);
     });
     const onHeightChange = useEventCallback((v: number) => {
@@ -80,6 +93,13 @@ export const WidthHeight = ({
             onWidthChangeCtl(w - (w % step));
             if (w === maxWidth) {
                 v = maxWidth / aspect - ((maxWidth / aspect) % step);
+            }
+        }
+        if (size) {
+            const w = Math.min(size / v, maxWidth);
+            onWidthChangeCtl(w - (w % step));
+            if (w === maxWidth) {
+                v = size / maxWidth - ((size / maxWidth) % step);
             }
         }
         onHeightChangeCtl(v);
@@ -133,16 +153,47 @@ export const WidthHeight = ({
                             setAspect(
                                 calcAspect(widthField.value, heightField.value)
                             );
+                            setSize(0);
                         }
                     }}
                 >
-                    {aspect ? (
-                        <Box display='flex' gap={1}>
-                            <Lock /> {str || aspect.toFixed(2)}
-                        </Box>
-                    ) : (
-                        <LockOpen />
-                    )}
+                    <Box display='flex' gap={1}>
+                        {aspect ? (
+                            <>
+                                <Lock />
+                                {str || aspect.toFixed(2)}
+                            </>
+                        ) : (
+                            <LockOpen />
+                        )}
+                    </Box>
+                </Button>
+                <Button
+                    variant={size ? 'contained' : 'outlined'}
+                    onClick={() => {
+                        if (size) {
+                            setSize(0);
+                        } else {
+                            setSize(widthField.value * heightField.value);
+                            setAspect({ aspect: 0, str: '' });
+                        }
+                    }}
+                >
+                    <Box
+                        display='flex'
+                        gap={1}
+                        sx={{
+                            flexDirection: {
+                                xs: 'column',
+                                sm: 'row',
+                            },
+                        }}
+                    >
+                        <PhotoSizeSelectLarge />
+                        {(
+                            (size || widthField.value * heightField.value) / 1e6
+                        ).toFixed(2)}
+                    </Box>
                 </Button>
             </Box>
         </Box>
