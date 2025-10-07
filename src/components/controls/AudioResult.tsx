@@ -13,9 +13,15 @@ import { SendResultButton } from './SendResultButton';
 export const AudioResult = ({
     title,
     noAutoplay,
+    sendTargetTab,
+    sendFields,
+    sendLabel,
     loop = true,
 }: {
     title?: string;
+    sendTargetTab?: string;
+    sendFields?: string[];
+    sendLabel?: string;
     noAutoplay?: boolean;
     loop?: boolean;
 }) => {
@@ -65,7 +71,12 @@ export const AudioResult = ({
                                 {tr('controls.download')}
                             </Button>
                         </a>
-                        <SendResultButton />
+                        <SendResultButton
+                            targetTab={sendTargetTab}
+                            fields={sendFields}
+                            label={sendLabel}
+                            fileField='audio'
+                        />
                     </VerticalBox>
                 );
             })}
