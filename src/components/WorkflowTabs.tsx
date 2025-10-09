@@ -61,12 +61,11 @@ const ValuesRestore = () => {
         if (!initialized || tab !== tab_name || action !== actionEnum.RESTORE) {
             return;
         }
-        Object.keys(values).forEach((k) => setValue(k, values[k]));
         dispatch(setParams({}));
-        setTimeout(
-            () => ref.current?.scrollIntoView({ behavior: 'smooth' }),
-            0
-        );
+        setTimeout(() => {
+            ref.current?.scrollIntoView({ behavior: 'smooth' });
+            Object.keys(values).forEach((k) => setValue(k, values[k]));
+        }, 0);
     }, [action, dispatch, initialized, setValue, tab, tab_name, values]);
     useEffect(() => {
         if (initialized || idb === undefined || !isLoaded) {
