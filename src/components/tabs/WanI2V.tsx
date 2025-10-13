@@ -125,7 +125,7 @@ const Content = () => {
 
 export const WanI2VTab = (
     <WFTab
-        label='Wan I2V'
+        label='Wan'
         value='Wan I2V'
         group='I2V'
         receivers={[

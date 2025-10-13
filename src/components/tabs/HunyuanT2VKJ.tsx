@@ -63,7 +63,7 @@ const Content = () => {
 
 export const HunyanT2VKJTab = (
     <WFTab
-        label='Hunyuan T2V Kijai'
+        label='Hunyuan Kijai'
         value='Hunyuan T2V KJ'
         group='T2V'
         content={<Content />}

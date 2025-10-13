@@ -65,7 +65,7 @@ SPEAKER B: Let's count: 1 2 3`}
 
 export const ChatterboxDialogTab = (
     <WFTab
-        label='Chatterbox TTS Dialog'
+        label='Chatterbox Dialog'
         value='Chatterbox TTS Dialog'
         group='TTS'
         content={<Content />}

@@ -73,7 +73,7 @@ const Content = () => {
 
 export const FramePackI2VTab = (
     <WFTab
-        label='FramePack I2V'
+        label='FramePack'
         value='FramePack I2V'
         group='I2V'
         receivers={[{ name: 'image', acceptedTypes: 'images' }]}

@@ -47,7 +47,7 @@ const Content = () => {
 
 export const VibeVoiceTab = (
     <WFTab
-        label='VibeVoice TTS'
+        label='VibeVoice'
         value='VibeVoice TTS'
         group='TTS'
         content={<Content />}

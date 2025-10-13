@@ -48,7 +48,7 @@ const Content = () => {
 
 export const ChatterboxTab = (
     <WFTab
-        label='Chatterbox TTS'
+        label='Chatterbox'
         value='Chatterbox TTS'
         group='TTS'
         content={<Content />}

@@ -102,7 +102,7 @@ const Content = () => {
 
 export const HunyanI2VTab = (
     <WFTab
-        label='Hunyuan I2V Native'
+        label='Hunyuan'
         value='Hunyuan I2V'
         group='I2V'
         receivers={[{ name: 'image', acceptedTypes: 'images' }]}

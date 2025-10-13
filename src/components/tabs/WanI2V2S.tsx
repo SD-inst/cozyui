@@ -85,7 +85,7 @@ const Content = () => {
 
 export const WanI2V2STab = (
     <WFTab
-        label='Wan I2V 2-stage'
+        label='Wan 2-stage'
         value='Wan I2V 2S'
         group='I2V'
         receivers={[{ name: 'image', acceptedTypes: 'images' }]}

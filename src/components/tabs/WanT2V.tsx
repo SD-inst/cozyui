@@ -97,5 +97,5 @@ const Content = () => {
 };
 
 export const WanT2VTab = (
-    <WFTab label='Wan T2V' value='Wan T2V' group='T2V' content={<Content />} />
+    <WFTab label='Wan' value='Wan T2V' group='T2V' content={<Content />} />
 );
