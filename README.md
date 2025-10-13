@@ -17,23 +17,37 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - I2V
         - Hunyuan I2V (leapfusion lora)
         - Wan I2V (Kijai)
+        - Wan I2V two-step
+        - Wan InfiniteTalk (Kijai)
         - Framepack
         - LTX I2V
         - EasyAnimate I2V
     - T2I
+        - StableDiffusion 1.5/SDXL
         - Flux
         - Chroma
         - HiDream
+        - Qwen Image
     - I2I
+        - Flux Kontext
+        - Qwen Image Edit
+    - Upscale
         - Chroma upscale
-    - V2V
+        - SD Upscale
         - Hunyuan latent upscale
+        - Video interpolation
     - T2A
         - StableAudio
         - MMAudio
+    - TTS
+        - Chatterbox (single/dialog)
+        - VibeVoice (single/dialog, up to 4 speakers)
+    - Music
+        - ACE Step
+        - SongBloom
 
 - Lora support with weights and blocks to merge
-- Animated latent preview (if supported by ComfyUI)
+- Animated/batch latent preview (if supported by ComfyUI)
 - Config overrides to tune defaults for your system
 - Docker support: ComfyUI+CozyUI
 - AUTOMATIC1111-like UI, not Gradio but uses similar concepts
@@ -44,7 +58,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - Ctrl+Shift+Up/Down (increase/decrease selection weight by 1)
 - History management:
     - Store generation data and video/audio locally in your browser (IndexedDB), including timestamp and total generation time
-    - Search (filter) by prompt
+    - Search (filter) by prompt/content type
     - Pin generations to prevent accidental deletion
     - Collection cleanup by time (before/after N seconds/minutes/hours/etc.)
     - Compare any two results side by side, generation data and videos, to see how changes affect the result
@@ -53,7 +67,6 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - Localization support (English/Russian currently)
 - Many controls have tips and explanation (can be disabled in settings)
 - VRAM and speed optimizations: TeaCache, WaveSpeed, MultiGPU
-- Animated and batch previews during generation
 - Hide any model tabs you don't need
 - Danbooru tag completion
 
@@ -87,9 +100,11 @@ A basic Docker setup (NVIDIA-only, I don't have AMD) is provided to get you star
 
 After you have the models downloaded, run `docker compose up -d` and wait. You'll have two containers up and running. Open `http://127.0.0.1:3000` and try generating something in Hunyuan. If it doesn't work, check out the container logs with `docker compose logs comfyui` and see what the problem is. If some model is absent you'll see the expected path and can put it there in the `models/` directory in the program root. Note, that `docker/config.local.json` is mounted in CozyUI container by default. You can change it in `compose.yml` or modify the config itself. ComfyUI should be available at `http://127.0.0.1:8188`.
 
+The custom node list is in `docker/custom_nodes.txt`, it's probably outdated but it's a good starting point.
+
 ## Model location
 
-Models are expected to be placed in certain directories relative to ComfyUI root:
+Models are expected to be placed in certain directories relative to ComfyUI root. Since new models and workflows are being added all the time it's best to simply run a workflow and check ComfyUI logs for errors about missing files, then put them where they are expected. Apologies for that! Maintaining this list doesn't make much sense unless CozyUI is installed by more than two people.
 
 ### Hunyuan
 
@@ -108,6 +123,14 @@ GGUF models can be dynamically offloaded to RAM allowing generating higher resol
 - Path: `models/loras/`
 
 They're additionally filtered by path component `hyvid/` which can be overridden in `conf/config.local.json` as `loras.hunyuan.filter` (see `conf/config.json`). It's a simple string filter, only files that have this string in the full path will be shown.
+
+### Wan
+
+- Path: `models/diffusion_models/wan/`
+- Filenames:
+    - T2V: `Wan2_1-T2V-14B_fp8_e4m3fn.safetensors`, `Wan2_1-T2V-1_3B_fp8_e4m3fn.safetensors`
+    - I2V: `Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors`, `Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors`
+    - VAE: `models/vae/wan_2.1_vae.safetensors`
 
 ### LTX Video
 
@@ -143,15 +166,32 @@ After this is set up, run `yarn dev` and it will tell you how to open the web ap
 
 ## Extending
 
+The architecture allows making arbitrary UI controls and bind them to arbitrary nodes and fields in the workflow. It works like this:
+- every control has a `name` which should be unique within the tab
+- the control value is stored in the form context (created automatically for each tab)
+- when you click `Generate` every value stored in the form is processed using `config.json`:
+    - either it's simply assigned to the `id`/`field` specified there
+    - or it's handled in a special way if the `id` field is set to `handle` (look for `useRegisterHandler` hook in controls for examples)
+    - or it's skipped if the `id` field is set to `skip` (useful if the value needs to be stored for some handler but not processed on its own)
+
+In the end this scheme allows to decouple controls from workflows using `config.json` definitions. `Control` ⇒ `config.json` => `workflow node and field`. With custom handlers it's possible to dynamically add or remove nodes, connections, and even reconfigure the entire workflow before submitting it to ComfyUI. It's represented as a plain JS object so you can do anything with it. There are also a few simple helper functions to insert and replace nodes. You can use the regular hooks from `react-hook-form` to access and change the form values from within the tab or controls, such as `useFormContext` or `useWatch`, it's the only source of truth when it comes to generation.
+
 To make a new tab you need to make a working workflow in ComfyUI first. Provide some sane defaults for the nodes if you don't plan to expose them all. Export the workflow as API (`Workflow ⇒ Export (API)`). Then make a new section in `config.json` with a new tab id (any string name) and fill it similarly to the existing ones.
 
 There are a few keys, `api` should be set to your exported API file name, `controls` binds the UI controls to the nodes as `"control_name": { "id": "digital_node_id", "field": "node_field" }`. The `result` key defines where to get the execution results from, `{"id": "digital_node_id", "type": "data_type"}`. You can check out the data type in the browser console, see the `executed` message in the log and you'll find the output type there. For videos it's usually `gifs`, for text it's `text`.
 
 `lora_params` sets some fields and node ids to insert multiple chained lora loaders somewhere in the workflow. It's not very comfortable to use currently so I'll describe it sometime later or remake it (you can guess how to define it from the existing workflows). The issue is that there are few lora loaders and few connection types, and it should be flexible enough to be used in different scenarios.
 
-New tabs are added to `App.tsx` and defined in `controls/tabs` in individual files. Copy the existing file, rename, and change. Export `<WFTab label='Text in tab' value='tab id in config.json' content={<Content />} />` as it defines a new tab resource, edit the `<Content>` component. Don't forget to add a `<GenerateButton />` and `<VideoResult />`. You can also create buttons to run arbitrary workflows, see the `Describe Image` button.
+New tabs are added to `App.tsx` and defined in `controls/tabs` in individual files. Copy the existing file, rename, and change. Export `<WFTab label='Text in tab' value='tab id in config.json' content={<Content />} />` as it defines a new tab resource, edit the `<Content>` component. Don't forget to add a `<GenerateButton />` and `<VideoResult />` (or `<AudioResult />` etc. depending on your output type). You can also create buttons to run arbitrary workflows, see the `Describe Image` button.
 
 If you forgot to bind some controls, or entered invalid node ids or field names you'll see the errors displayed by the generate button when you click it. You can temporarily disable actual ComfyUI API request to debug the form first by adding a `noexec` parameter to the generate button like this: `<GenerateButton noexec />`. The JSON to be submitted is also dumped to the browser console so you can check if all settings applied correctly there.
+
+There are a few checks to ensure your workflow is bound properly:
+- all form values should be bound, i.e. have a corresponding entry in `config.json`
+- all defined `config.json` controls should get assigned a value from the form, i.e. the corresponding control should exist and should set a non-undefined value; make sure it's assigned by default if user hasn't changed anything and just pressed `Generate`
+- all defined `config.json` controls with `id`/`field` pairs (except `handle` and `skip` ids) should match the existing nodes in the workflow
+
+If any of these rules are violated you'll see errors when you generate. Make sure you have none in all cases, if some control values are optional you should use a handler (to dynamically add a node/connection) or a `defaultValue`.
 
 ## Config overrides
 
