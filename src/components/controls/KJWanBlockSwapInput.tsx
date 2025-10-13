@@ -28,6 +28,7 @@ export const KJWanBlockSwapInput = ({
                 inputs: {
                     ...inputs,
                     use_non_blocking: true,
+                    prefetch_blocks: 1,
                 },
                 class_type: 'WanVideoBlockSwap',
                 _meta: {
