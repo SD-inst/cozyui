@@ -46,6 +46,7 @@ import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { ACEStepTab } from './components/tabs/ACEStep';
 import { SongBloomTab } from './components/tabs/SongBloom';
 import { VideoInterpolationTab } from './components/tabs/VideoInterpolation';
+import { OviI2VTab } from './components/tabs/OviI2V';
 
 function App() {
     return (
@@ -59,14 +60,15 @@ function App() {
                         <WorkflowTabsContextProvider>
                             <WorkflowTabs>
                                 {HunyanT2VTab}
+                                {WanI2VTab}
                                 {WanT2VTab}
                                 {ChromaTab}
                                 {SDTab}
                                 {QwenImageTab}
                                 {FluxKontextTab}
                                 {QwenImageEditTab}
-                                {WanI2VTab}
                                 {WanI2VITTab}
+                                {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
                                 {FramePackI2VTab}
