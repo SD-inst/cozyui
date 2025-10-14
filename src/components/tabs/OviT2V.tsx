@@ -1,13 +1,14 @@
 import { useWatch } from 'react-hook-form';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
-import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
+import { KJEasyCacheInput } from '../controls/KJEasyCacheInput';
 import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
+import { OviPromptInput } from '../controls/OviPromptInput';
 import { PromptInput } from '../controls/PromptInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
@@ -15,25 +16,16 @@ import { ToggleInput } from '../controls/ToggleInput';
 import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VideoResult } from '../controls/VideoResult';
 import { WanSampler } from '../controls/WanSampler';
+import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
-import { KJEasyCacheInput } from '../controls/KJEasyCacheInput';
-import { OviPromptInput } from '../controls/OviPromptInput';
 
 const Content = () => {
     const mergeLoras = useWatch({ name: 'merge_loras' });
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' />
                 <OviPromptInput name='prompt' sx={{ mb: 2 }} />
-                <SliderInput
-                    name='size'
-                    label='size_mp'
-                    defaultValue={0.6}
-                    min={0.1}
-                    max={2}
-                    step={0.1}
-                />
+                <WidthHeight defaultWidth={720} defaultHeight={720} step={32} />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
                 <AdvancedSettings>
                     <WanSampler name='sampler' />
@@ -71,18 +63,12 @@ const Content = () => {
                 <VideoResult />
             </GridRight>
             <GridBottom>
-                <GenerateButton requiredControls={['image']} />
+                <GenerateButton />
             </GridBottom>
         </Layout>
     );
 };
 
-export const OviI2VTab = (
-    <WFTab
-        label='Ovi'
-        value='Ovi I2V'
-        group='I2V'
-        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
-        content={<Content />}
-    />
+export const OviT2VTab = (
+    <WFTab label='Ovi' value='Ovi T2V' group='T2V' content={<Content />} />
 );

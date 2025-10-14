@@ -6,7 +6,7 @@ import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput } from './SliderInput';
 
 export const KJEasyCacheInput = ({
-    defaultThreshold = 0.1,
+    defaultThreshold = 0.05,
     defaultStart = 10,
     defaultEnd = -1,
 }: {

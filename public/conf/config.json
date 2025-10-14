@@ -2105,6 +2105,99 @@
                 "type": "gifs"
             }
         },
+        "Ovi T2V": {
+            "api": "api/ovi_t2v_kj.json",
+            "controls": {
+                "prompt": {
+                    "id": "85",
+                    "field": "positive_prompt"
+                },
+                "neg_prompt": {
+                    "id": "85",
+                    "field": "negative_prompt"
+                },
+                "audio_neg_prompt": {
+                    "id": "96",
+                    "field": "negative_prompt"
+                },
+                "width": {
+                    "id": "81",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "81",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "80",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "80",
+                    "field": "scheduler"
+                },
+                "flow_shift": {
+                    "id": "80",
+                    "field": "shift"
+                },
+                "cfg": {
+                    "id": "80",
+                    "field": "cfg"
+                },
+                "audio_cfg": {
+                    "id": "94",
+                    "field": "ovi_audio_cfg"
+                },
+                "seed": {
+                    "id": "133",
+                    "field": "value"
+                },
+                "block_swap": {
+                    "id": "handle"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
+                },
+                "merge_loras": {
+                    "id": "skip"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": "80"
+                },
+                "start_step": {
+                    "id": "skip"
+                },
+                "end_step": {
+                    "id": "skip"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "12"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "prev_lora",
+                    "api_input_name": "lora",
+                    "output_node_ids": ["12"],
+                    "output_idx": 0,
+                    "class_name": "WanVideoLoraSelect",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora",
+                    "additional_inputs": {
+                        "merge_loras": false
+                    }
+                }
+            },
+            "result": {
+                "id": "88",
+                "type": "gifs"
+            }
+        },
         "Wan T2V": {
             "api": "api/wan_t2v_kj.json",
             "controls": {
