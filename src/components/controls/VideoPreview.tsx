@@ -84,6 +84,7 @@ export const VideoPreview = ({
         }, 1000 / effective_rate);
         return () => {
             clearInterval(interval);
+            frames = [];
         };
     }, [fps, rate, rate_override, size]);
     return (
