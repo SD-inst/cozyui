@@ -1795,6 +1795,16 @@
                 },
                 "interpolation_multiplier": {
                     "id": "handle"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": "27"
+                },
+                "start_step": {
+                    "id": "skip"
+                },
+                "end_step": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -2282,6 +2292,16 @@
                 },
                 "interpolation_multiplier": {
                     "id": "handle"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": "27"
+                },
+                "start_step": {
+                    "id": "skip"
+                },
+                "end_step": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
