@@ -28,15 +28,21 @@ export const ImagePreview = ({ size }: { size: number }) => {
             return;
         }
         const image_aspect = frames[0].width / frames[0].height;
-        const tiles_x_f = Math.min(
-            frames.length,
-            Math.floor(Math.sqrt(frames.length / image_aspect))
+        const tiles_x_f = Math.max(
+            Math.min(
+                frames.length,
+                Math.floor(Math.sqrt(frames.length / image_aspect))
+            ),
+            1
         );
         const tiles_y_f = Math.ceil(frames.length / tiles_x_f);
 
-        const tiles_x_c = Math.min(
-            frames.length,
-            Math.ceil(Math.sqrt(frames.length / image_aspect))
+        const tiles_x_c = Math.max(
+            Math.min(
+                frames.length,
+                Math.ceil(Math.sqrt(frames.length / image_aspect))
+            ),
+            1
         );
         const tiles_y_c = Math.ceil(frames.length / tiles_x_c);
 
