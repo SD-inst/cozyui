@@ -34,13 +34,14 @@
     }
   },
   "162": {
-    "inputs": {
-      "unet_name": "hidream-i1-dev-Q8_0.gguf"
-    },
-    "class_type": "UnetLoaderGGUF",
-    "_meta": {
-      "title": "Unet Loader (GGUF)"
-    }
+      "inputs": {
+          "unet_name": "hidream/hidream_i1_dev_fp8_e5m2.safetensors",
+          "weight_dtype": "default"
+      },
+      "class_type": "UNETLoader",
+      "_meta": {
+          "title": "Load Diffusion Model"
+      }
   },
   "164": {
     "inputs": {
