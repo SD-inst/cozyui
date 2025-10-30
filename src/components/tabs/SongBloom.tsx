@@ -83,6 +83,15 @@ Lost in the warmth of those sunny old days.
                         ]}
                         defaultValue='spiral'
                     />
+                    <SelectInput
+                        name='model'
+                        choices={[
+                            'songbloom_full_150s.safetensors',
+                            'songbloom_full_150s_dpo.safetensors',
+                            'songbloom_full_240s.safetensors',
+                        ]}
+                        defaultValue='songbloom_full_240s.safetensors'
+                    />
                     <SliderInput
                         name='audio_len'
                         defaultValue={10}

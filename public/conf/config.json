@@ -820,6 +820,10 @@
                 "seed": {
                     "id": "127",
                     "field": "value"
+                },
+                "model": {
+                    "id": "124",
+                    "field": "checkpoint"
                 }
             },
             "result": {
