@@ -8,7 +8,9 @@ import { KJEasyCacheInput } from '../controls/KJEasyCacheInput';
 import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
+import { OviLengthInput } from '../controls/OviLengthInput';
 import { OviPromptInput } from '../controls/OviPromptInput';
+import { OviVersionInput } from '../controls/OviVersionInput';
 import { PromptInput } from '../controls/PromptInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
@@ -25,9 +27,11 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <OviPromptInput name='prompt' sx={{ mb: 2 }} />
-                <WidthHeight defaultWidth={720} defaultHeight={720} step={32} />
+                <WidthHeight defaultWidth={960} defaultHeight={960} step={32} />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
+                <OviLengthInput />
                 <AdvancedSettings>
+                    <OviVersionInput />
                     <WanSampler name='sampler' />
                     <CFGInput defaultValue={4} />
                     <CFGInput defaultValue={4} name='audio_cfg' />

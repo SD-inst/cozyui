@@ -1,8 +1,9 @@
 import { Box, Button, ButtonProps } from '@mui/material';
 import { RefObject, useRef } from 'react';
+import { useFormContext } from 'react-hook-form';
+import { useWatchForm } from '../../hooks/useWatchForm';
 import { useTranslate } from '../../i18n/I18nContext';
 import { TextInput, TextInputProps } from './TextInput';
-import { useFormContext } from 'react-hook-form';
 
 const TagButton = ({
     name,
@@ -35,11 +36,14 @@ const TagButton = ({
         const text = value.slice(selStart, selEnd);
         const textBefore = value.slice(0, selStart);
         const textAfter = value.slice(selEnd);
-        if (textBefore.endsWith('>') && textAfter.startsWith('<')) {
+        if (
+            textBefore.endsWith(tagOpen) &&
+            (tagClose === '' || textAfter.startsWith(tagClose))
+        ) {
             // remove tags
-            let openTagStart = selStart - 1;
+            let openTagStart = selStart;
             while (openTagStart >= 0) {
-                if (value[openTagStart] === '<') {
+                if (value.slice(openTagStart).startsWith(tagOpen)) {
                     break;
                 }
                 openTagStart--;
@@ -47,20 +51,23 @@ const TagButton = ({
             if (openTagStart < 0) {
                 return;
             }
-            let closeTagEnd = selEnd + 1;
-            while (closeTagEnd < value.length) {
-                if (value[closeTagEnd] === '>') {
-                    break;
+            let closeTagEnd = selEnd;
+            if (tagClose !== '') {
+                while (closeTagEnd + tagClose.length <= value.length) {
+                    if (value.slice(closeTagEnd).startsWith(tagClose)) {
+                        closeTagEnd += tagClose.length;
+                        break;
+                    }
+                    closeTagEnd++;
                 }
-                closeTagEnd++;
-            }
-            if (closeTagEnd === value.length) {
-                return;
+                if (closeTagEnd > value.length) {
+                    return;
+                }
             }
             const updatedValue =
                 value.slice(0, openTagStart) +
                 value.slice(selStart, selEnd) +
-                value.slice(closeTagEnd + 1);
+                value.slice(closeTagEnd);
             setValue(name, updatedValue);
             setTimeout(() => {
                 input.setSelectionRange(
@@ -93,6 +100,7 @@ const TagButton = ({
 
 export const OviPromptInput = ({ ...props }: TextInputProps) => {
     const ref = useRef<HTMLInputElement>(null);
+    const version = useWatchForm('version');
     return (
         <Box display='flex' flexDirection='column' mb={2}>
             <TextInput inputRef={ref} multiline {...props} />
@@ -107,8 +115,8 @@ export const OviPromptInput = ({ ...props }: TextInputProps) => {
                 <TagButton
                     name={props.name}
                     label='audio'
-                    tagOpen='<AUDCAP>'
-                    tagClose='<ENDAUDCAP>'
+                    tagOpen={version === '1.0' ? '<AUDCAP>' : 'Audio: '}
+                    tagClose={version === '1.0' ? '<ENDAUDCAP>' : ''}
                     inputRef={ref}
                 />
             </Box>

@@ -18,6 +18,8 @@ import { WanSampler } from '../controls/WanSampler';
 import { WFTab } from '../WFTab';
 import { KJEasyCacheInput } from '../controls/KJEasyCacheInput';
 import { OviPromptInput } from '../controls/OviPromptInput';
+import { OviLengthInput } from '../controls/OviLengthInput';
+import { OviVersionInput } from '../controls/OviVersionInput';
 
 const Content = () => {
     const mergeLoras = useWatch({ name: 'merge_loras' });
@@ -35,7 +37,9 @@ const Content = () => {
                     step={0.1}
                 />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
+                <OviLengthInput />
                 <AdvancedSettings>
+                    <OviVersionInput />
                     <WanSampler name='sampler' />
                     <CFGInput defaultValue={4} />
                     <CFGInput defaultValue={4} name='audio_cfg' />

@@ -186,7 +186,8 @@ const translation = {
         audio_cfg: 'audio CFG',
         start_step: 'start step',
         end_step: 'end step',
-        speech: 'Speech'
+        speech: 'Speech',
+        version: 'version'
     },
     settings: {
         select_language: 'Select language',

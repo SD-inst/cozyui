@@ -185,7 +185,8 @@ const translation = {
         audio_cfg: 'аудио CFG',
         start_step: 'первый шаг',
         end_step: 'последний шаг',
-        speech: 'речь'
+        speech: 'речь',
+        version: 'версия'
     },
     settings: {
         select_language: 'Выбор языка',

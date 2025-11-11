@@ -2098,6 +2098,25 @@
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "12"
+                },
+                "version": {
+                    "id": "skip"
+                },
+                "model_audio": {
+                    "id": "78",
+                    "field": "extra_model"
+                },
+                "model_video": {
+                    "id": "12",
+                    "field": "model"
+                },
+                "length": {
+                    "id": "81",
+                    "field": "num_frames"
+                },
+                "audio_length": {
+                    "id": "125",
+                    "field": "length"
                 }
             },
             "handler_options": {
@@ -2191,6 +2210,25 @@
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "12"
+                },
+                "version": {
+                    "id": "skip"
+                },
+                "model_audio": {
+                    "id": "78",
+                    "field": "extra_model"
+                },
+                "model_video": {
+                    "id": "12",
+                    "field": "model"
+                },
+                "length": {
+                    "id": "81",
+                    "field": "num_frames"
+                },
+                "audio_length": {
+                    "id": "125",
+                    "field": "length"
                 }
             },
             "handler_options": {
