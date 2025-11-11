@@ -14,7 +14,7 @@ export const OviLengthInput = ({
     const length = useWatchForm(name);
     const { setValue } = useFormContext();
     useEffect(() => {
-        setValue(audio_name, Math.round((length * 157) / 121));
+        setValue(audio_name, Math.round((length * 314) / 241));
     }, [audio_name, length, setValue]);
     return (
         <LengthInput
