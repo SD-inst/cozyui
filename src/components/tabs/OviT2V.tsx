@@ -64,7 +64,7 @@ const Content = () => {
                 flexDirection='column'
                 alignItems='center'
             >
-                <VideoResult />
+                <VideoResult fps={32} />
             </GridRight>
             <GridBottom>
                 <GenerateButton />
