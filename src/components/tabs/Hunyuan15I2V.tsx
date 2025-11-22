@@ -1,6 +1,7 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
+import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { HYLengthInput } from '../controls/HYLengthInput';
@@ -13,33 +14,41 @@ import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
+import { UploadType } from '../controls/UploadType';
 import { VideoImageOverride } from '../controls/VideoImageOverride';
 import { VideoImageResult } from '../controls/VideoImageResult';
 import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
-import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
     return (
         <Layout>
             <GridLeft>
+                <FileUpload name='image' type={UploadType.IMAGE} />
                 <PromptInput name='prompt' />
                 <PromptInput name='neg_prompt' />
-                <WidthHeight defaultWidth={848} defaultHeight={480} />
+                <SliderInput
+                    name='size'
+                    label='size_mp'
+                    defaultValue={0.4}
+                    min={0.1}
+                    max={2}
+                    step={0.1}
+                />
                 <HYLengthInput defaultValue={121} max={241} />
                 <SliderInput name='steps' defaultValue={50} min={1} max={50} />
                 <CFGInput defaultValue={6} />
-                <FlowShiftInput defaultValue={9} />
+                <FlowShiftInput defaultValue={7} />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'
                         type='hunyuan'
                         extraFilter={(v) =>
-                            v.includes('hunyuanvideo1.5') && v.includes('_t2v_')
+                            v.includes('hunyuanvideo1.5') && v.includes('_i2v_')
                         }
                         defaultValue={
-                            'hyvid/hunyuanvideo1.5_720p_t2v_fp16.safetensors'
+                            'hyvid/hunyuanvideo1.5_720p_i2v_fp16.safetensors'
                         }
                         sx={{ mb: 2 }}
                     />
@@ -76,11 +85,11 @@ const Content = () => {
     );
 };
 
-export const Hunyan15T2VTab = (
+export const Hunyan15I2VTab = (
     <WFTab
         label='Hunyuan 1.5'
-        value='Hunyuan15 T2V'
-        group='T2V'
+        value='Hunyuan15 I2V'
+        group='I2V'
         content={<Content />}
     />
 );

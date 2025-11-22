@@ -38,7 +38,7 @@
   },
   "12": {
     "inputs": {
-      "unet_name": "hyvid/hunyuanvideo1.5_720p_t2v_fp16.safetensors",
+      "unet_name": "hyvid/hunyuanvideo1.5_720p_i2v_fp16.safetensors",
       "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
@@ -48,7 +48,7 @@
   },
   "44": {
     "inputs": {
-      "text": "Positive prompt",
+      "text": "positive prompt",
       "clip": [
         "11",
         0
@@ -57,6 +57,79 @@
     "class_type": "CLIPTextEncode",
     "_meta": {
       "title": "CLIP Text Encode (Positive Prompt)"
+    }
+  },
+  "78": {
+    "inputs": {
+      "width": [
+        "130",
+        0
+      ],
+      "height": [
+        "130",
+        1
+      ],
+      "length": 121,
+      "batch_size": 1,
+      "positive": [
+        "44",
+        0
+      ],
+      "negative": [
+        "93",
+        0
+      ],
+      "vae": [
+        "10",
+        0
+      ],
+      "start_image": [
+        "129",
+        0
+      ],
+      "clip_vision_output": [
+        "79",
+        0
+      ]
+    },
+    "class_type": "HunyuanVideo15ImageToVideo",
+    "_meta": {
+      "title": "HunyuanVideo15ImageToVideo"
+    }
+  },
+  "79": {
+    "inputs": {
+      "crop": "center",
+      "clip_vision": [
+        "81",
+        0
+      ],
+      "image": [
+        "80",
+        0
+      ]
+    },
+    "class_type": "CLIPVisionEncode",
+    "_meta": {
+      "title": "CLIP Vision Encode"
+    }
+  },
+  "80": {
+    "inputs": {
+      "image": "video_hunyuan_video_1.5_720p_i2v_input_image.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "81": {
+    "inputs": {
+      "clip_name": "sigclip_vision_patch14_384.safetensors"
+    },
+    "class_type": "CLIPVisionLoader",
+    "_meta": {
+      "title": "Load CLIP Vision"
     }
   },
   "93": {
@@ -72,38 +145,7 @@
       "title": "CLIP Text Encode (Negative Prompt)"
     }
   },
-  "102": {
-      "inputs": {
-          "frame_rate": 24,
-          "loop_count": 0,
-          "filename_prefix": ["127", 0],
-          "format": "video/h264-mp4",
-          "pix_fmt": "yuv420p",
-          "crf": 19,
-          "save_metadata": true,
-          "trim_to_audio": false,
-          "pingpong": false,
-          "save_output": true,
-          "images": ["8", 0]
-      },
-      "class_type": "VHS_VideoCombine",
-      "_meta": {
-          "title": "Video Combine 🎥🅥🅗🅢"
-      }
-  },
   "124": {
-    "inputs": {
-      "width": 1280,
-      "height": 720,
-      "length": 121,
-      "batch_size": 1
-    },
-    "class_type": "EmptyHunyuanVideo15Latent",
-    "_meta": {
-      "title": "EmptyHunyuanVideo15Latent"
-    }
-  },
-  "126": {
     "inputs": {
       "value": 1024
     },
@@ -112,18 +154,69 @@
       "title": "INT Constant"
     }
   },
-  "127": {
+  "125": {
     "inputs": {
-      "prefix": "HunyuanVideo_T2V_",
+      "prefix": "HunyuanVideo_I2V_",
       "suffix": "",
       "input": [
-        "126",
+        "124",
         0
       ]
     },
     "class_type": "SomethingToString",
     "_meta": {
       "title": "Something To String"
+    }
+  },
+  "128": {
+    "inputs": {
+      "frame_rate": 24,
+      "loop_count": 0,
+      "filename_prefix": [
+        "125",
+        0
+      ],
+      "format": "video/h264-mp4",
+      "pix_fmt": "yuv420p",
+      "crf": 19,
+      "save_metadata": true,
+      "trim_to_audio": false,
+      "pingpong": false,
+      "save_output": true,
+      "images": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "VHS_VideoCombine",
+    "_meta": {
+      "title": "Video Combine 🎥🅥🅗🅢"
+    }
+  },
+  "129": {
+    "inputs": {
+      "upscale_method": "lanczos",
+      "megapixels": 0.4,
+      "image": [
+        "80",
+        0
+      ]
+    },
+    "class_type": "ImageScaleToTotalPixels",
+    "_meta": {
+      "title": "Scale Image to Total Pixels"
+    }
+  },
+  "130": {
+    "inputs": {
+      "image": [
+        "129",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
     }
   },
   "100:99": {
@@ -145,8 +238,8 @@
         0
       ],
       "latent_image": [
-        "124",
-        0
+        "78",
+        2
       ]
     },
     "class_type": "SamplerCustomAdvanced",
@@ -186,12 +279,12 @@
         0
       ],
       "positive": [
-        "44",
+        "78",
         0
       ],
       "negative": [
-        "93",
-        0
+        "78",
+        1
       ]
     },
     "class_type": "CFGGuider",
@@ -215,7 +308,7 @@
   "100:96": {
     "inputs": {
       "noise_seed": [
-        "126",
+        "124",
         0
       ]
     },

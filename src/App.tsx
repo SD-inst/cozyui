@@ -49,6 +49,7 @@ import { VideoInterpolationTab } from './components/tabs/VideoInterpolation';
 import { OviI2VTab } from './components/tabs/OviI2V';
 import { OviT2VTab } from './components/tabs/OviT2V';
 import { Hunyan15T2VTab } from './components/tabs/Hunyuan15T2V';
+import { Hunyan15I2VTab } from './components/tabs/Hunyuan15I2V';
 
 function App() {
     return (
@@ -75,6 +76,7 @@ function App() {
                                 {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
+                                {Hunyan15I2VTab}
                                 {FramePackI2VTab}
                                 {HiDreamTab}
                                 {FluxTab}
