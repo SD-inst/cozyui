@@ -48,6 +48,7 @@ import { SongBloomTab } from './components/tabs/SongBloom';
 import { VideoInterpolationTab } from './components/tabs/VideoInterpolation';
 import { OviI2VTab } from './components/tabs/OviI2V';
 import { OviT2VTab } from './components/tabs/OviT2V';
+import { Hunyan15T2VTab } from './components/tabs/Hunyuan15T2V';
 
 function App() {
     return (
@@ -61,6 +62,7 @@ function App() {
                         <WorkflowTabsContextProvider>
                             <WorkflowTabs>
                                 {HunyanT2VTab}
+                                {Hunyan15T2VTab}
                                 {WanI2VTab}
                                 {WanT2VTab}
                                 {OviT2VTab}

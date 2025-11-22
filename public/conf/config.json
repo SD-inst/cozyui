@@ -136,6 +136,103 @@
                 "temporal_overlap": 4
             }
         },
+        "Hunyuan15 T2V": {
+            "api": "api/hunyuan15_t2v_native.json",
+            "controls": {
+                "prompt": {
+                    "id": "44",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "93",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "12",
+                    "field": "unet_name"
+                },
+                "width": {
+                    "id": "124",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "124",
+                    "field": "height"
+                },
+                "seed": {
+                    "id": "126",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "100:95",
+                    "field": "steps"
+                },
+                "length": {
+                    "id": "124",
+                    "field": "length"
+                },
+                "flow_shift": {
+                    "id": "100:67",
+                    "field": "shift"
+                },
+                "cfg": {
+                    "id": "100:98",
+                    "field": "cfg"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "sampler": {
+                    "id": "100:97",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "100:95",
+                    "field": "scheduler"
+                },
+                "reuse_threshold": {
+                    "id": "handle",
+                    "node_id": "100:67"
+                },
+                "start_percent": {
+                    "id": "skip"
+                },
+                "end_percent": {
+                    "id": "skip"
+                },
+                "virtual_vram": {
+                    "id": "skip"
+                },
+                "compile_model": {
+                    "id": "handle",
+                    "output_node_id": "100:67"
+                },
+                "video_image_override": {
+                    "id": "handle"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["100:67"],
+                    "output_idx": 0,
+                    "class_name": "HunyuanVideoLoraLoader",
+                    "strength_field_name": "strength",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": [
+                {
+                    "id": "102",
+                    "type": "gifs"
+                }
+            ]
+        },
         "Hunyuan Upscale": {
             "api": "api/hunyuan_upscale.json",
             "controls": {
