@@ -136,7 +136,7 @@
                 "temporal_overlap": 4
             }
         },
-        "Hunyuan15 T2V": {
+        "Hunyuan 1.5 T2V": {
             "api": "api/hunyuan15_t2v_native.json",
             "controls": {
                 "prompt": {
@@ -233,7 +233,7 @@
                 }
             ]
         },
-        "Hunyuan15 I2V": {
+        "Hunyuan 1.5 I2V": {
             "api": "api/hunyuan15_i2v_native.json",
             "controls": {
                 "image": {
