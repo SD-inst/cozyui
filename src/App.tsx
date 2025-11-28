@@ -50,6 +50,7 @@ import { OviI2VTab } from './components/tabs/OviI2V';
 import { OviT2VTab } from './components/tabs/OviT2V';
 import { Hunyan15T2VTab } from './components/tabs/Hunyuan15T2V';
 import { Hunyan15I2VTab } from './components/tabs/Hunyuan15I2V';
+import { ZImageTab } from './components/tabs/ZImage';
 
 function App() {
     return (
@@ -69,6 +70,7 @@ function App() {
                                 {OviT2VTab}
                                 {ChromaTab}
                                 {SDTab}
+                                {ZImageTab}
                                 {QwenImageTab}
                                 {FluxKontextTab}
                                 {QwenImageEditTab}
