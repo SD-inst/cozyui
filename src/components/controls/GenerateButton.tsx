@@ -204,7 +204,7 @@ export const GenerateButton = ({
                     setParams({
                         action: actionEnum.STORE,
                         tab: tab_name,
-                        values: vals,
+                        values: cloneDeep(vals),
                     })
                 );
                 return;
