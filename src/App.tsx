@@ -51,6 +51,7 @@ import { OviT2VTab } from './components/tabs/OviT2V';
 import { Hunyan15T2VTab } from './components/tabs/Hunyuan15T2V';
 import { Hunyan15I2VTab } from './components/tabs/Hunyuan15I2V';
 import { ZImageTab } from './components/tabs/ZImage';
+import { Flux2Tab } from './components/tabs/Flux2';
 
 function App() {
     return (
@@ -82,6 +83,7 @@ function App() {
                                 {FramePackI2VTab}
                                 {HiDreamTab}
                                 {FluxTab}
+                                {Flux2Tab}
                                 {HunyanT2VKJTab}
                                 {HunyanI2VKJTab}
                                 {LTXI2VTab}
