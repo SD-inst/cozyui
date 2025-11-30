@@ -1,15 +1,10 @@
-import {
-    Box,
-    FormControlLabel,
-    Switch,
-    TextField,
-    useEventCallback,
-} from '@mui/material';
+import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
-import { useTranslate } from '../../i18n/I18nContext';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { SliderInput } from './SliderInput';
+import { ToggleInput } from './ToggleInput';
 
 type valueType = {
     enabled: boolean;
@@ -19,9 +14,11 @@ type valueType = {
     offload_img_in: boolean;
 };
 
-export const KJHYBlockSwapInput = ({ ...props }) => {
+export const KJHYBlockSwapInput = ({
+    name,
+    ...props
+}: { name: string } & BoxProps) => {
     const { handler_options } = useAPI();
-    const tr = useTranslate();
     const handler = useEventCallback((api: any, value: valueType) => {
         const { enabled, ...inputs } = value;
         if (!enabled) {
@@ -41,11 +38,11 @@ export const KJHYBlockSwapInput = ({ ...props }) => {
             0,
         ];
     });
-    useRegisterHandler({ name: props.name, handler });
+    useRegisterHandler({ name, handler });
     const {
-        field: { value, onChange },
+        field: { value },
     } = useController({
-        name: props.name,
+        name,
         defaultValue: {
             enabled: false,
             double_blocks_to_swap: 20,
@@ -64,45 +61,21 @@ export const KJHYBlockSwapInput = ({ ...props }) => {
             p={2}
             {...props}
         >
-            <FormControlLabel
-                label={tr(`controls.${props.name}`)}
-                control={
-                    <Switch
-                        checked={value.enabled}
-                        onChange={(_, enabled) =>
-                            onChange({ ...value, enabled })
-                        }
-                    />
-                }
-            />
+            <ToggleInput name={name + '.enabled'} />
             {value.enabled && (
                 <>
                     <Box display='flex' flexDirection='row' gap={2}>
-                        <TextField
-                            type='number'
-                            label={tr('controls.single_blocks')}
-                            slotProps={{ htmlInput: { min: 0, max: 40 } }}
-                            value={value.single_blocks_to_swap}
-                            onChange={(e) =>
-                                onChange({
-                                    ...value,
-                                    single_blocks_to_swap: e.target.value,
-                                })
-                            }
-                            fullWidth
+                        <SliderInput
+                            name={name + '.single_blocks_to_swap'}
+                            label='single_blocks'
+                            max={40}
+                            min={0}
                         />
-                        <TextField
-                            type='number'
-                            label={tr('controls.double_blocks')}
-                            slotProps={{ htmlInput: { min: 0, max: 20 } }}
-                            value={value.double_blocks_to_swap}
-                            onChange={(e) =>
-                                onChange({
-                                    ...value,
-                                    double_blocks_to_swap: e.target.value,
-                                })
-                            }
-                            fullWidth
+                        <SliderInput
+                            name={name + '.double_blocks_to_swap'}
+                            label='double_blocks'
+                            max={20}
+                            min={0}
                         />
                     </Box>
                     <Box
@@ -111,33 +84,13 @@ export const KJHYBlockSwapInput = ({ ...props }) => {
                         flexWrap='wrap'
                         gap={2}
                     >
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={value.offload_txt_in}
-                                    onChange={(_, offload_txt_in) =>
-                                        onChange({
-                                            ...value,
-                                            offload_txt_in,
-                                        })
-                                    }
-                                />
-                            }
-                            label={tr('controls.offload_txt_in')}
+                        <ToggleInput
+                            name={name + '.offload_txt_in'}
+                            label='offload_txt_in'
                         />
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={value.offload_img_in}
-                                    onChange={(_, offload_img_in) =>
-                                        onChange({
-                                            ...value,
-                                            offload_img_in,
-                                        })
-                                    }
-                                />
-                            }
-                            label={tr('controls.offload_img_in')}
+                        <ToggleInput
+                            name={name + '.offload_img_in'}
+                            label='offload_img_in'
                         />
                     </Box>
                 </>
