@@ -37,7 +37,7 @@ const Content = () => {
                         label: 'flux_schnell',
                     }}
                 />
-                <LoraInput name='lora' type='flux' />
+                <LoraInput name='lora' type='flux' sx={{ mb: 2 }} />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight

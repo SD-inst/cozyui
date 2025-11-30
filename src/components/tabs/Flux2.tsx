@@ -34,7 +34,7 @@ const Content = () => {
                     sx={{ mb: 2 }}
                     defaultValue={'flux2/flux2_dev_fp8mixed.safetensors'}
                 />
-                <LoraInput name='lora' type='flux' />
+                <LoraInput name='lora' type='flux' sx={{ mb: 2 }} />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
