@@ -54,15 +54,9 @@
                     "id": "12",
                     "field": "scheduler"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": "6"
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 },
                 "tile_size": {
                     "id": "4",
@@ -191,15 +185,9 @@
                     "id": "100:95",
                     "field": "scheduler"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": "100:67"
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 },
                 "virtual_vram": {
                     "id": "skip"
@@ -288,15 +276,9 @@
                     "id": "100:95",
                     "field": "scheduler"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": "100:67"
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 },
                 "virtual_vram": {
                     "id": "skip"
@@ -808,15 +790,9 @@
                     "id": "74",
                     "field": "strength"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": "54"
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 },
                 "tile_size": {
                     "id": "57",
@@ -1401,15 +1377,9 @@
                 "lora": {
                     "id": "handle"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": ["63", "81"]
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 }
             },
             "result": {
@@ -1650,15 +1620,9 @@
                 "lora": {
                     "id": "handle"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": "66"
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 }
             },
             "result": {
@@ -1750,15 +1714,9 @@
                     "node_id": "37",
                     "field": "unet_name"
                 },
-                "reuse_threshold": {
+                "easy_cache": {
                     "id": "handle",
                     "node_id": "66"
-                },
-                "start_percent": {
-                    "id": "skip"
-                },
-                "end_percent": {
-                    "id": "skip"
                 }
             },
             "result": {
@@ -2116,15 +2074,9 @@
                 "interpolation_multiplier": {
                     "id": "handle"
                 },
-                "reuse_threshold": {
+                "tea_cache": {
                     "id": "handle",
                     "node_id": "27"
-                },
-                "start_step": {
-                    "id": "skip"
-                },
-                "end_step": {
-                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -2398,15 +2350,9 @@
                 "merge_loras": {
                     "id": "skip"
                 },
-                "reuse_threshold": {
+                "tea_cache": {
                     "id": "handle",
                     "node_id": "80"
-                },
-                "start_step": {
-                    "id": "skip"
-                },
-                "end_step": {
-                    "id": "skip"
                 },
                 "lora": {
                     "id": "handle"
@@ -2510,15 +2456,9 @@
                 "merge_loras": {
                     "id": "skip"
                 },
-                "reuse_threshold": {
+                "tea_cache": {
                     "id": "handle",
                     "node_id": "80"
-                },
-                "start_step": {
-                    "id": "skip"
-                },
-                "end_step": {
-                    "id": "skip"
                 },
                 "lora": {
                     "id": "handle"
@@ -2651,15 +2591,9 @@
                 "interpolation_multiplier": {
                     "id": "handle"
                 },
-                "reuse_threshold": {
+                "tea_cache": {
                     "id": "handle",
                     "node_id": "27"
-                },
-                "start_step": {
-                    "id": "skip"
-                },
-                "end_step": {
-                    "id": "skip"
                 }
             },
             "handler_options": {

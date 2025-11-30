@@ -1,6 +1,5 @@
 import { useEventCallback } from '@mui/material';
 import { replaceNodeConnection } from '../../api/utils';
-import { useWatchFormMany } from '../../hooks/useWatchForm';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput } from './SliderInput';
@@ -14,20 +13,14 @@ export const KJEasyCacheInput = ({
     defaultStart?: number;
     defaultEnd?: number;
 }) => {
-    const [start_step, end_step] = useWatchFormMany([
-        'start_step',
-        'end_step',
-    ]);
     const handler = useEventCallback(
-        (api: any, value: string, control?: controlType) => {
+        (api: any, value: any, control?: controlType) => {
             if (!value || !control || !control.node_id) {
                 return;
             }
             const node = {
                 inputs: {
-                    easycache_thresh: value,
-                    start_step,
-                    end_step,
+                    ...value,
                     cache_device: 'offload_device',
                 },
                 class_type: 'WanVideoEasyCache',
@@ -38,7 +31,7 @@ export const KJEasyCacheInput = ({
             replaceNodeConnection(api, control.node_id, 'cache_args', node);
         }
     );
-    useRegisterHandler({ name: 'reuse_threshold', handler });
+    useRegisterHandler({ name: 'tea_cache', handler });
     return (
         <>
             <SliderInput
@@ -46,7 +39,8 @@ export const KJEasyCacheInput = ({
                 max={1}
                 step={0.01}
                 defaultValue={defaultThreshold}
-                name='reuse_threshold'
+                name='tea_cache.easycache_thresh'
+                label='reuse_threshold'
                 tooltip='tea_cache'
             />
             <SliderInput
@@ -54,7 +48,8 @@ export const KJEasyCacheInput = ({
                 max={100}
                 step={1}
                 defaultValue={defaultStart}
-                name='start_step'
+                name='tea_cache.start_step'
+                label='start_step'
                 tooltip='tea_cache_start'
             />
             <SliderInput
@@ -62,7 +57,8 @@ export const KJEasyCacheInput = ({
                 max={100}
                 step={1}
                 defaultValue={defaultEnd}
-                name='end_step'
+                name='tea_cache.end_step'
+                label='end_step'
                 tooltip='tea_cache_end'
             />
         </>
