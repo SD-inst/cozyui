@@ -12,22 +12,24 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 
 - Supported models and modes:
     - T2V
-        - Hunyuan T2V (Native/Kijai)
-        - Wan T2V (Kijai)
+        - Hunyuan 1/1.5 (Native/Kijai)
+        - Wan (Kijai)
     - I2V
-        - Hunyuan I2V (leapfusion lora)
-        - Wan I2V (Kijai)
-        - Wan I2V two-step
-        - Wan InfiniteTalk (Kijai)
+        - Hunyuan 1.5
+        - Hunyuan 1 (leapfusion lora)
+        - Wan 2.1 (Kijai)
+        - Wan 2.1 two-step
+        - Wan 2.1 InfiniteTalk (Kijai)
         - Framepack
         - LTX I2V
         - EasyAnimate I2V
     - T2I
         - StableDiffusion 1.5/SDXL
-        - Flux
+        - Flux.1/2
         - Chroma
         - HiDream
         - Qwen Image
+        - Z-Image
     - I2I
         - Flux Kontext
         - Qwen Image Edit
@@ -66,7 +68,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - Customizable audio notification when task completes
 - Localization support (English/Russian currently)
 - Many controls have tips and explanation (can be disabled in settings)
-- VRAM and speed optimizations: TeaCache, WaveSpeed, MultiGPU
+- VRAM and speed optimizations: TeaCache, EasyCache, MultiGPU
 - Hide any model tabs you don't need
 - Danbooru tag completion
 
