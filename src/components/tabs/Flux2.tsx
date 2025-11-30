@@ -5,6 +5,7 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
+import { ReferenceLatentInput } from '../controls/ReferenceLatentInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
@@ -16,6 +17,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <ReferenceLatentInput name='reference_images' />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={40} />
                 <GuidanceInput defaultValue={4} step={0.1} />
@@ -28,9 +30,9 @@ const Content = () => {
                 />
                 <ModelSelectAutocomplete
                     name='model'
-                    type='flux'
+                    type='flux2'
                     sx={{ mb: 2 }}
-                    defaultValue={'flux/flux2_dev_fp8mixed.safetensors'}
+                    defaultValue={'flux2/flux2_dev_fp8mixed.safetensors'}
                 />
                 <LoraInput name='lora' type='flux' />
                 <SeedInput name='seed' defaultValue={1024} />

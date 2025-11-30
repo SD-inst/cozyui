@@ -1306,6 +1306,11 @@
                     "id": "handle",
                     "node_id": "12",
                     "field": "unet_name"
+                },
+                "reference_images": {
+                    "id": "handle",
+                    "guider_node_id": "22",
+                    "vae_node_id": "10"
                 }
             },
             "handler_options": {
@@ -2842,6 +2847,9 @@
         },
         "flux": {
             "filter": "flux/"
+        },
+        "flux2": {
+            "filter": "flux2/"
         },
         "hidream": {
             "filter": "hidream/"

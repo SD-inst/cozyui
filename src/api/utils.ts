@@ -17,7 +17,7 @@ export const shiftIds = (api: any, base: number) => {
 
 export const getFreeNodeId = (api: any) =>
     Object.keys(api)
-        .map((k) => parseInt(k))
+        .map((k) => parseInt(k.split(':')[0]))
         .reduce((a, k) => Math.max(a, k)) + 1;
 
 /**
@@ -81,4 +81,33 @@ export const bigRandom = (len: number) => {
         .join('');
 
     return BigInt(`0x${hexString}`).toString();
+};
+
+/**
+ *
+ * @param api ComfyUI API object
+ * @param graph object with nodes to insert, IDs should start with a colon ':', a free node ID will be prepended; all links between the graph nodes will also be prepended with this free node ID, if they start with a colon, otherwise they're unchanged
+ * @returns new node ID which is prefixed to all nodes in the graph and
+ */
+export const insertGraph = (api: any, graph: any) => {
+    const newNodeID = getFreeNodeId(api) + '';
+    Object.entries(graph).forEach(([k, v]) => {
+        const inputs = Object.fromEntries(
+            Object.entries((v as any).inputs).map(([ik, iv]) => {
+                if (
+                    Array.isArray(iv) &&
+                    iv.length == 2 &&
+                    typeof iv[0] === 'string' &&
+                    iv[1] !== undefined &&
+                    iv[0].startsWith(':')
+                ) {
+                    return [ik, [newNodeID + iv[0], iv[1]]];
+                } else {
+                    return [ik, iv];
+                }
+            })
+        );
+        api[`${newNodeID}${k}`] = { ...(v as any), inputs };
+    });
+    return newNodeID;
 };

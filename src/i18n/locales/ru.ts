@@ -186,7 +186,9 @@ const translation = {
         start_step: 'первый шаг',
         end_step: 'последний шаг',
         speech: 'речь',
-        version: 'версия'
+        version: 'версия',
+        reference_images: 'изображения-образцы',
+        enabled: 'разрешено',
     },
     settings: {
         select_language: 'Выбор языка',

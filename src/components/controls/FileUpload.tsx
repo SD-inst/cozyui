@@ -165,7 +165,7 @@ export const FileUpload = ({
     return (
         <Box mb={2} display='flex' flexDirection='column'>
             <Typography variant='body1'>
-                {tr(`controls.${props.name}`)}
+                {tr(`controls.${props.label || props.name}`)}
             </Typography>
             <Box
                 flex={1}

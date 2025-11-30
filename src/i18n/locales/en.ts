@@ -187,7 +187,9 @@ const translation = {
         start_step: 'start step',
         end_step: 'end step',
         speech: 'Speech',
-        version: 'version'
+        version: 'version',
+        reference_images: 'reference images',
+        enabled: 'enabled',
     },
     settings: {
         select_language: 'Select language',
