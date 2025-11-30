@@ -8,8 +8,8 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYSize } from '../controls/HYSize';
-import { HYTeaCacheInput } from '../controls/HYTeaCacheInput';
 import { KJHYBlockSwapInput } from '../controls/KJHYBlockSwapInput';
+import { KJHYTeaCacheInput } from '../controls/KJHYTeaCacheInput';
 import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
@@ -67,8 +67,8 @@ const Content = () => {
                         defaultValue={1}
                     />
                     <EnhanceVideoInput name='enhance_video' />
-                    <HYTeaCacheInput name='tea_cache' defaultValue={0.15} />
-                    <KJHYBlockSwapInput name='block_swap' />
+                    <KJHYTeaCacheInput defaultThreshold={0.1} />
+                    <KJHYBlockSwapInput />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput
@@ -77,7 +77,7 @@ const Content = () => {
                     sx={{ mb: 2 }}
                     append={[
                         {
-                            id: 'comfy/img2vid544p.safetensors',
+                            id: 'img2vid544p.safetensors',
                             label: 'img2vid',
                             strength: 1,
                             merge: mergeType.FULL,

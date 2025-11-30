@@ -1,7 +1,7 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
-import { useController } from 'react-hook-form';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
+import { useWatchForm } from '../../hooks/useWatchForm';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
@@ -15,9 +15,9 @@ type valueType = {
 };
 
 export const KJHYBlockSwapInput = ({
-    name,
+    name = 'block_swap',
     ...props
-}: { name: string } & BoxProps) => {
+}: { name?: string } & BoxProps) => {
     const { handler_options } = useAPI();
     const handler = useEventCallback((api: any, value: valueType) => {
         const { enabled, ...inputs } = value;
@@ -39,18 +39,7 @@ export const KJHYBlockSwapInput = ({
         ];
     });
     useRegisterHandler({ name, handler });
-    const {
-        field: { value },
-    } = useController({
-        name,
-        defaultValue: {
-            enabled: false,
-            double_blocks_to_swap: 20,
-            single_blocks_to_swap: 0,
-            offload_txt_in: true,
-            offload_img_in: true,
-        } as valueType,
-    });
+    const enabled = useWatchForm(name + '.enabled');
     return (
         <Box
             display='flex'
@@ -61,8 +50,8 @@ export const KJHYBlockSwapInput = ({
             p={2}
             {...props}
         >
-            <ToggleInput name={name + '.enabled'} />
-            {value.enabled && (
+            <ToggleInput name={name + '.enabled'} label={name} />
+            {enabled && (
                 <>
                     <Box display='flex' flexDirection='row' gap={2}>
                         <SliderInput
@@ -70,12 +59,14 @@ export const KJHYBlockSwapInput = ({
                             label='single_blocks'
                             max={40}
                             min={0}
+                            defaultValue={0}
                         />
                         <SliderInput
                             name={name + '.double_blocks_to_swap'}
                             label='double_blocks'
                             max={20}
                             min={0}
+                            defaultValue={20}
                         />
                     </Box>
                     <Box
@@ -87,10 +78,12 @@ export const KJHYBlockSwapInput = ({
                         <ToggleInput
                             name={name + '.offload_txt_in'}
                             label='offload_txt_in'
+                            defaultValue={true}
                         />
                         <ToggleInput
                             name={name + '.offload_img_in'}
                             label='offload_img_in'
+                            defaultValue={true}
                         />
                     </Box>
                 </>

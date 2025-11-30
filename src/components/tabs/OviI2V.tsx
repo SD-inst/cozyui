@@ -51,7 +51,7 @@ const Content = () => {
                     />
                     <PromptInput name='audio_neg_prompt' sx={{ mb: 3 }} />
                     <KJEasyCacheInput />
-                    <KJWanBlockSwapInput name='block_swap' />
+                    <KJWanBlockSwapInput />
                     <VideoInterpolationSlider />
                     <ToggleInput name='merge_loras' />
                 </AdvancedSettings>

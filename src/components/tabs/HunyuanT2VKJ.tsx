@@ -4,10 +4,10 @@ import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
-import { HYTeaCacheInput } from '../controls/HYTeaCacheInput';
 import { KJAttentionSelectInput } from '../controls/KJAttentionSelectInput';
 import { KJHYBlockSwapInput } from '../controls/KJHYBlockSwapInput';
 import { KJHYCFG } from '../controls/KJHYCFG';
+import { KJHYTeaCacheInput } from '../controls/KJHYTeaCacheInput';
 import { KJSchedulerSelectInput } from '../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
@@ -45,8 +45,8 @@ const Content = () => {
                     <KJSchedulerSelectInput name='sampler' />
                     <KJAttentionSelectInput name='attention' />
                     <EnhanceVideoInput name='enhance_video' />
-                    <HYTeaCacheInput name='tea_cache' defaultValue={0.2} />
-                    <KJHYBlockSwapInput name='block_swap' />
+                    <KJHYTeaCacheInput defaultThreshold={0.1} />
+                    <KJHYBlockSwapInput />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
                 <LoraInput name='lora' type='hunyuan' />

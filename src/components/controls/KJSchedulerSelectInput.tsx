@@ -19,6 +19,10 @@ export const KJSchedulerSelectInput = ({
                     value: 'DPMSolverMultistepScheduler',
                 },
                 {
+                    text: 'SA Solver',
+                    value: 'SASolverScheduler',
+                },
+                {
                     text: 'UniPC',
                     value: 'UniPCMultistepScheduler',
                 },

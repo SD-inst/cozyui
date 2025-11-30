@@ -20,7 +20,7 @@ export const ToggleInputBase = ({
         <Box position='relative'>
             <FormControlLabel
                 sx={{ mt: 1 }}
-                label={label ? tr(label) : tr('controls.' + props.name)}
+                label={tr(`controls.${label || props.name}`)}
                 control={<Switch checked={value} ref={baseRef} {...props} />}
             />
             {tooltip && <HelpButton title={tooltip} />}

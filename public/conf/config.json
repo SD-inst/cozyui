@@ -459,7 +459,8 @@
                     "id": "handle"
                 },
                 "tea_cache": {
-                    "id": "handle"
+                    "id": "handle",
+                    "node_id": "3"
                 },
                 "neg_prompt": {
                     "id": "handle"
@@ -691,7 +692,8 @@
                     "id": "skip"
                 },
                 "tea_cache": {
-                    "id": "handle"
+                    "id": "handle",
+                    "node_id": "3"
                 },
                 "block_swap": {
                     "id": "handle"

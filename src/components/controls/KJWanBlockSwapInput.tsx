@@ -1,10 +1,10 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
-import { useController } from 'react-hook-form';
 import { replaceNodeConnection } from '../../api/utils';
+import { useWatchForm } from '../../hooks/useWatchForm';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
-import { TextInputBase } from './TextInputBase';
-import { ToggleInputBase } from './ToggleInputBase';
+import { SliderInput } from './SliderInput';
+import { ToggleInput } from './ToggleInput';
 
 type valueType = {
     enabled: boolean;
@@ -15,9 +15,9 @@ type valueType = {
 };
 
 export const KJWanBlockSwapInput = ({
-    name,
+    name = 'block_swap',
     ...props
-}: BoxProps & { name: string }) => {
+}: BoxProps & { name?: string }) => {
     const handler = useEventCallback(
         (api: any, value: valueType, control?: controlType) => {
             const { enabled, ...inputs } = value;
@@ -44,18 +44,7 @@ export const KJWanBlockSwapInput = ({
         }
     );
     useRegisterHandler({ name, handler });
-    const {
-        field: { value, onChange },
-    } = useController({
-        name: name,
-        defaultValue: {
-            enabled: false,
-            blocks_to_swap: 20,
-            vace_blocks_to_swap: 0,
-            offload_txt_emb: true,
-            offload_img_emb: true,
-        } as valueType,
-    });
+    const enabled = useWatchForm(name + '.enabled');
     return (
         <Box
             display='flex'
@@ -66,41 +55,22 @@ export const KJWanBlockSwapInput = ({
             p={2}
             {...props}
         >
-            <ToggleInputBase
-                name={name}
-                value={value.enabled}
-                onChange={(_, enabled) => onChange({ ...value, enabled })}
-            />
-            {value.enabled && (
+            <ToggleInput name={name + '.enabled'} label='block_swap' />
+            {enabled && (
                 <>
                     <Box display='flex' flexDirection='row' gap={2}>
-                        <TextInputBase
-                            type='number'
-                            name='blocks_to_swap'
-                            slotProps={{ htmlInput: { min: 0, max: 40 } }}
-                            value={value.blocks_to_swap}
-                            onChange={(e) =>
-                                onChange({
-                                    ...value,
-                                    blocks_to_swap: parseInt(e.target.value),
-                                })
-                            }
-                            fullWidth
+                        <SliderInput
+                            name={name + '.blocks_to_swap'}
+                            label='blocks_to_swap'
+                            min={0}
+                            max={40}
+                            defaultValue={20}
                         />
-                        <TextInputBase
-                            type='number'
-                            name='vace_blocks_to_swap'
-                            slotProps={{ htmlInput: { min: 0, max: 15 } }}
-                            value={value.vace_blocks_to_swap}
-                            onChange={(e) =>
-                                onChange({
-                                    ...value,
-                                    vace_blocks_to_swap: parseInt(
-                                        e.target.value
-                                    ),
-                                })
-                            }
-                            fullWidth
+                        <SliderInput
+                            name={name + '.vace_blocks_to_swap'}
+                            label='vace_blocks_to_swap'
+                            min={0}
+                            max={15}
                         />
                     </Box>
                     <Box
@@ -109,25 +79,15 @@ export const KJWanBlockSwapInput = ({
                         flexWrap='wrap'
                         gap={2}
                     >
-                        <ToggleInputBase
-                            name='offload_txt_emb'
-                            value={value.offload_txt_emb}
-                            onChange={(_, offload_txt_emb) =>
-                                onChange({
-                                    ...value,
-                                    offload_txt_emb,
-                                })
-                            }
+                        <ToggleInput
+                            name={name + '.offload_txt_emb'}
+                            label='offload_txt_emb'
+                            defaultValue={true}
                         />
-                        <ToggleInputBase
-                            name='offload_img_emb'
-                            value={value.offload_img_emb}
-                            onChange={(_, offload_img_emb) =>
-                                onChange({
-                                    ...value,
-                                    offload_img_emb,
-                                })
-                            }
+                        <ToggleInput
+                            name={name + '.offload_img_emb'}
+                            label='offload_img_emb'
+                            defaultValue={true}
                         />
                     </Box>
                 </>

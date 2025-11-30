@@ -60,7 +60,7 @@ const Content = () => {
                     />
                     <WanNAG name='nag' />
                     <KJEasyCacheInput defaultThreshold={0} defaultStart={6} />
-                    <KJWanBlockSwapInput name='block_swap' />
+                    <KJWanBlockSwapInput />
                     <KJWanLoopInput name='loop' sx={{ mt: 2, mb: 2 }} />
                     <SliderInput
                         name='aug_strength'
