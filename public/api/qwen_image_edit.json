@@ -21,8 +21,7 @@
         "inputs": {
             "prompt": "positive prompt",
             "clip": ["38", 0],
-            "vae": ["39", 0],
-            "image1": ["75", 0]
+            "vae": ["39", 0]
         },
         "class_type": "TextEncodeQwenImageEditPlus",
         "_meta": {
@@ -33,8 +32,7 @@
         "inputs": {
             "prompt": "",
             "clip": ["38", 0],
-            "vae": ["39", 0],
-            "image1": ["75", 0]
+            "vae": ["39", 0]
         },
         "class_type": "TextEncodeQwenImageEditPlus",
         "_meta": {
@@ -81,15 +79,6 @@
             "title": "Load VAE"
         }
     },
-    "41": {
-        "inputs": {
-            "image": "image.png"
-        },
-        "class_type": "LoadImage",
-        "_meta": {
-            "title": "Load Image"
-        }
-    },
     "58": {
         "inputs": {
             "pixels": ["75", 0],
@@ -108,24 +97,6 @@
         "class_type": "SaveImage",
         "_meta": {
             "title": "Save Image"
-        }
-    },
-    "64": {
-        "inputs": {
-            "image": ""
-        },
-        "class_type": "LoadImage",
-        "_meta": {
-            "title": "Load Second Image"
-        }
-    },
-    "65": {
-        "inputs": {
-            "image": ""
-        },
-        "class_type": "LoadImage",
-        "_meta": {
-            "title": "Load Third Image"
         }
     },
     "66": {
@@ -166,17 +137,6 @@
         "class_type": "SomethingToString",
         "_meta": {
             "title": "Something To String"
-        }
-    },
-    "75": {
-        "inputs": {
-            "upscale_method": "lanczos",
-            "megapixels": 1,
-            "image": ["41", 0]
-        },
-        "class_type": "ImageScaleToTotalPixels",
-        "_meta": {
-            "title": "Scale Image to Total Pixels"
         }
     }
 }

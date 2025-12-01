@@ -1651,27 +1651,11 @@
         "Qwen Image Edit": {
             "api": "api/qwen_image_edit.json",
             "controls": {
-                "image": {
-                    "id": "41",
-                    "field": "image"
-                },
-                "second_image": {
+                "reference_images": {
                     "id": "handle",
-                    "field": "image",
-                    "node_id": "64",
-                    "connect": [
-                        ["6", "image2"],
-                        ["7", "image2"]
-                    ]
-                },
-                "third_image": {
-                    "id": "handle",
-                    "field": "image",
-                    "node_id": "65",
-                    "connect": [
-                        ["6", "image3"],
-                        ["7", "image3"]
-                    ]
+                    "positive_node_id": "6",
+                    "negative_node_id": "7",
+                    "vae_encode_node_id": "58"
                 },
                 "prompt": {
                     "id": "6",
@@ -1680,10 +1664,6 @@
                 "neg_prompt": {
                     "id": "7",
                     "field": "prompt"
-                },
-                "size": {
-                    "id": "75",
-                    "field": "megapixels"
                 },
                 "steps": {
                     "id": "3",
