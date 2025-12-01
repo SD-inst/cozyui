@@ -168,20 +168,6 @@
             "title": "Something To String"
         }
     },
-    "74": {
-        "inputs": {
-            "noise_mask": true,
-            "positive": ["6", 0],
-            "negative": ["7", 0],
-            "vae": ["39", 0],
-            "pixels": ["75", 0],
-            "mask": ["41", 1]
-        },
-        "class_type": "InpaintModelConditioning",
-        "_meta": {
-            "title": "InpaintModelConditioning"
-        }
-    },
     "75": {
         "inputs": {
             "upscale_method": "lanczos",

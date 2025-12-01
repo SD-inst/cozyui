@@ -143,7 +143,7 @@ export const FileUpload = ({
     });
     const handlePaste = useEventCallback((e: ClipboardEvent) => {
         const items = e.clipboardData?.items;
-        if (!items) {
+        if (!items || field.value) {
             return;
         }
         for (let i = 0; i < items.length; i++) {
@@ -194,19 +194,25 @@ export const FileUpload = ({
                     )}
                     {field.value &&
                         (filetype === UploadType.IMAGE ? (
-                            <img style={style} src={imageURL} />
+                            <img
+                                style={style}
+                                src={imageURL}
+                                onError={() => field.onChange(undefined)}
+                            />
                         ) : filetype === UploadType.VIDEO ||
                           filetype === UploadType.BOTH ? (
                             <video
                                 style={{ ...style, width: 200 }}
                                 src={imageURL}
                                 controls
+                                onError={() => field.onChange(undefined)}
                             />
                         ) : (
                             <audio
                                 style={{ ...style, minWidth: 300 }}
                                 src={imageURL}
                                 controls
+                                onError={() => field.onChange(undefined)}
                             />
                         ))}
                 </Box>
