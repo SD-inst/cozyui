@@ -34,7 +34,7 @@ const Content = () => {
                     defaultValue={0.4}
                     min={0.1}
                     max={2}
-                    step={0.1}
+                    step={0.01}
                 />
                 <HYLengthInput defaultValue={121} max={241} />
                 <SliderInput name='steps' defaultValue={50} min={1} max={50} />
