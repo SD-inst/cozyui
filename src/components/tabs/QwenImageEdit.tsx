@@ -1,6 +1,9 @@
-import { Box, Button, Typography, useEventCallback } from '@mui/material';
+import { useEventCallback } from '@mui/material';
+import { insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
+import { useRegisterHandler } from '../contexts/TabContext';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
+import { ArrayInput } from '../controls/ArrayInput';
 import { CFGInput } from '../controls/CFGInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FileUpload } from '../controls/FileUpload';
@@ -16,15 +19,9 @@ import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TeaCacheInput } from '../controls/TeaCacheInput';
-import { WFTab } from '../WFTab';
-import { Add, Close } from '@mui/icons-material';
 import { ToggleInput } from '../controls/ToggleInput';
-import { useTranslate } from '../../i18n/I18nContext';
-import { useFormContext } from 'react-hook-form';
+import { WFTab } from '../WFTab';
 import { useWatchForm } from '../../hooks/useWatchForm';
-import { useEffect } from 'react';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { insertGraph } from '../../api/utils';
 
 type ReferenceType = {
     image: string;
@@ -33,27 +30,6 @@ type ReferenceType = {
 }[];
 
 const ReferenceImages = ({ name }: { name: string }) => {
-    const tr = useTranslate();
-    const value: ReferenceType = useWatchForm(name) || [];
-    const { setValue, getValues } = useFormContext();
-    useEffect(() => {
-        const values = getValues(name);
-        if (!values || !values.length) {
-            setValue(name, [{ size: 1, enabled: true }]);
-        }
-    }, [getValues, name, setValue]);
-    const handleAdd = () => {
-        if (value.length > 2) {
-            return;
-        }
-        setValue(name, [...value, { size: 1, enabled: true }]);
-    };
-    const handleDelete = (idx: number) => {
-        if (value.length < 2) {
-            return;
-        }
-        setValue(name, [...value.slice(0, idx), ...value.slice(idx + 1)]);
-    };
     const handler = useEventCallback(
         (api: any, value: ReferenceType, control?: controlType) => {
             if (
@@ -106,70 +82,29 @@ const ReferenceImages = ({ name }: { name: string }) => {
     );
     useRegisterHandler({ name, handler });
     return (
-        <Box
-            display='flex'
-            flexDirection='column'
-            alignItems='center'
-            gap={2}
-            mb={2}
+        <ArrayInput
+            name={name}
+            label='reference_images'
+            newValue={{ size: 1, enabled: true }}
+            min={1}
+            max={3}
         >
-            {tr('controls.reference_images')}
-            {value?.map((img, idx) => (
-                <Box
-                    display='flex'
-                    flexDirection='column'
-                    gap={1}
-                    width='100%'
-                    key={`${idx}_${img.image}`}
-                >
-                    <Typography variant='body2' align='center'>
-                        {idx + 1}
-                    </Typography>
-                    <Box
-                        display='flex'
-                        gap={2}
-                        width='100%'
-                        alignItems='flex-start'
-                        justifyContent='space-between'
-                    >
-                        <Box flex={1}>
-                            <FileUpload
-                                name={`${name}.${idx}.image`}
-                                label='image'
-                            />
-                        </Box>
-                        {value.length > 1 && (
-                            <Button onClick={() => handleDelete(idx)}>
-                                <Close />
-                            </Button>
-                        )}
-                    </Box>
-                    <SliderInput
-                        name={`${name}.${idx}.size`}
-                        label='size_mp'
-                        min={0.1}
-                        max={4}
-                        defaultValue={1}
-                        step={0.01}
-                    />
-                    {idx > 0 && (
-                        <ToggleInput
-                            name={`${name}.${idx}.enabled`}
-                            label='enabled'
-                        />
-                    )}
-                </Box>
-            ))}
-            {value.length < 3 && (
-                <Button onClick={handleAdd}>
-                    <Add />
-                </Button>
-            )}
-        </Box>
+            <FileUpload name='image' label='image' />
+            <SliderInput
+                name='size'
+                label='size_mp'
+                min={0.1}
+                max={4}
+                defaultValue={1}
+                step={0.01}
+            />
+            <ToggleInput name='enabled' label='enabled' />
+        </ArrayInput>
     );
 };
 
 const Content = () => {
+    const images: ReferenceType = useWatchForm('reference_images');
     return (
         <Layout>
             <GridLeft>
@@ -214,7 +149,11 @@ const Content = () => {
                 />
             </GridRight>
             <GridBottom>
-                <GenerateButton />
+                <GenerateButton
+                    disabled={
+                        !images || images.every((i) => !i.image || !i.enabled)
+                    }
+                />
             </GridBottom>
         </Layout>
     );

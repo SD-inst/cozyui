@@ -1,11 +1,8 @@
-import { Add, Close } from '@mui/icons-material';
-import { Box, Button, Typography, useEventCallback } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import { useEventCallback } from '@mui/material';
 import { insertGraph } from '../../api/utils';
-import { useWatchForm } from '../../hooks/useWatchForm';
-import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { ArrayInput } from './ArrayInput';
 import { FileUpload } from './FileUpload';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
@@ -83,63 +80,23 @@ export const ReferenceLatentInput = ({ name }: { name: string }) => {
         }
     );
     useRegisterHandler({ name, handler });
-    const tr = useTranslate();
-    const value: ReferenceType = useWatchForm(name) || [];
-    const { setValue } = useFormContext();
-    const handleAdd = () => {
-        setValue(name, [...value, { size: 1, enabled: true }]);
-    };
-    const handleDelete = (idx: number) => {
-        setValue(name, [...value.slice(0, idx), ...value.slice(idx + 1)]);
-    };
     return (
-        <Box display='flex' flexDirection='column' alignItems='center' gap={2}>
-            {tr('controls.reference_images')}
-            {value?.map((img, idx) => (
-                <Box
-                    display='flex'
-                    flexDirection='column'
-                    gap={1}
-                    width='100%'
-                    key={`${idx}_${img.image}`}
-                >
-                    <Typography variant='body2' align='center'>
-                        {idx + 1}
-                    </Typography>
-                    <Box
-                        display='flex'
-                        gap={2}
-                        width='100%'
-                        alignItems='flex-start'
-                        justifyContent='space-between'
-                    >
-                        <Box flex={1}>
-                            <FileUpload
-                                name={`${name}.${idx}.image`}
-                                label='image'
-                            />
-                        </Box>
-                        <Button onClick={() => handleDelete(idx)}>
-                            <Close />
-                        </Button>
-                    </Box>
-                    <SliderInput
-                        name={`${name}.${idx}.size`}
-                        label='size_mp'
-                        min={0.1}
-                        max={3}
-                        defaultValue={1}
-                        step={0.01}
-                    />
-                    <ToggleInput
-                        name={`${name}.${idx}.enabled`}
-                        label='enabled'
-                    />
-                </Box>
-            ))}
-            <Button onClick={handleAdd}>
-                <Add />
-            </Button>
-        </Box>
+        <ArrayInput
+            label='reference_images'
+            name={name}
+            newValue={{ size: 1, enabled: true }}
+            max={10}
+        >
+            <FileUpload name='image' label='image' />
+            <SliderInput
+                name='size'
+                label='size_mp'
+                min={0.1}
+                max={3}
+                defaultValue={1}
+                step={0.01}
+            />
+            <ToggleInput name='enabled' label='enabled' />
+        </ArrayInput>
     );
 };
