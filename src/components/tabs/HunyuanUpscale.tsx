@@ -13,6 +13,7 @@ import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { UploadType } from '../controls/UploadType';
+import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VideoResult } from '../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../WFTab';
@@ -45,6 +46,7 @@ const Content = () => {
                     <SamplerSelectInput name='sampler' />
                     <SchedulerSelectInput name='scheduler' />
                     <VirtualVRAMSliderInput name='virtual_vram' />
+                    <VideoInterpolationSlider />
                     <CompileModelToggle />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />

@@ -385,6 +385,9 @@
                 "compile_model": {
                     "id": "handle",
                     "output_node_id": "14"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "result": {
