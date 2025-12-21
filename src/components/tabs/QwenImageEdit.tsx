@@ -60,6 +60,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
                         inputs: {
                             upscale_method: 'lanczos',
                             megapixels: v.size,
+                            resolution_steps: 1,
                             image: [':1', 0],
                         },
                         class_type: 'ImageScaleToTotalPixels',

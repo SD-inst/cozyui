@@ -195,12 +195,10 @@
   },
   "129": {
     "inputs": {
-      "upscale_method": "lanczos",
-      "megapixels": 0.4,
-      "image": [
-        "80",
-        0
-      ]
+        "upscale_method": "lanczos",
+        "megapixels": 0.4,
+        "resolution_steps": 1,
+        "image": ["80", 0]
     },
     "class_type": "ImageScaleToTotalPixels",
     "_meta": {
