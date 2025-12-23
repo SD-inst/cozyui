@@ -130,16 +130,12 @@
     },
     "57": {
         "inputs": {
-            "tile_size": 256,
-            "overlap": 64,
-            "temporal_size": 64,
-            "temporal_overlap": 8,
             "samples": ["84", 0],
             "vae": ["49", 0]
         },
-        "class_type": "VAEDecodeTiled",
+        "class_type": "VAEDecode",
         "_meta": {
-            "title": "VAE Decode (Tiled)"
+            "title": "VAE Decode"
         }
     },
     "62": {

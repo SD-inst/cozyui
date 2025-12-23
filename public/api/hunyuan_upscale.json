@@ -161,10 +161,6 @@
   },
   "19": {
     "inputs": {
-      "tile_size": 256,
-      "overlap": 64,
-      "temporal_size": 64,
-      "temporal_overlap": 4,
       "samples": [
         "18",
         0
@@ -174,9 +170,9 @@
         0
       ]
     },
-    "class_type": "VAEDecodeTiled",
+    "class_type": "VAEDecode",
     "_meta": {
-      "title": "VAE Decode (Tiled)"
+      "title": "VAE Decode"
     }
   },
   "20": {
@@ -229,10 +225,6 @@
   },
   "29": {
     "inputs": {
-      "tile_size": 512,
-      "overlap": 64,
-      "temporal_size": 64,
-      "temporal_overlap": 16,
       "pixels": [
         "1",
         0
@@ -242,9 +234,9 @@
         0
       ]
     },
-    "class_type": "VAEEncodeTiled",
+    "class_type": "VAEEncode",
     "_meta": {
-      "title": "VAE Encode (Tiled)"
+      "title": "VAE Encode"
     }
   },
   "30": {

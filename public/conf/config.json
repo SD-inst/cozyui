@@ -58,22 +58,6 @@
                     "id": "handle",
                     "node_id": "6"
                 },
-                "tile_size": {
-                    "id": "4",
-                    "field": "tile_size"
-                },
-                "overlap": {
-                    "id": "4",
-                    "field": "overlap"
-                },
-                "temporal_size": {
-                    "id": "4",
-                    "field": "temporal_size"
-                },
-                "temporal_overlap": {
-                    "id": "4",
-                    "field": "temporal_overlap"
-                },
                 "clip_model": {
                     "id": "10",
                     "field": "clip_name2"
@@ -122,13 +106,7 @@
                     "type": "gifs"
                 },
                 { "id": "20", "type": "images" }
-            ],
-            "defaults": {
-                "tile_size": 256,
-                "overlap": 64,
-                "temporal_size": 64,
-                "temporal_overlap": 4
-            }
+            ]
         },
         "Hunyuan 1.5 T2V": {
             "api": "api/hunyuan15_t2v_native.json",
@@ -360,22 +338,6 @@
                     "id": "30",
                     "field": "scale_by"
                 },
-                "tile_size": {
-                    "id": "19",
-                    "field": "tile_size"
-                },
-                "overlap": {
-                    "id": "19",
-                    "field": "overlap"
-                },
-                "temporal_size": {
-                    "id": "19",
-                    "field": "temporal_size"
-                },
-                "temporal_overlap": {
-                    "id": "19",
-                    "field": "temporal_overlap"
-                },
                 "lora": {
                     "id": "handle"
                 },
@@ -404,12 +366,6 @@
                     "strength_field_name": "strength",
                     "name_field_name": "lora_name"
                 }
-            },
-            "defaults": {
-                "tile_size": 256,
-                "overlap": 64,
-                "temporal_size": 64,
-                "temporal_overlap": 4
             }
         },
         "Hunyuan T2V KJ": {
@@ -799,22 +755,6 @@
                     "id": "handle",
                     "node_id": "54"
                 },
-                "tile_size": {
-                    "id": "57",
-                    "field": "tile_size"
-                },
-                "overlap": {
-                    "id": "57",
-                    "field": "overlap"
-                },
-                "temporal_size": {
-                    "id": "57",
-                    "field": "temporal_size"
-                },
-                "temporal_overlap": {
-                    "id": "57",
-                    "field": "temporal_overlap"
-                },
                 "clip_model": {
                     "id": "47",
                     "field": "clip_name2"
@@ -847,13 +787,7 @@
                     "type": "gifs"
                 },
                 { "id": "93", "type": "images" }
-            ],
-            "defaults": {
-                "tile_size": 256,
-                "overlap": 64,
-                "temporal_size": 64,
-                "temporal_overlap": 4
-            }
+            ]
         },
         "Stable audio": {
             "api": "api/stable_audio.json",
