@@ -262,7 +262,7 @@
   "119": {
     "inputs": {
       "normalize_loudness": true,
-      "num_frames": 1000,
+      "num_frames": 2000,
       "fps": [
         "130",
         0
