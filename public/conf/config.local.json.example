@@ -3,10 +3,7 @@
         "Hunyuan T2V": {
             "defaults": {
                 "guidance": 8,
-                "flow_shift": 9,
-                "tile_size": 192,
-                "temporal_size": 128,
-                "temporal_overlap": 16
+                "flow_shift": 9
             }
         }
     },
