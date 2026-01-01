@@ -72,8 +72,18 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                 return w.notEqual(markEnum.PINNED).primaryKeys();
             }
         };
-        return [tsFilterFunc, pinFilterFunc];
-    }, [filter.pinned, newer, seconds]);
+        const typeFilterFunc = () => {
+            return db.taskResults
+                .where('type')
+                .equals(filter.type)
+                .primaryKeys();
+        };
+        const result = [tsFilterFunc, pinFilterFunc];
+        if (filter.type) {
+            result.push(typeFilterFunc);
+        }
+        return result;
+    }, [filter.pinned, filter.type, newer, seconds]);
     const handleConfirmDelete = useEventCallback(async () => {
         const coll = await pkFromFilter(filterFuncs);
         const cnt = coll.length;
@@ -160,6 +170,13 @@ export const ClearHistoryButton = ({ ...props }: BoxProps) => {
                     {filter.pinned && (
                         <Typography variant='body2' color='error'>
                             {tr('settings.pinned_active')}
+                        </Typography>
+                    )}
+                    {filter.type && (
+                        <Typography variant='body2' color='warning'>
+                            {tr('settings.type_active', {
+                                type: filter.type,
+                            })}
                         </Typography>
                     )}
                     <Box

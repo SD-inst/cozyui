@@ -33,7 +33,6 @@ export const pkFromFilter = async (
         pksP.push(pinFilter());
     }
     if (filter.type) {
-        console.log('Filtering by type:', filter);
         pksP.push(typeFilter(filter.type));
     }
     if (additionalFilters) {

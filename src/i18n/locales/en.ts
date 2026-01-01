@@ -225,6 +225,7 @@ const translation = {
         prompt_active:
             'Filter is active! Only the items matching "%{prompt}" will be deleted',
         pinned_active: 'Only pinned items will be deleted!',
+        type_active: 'Only items of type %{type} will be deleted!',
         version: 'version: %{version}',
     },
     help: {
