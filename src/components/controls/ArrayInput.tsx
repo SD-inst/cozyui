@@ -7,10 +7,11 @@ import React, {
     ReactNode,
     useEffect,
 } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { useWatchForm } from '../../hooks/useWatchForm';
 import { useTranslate } from '../../i18n/I18nContext';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
+import toast from 'react-hot-toast';
 
 const cloneChildren = ({
     children,
@@ -67,6 +68,8 @@ const cloneChildren = ({
     );
 };
 
+const defaultValue: any[] = [];
+
 export const ArrayInput = ({
     label,
     name,
@@ -74,30 +77,74 @@ export const ArrayInput = ({
     keyField = 'image',
     min = 0,
     max = -1,
+    receiverFieldName,
+    targetFieldName,
     ...props
 }: {
     name: string;
-    label: string;
+    label?: string;
     newValue: any;
     keyField?: string;
     min?: number;
     max?: number;
+    receiverFieldName?: string;
+    targetFieldName?: string;
 } & PropsWithChildren) => {
     const tr = useTranslate();
-    const value: any = useWatchForm(name) || [];
-    const { setValue } = useFormContext();
+    const value: any = useWatchForm(name) || defaultValue;
+    const { unregister } = useFormContext();
+    const { append, update } = useFieldArray({ name });
     useEffect(() => {
-        if (!value.length && min > 0) {
-            setValue(name, Array(min).fill(newValue));
+        if (value.length < min && min > 0) {
+            for (let i = 0; i < min; i++) {
+                append(clone(newValue));
+            }
         }
-    }, [min, name, newValue, setValue, value.length]);
-
+    }, [append, min, newValue, value.length]);
     const handleAdd = () => {
-        setValue(name, [...value, clone(newValue)]);
+        append(clone(newValue));
     };
+    const receiverFieldValue = useWatch({
+        name: receiverFieldName || '',
+        disabled: !receiverFieldName || !targetFieldName,
+    });
+    useEffect(() => {
+        if (!receiverFieldName || !receiverFieldValue || !targetFieldName) {
+            return;
+        }
+        unregister(receiverFieldName);
+        for (let index = 0; index < value.length; index++) {
+            if (!value[index][targetFieldName]) {
+                update(index, {
+                    ...value[index],
+                    [targetFieldName]: receiverFieldValue,
+                });
+                return;
+            }
+        }
+        if (value.length < max) {
+            append({
+                ...clone(newValue),
+                [targetFieldName]: receiverFieldValue,
+            });
+        } else {
+            toast.error(tr('toasts.array_overflow'));
+        }
+    }, [
+        receiverFieldValue,
+        receiverFieldName,
+        targetFieldName,
+        value,
+        newValue,
+        max,
+        tr,
+        unregister,
+        append,
+        update,
+    ]);
     return (
         <Box display='flex' flexDirection='column' alignItems='center' gap={2}>
-            {tr('controls.' + label)}
+            {label ? tr(label) : tr('controls.' + name)}
             {value?.map((val: any, index: number) => (
                 <Box
                     display='flex'

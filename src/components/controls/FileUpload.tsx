@@ -63,7 +63,13 @@ export const FileUpload = ({
             return UploadType.IMAGE;
         }
         for (const k of Object.keys(ext)) {
-            if (ext[k].some((e) => field.value.endsWith(e))) {
+            if (
+                ext[k].some(
+                    (e) =>
+                        typeof field.value === 'string' &&
+                        field.value.endsWith(e)
+                )
+            ) {
                 return k;
             }
         }

@@ -13,7 +13,13 @@ type ReferenceType = {
     enabled: boolean;
 }[];
 
-export const ReferenceLatentInput = ({ name }: { name: string }) => {
+export const ReferenceLatentInput = ({
+    name,
+    receiverFieldName,
+}: {
+    name: string;
+    receiverFieldName?: string;
+}) => {
     const handler = useEventCallback(
         (api: any, value: ReferenceType, control?: controlType) => {
             if (
@@ -83,10 +89,11 @@ export const ReferenceLatentInput = ({ name }: { name: string }) => {
     useRegisterHandler({ name, handler });
     return (
         <ArrayInput
-            label='reference_images'
             name={name}
             newValue={{ size: 1, enabled: true }}
             max={10}
+            receiverFieldName={receiverFieldName}
+            targetFieldName='image'
         >
             <FileUpload name='image' label='image' />
             <SliderInput

@@ -17,7 +17,10 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
-                <ReferenceLatentInput name='reference_images' />
+                <ReferenceLatentInput
+                    name='reference_images'
+                    receiverFieldName='image'
+                />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={40} />
                 <GuidanceInput defaultValue={4} step={0.1} />
@@ -53,5 +56,11 @@ const Content = () => {
 };
 
 export const Flux2Tab = (
-    <WFTab label='Flux 2' value='Flux 2' group='T2I' content={<Content />} />
+    <WFTab
+        label='Flux 2'
+        value='Flux 2'
+        group='T2I'
+        receivers={[{ name: 'reference_images', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

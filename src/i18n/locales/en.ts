@@ -282,6 +282,7 @@ const translation = {
         error_exporting_database: 'Error exporting history: %{err}',
         error_uploading: 'Error uploading image: %{err}',
         tags_loaded: 'Tags loaded',
+        array_overflow: "Can't add more elements. Please reset or remove one of the references."
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',

@@ -283,6 +283,8 @@ const translation = {
         error_exporting_database: 'Ошибка при экспорте истории: %{err}',
         error_uploading: 'Ошибка при загрузке изображения: %{err}',
         tags_loaded: 'Теги загружены',
+        array_overflow:
+            'Нельзя добавить больше изображений. Удалите или сбросьте одно из существующих.',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',

@@ -1247,7 +1247,8 @@
                 "reference_images": {
                     "id": "handle",
                     "guider_node_id": "22",
-                    "vae_node_id": "10"
+                    "vae_node_id": "10",
+                    "set_field": "image"
                 }
             },
             "handler_options": {
@@ -1592,7 +1593,8 @@
                     "id": "handle",
                     "positive_node_id": "6",
                     "negative_node_id": "7",
-                    "vae_encode_node_id": "58"
+                    "vae_encode_node_id": "58",
+                    "set_field": "image"
                 },
                 "prompt": {
                     "id": "6",

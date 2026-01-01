@@ -85,10 +85,11 @@ const ReferenceImages = ({ name }: { name: string }) => {
     return (
         <ArrayInput
             name={name}
-            label='reference_images'
             newValue={{ size: 1, enabled: true }}
             min={1}
             max={3}
+            receiverFieldName='image'
+            targetFieldName='image'
         >
             <FileUpload name='image' label='image' />
             <SliderInput
@@ -165,11 +166,7 @@ export const QwenImageEditTab = (
         label='Qwen Image Edit'
         value='Qwen Image Edit'
         group='I2I'
-        receivers={[
-            { name: 'image', acceptedTypes: 'images', weight: 90 },
-            { name: 'second_image', acceptedTypes: 'images', weight: 89 },
-            { name: 'third_image', acceptedTypes: 'images', weight: 88 },
-        ]}
+        receivers={[{ name: 'reference_images', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );

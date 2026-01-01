@@ -13,7 +13,7 @@ import {
     FormProvider,
     useForm,
     useFormContext,
-    useWatch,
+    useWatch
 } from 'react-hook-form';
 import { useCurrentTab } from '../hooks/useCurrentTab';
 import { useHiddenTabs } from '../hooks/useHiddenTabs';
@@ -40,7 +40,15 @@ const useRestoreValues = () => {
             return;
         }
         if (api.controls[key]) {
-            setValue(key, value, { shouldDirty: false });
+            if (typeof value === 'string' && api.controls[key].set_field) {
+                // only use the set_field parameter for string values that are
+                // used with send/receive
+                setValue(api.controls[key].set_field, value, {
+                    shouldDirty: false,
+                });
+            } else {
+                setValue(key, value, { shouldDirty: false });
+            }
         }
     });
 };
