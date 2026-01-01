@@ -6,7 +6,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 
 <img src=".github/1.jpg" width="500"/>
 <img src=".github/2.jpg" width="500"/>
-<img src=".github/3.jpg" width="500"/>
+<img src=".github/3.png" width="500"/>
 
 ## Features
 
@@ -59,12 +59,13 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - Ctrl+Up/Down (increase/decrease selection weight by 0.1)
     - Ctrl+Shift+Up/Down (increase/decrease selection weight by 1)
 - History management:
-    - Store generation data and video/audio locally in your browser (IndexedDB), including timestamp and total generation time
+    - Store/restore generation data and images/video/audio locally in your browser (IndexedDB), including timestamp and total generation time
     - Search (filter) by prompt/content type
     - Pin generations to prevent accidental deletion
-    - Collection cleanup by time (before/after N seconds/minutes/hours/etc.)
+    - Collection cleanup by time (before/after N seconds/minutes/hours/etc.), prompt, file type
     - Compare any two results side by side, generation data and videos, to see how changes affect the result
     - Import/Export to back up the history or transfer it to another browser/device
+- Send results to other tabs if content type allows it (generate image => send to I2V for example)
 - Customizable audio notification when task completes
 - Localization support (English/Russian currently)
 - Many controls have tips and explanation (can be disabled in settings)
@@ -180,7 +181,7 @@ In the end this scheme allows to decouple controls from workflows using `config.
 
 To make a new tab you need to make a working workflow in ComfyUI first. Provide some sane defaults for the nodes if you don't plan to expose them all. Export the workflow as API (`Workflow ⇒ Export (API)`). Then make a new section in `config.json` with a new tab id (any string name) and fill it similarly to the existing ones.
 
-There are a few keys, `api` should be set to your exported API file name, `controls` binds the UI controls to the nodes as `"control_name": { "id": "digital_node_id", "field": "node_field" }`. The `result` key defines where to get the execution results from, `{"id": "digital_node_id", "type": "data_type"}`. You can check out the data type in the browser console, see the `executed` message in the log and you'll find the output type there. For videos it's usually `gifs`, for text it's `text`.
+There are a few keys, `api` should be set to your exported API file name, `controls` binds the UI controls to the nodes as `"control_name": { "id": "digital_node_id", "field": "node_field" }`. The `result` key defines where to get the execution results from, `{"id": "digital_node_id", "type": "data_type"}`. You can check out the data type in the browser console, see the `executed` message in the log and you'll find the output type there. For images it's `images`, for videos it's usually `gifs`, for text it's `text`.
 
 `lora_params` sets some fields and node ids to insert multiple chained lora loaders somewhere in the workflow. It's not very comfortable to use currently so I'll describe it sometime later or remake it (you can guess how to define it from the existing workflows). The issue is that there are few lora loaders and few connection types, and it should be flexible enough to be used in different scenarios.
 
@@ -197,7 +198,7 @@ If any of these rules are violated you'll see errors when you generate. Make sur
 
 ## Config overrides
 
-You can create a file named `config.local.json` in `public/conf` directory in the source or in the root of the deployed app (next to `conf/config.json`). This file is loaded and merged on top of `config.json` so you can provide local defaults, overrides, and additional parameters. The arrays are concatenated, you can append models like this. There's now one `defaults` section in `config.json` which defines the default VAE parameters but it also works with all controls you see in the UI. The keys in that section are control names and the values are, well, their desired values. Controls don't *have* to have a UI representation as long as they're bound to the workflow (API) in the config, see the `controls` section. VAE settings are an example of such invisible controls. However, if you add more controls make sure to provide the default values too, otherwise an error during generation would be shown: `Missing controls (present in API)` with a list of controls that don't have values. If you provided the defaults but forgot to make bindings for them in the config, the error would be `Missing API bindings (present controls)`. Invalid control definitions that have a non-existent node id are reported as `Missing API ids`, those without a field are reported as `Missing API fields`. Normally you shouldn't see any such errors if you only use the stock config and no overrides.
+You can create a file named `config.local.json` in `public/conf` directory in the source or in the root of the deployed app (next to `conf/config.json`). This file is loaded and merged on top of `config.json` so you can provide local defaults, overrides, and additional parameters. The arrays are concatenated, you can append models like this. There are some `defaults` sections in `config.json` which defines the default models but it also works with all controls you see in the UI. The keys in that section are control names and the values are, well, their desired values. Controls don't *have* to have a UI representation as long as they're bound to the workflow (API) in the config, see the `controls` section. However, if you add more controls make sure to provide the default values too, otherwise an error during generation would be shown: `Missing controls (present in API)` with a list of controls that don't have values. If you provided the defaults but forgot to make bindings for them in the config, the error would be `Missing API bindings (present controls)`. Invalid control definitions that have a non-existent node id are reported as `Missing API ids`, those without a field are reported as `Missing API fields`. Normally you shouldn't see any such errors if you only use the stock config and no overrides.
 
 ## Lora previews
 
