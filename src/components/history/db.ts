@@ -35,11 +35,17 @@ export interface FormState {
     state: string;
 }
 
+export interface Uploads {
+    id: string;
+    file: File;
+}
+
 export const db = new Dexie('task_results') as Dexie & {
     taskResults: EntityTable<TaskResult, 'id'>;
     settings: Table<Settings, string>;
     formState: Table<FormState, string>;
-    tags: Table<Tags, string>
+    tags: Table<Tags, string>;
+    uploads: Table<Uploads, string>;
 };
 
 db.version(2)
@@ -67,7 +73,8 @@ db.version(3)
         });
     });
 
-db.version(4).stores({tags: '&name, color, *index'})
+db.version(4).stores({ tags: '&name, color, *index' });
+db.version(5).stores({ uploads: '&id' });
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

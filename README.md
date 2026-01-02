@@ -72,6 +72,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - VRAM and speed optimizations: TeaCache, EasyCache, MultiGPU
 - Hide any model tabs you don't need
 - Danbooru tag completion
+- Optionally save uploaded files in your browser and automatically reupload them if they were deleted in ComfyUI
 
 ## Goals
 

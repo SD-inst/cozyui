@@ -4,12 +4,19 @@ import { useEffect, useMemo } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { settings } from '../../hooks/settings';
 import { useApiURL } from '../../hooks/useApiURL';
+import { useImageURL } from '../../hooks/useImageURL';
+import { useBooleanSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
-import { useIsCurrentTab, useRegisterHandler } from '../contexts/TabContext';
+import {
+    useIsCurrentTab,
+    useRegisterHandler,
+    useTabName,
+} from '../contexts/TabContext';
+import { db } from '../history/db';
 import { UploadType } from './UploadType';
-import { useImageURL } from '../../hooks/useImageURL';
 
 const style = {
     maxWidth: 200,
@@ -54,6 +61,7 @@ export const FileUpload = ({
     onUpload?: (file: File) => void;
     extraHandler?: (api: any, value: string, control?: controlType) => void;
 }) => {
+    const backupUploads = useBooleanSetting(settings.backup_uploads);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
@@ -91,6 +99,8 @@ export const FileUpload = ({
         }
     );
     useRegisterHandler({ name: props.name, handler });
+    const tabName = useTabName();
+    const uploadKey = tabName + '/' + props.name;
     const { mutate } = useMutation({
         onMutate: async (files: File[]) => {
             const formData = new FormData();
@@ -109,6 +119,12 @@ export const FileUpload = ({
                 j.filename = j.name;
                 delete j.name;
                 field.onChange(j.filename);
+                if (backupUploads) {
+                    db.uploads.put({
+                        id: uploadKey,
+                        file: files[0],
+                    });
+                }
                 if (onUpload && j.filename) {
                     onUpload(file);
                 }
@@ -168,6 +184,14 @@ export const FileUpload = ({
         }
         return () => document.removeEventListener('paste', handlePaste);
     }, [isCurrentTab, handlePaste]);
+    const handleUploadLost = useEventCallback(async () => {
+        const file = await db.uploads.get(uploadKey);
+        if (!backupUploads || !file) {
+            field.onChange(null);
+            return;
+        }
+        mutate([file.file]);
+    });
     return (
         <Box mb={2} display='flex' flexDirection='column'>
             <Typography variant='body1'>
@@ -203,7 +227,7 @@ export const FileUpload = ({
                             <img
                                 style={style}
                                 src={imageURL}
-                                onError={() => field.onChange(undefined)}
+                                onError={handleUploadLost}
                             />
                         ) : filetype === UploadType.VIDEO ||
                           filetype === UploadType.BOTH ? (
@@ -211,14 +235,14 @@ export const FileUpload = ({
                                 style={{ ...style, width: 200 }}
                                 src={imageURL}
                                 controls
-                                onError={() => field.onChange(undefined)}
+                                onError={handleUploadLost}
                             />
                         ) : (
                             <audio
                                 style={{ ...style, minWidth: 300 }}
                                 src={imageURL}
                                 controls
-                                onError={() => field.onChange(undefined)}
+                                onError={handleUploadLost}
                             />
                         ))}
                 </Box>

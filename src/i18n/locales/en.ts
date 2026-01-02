@@ -198,6 +198,7 @@ const translation = {
         disable_help: 'Disable tooltips',
         enable_previews: 'Enable previews',
         tag_completion: 'Tag completion',
+        backup_uploads: 'Backup/restore uploaded files',
         tag_number: 'Number of tag suggestions',
         tag_enabled_tabs: 'Tags enabled on tabs',
         notification: 'Notification sound',

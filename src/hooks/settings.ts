@@ -7,6 +7,7 @@ export enum settings {
     enable_previews = 'enable_previews',
     hidden_tabs = 'hidden_tabs',
     tag_completion = 'tag_completion',
+    backup_uploads = 'backup_uploads',
     tag_number = 'tag_number',
     tag_enabled_tabs = 'tag_enabled_tabs',
 }

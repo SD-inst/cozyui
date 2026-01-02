@@ -8,6 +8,7 @@ export const useImageURL = (filename: string) => {
         params.set('subfolder', '');
         params.set('type', 'input');
         params.set('filename', filename);
+        params.set('noCache', Math.floor(Math.random() * 1000000).toFixed(0));
         return apiUrl + '/api/view?' + params.toString();
     }, [apiUrl, filename]);
     return imageURL;
