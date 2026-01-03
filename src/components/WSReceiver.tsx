@@ -17,6 +17,7 @@ import {
 } from '../redux/progress';
 import { addResult, clearPrompt } from '../redux/tab';
 import { useRef } from 'react';
+import { updateNoCache } from '../api/utils';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -75,6 +76,7 @@ export const WSReceiver = () => {
                 dispatch(setGenerationStart());
                 break;
             case 'executed':
+                updateNoCache();
                 dispatch(
                     addResult({
                         prompt_id: j.data.prompt_id,

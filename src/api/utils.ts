@@ -1,3 +1,8 @@
+let noCache = '';
+
+export const updateNoCache = () =>
+    (noCache = Math.floor(Math.random() * 1000000).toFixed(0));
+
 export const shiftStr = (a: string, b: number) => '' + (parseInt(a) + b);
 
 export const shiftIds = (api: any, base: number) => {
@@ -71,7 +76,7 @@ export const makeOutputUrl = (apiUrl: string, r: any) => {
     if (r.url) {
         return r.url;
     }
-    return `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}`;
+    return `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}&noCache=${noCache}`;
 };
 
 export const bigRandom = (len: number) => {
