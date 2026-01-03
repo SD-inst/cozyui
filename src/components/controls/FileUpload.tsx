@@ -1,6 +1,13 @@
-import { Box, Button, Link, Typography, useEventCallback } from '@mui/material';
+import {
+    Box,
+    Button,
+    LinearProgress,
+    Link,
+    Typography,
+    useEventCallback,
+} from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -61,6 +68,7 @@ export const FileUpload = ({
     onUpload?: (file: File) => void;
     extraHandler?: (api: any, value: string, control?: controlType) => void;
 }) => {
+    const [uploadProgress, setUploadProgress] = useState(false);
     const backupUploads = useBooleanSetting(settings.backup_uploads);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
@@ -111,6 +119,7 @@ export const FileUpload = ({
             );
             formData.append('image', file);
             try {
+                setUploadProgress(true);
                 const r = await fetch(apiUrl + '/api/upload/image', {
                     method: 'POST',
                     body: formData,
@@ -130,6 +139,8 @@ export const FileUpload = ({
                 }
             } catch (e) {
                 toast(tr('toasts.error_uploading', { err: e }));
+            } finally {
+                setUploadProgress(false);
             }
         },
     });
@@ -206,46 +217,56 @@ export const FileUpload = ({
                 sx={{ transition: 'border .24s ease-in-out' }}
                 {...getRootProps()}
             >
-                <input {...getInputProps()} />
-                <Box display='flex' alignItems='center' flexDirection='column'>
-                    {isDragActive ? (
-                        <p style={{ alignSelf: 'center' }}>
-                            {tr('controls.drop_files_here')}
-                        </p>
-                    ) : (
-                        <Link
-                            sx={{
-                                cursor: 'pointer',
-                                textAlign: 'center',
-                            }}
+                {uploadProgress ? (
+                    <LinearProgress />
+                ) : (
+                    <>
+                        <input {...getInputProps()} />
+                        <Box
+                            display='flex'
+                            alignItems='center'
+                            flexDirection='column'
                         >
-                            {tr('controls.drop_files_desc')}
-                        </Link>
-                    )}
-                    {field.value &&
-                        (filetype === UploadType.IMAGE ? (
-                            <img
-                                style={style}
-                                src={imageURL}
-                                onError={handleUploadLost}
-                            />
-                        ) : filetype === UploadType.VIDEO ||
-                          filetype === UploadType.BOTH ? (
-                            <video
-                                style={{ ...style, width: 200 }}
-                                src={imageURL}
-                                controls
-                                onError={handleUploadLost}
-                            />
-                        ) : (
-                            <audio
-                                style={{ ...style, minWidth: 300 }}
-                                src={imageURL}
-                                controls
-                                onError={handleUploadLost}
-                            />
-                        ))}
-                </Box>
+                            {isDragActive ? (
+                                <p style={{ alignSelf: 'center' }}>
+                                    {tr('controls.drop_files_here')}
+                                </p>
+                            ) : (
+                                <Link
+                                    sx={{
+                                        cursor: 'pointer',
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    {tr('controls.drop_files_desc')}
+                                </Link>
+                            )}
+                            {field.value &&
+                                (filetype === UploadType.IMAGE ? (
+                                    <img
+                                        style={style}
+                                        src={imageURL}
+                                        onError={handleUploadLost}
+                                    />
+                                ) : filetype === UploadType.VIDEO ||
+                                  filetype === UploadType.BOTH ? (
+                                    <video
+                                        style={{ ...style, width: 200 }}
+                                        src={imageURL}
+                                        controls
+                                        onError={handleUploadLost}
+                                    />
+                                ) : (
+                                    <audio
+                                        style={{ ...style, minWidth: 300 }}
+                                        src={imageURL}
+                                        controls
+                                        onError={handleUploadLost}
+                                    />
+                                ))}
+                        </Box>
+                    </>
+                )}
             </Box>
             {field.value && (
                 <Button
