@@ -269,7 +269,7 @@ const translation = {
         disconnected: 'Отключен',
         connected: 'Подключен!',
         error_getting_config: 'Ошибка получения конфига: %{err}',
-        error_obj_info: 'Ошибка получения ифнормации об объектах: %{err}',
+        error_obj_info: 'Ошибка получения информации об объектах: %{err}',
         objects_updated: 'Объекты обновлены',
         execution_skipped: 'Выполнение пропущено',
         error_processing_handler:
