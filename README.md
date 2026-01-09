@@ -22,7 +22,6 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Wan 2.1 InfiniteTalk (Kijai)
         - Framepack
         - LTX I2V
-        - EasyAnimate I2V
     - T2I
         - StableDiffusion 1.5/SDXL
         - Flux.1/2
@@ -139,12 +138,6 @@ They're additionally filtered by path component `hyvid/` which can be overridden
 ### LTX Video
 
 - Filename: `models/checkpoints/video/ltx-video-2b-v0.9.1.safetensors`
-
-### EasyAnimate
-
-- Path: `models/EasyAnimate/EasyAnimateV5.1-12b-zh-InP`
-
-Should download automatically if absent
 
 ### Stable Audio
 

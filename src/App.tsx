@@ -19,7 +19,6 @@ import { ChatterboxTab } from './components/tabs/ChatterboxTTS';
 import { ChatterboxDialogTab } from './components/tabs/ChatterboxTTSDialog';
 import { ChromaTab } from './components/tabs/Chroma';
 import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
-import { EasyAnimateI2VTab } from './components/tabs/EasyAnimate';
 import { FluxTab } from './components/tabs/Flux';
 import { FluxKontextTab } from './components/tabs/FluxKontext';
 import { FramePackI2VTab } from './components/tabs/FramePackI2V';
@@ -86,8 +85,6 @@ function App() {
                                 {Flux2Tab}
                                 {HunyanT2VKJTab}
                                 {HunyanI2VKJTab}
-                                {LTXI2VTab}
-                                {EasyAnimateI2VTab}
                                 {StableAudioTab}
                                 {MMAudioTab}
                                 {ChatterboxTab}
