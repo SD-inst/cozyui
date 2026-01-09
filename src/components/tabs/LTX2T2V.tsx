@@ -29,7 +29,7 @@ const Content = () => {
                     min={9}
                     max={601}
                     step={8}
-                    defaultValue={126}
+                    defaultValue={129}
                     fps={25}
                 />
                 <SliderInput name='steps' defaultValue={20} min={5} max={50} />
@@ -40,7 +40,7 @@ const Content = () => {
                         multiline
                     />
                     <CFGInput defaultValue={4} />
-                    <SamplerSelectInput name='sampler' defaultValue='euler' />
+                    <SamplerSelectInput name='sampler' defaultValue='euler_ancestral' />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />

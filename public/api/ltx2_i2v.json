@@ -124,7 +124,7 @@
   },
   "92:66": {
     "inputs": {
-      "sampler_name": "gradient_estimation"
+      "sampler_name": "euler_ancestral"
     },
     "class_type": "KSamplerSelect",
     "_meta": {
@@ -598,7 +598,7 @@
     "inputs": {
       "av_latent": [
         "92:70",
-        0
+        1
       ]
     },
     "class_type": "LTXVSeparateAVLatent",
