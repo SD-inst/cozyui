@@ -1,13 +1,14 @@
 import { Button, Typography } from '@mui/material';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
 import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useIsCurrentTab } from '../contexts/TabContext';
 import { VerticalBox } from '../VerticalBox';
-import { VideoPreview } from './VideoPreview';
 import { SendResultButton } from './SendResultButton';
+import { VideoPreview } from './VideoPreview';
 
 export type VideoResultProps = {
     title?: string;
@@ -28,6 +29,8 @@ export const VideoResult = ({
     sendLabel,
     sendOnClick,
 }: VideoResultProps) => {
+    const sound = useIsCurrentTab();
+    const [paused, setPaused] = useState(false);
     const results = useResult();
     const tr = useTranslate();
     const videoRef = useRef<HTMLVideoElement & HTMLImageElement>(null);
@@ -61,8 +64,11 @@ export const VideoResult = ({
                                 style={{ width: '100%' }}
                                 src={url}
                                 controls
-                                autoPlay
+                                autoPlay={!paused}
                                 loop
+                                muted={!sound}
+                                onPause={() => setPaused(true)}
+                                onPlay={() => setPaused(false)}
                             />
                         )}
                         <a download href={url}>
