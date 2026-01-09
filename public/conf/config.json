@@ -545,53 +545,125 @@
                 "type": "text"
             }
         },
-        "EasyAnimate I2V": {
-            "api": "api/easy_animate.json",
+        "LTX-2 T2V": {
+            "api": "api/ltx2_t2v.json",
             "controls": {
                 "prompt": {
-                    "id": "75",
-                    "field": "prompt"
+                    "id": "92:3",
+                    "field": "text"
                 },
-                "image": {
-                    "id": "7",
-                    "field": "image"
-                },
-                "image_end": {
-                    "id": "handle"
-                },
-                "neg_prompt": {
-                    "id": "73",
-                    "field": "prompt"
+                "seed": {
+                    "id": "104",
+                    "field": "value"
                 },
                 "length": {
-                    "id": "82",
-                    "field": "video_length"
+                    "id": "92:62",
+                    "field": "value"
                 },
                 "steps": {
-                    "id": "82",
+                    "id": "92:9",
                     "field": "steps"
                 },
+                "width": {
+                    "id": "92:89",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "92:89",
+                    "field": "height"
+                },
+                "neg_prompt": {
+                    "id": "92:4",
+                    "field": "text"
+                },
                 "cfg": {
-                    "id": "82",
+                    "id": "92:47",
                     "field": "cfg"
                 },
                 "sampler": {
-                    "id": "82",
-                    "field": "scheduler"
+                    "id": "92:8",
+                    "field": "sampler_name"
                 },
-                "seed": {
-                    "id": "87",
-                    "field": "value"
-                },
-                "suffix": {
-                    "id": "skip"
-                },
-                "llm": {
-                    "id": "skip"
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["92:68", "92:47"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
                 }
             },
             "result": {
-                "id": "17",
+                "id": "103",
+                "type": "gifs"
+            }
+        },
+        "LTX-2 I2V": {
+            "api": "api/ltx2_i2v.json",
+            "controls": {
+                "prompt": {
+                    "id": "92:3",
+                    "field": "text"
+                },
+                "image": {
+                    "id": "98",
+                    "field": "image"
+                },
+                "seed": {
+                    "id": "104",
+                    "field": "value"
+                },
+                "length": {
+                    "id": "92:62",
+                    "field": "value"
+                },
+                "compression": {
+                    "id": "92:99",
+                    "field": "img_compression"
+                },
+                "steps": {
+                    "id": "92:9",
+                    "field": "steps"
+                },
+                "size": {
+                    "id": "106",
+                    "field": "megapixels"
+                },
+                "neg_prompt": {
+                    "id": "92:4",
+                    "field": "text"
+                },
+                "cfg": {
+                    "id": "92:47",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "92:8",
+                    "field": "sampler_name"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["92:68", "92:47"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "103",
                 "type": "gifs"
             }
         },
@@ -2791,6 +2863,9 @@
         },
         "zimage": {
             "filter": "zimage/"
+        },
+        "ltx2": {
+            "filter": "ltx2/"
         }
     },
     "api": "/cui"

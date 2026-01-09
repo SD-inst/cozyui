@@ -15,42 +15,43 @@ import { TagLoader } from './components/controls/TagAutocomplete';
 import { ThemedToaster } from './components/controls/ThemedToaster';
 import { HistoryPanel } from './components/history/HistoryPanel';
 import { AppSettings } from './components/settings/AppSettings';
+import { ACEStepTab } from './components/tabs/ACEStep';
 import { ChatterboxTab } from './components/tabs/ChatterboxTTS';
 import { ChatterboxDialogTab } from './components/tabs/ChatterboxTTSDialog';
 import { ChromaTab } from './components/tabs/Chroma';
 import { ChromaUpscaleTab } from './components/tabs/ChromaUpscale';
 import { FluxTab } from './components/tabs/Flux';
+import { Flux2Tab } from './components/tabs/Flux2';
 import { FluxKontextTab } from './components/tabs/FluxKontext';
 import { FramePackI2VTab } from './components/tabs/FramePackI2V';
 import { HiDreamTab } from './components/tabs/HiDream';
+import { Hunyan15I2VTab } from './components/tabs/Hunyuan15I2V';
+import { Hunyan15T2VTab } from './components/tabs/Hunyuan15T2V';
 import { HunyanI2VTab } from './components/tabs/HunyuanI2V';
 import { HunyanI2VKJTab } from './components/tabs/HunyuanI2VKJ';
 import { HunyanT2VTab } from './components/tabs/HunyuanT2V';
 import { HunyanT2VKJTab } from './components/tabs/HunyuanT2VKJ';
 import { HunyanUpscale } from './components/tabs/HunyuanUpscale';
-import { LTXI2VTab } from './components/tabs/LTXI2V';
+import { LTX2I2VTab } from './components/tabs/LTX2I2V';
+import { LTX2T2VTab } from './components/tabs/LTX2T2V';
 import { MMAudioTab } from './components/tabs/MMAudio';
+import { OviI2VTab } from './components/tabs/OviI2V';
+import { OviT2VTab } from './components/tabs/OviT2V';
 import { QwenImageTab } from './components/tabs/QwenImage';
 import { QwenImageEditTab } from './components/tabs/QwenImageEdit';
 import { SDTab } from './components/tabs/SD';
 import { SDUpscaleTab } from './components/tabs/SDUpscale';
+import { SongBloomTab } from './components/tabs/SongBloom';
 import { StableAudioTab } from './components/tabs/StableAudio';
 import { VibeVoiceTab } from './components/tabs/VibeVoiceTTS';
 import { VibeVoiceDialogTab } from './components/tabs/VibeVoiceTTSDialog';
+import { VideoInterpolationTab } from './components/tabs/VideoInterpolation';
 import { WanI2VTab } from './components/tabs/WanI2V';
 import { WanI2V2STab } from './components/tabs/WanI2V2S';
 import { WanI2VITTab } from './components/tabs/WanI2VIT';
 import { WanT2VTab } from './components/tabs/WanT2V';
-import { I18nContextProvider } from './i18n/I18nContextProvider';
-import { ACEStepTab } from './components/tabs/ACEStep';
-import { SongBloomTab } from './components/tabs/SongBloom';
-import { VideoInterpolationTab } from './components/tabs/VideoInterpolation';
-import { OviI2VTab } from './components/tabs/OviI2V';
-import { OviT2VTab } from './components/tabs/OviT2V';
-import { Hunyan15T2VTab } from './components/tabs/Hunyuan15T2V';
-import { Hunyan15I2VTab } from './components/tabs/Hunyuan15I2V';
 import { ZImageTab } from './components/tabs/ZImage';
-import { Flux2Tab } from './components/tabs/Flux2';
+import { I18nContextProvider } from './i18n/I18nContextProvider';
 
 function App() {
     return (
@@ -64,6 +65,7 @@ function App() {
                         <WorkflowTabsContextProvider>
                             <WorkflowTabs>
                                 {HunyanT2VTab}
+                                {LTX2T2VTab}
                                 {Hunyan15T2VTab}
                                 {WanI2VTab}
                                 {WanT2VTab}
@@ -75,6 +77,7 @@ function App() {
                                 {FluxKontextTab}
                                 {QwenImageEditTab}
                                 {WanI2VITTab}
+                                {LTX2I2VTab}
                                 {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
