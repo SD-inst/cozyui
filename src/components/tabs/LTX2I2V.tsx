@@ -6,6 +6,7 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
+import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
 import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -20,6 +21,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
+                <LTX2KeyframesControl />
                 <TextInput name='prompt' multiline />
                 <SliderInput
                     name='size'
@@ -81,7 +83,10 @@ export const LTX2I2VTab = (
         label='LTX-2'
         value='LTX-2 I2V'
         group='I2V'
-        receivers={[{ name: 'image', acceptedTypes: 'images' }]}
+        receivers={[
+            { name: 'image', acceptedTypes: 'images' },
+            { name: 'keyframe', acceptedTypes: ['images', 'gifs'] },
+        ]}
         content={<Content />}
     />
 );

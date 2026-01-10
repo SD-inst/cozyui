@@ -1,12 +1,13 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { insertGraph } from '../../api/utils';
+import { useResultParam } from '../../hooks/useResult';
+import { useWatchForm } from '../../hooks/useWatchForm';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
-import { ToggleInput } from './ToggleInput';
-import { SamplerSelectInput } from './SamplerSelectInput';
 import { VerticalBox } from '../VerticalBox';
-import { useWatchForm } from '../../hooks/useWatchForm';
-import { useResultParam } from '../../hooks/useResult';
+import { SamplerSelectInput } from './SamplerSelectInput';
+import { ToggleInput } from './ToggleInput';
+import { keyframeHandler, TKeyframe } from './keyframeHandler';
 
 type TValue = {
     spatial: boolean;
@@ -24,6 +25,7 @@ export const LTX2UpsampleControl = ({
 } & BoxProps) => {
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
+    const keyframes: TKeyframe[] = useWatchForm('keyframes');
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
             if (!value || (!value.spatial && !value.temporal)) {
@@ -210,7 +212,26 @@ export const LTX2UpsampleControl = ({
                 };
                 wf[':2'].inputs.video_latent = [':7', 0];
             }
-            const upscaleOutputNode = [insertGraph(api, wf) + ':6', 1];
+            const wfNodeID = insertGraph(api, wf);
+            const upscaleOutputNode = [wfNodeID + ':6', 1];
+            if (keyframes?.length) {
+                keyframeHandler(
+                    api,
+                    value.temporal
+                        ? keyframes.map((kf) => ({
+                              ...kf,
+                              position: kf.position * 2,
+                          }))
+                        : keyframes,
+                    {
+                        id: 'handle',
+                        field: '',
+                        cond_node_id: wfNodeID + ':1',
+                        vae_node_id,
+                        concat_node_id: wfNodeID + ':2',
+                    }
+                );
+            }
             api[output_node_id].inputs.av_latent = upscaleOutputNode;
         }
     );

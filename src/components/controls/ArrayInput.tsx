@@ -77,8 +77,8 @@ export const ArrayInput = ({
     keyField = 'image',
     min = 0,
     max = -1,
-    receiverFieldName,
-    targetFieldName,
+    receiverFieldName, // temporary field to receive images/videos
+    targetFieldName, // subfield in the array element to assign the received value to
     ...props
 }: {
     name: string;

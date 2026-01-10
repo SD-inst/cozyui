@@ -192,6 +192,9 @@ const translation = {
         upsample_spatial: 'полное разрешение',
         upsample_temporal: 'удвоить FPS',
         upsample_sampler: 'сэмплер для улучшения',
+        keyframes: 'ключевые кадры',
+        keyframe_position: 'позиция кадра',
+        keyframe_strength: 'сила кадра',
     },
     settings: {
         select_language: 'Выбор языка',

@@ -5,6 +5,7 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
+import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
 import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -20,6 +21,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <TextInput name='prompt' multiline />
+                <LTX2KeyframesControl />
                 <WidthHeight
                     defaultWidth={1280}
                     defaultHeight={736}

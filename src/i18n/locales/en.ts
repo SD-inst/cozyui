@@ -193,6 +193,9 @@ const translation = {
         upsample_spatial: 'native resolution',
         upsample_temporal: 'double FPS',
         upsample_sampler: 'upsample sampler',
+        keyframes: 'keyframes',
+        keyframe_position: 'keyframe position',
+        keyframe_strength: 'keyframe strength',
     },
     settings: {
         select_language: 'Select language',

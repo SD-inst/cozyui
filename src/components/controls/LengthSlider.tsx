@@ -1,9 +1,9 @@
-import { SliderProps } from '@mui/material';
 import { Mark } from '@mui/material/Slider/useSlider.types';
-import { SliderInput } from './SliderInput';
+import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useTranslate } from '../../i18n/I18nContext';
-import { useMemo } from 'react';
+import { SliderInput } from './SliderInput';
+import { SliderInputProps } from './SliderInputBase';
 
 export type LengthInputProps = {
     name: string;
@@ -11,7 +11,7 @@ export type LengthInputProps = {
     max: number;
     step?: number;
     fps?: number;
-} & SliderProps;
+} & SliderInputProps;
 
 export const LengthInput = ({
     min,
