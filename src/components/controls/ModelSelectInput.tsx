@@ -7,8 +7,8 @@ import { SelectInput, SelectInputProps } from './SelectInput';
 export const ModelSelectInput = ({ ...props }: SelectInputProps) => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, val: string, control?: controlType) => {
-            if (!control || !control['node_id']) {
+        (api: any, val: string, control: controlType) => {
+            if (!control['node_id']) {
                 throw 'control undefined';
             }
             const loader_node_id = control['node_id'];
@@ -51,7 +51,7 @@ export const ModelSelectInput = ({ ...props }: SelectInputProps) => {
                     },
                 };
             }
-        },
+        }
     );
     useRegisterHandler({ name: props.name, handler });
     return <SelectInput {...props} />;

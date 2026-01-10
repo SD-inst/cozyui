@@ -9,8 +9,8 @@ export const CompileModelToggle = ({
     ...props
 }: Optional<ToggleInputProps, 'name'>) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
-            if (!value || !control) {
+        (api: any, value: boolean, control: controlType) => {
+            if (!value) {
                 return;
             }
             const compile_node = {

@@ -22,9 +22,9 @@ export const KJWanLoopInput = ({
 }: BoxProps & { name: string }) => {
     const { id } = useResultParam();
     const handler = useEventCallback(
-        (api: any, value: valueType, control?: controlType) => {
+        (api: any, value: valueType, control: controlType) => {
             const { enabled, color_correction, ...inputs } = value;
-            if (!enabled || !control || !control.sampler_node_id) {
+            if (!enabled || !control.sampler_node_id) {
                 return;
             }
             if (color_correction != 'off') {

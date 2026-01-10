@@ -6,8 +6,8 @@ import { ToggleInput, ToggleInputProps } from './ToggleInput';
 
 export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
     const handler = useEventCallback(
-        (api: any, value: any, control?: controlType) => {
-            if (!control || !value) {
+        (api: any, value: any, control: controlType) => {
+            if (!value) {
                 return;
             }
             const riflex_node = {

@@ -5,8 +5,8 @@ import { ToggleInput, ToggleInputProps } from './ToggleInput';
 
 export const WanRiflexToggle = ({ ...props }: ToggleInputProps) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
-            if (!value || !control || !control.node_id || !control.field) {
+        (api: any, value: boolean, control: controlType) => {
+            if (!value || !control.node_id || !control.field) {
                 return;
             }
             api[control.node_id].inputs[control.field] = 6;

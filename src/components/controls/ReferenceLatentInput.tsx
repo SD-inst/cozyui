@@ -21,13 +21,12 @@ export const ReferenceLatentInput = ({
     receiverFieldName?: string;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: ReferenceType, control?: controlType) => {
+        (api: any, value: ReferenceType, control: controlType) => {
             if (
                 !value ||
-                !control ||
                 !value.length ||
-                !control?.guider_node_id ||
-                !control?.vae_node_id
+                !control.guider_node_id ||
+                !control.vae_node_id
             ) {
                 return;
             }
@@ -62,7 +61,7 @@ export const ReferenceLatentInput = ({
                     ':3': {
                         inputs: {
                             pixels: [':2', 0],
-                            vae: [control?.vae_node_id, 0],
+                            vae: [control.vae_node_id, 0],
                         },
                         class_type: 'VAEEncode',
                         _meta: {

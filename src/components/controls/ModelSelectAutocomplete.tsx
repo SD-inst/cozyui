@@ -74,8 +74,8 @@ export const ModelSelectAutocomplete = ({
         }
     }, [opts, ctl.field]);
     const handler = useEventCallback(
-        (api: any, value: valueType, control?: controlType) => {
-            if (!value || !control || !control.node_id) {
+        (api: any, value: valueType, control: controlType) => {
+            if (!value || !control.node_id) {
                 return;
             }
             api[control.node_id].inputs[control.field] = value.id;

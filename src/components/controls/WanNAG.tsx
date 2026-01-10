@@ -34,10 +34,9 @@ export const WanNAG = ({
     });
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: valueType, control?: controlType) => {
+        (api: any, value: valueType, control: controlType) => {
             if (
                 !value.enabled ||
-                !control ||
                 !control.sampler_node_id ||
                 !control.prompt_node_id
             ) {

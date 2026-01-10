@@ -17,12 +17,11 @@ export const AudioInput = ({
 }) => {
     const { watch, getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
+        (api: any, value: boolean, control: controlType) => {
             const audio = getValues(audioName);
             if (
                 !value ||
                 !audio ||
-                !control ||
                 !control.tts_node_id ||
                 !control.tts_field
             ) {

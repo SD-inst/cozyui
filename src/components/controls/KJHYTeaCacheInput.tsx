@@ -14,8 +14,8 @@ export const KJHYTeaCacheInput = ({
     defaultEnd?: number;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: any, control?: controlType) => {
-            if (!value || !control || !control.node_id || !value.rel_l1_thresh) {
+        (api: any, value: any, control: controlType) => {
+            if (!value || !control.node_id || !value.rel_l1_thresh) {
                 return;
             }
             const node = {

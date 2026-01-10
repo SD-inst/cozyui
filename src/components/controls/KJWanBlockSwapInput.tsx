@@ -19,9 +19,9 @@ export const KJWanBlockSwapInput = ({
     ...props
 }: BoxProps & { name?: string }) => {
     const handler = useEventCallback(
-        (api: any, value: valueType, control?: controlType) => {
+        (api: any, value: valueType, control: controlType) => {
             const { enabled, ...inputs } = value;
-            if (!enabled || !control || !control.loader_node_id) {
+            if (!enabled || !control.loader_node_id) {
                 return;
             }
             const block_swap_node = {

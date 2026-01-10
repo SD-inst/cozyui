@@ -14,11 +14,10 @@ export const TeaCacheInput = ({
     defaultEnd?: number;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: any, control?: controlType) => {
+        (api: any, value: any, control: controlType) => {
             if (
                 !value ||
                 !value.reuse_threshold ||
-                !control ||
                 !control.node_id
             ) {
                 return;

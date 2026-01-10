@@ -14,8 +14,8 @@ export const KJEasyCacheInput = ({
     defaultEnd?: number;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: any, control?: controlType) => {
-            if (!value || !control || !control.node_id) {
+        (api: any, value: any, control: controlType) => {
+            if (!value || !control.node_id) {
                 return;
             }
             const node = {

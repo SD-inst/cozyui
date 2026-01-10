@@ -17,9 +17,8 @@ export const WanEndImage = ({
     const useEndImage = useWatch({ name });
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
+        (api: any, value: boolean, control: controlType) => {
             if (
-                !control ||
                 !control.image_node_id ||
                 !control.i2v_encode_node_id ||
                 !control.clip_vision_node_id ||
@@ -44,7 +43,7 @@ export const WanEndImage = ({
             ];
             api[control.image_node_id].inputs.image =
                 getValues(imageUploadName);
-        },
+        }
     );
     useRegisterHandler({ name, handler });
     return (

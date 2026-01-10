@@ -7,10 +7,9 @@ export const WanFLF2V = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
     useController({ name, defaultValue: true });
     const handler = useEventCallback(
-        (api: any, _: any, control?: controlType) => {
+        (api: any, _: any, control: controlType) => {
             const model = getValues('model');
             if (
-                !control ||
                 !control.i2v_encode_node_id ||
                 !control.clip_vision_node_id ||
                 !control.clip_vision_loader_node_id ||

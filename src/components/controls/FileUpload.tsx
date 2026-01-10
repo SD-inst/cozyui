@@ -66,7 +66,7 @@ export const FileUpload = ({
     label?: string;
     type?: UploadType;
     onUpload?: (file: File) => void;
-    extraHandler?: (api: any, value: string, control?: controlType) => void;
+    extraHandler?: (api: any, value: string, control: controlType) => void;
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
     const backupUploads = useBooleanSetting(settings.backup_uploads);
@@ -92,10 +92,7 @@ export const FileUpload = ({
         return UploadType.IMAGE;
     }, [field.value]);
     const handler = useEventCallback(
-        (api: any, val: string, control?: controlType) => {
-            if (!control) {
-                return;
-            }
+        (api: any, val: string, control: controlType) => {
             if (filetype === UploadType.IMAGE) {
                 api[control.node_id].inputs[control.field] = val;
             } else {

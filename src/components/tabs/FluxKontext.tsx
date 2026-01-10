@@ -45,10 +45,9 @@ const AppendImage = ({
     const { getValues } = useFormContext();
     const { resetLatents } = useLatents('latents');
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
+        (api: any, value: boolean, control: controlType) => {
             if (
                 !value ||
-                !control ||
                 !control.image_1_id ||
                 !control.image_2_id ||
                 !control.scale_id
@@ -87,8 +86,8 @@ const AppendImage = ({
 
 const LoadLatents = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
-            if (!value || !control || !control.reference_node_id) {
+        (api: any, value: boolean, control: controlType) => {
+            if (!value || !control.reference_node_id) {
                 return;
             }
             const loadLatentNode = {

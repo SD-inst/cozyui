@@ -16,7 +16,7 @@ export type handlerType = {
     [control_name: string]: (
         api: any,
         value: any[],
-        control?: controlType
+        control: controlType
     ) => void;
 };
 
@@ -68,7 +68,7 @@ export const useRegisterHandler = ({
     handler,
 }: {
     name: string;
-    handler: (api: any, value: any, control?: controlType) => void;
+    handler: (api: any, value: any, control: controlType) => void;
 }) => {
     const { setValue } = useContext(TabContext);
     useEffect(() => {

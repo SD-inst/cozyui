@@ -31,14 +31,13 @@ type ReferenceType = {
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: ReferenceType, control?: controlType) => {
+        (api: any, value: ReferenceType, control: controlType) => {
             if (
                 !value ||
-                !control ||
                 !value.length ||
-                !control?.positive_node_id ||
-                !control?.negative_node_id ||
-                !control?.vae_encode_node_id
+                !control.positive_node_id ||
+                !control.negative_node_id ||
+                !control.vae_encode_node_id
             ) {
                 return;
             }

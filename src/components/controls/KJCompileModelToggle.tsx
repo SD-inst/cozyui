@@ -10,8 +10,8 @@ export const KJCompileModelToggle = ({
     ...props
 }: Optional<ToggleInputProps, 'name'> & { classType: string }) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control?: controlType) => {
-            if (!value || !control || !control.output_node_id) {
+        (api: any, value: boolean, control: controlType) => {
+            if (!value || !control.output_node_id) {
                 return;
             }
             const compile_node = {
