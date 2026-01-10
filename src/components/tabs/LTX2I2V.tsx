@@ -61,7 +61,7 @@ const Content = () => {
                         name='sampler'
                         defaultValue='euler_ancestral'
                     />
-                    <LTX2UpsampleControl />
+                    <LTX2UpsampleControl i2v />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />

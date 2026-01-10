@@ -16,9 +16,11 @@ type TValue = {
 
 export const LTX2UpsampleControl = ({
     name = 'upsample',
+    i2v = false,
     ...props
 }: {
     name?: string;
+    i2v?: boolean;
 } & BoxProps) => {
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
@@ -34,6 +36,7 @@ export const LTX2UpsampleControl = ({
                 vae_node_id,
                 seed_node_id,
                 output_node_id,
+                image_node_id,
             } = control;
             const splitGraph = {
                 ':1': {
@@ -127,7 +130,7 @@ export const LTX2UpsampleControl = ({
                 };
                 samplesNode = [insertGraph(api, spatialUpscale) + ':2', 0];
             }
-            const wf = {
+            const wf: any = {
                 ':1': {
                     inputs: {
                         cfg: 1,
@@ -191,6 +194,22 @@ export const LTX2UpsampleControl = ({
                     },
                 },
             };
+            if (i2v) {
+                wf[':7'] = {
+                    inputs: {
+                        strength: 1,
+                        bypass: false,
+                        vae: [vae_node_id, 2],
+                        image: [image_node_id, 0],
+                        latent: samplesNode,
+                    },
+                    class_type: 'LTXVImgToVideoInplace',
+                    _meta: {
+                        title: 'LTXVImgToVideoInplace',
+                    },
+                };
+                wf[':2'].inputs.video_latent = [':7', 0];
+            }
             const upscaleOutputNode = [insertGraph(api, wf) + ':6', 1];
             api[output_node_id].inputs.av_latent = upscaleOutputNode;
         }
