@@ -586,6 +586,10 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "fps": {
+                    "id": "106",
+                    "field": "value"
                 }
             },
             "handler_options": {
@@ -649,6 +653,10 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "fps": {
+                    "id": "107",
+                    "field": "value"
                 }
             },
             "handler_options": {

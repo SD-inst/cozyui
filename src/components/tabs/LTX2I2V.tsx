@@ -1,3 +1,4 @@
+import { useWatchForm } from '../../hooks/useWatchForm';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { FileUpload } from '../controls/FileUpload';
@@ -13,6 +14,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
+    const fps = useWatchForm('fps');
     return (
         <Layout>
             <GridLeft>
@@ -32,7 +34,7 @@ const Content = () => {
                     max={601}
                     step={8}
                     defaultValue={129}
-                    fps={25}
+                    fps={fps}
                 />
                 <SliderInput name='steps' defaultValue={20} min={5} max={50} />
                 <AdvancedSettings>
@@ -43,12 +45,21 @@ const Content = () => {
                     />
                     <CFGInput defaultValue={4} />
                     <SliderInput
+                        name='fps'
+                        defaultValue={24}
+                        min={1}
+                        max={50}
+                    />
+                    <SliderInput
                         name='compression'
                         defaultValue={33}
                         min={1}
                         max={50}
                     />
-                    <SamplerSelectInput name='sampler' defaultValue='euler_ancestral' />
+                    <SamplerSelectInput
+                        name='sampler'
+                        defaultValue='euler_ancestral'
+                    />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />
