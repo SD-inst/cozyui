@@ -163,7 +163,7 @@
   },
   "92:68": {
     "inputs": {
-      "lora_name": "ltx/ltx-2-19b-distilled-lora-384.safetensors",
+      "lora_name": "ltx2/ltx-2-19b-distilled-lora-384.safetensors",
       "strength_model": 1,
       "model": [
         "92:1",
