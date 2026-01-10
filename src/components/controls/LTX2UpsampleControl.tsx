@@ -91,7 +91,7 @@ export const LTX2UpsampleControl = ({
                         inputs: {
                             frame_rate: fps * 2,
                             positive: [condNodeID, 0],
-                            negative: [condNodeID, 0],
+                            negative: [condNodeID, 1],
                         },
                         class_type: 'LTXVConditioning',
                         _meta: {
