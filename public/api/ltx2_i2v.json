@@ -108,33 +108,6 @@
             "title": "LTXV Audio VAE Loader"
         }
     },
-    "92:76": {
-        "inputs": {
-            "model_name": "ltx/ltx-2-spatial-upscaler-x2-1.0.safetensors"
-        },
-        "class_type": "LatentUpscaleModelLoader",
-        "_meta": {
-            "title": "Load Latent Upscale Model"
-        }
-    },
-    "92:73": {
-        "inputs": {
-            "sigmas": "0.909375, 0.725, 0.421875, 0.0"
-        },
-        "class_type": "ManualSigmas",
-        "_meta": {
-            "title": "ManualSigmas"
-        }
-    },
-    "92:66": {
-        "inputs": {
-            "sampler_name": "euler_ancestral"
-        },
-        "class_type": "KSamplerSelect",
-        "_meta": {
-            "title": "KSamplerSelect"
-        }
-    },
     "92:1": {
         "inputs": {
             "ckpt_name": "ltx/ltx-2-19b-dev-fp8.safetensors"
@@ -194,15 +167,6 @@
         "class_type": "LTXVEmptyLatentAudio",
         "_meta": {
             "title": "LTXV Empty Latent Audio"
-        }
-    },
-    "92:67": {
-        "inputs": {
-            "noise_seed": ["104", 0]
-        },
-        "class_type": "RandomNoise",
-        "_meta": {
-            "title": "RandomNoise"
         }
     },
     "92:11": {
@@ -360,88 +324,9 @@
             "title": "Sampling at half resolution"
         }
     },
-    "92:80": {
-        "inputs": {
-            "av_latent": ["92:41", 0]
-        },
-        "class_type": "LTXVSeparateAVLatent",
-        "_meta": {
-            "title": "LTXVSeparateAVLatent"
-        }
-    },
-    "92:81": {
-        "inputs": {
-            "positive": ["92:22", 0],
-            "negative": ["92:22", 1],
-            "latent": ["92:80", 0]
-        },
-        "class_type": "LTXVCropGuides",
-        "_meta": {
-            "title": "LTXVCropGuides"
-        }
-    },
-    "92:82": {
-        "inputs": {
-            "cfg": 1,
-            "model": ["92:68", 0],
-            "positive": ["92:81", 0],
-            "negative": ["92:81", 1]
-        },
-        "class_type": "CFGGuider",
-        "_meta": {
-            "title": "CFGGuider"
-        }
-    },
-    "92:84": {
-        "inputs": {
-            "samples": ["92:81", 2],
-            "upscale_model": ["92:76", 0],
-            "vae": ["92:1", 2]
-        },
-        "class_type": "LTXVLatentUpsampler",
-        "_meta": {
-            "title": "spatial"
-        }
-    },
-    "92:108": {
-        "inputs": {
-            "strength": 1,
-            "bypass": false,
-            "vae": ["92:1", 2],
-            "image": ["92:99", 0],
-            "latent": ["92:84", 0]
-        },
-        "class_type": "LTXVImgToVideoInplace",
-        "_meta": {
-            "title": "LTXVImgToVideoInplace"
-        }
-    },
-    "92:83": {
-        "inputs": {
-            "video_latent": ["92:108", 0],
-            "audio_latent": ["92:80", 1]
-        },
-        "class_type": "LTXVConcatAVLatent",
-        "_meta": {
-            "title": "LTXVConcatAVLatent"
-        }
-    },
-    "92:70": {
-        "inputs": {
-            "noise": ["92:67", 0],
-            "guider": ["92:82", 0],
-            "sampler": ["92:66", 0],
-            "sigmas": ["92:73", 0],
-            "latent_image": ["92:83", 0]
-        },
-        "class_type": "SamplerCustomAdvanced",
-        "_meta": {
-            "title": "2x Upscale"
-        }
-    },
     "92:94": {
         "inputs": {
-            "av_latent": ["92:70", 1]
+            "av_latent": ["92:41", 1]
         },
         "class_type": "LTXVSeparateAVLatent",
         "_meta": {

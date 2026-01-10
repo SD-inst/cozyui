@@ -14,6 +14,7 @@ export type SelectInputProps = {
     )[];
     tooltip?: string;
     name: string;
+    label?: string;
 } & Omit<SelectProps, 'label'>;
 
 export type CustomSelectInputProps = Optional<

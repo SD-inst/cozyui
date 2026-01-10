@@ -6,6 +6,7 @@ import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
+import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
@@ -60,6 +61,7 @@ const Content = () => {
                         name='sampler'
                         defaultValue='euler_ancestral'
                     />
+                    <LTX2UpsampleControl />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />

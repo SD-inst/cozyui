@@ -1,9 +1,8 @@
 import { useEffect } from 'react';
+import { useFormContext } from 'react-hook-form';
 import { useWatchForm } from '../../hooks/useWatchForm';
 import { Optional } from './optional';
-import { SelectInput } from './SelectInput';
-import { SelectInputProps } from './SelectInputBase';
-import { useFormContext } from 'react-hook-form';
+import { SelectInput, SelectInputProps } from './SelectInput';
 
 export const OviVersionInput = ({
     ...props

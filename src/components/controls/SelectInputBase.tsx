@@ -1,20 +1,8 @@
-import { MenuItem, SelectProps } from '@mui/material';
+import { MenuItem } from '@mui/material';
 import { RefCallBack } from 'react-hook-form';
 import { Optional } from './optional';
 import { SelectControl } from './SelectControl';
-
-export type SelectInputProps = {
-    defaultValue?: any;
-    choices: (
-        | string
-        | {
-              text: string;
-              value: string | number;
-          }
-    )[];
-    tooltip?: string;
-    name: string;
-} & Omit<SelectProps, 'label'>;
+import { SelectInputProps } from './SelectInput';
 
 export type CustomSelectInputProps = Optional<
     SelectInputProps,
@@ -24,12 +12,13 @@ export type CustomSelectInputProps = Optional<
 export const SelectInputBase = ({
     choices,
     tooltip,
+    label,
     ...props
 }: SelectInputProps & { selectRef?: RefCallBack }) => {
     return (
         <SelectControl
             tooltip={tooltip}
-            label={`controls.${props.name}`}
+            label={`controls.${label || props.name}`}
             {...props}
         >
             {choices.map((c) => (

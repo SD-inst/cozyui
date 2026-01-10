@@ -590,6 +590,15 @@
                 "fps": {
                     "id": "106",
                     "field": "value"
+                },
+                "upsample": {
+                    "id": "handle",
+                    "cond_node_id": "92:22",
+                    "input_node_id": "92:41",
+                    "model_node_id": "92:68",
+                    "vae_node_id": "92:1",
+                    "seed_node_id": "104",
+                    "output_node_id": "92:94"
                 }
             },
             "handler_options": {
@@ -657,6 +666,15 @@
                 "fps": {
                     "id": "107",
                     "field": "value"
+                },
+                "upsample": {
+                    "id": "handle",
+                    "cond_node_id": "92:22",
+                    "input_node_id": "92:41",
+                    "model_node_id": "92:68",
+                    "vae_node_id": "92:1",
+                    "seed_node_id": "104",
+                    "output_node_id": "92:94"
                 }
             },
             "handler_options": {
