@@ -16,7 +16,7 @@ export const keyframeHandler = (
     if (!value) {
         return;
     }
-    const { cond_node_id, vae_node_id, concat_node_id } = control;
+    const { cond_node_id, vae_node_id, concat_node_id, crop_node_id } = control;
     const prevNodeCond = {
         positive: api[cond_node_id].inputs.positive,
         negative: api[cond_node_id].inputs.negative,
@@ -31,11 +31,18 @@ export const keyframeHandler = (
         const graph = {
             ':1': {
                 inputs: {
-                    image: v.image,
+                    video: v.image,
+                    force_rate: 0,
+                    force_size: 'Disabled',
+                    custom_width: 0,
+                    custom_height: 0,
+                    frame_load_cap: 0,
+                    skip_first_frames: 0,
+                    select_every_nth: 1,
                 },
-                class_type: 'LoadImage',
+                class_type: 'VHS_LoadVideo',
                 _meta: {
-                    title: 'Load Image',
+                    title: 'Load Video (Upload) 🎥🅥🅗🅢',
                 },
             },
             ':2': {
@@ -61,4 +68,6 @@ export const keyframeHandler = (
     api[cond_node_id].inputs.positive = prevNodeCond.positive;
     api[cond_node_id].inputs.negative = prevNodeCond.negative;
     api[concat_node_id].inputs.video_latent = prevNodeLatent.latent;
+    api[crop_node_id].inputs.positive = prevNodeCond.positive;
+    api[crop_node_id].inputs.negative = prevNodeCond.negative;
 };

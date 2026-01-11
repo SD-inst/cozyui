@@ -39,6 +39,7 @@ export const LTX2UpsampleControl = ({
                 seed_node_id,
                 output_node_id,
                 image_node_id,
+                crop_node_id,
             } = control;
             const splitGraph = {
                 ':1': {
@@ -218,10 +219,15 @@ export const LTX2UpsampleControl = ({
                 keyframeHandler(
                     api,
                     value.temporal
-                        ? keyframes.map((kf) => ({
-                              ...kf,
-                              position: kf.position * 2,
-                          }))
+                        ? keyframes
+                              .filter(
+                                  (kf) =>
+                                      !kf.image.match(/\.(mp4|webm|avi|wmv)$/)
+                              )
+                              .map((kf) => ({
+                                  ...kf,
+                                  position: kf.position * 2,
+                              }))
                         : keyframes,
                     {
                         id: 'handle',
@@ -229,6 +235,7 @@ export const LTX2UpsampleControl = ({
                         cond_node_id: wfNodeID + ':1',
                         vae_node_id,
                         concat_node_id: wfNodeID + ':2',
+                        crop_node_id,
                     }
                 );
             }

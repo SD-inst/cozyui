@@ -598,13 +598,15 @@
                     "model_node_id": "92:68",
                     "vae_node_id": "92:1",
                     "seed_node_id": "104",
-                    "output_node_id": "92:94"
+                    "output_node_id": "92:94",
+                    "crop_node_id": "92:95"
                 },
                 "keyframes": {
                     "id": "handle",
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
-                    "concat_node_id": "92:56"
+                    "concat_node_id": "92:56",
+                    "crop_node_id": "92:95"
                 }
             },
             "handler_options": {
@@ -681,13 +683,15 @@
                     "vae_node_id": "92:1",
                     "seed_node_id": "104",
                     "output_node_id": "92:94",
-                    "image_node_id": "92:99"
+                    "image_node_id": "92:99",
+                    "crop_node_id": "92:95"
                 },
                 "keyframes": {
                     "id": "handle",
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
-                    "concat_node_id": "92:56"
+                    "concat_node_id": "92:56",
+                    "crop_node_id": "92:95"
                 }
             },
             "handler_options": {

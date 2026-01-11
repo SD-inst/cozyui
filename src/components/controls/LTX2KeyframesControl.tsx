@@ -6,6 +6,7 @@ import { keyframeHandler } from './keyframeHandler';
 import { LengthInput } from './LengthSlider';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
+import { UploadType } from './UploadType';
 
 export const LTX2KeyframesControl = ({
     name = 'keyframes',
@@ -20,7 +21,7 @@ export const LTX2KeyframesControl = ({
             receiverFieldName={receiverFieldName}
             targetFieldName='image'
         >
-            <FileUpload name='image' label='image' />
+            <FileUpload name='image' label='image' type={UploadType.BOTH} />
             <LengthInput
                 name='position'
                 label='keyframe_position'

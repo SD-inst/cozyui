@@ -272,11 +272,22 @@
     },
     "92:94": {
         "inputs": {
-            "av_latent": ["92:41", 1]
+            "av_latent": ["92:41", 0]
         },
         "class_type": "LTXVSeparateAVLatent",
         "_meta": {
             "title": "LTXVSeparateAVLatent"
+        }
+    },
+    "92:95": {
+        "inputs": {
+            "positive": ["92:22", 0],
+            "negative": ["92:22", 1],
+            "latent": ["92:94", 0]
+        },
+        "class_type": "LTXVCropGuides",
+        "_meta": {
+            "title": "LTXVCropGuides"
         }
     },
     "92:116": {
@@ -285,7 +296,7 @@
             "overlap": 64,
             "temporal_size": 4096,
             "temporal_overlap": 8,
-            "samples": ["92:94", 0],
+            "samples": ["92:95", 2],
             "vae": ["92:1", 2]
         },
         "class_type": "VAEDecodeTiled",
