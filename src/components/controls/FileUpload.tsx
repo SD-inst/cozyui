@@ -7,7 +7,7 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -69,6 +69,7 @@ export const FileUpload = ({
     extraHandler?: (api: any, value: string, control: controlType) => void;
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
+    const reuploadAttempts = useRef(0);
     const backupUploads = useBooleanSetting(settings.backup_uploads);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
@@ -198,7 +199,10 @@ export const FileUpload = ({
             field.onChange(null);
             return;
         }
-        mutate([file.file]);
+        if (reuploadAttempts.current > 2) {
+            return;
+        }
+        mutate([file.file], { onError: () => reuploadAttempts.current++ });
     });
     return (
         <Box mb={2} display='flex' flexDirection='column'>
