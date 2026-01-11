@@ -7,6 +7,7 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
 import { LoraInput } from '../controls/LoraInput';
 import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
+import { LTX2ReferenceAudioControl } from '../controls/LTX2ReferenceAudioControl';
 import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -22,6 +23,7 @@ const Content = () => {
             <GridLeft>
                 <FileUpload name='image' />
                 <LTX2KeyframesControl />
+                <LTX2ReferenceAudioControl />
                 <TextInput name='prompt' multiline />
                 <SliderInput
                     name='size'

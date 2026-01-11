@@ -607,6 +607,12 @@
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
                     "crop_node_id": "92:95"
+                },
+                "reference_audio": {
+                    "id": "handle",
+                    "audio_vae_node_id": "92:48",
+                    "size_node_id": "92:91",
+                    "concat_node_id": "92:56"
                 }
             },
             "handler_options": {
@@ -692,6 +698,12 @@
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
                     "crop_node_id": "92:95"
+                },
+                "reference_audio": {
+                    "id": "handle",
+                    "audio_vae_node_id": "92:48",
+                    "size_node_id": "92:91",
+                    "concat_node_id": "92:56"
                 }
             },
             "handler_options": {

@@ -195,6 +195,8 @@ const translation = {
         keyframes: 'ключевые кадры',
         keyframe_position: 'позиция кадра',
         keyframe_strength: 'сила кадра',
+        reference_audio_enabled: 'аудио-референс',
+        trim: 'обрезать аудио (сек)',
     },
     settings: {
         select_language: 'Выбор языка',

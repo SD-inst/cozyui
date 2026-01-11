@@ -196,6 +196,8 @@ const translation = {
         keyframes: 'keyframes',
         keyframe_position: 'keyframe position',
         keyframe_strength: 'keyframe strength',
+        reference_audio_enabled: 'use reference audio',
+        trim: 'trim audio (sec)',
     },
     settings: {
         select_language: 'Select language',
