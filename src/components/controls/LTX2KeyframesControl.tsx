@@ -17,7 +17,7 @@ export const LTX2KeyframesControl = ({
     return (
         <ArrayInput
             name={name}
-            newValue={{ pos: -1, enabled: true }}
+            newValue={{ pos: 0, enabled: true }}
             receiverFieldName={receiverFieldName}
             targetFieldName='image'
         >
@@ -25,11 +25,11 @@ export const LTX2KeyframesControl = ({
             <LengthInput
                 name='position'
                 label='keyframe_position'
-                min={-1}
+                min={0}
                 max={601}
                 fps={fps}
                 step={8}
-                defaultValue={-1}
+                defaultValue={0}
             />
             <SliderInput
                 name='strength'
