@@ -88,6 +88,7 @@ export const LTX2I2VTab = (
         receivers={[
             { name: 'image', acceptedTypes: 'images' },
             { name: 'keyframe', acceptedTypes: ['images', 'gifs'] },
+            { name: 'reference_audio', acceptedTypes: 'audio' },
         ]}
         content={<Content />}
     />

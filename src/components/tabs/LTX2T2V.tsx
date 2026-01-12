@@ -73,5 +73,14 @@ const Content = () => {
 };
 
 export const LTX2T2VTab = (
-    <WFTab label='LTX-2' value='LTX-2 T2V' group='T2V' content={<Content />} />
+    <WFTab
+        label='LTX-2'
+        value='LTX-2 T2V'
+        group='T2V'
+        receivers={[
+            { name: 'keyframe', acceptedTypes: ['images', 'gifs'] },
+            { name: 'reference_audio', acceptedTypes: 'audio' },
+        ]}
+        content={<Content />}
+    />
 );

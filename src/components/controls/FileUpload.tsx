@@ -205,7 +205,7 @@ export const FileUpload = ({
         mutate([file.file], { onError: () => reuploadAttempts.current++ });
     });
     return (
-        <Box mb={2} display='flex' flexDirection='column'>
+        <Box mb={2} display='flex' flexDirection='column' width='100%'>
             <Typography variant='body1'>
                 {tr(`controls.${props.label || props.name}`)}
             </Typography>
