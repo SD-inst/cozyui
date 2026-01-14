@@ -96,7 +96,7 @@
     },
     "92:60": {
         "inputs": {
-            "text_encoder": "gemma_3_12B_it_fp8_e4m3fn.safetensors",
+            "text_encoder": "gemma-3-12b-abliterated-text-encoder.safetensors",
             "ckpt_name": "ltx/ltx-2-19b-dev-fp8.safetensors",
             "device": "default"
         },
