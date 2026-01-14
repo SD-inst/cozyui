@@ -41,6 +41,7 @@ export const LTX2UpsampleControl = ({
                 image_node_id,
                 crop_node_id,
                 scale_node_id,
+                audio_node_id,
             } = control;
             if (!value.spatial) {
                 api[scale_node_id].inputs.scale_by = 1;
@@ -247,6 +248,7 @@ export const LTX2UpsampleControl = ({
                 );
             }
             api[output_node_id].inputs.av_latent = upscaleOutputNode;
+            api[audio_node_id].inputs.samples = [separateNodeID, 1];
         }
     );
     useRegisterHandler({ name, handler });
