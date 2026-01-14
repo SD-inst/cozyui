@@ -28,7 +28,7 @@ export const LTX2UpsampleControl = ({
     const keyframes: TKeyframe[] = useWatchForm('keyframes');
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
-            if (!value || (!value.spatial && !value.temporal)) {
+            if (!value) {
                 return;
             }
             const {
@@ -40,7 +40,14 @@ export const LTX2UpsampleControl = ({
                 output_node_id,
                 image_node_id,
                 crop_node_id,
+                scale_node_id,
             } = control;
+            if (!value.spatial) {
+                api[scale_node_id].inputs.scale_by = 1;
+                if (!value.temporal) {
+                    return;
+                }
+            }
             const splitGraph = {
                 ':1': {
                     inputs: {

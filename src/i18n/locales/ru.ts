@@ -189,7 +189,7 @@ const translation = {
         version: 'версия',
         reference_images: 'изображения-образцы',
         enabled: 'разрешено',
-        upsample_spatial: 'полное разрешение',
+        upsample_spatial: 'два прохода',
         upsample_temporal: 'удвоить FPS',
         upsample_sampler: 'сэмплер для улучшения',
         keyframes: 'ключевые кадры',

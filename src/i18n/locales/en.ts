@@ -190,7 +190,7 @@ const translation = {
         version: 'version',
         reference_images: 'reference images',
         enabled: 'enabled',
-        upsample_spatial: 'native resolution',
+        upsample_spatial: '2-pass sampling',
         upsample_temporal: 'double FPS',
         upsample_sampler: 'upsample sampler',
         keyframes: 'keyframes',
