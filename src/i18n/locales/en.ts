@@ -195,6 +195,8 @@ const translation = {
         upsample_audio: 'upsample audio',
         upsample_sampler: 'upsample sampler',
         upsample_scheduler: 'upsample scheduler',
+        upsample_distill_strength: 'distill lora strength',
+        upsample_detail_strength: 'detail lora strength',
         keyframes: 'keyframes',
         keyframe_position: 'keyframe position',
         keyframe_strength: 'keyframe strength',

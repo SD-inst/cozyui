@@ -5,19 +5,33 @@ import { useWatchForm } from '../../hooks/useWatchForm';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { VerticalBox } from '../VerticalBox';
-import { SamplerSelectInput } from './SamplerSelectInput';
-import { ToggleInput } from './ToggleInput';
 import { keyframeHandler, TKeyframe } from './keyframeHandler';
+import { SamplerSelectInput } from './SamplerSelectInput';
 import { SchedulerSelectInput } from './SchedulerSelectInput';
 import { SliderInput } from './SliderInput';
+import { ToggleInput } from './ToggleInput';
+import { useWatch } from 'react-hook-form';
 
 type TValue = {
     spatial: boolean;
     temporal: boolean;
     audio: boolean;
     steps: number;
+    distill_strength: number;
+    detail_strength: number;
     sampler: string;
     scheduler: string;
+};
+
+const defaults: TValue = {
+    audio: false,
+    detail_strength: 0.3,
+    distill_strength: 0.6,
+    sampler: 'euler_ancestral',
+    scheduler: 'simple',
+    spatial: true,
+    steps: 3,
+    temporal: false,
 };
 
 export const LTX2UpsampleControl = ({
@@ -31,7 +45,7 @@ export const LTX2UpsampleControl = ({
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
     const keyframes: TKeyframe[] = useWatchForm('keyframes');
-    const value: TValue = useWatchForm(name);
+    const value: TValue = useWatch({ name, defaultValue: defaults });
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
             if (!value) {
@@ -41,7 +55,6 @@ export const LTX2UpsampleControl = ({
                 input_node_id,
                 cond_node_id,
                 model_node_id,
-                vae_node_id,
                 seed_node_id,
                 output_node_id,
                 image_node_id,
@@ -97,7 +110,7 @@ export const LTX2UpsampleControl = ({
                         inputs: {
                             samples: samplesNode,
                             upscale_model: [':1', 0],
-                            vae: [vae_node_id, 2],
+                            vae: [model_node_id, 2],
                         },
                         class_type: 'LTXVLatentUpsampler',
                         _meta: {
@@ -137,7 +150,7 @@ export const LTX2UpsampleControl = ({
                         inputs: {
                             samples: samplesNode,
                             upscale_model: [':1', 0],
-                            vae: [vae_node_id, 2],
+                            vae: [model_node_id, 2],
                         },
                         class_type: 'LTXVLatentUpsampler',
                         _meta: {
@@ -166,7 +179,7 @@ export const LTX2UpsampleControl = ({
                         sampler_name: value.sampler,
                         scheduler: value.scheduler,
                         denoise: 0.5,
-                        model: [model_node_id, 0],
+                        model: [':4', 0],
                         positive: [condNodeID, 0],
                         negative: [condNodeID, 1],
                         latent_image: [':1', 0],
@@ -176,13 +189,37 @@ export const LTX2UpsampleControl = ({
                         title: '2x Upscale',
                     },
                 },
+                ':3': {
+                    inputs: {
+                        lora_name:
+                            'ltx2/ltx-2-19b-distilled-lora-384.safetensors',
+                        strength_model: value.distill_strength,
+                        model: [model_node_id, 0],
+                    },
+                    class_type: 'LoraLoaderModelOnly',
+                    _meta: {
+                        title: 'LoraLoaderModelOnly',
+                    },
+                },
+                ':4': {
+                    inputs: {
+                        lora_name:
+                            'ltx2/ltx-2-19b-ic-lora-detailer.safetensors',
+                        strength_model: value.detail_strength,
+                        model: [':3', 0],
+                    },
+                    class_type: 'LoraLoaderModelOnly',
+                    _meta: {
+                        title: 'LoraLoaderModelOnly',
+                    },
+                },
             };
             if (i2v) {
-                wf[':3'] = {
+                wf[':5'] = {
                     inputs: {
                         strength: 1,
                         bypass: false,
-                        vae: [vae_node_id, 2],
+                        vae: [model_node_id, 2],
                         image: [image_node_id, 0],
                         latent: samplesNode,
                     },
@@ -191,7 +228,7 @@ export const LTX2UpsampleControl = ({
                         title: 'LTXVImgToVideoInplace',
                     },
                 };
-                wf[':1'].inputs.video_latent = [':3', 0];
+                wf[':1'].inputs.video_latent = [':5', 0];
             }
             const wfNodeID = insertGraph(api, wf);
             const upscaleOutputNode = [wfNodeID + ':2', 0];
@@ -213,7 +250,7 @@ export const LTX2UpsampleControl = ({
                         id: 'handle',
                         field: '',
                         cond_node_id: wfNodeID + ':2',
-                        vae_node_id,
+                        model_node_id,
                         concat_node_id: wfNodeID + ':1',
                         crop_node_id,
                     }
@@ -232,37 +269,58 @@ export const LTX2UpsampleControl = ({
                 <ToggleInput
                     name={`${name}.spatial`}
                     label='upsample_spatial'
-                    defaultValue={true}
+                    defaultValue={defaults.spatial}
                 />
                 <ToggleInput
                     name={`${name}.temporal`}
                     label='upsample_temporal'
-                    defaultValue={false}
+                    defaultValue={defaults.temporal}
                 />
                 <ToggleInput
                     name={`${name}.audio`}
                     label='upsample_audio'
-                    disabled={!value.temporal && !value.spatial}
-                    defaultValue={false}
+                    disabled={!value?.temporal && !value?.spatial}
+                    defaultValue={defaults.audio}
                 />
             </Box>
-            {(value.temporal || value.spatial) && (
+            {(value?.temporal || value?.spatial) && (
                 <>
                     <SliderInput
                         name={`${name}.steps`}
                         label='steps'
-                        defaultValue={3}
+                        defaultValue={defaults.steps}
                         max={20}
                     />
+                    <Box
+                        display='flex'
+                        flexDirection='row'
+                        gap={2}
+                        width='100%'
+                    >
+                        <SliderInput
+                            name={`${name}.distill_strength`}
+                            label='upsample_distill_strength'
+                            defaultValue={defaults.distill_strength}
+                            max={1}
+                            step={0.05}
+                        />
+                        <SliderInput
+                            name={`${name}.detail_strength`}
+                            label='upsample_detail_strength'
+                            defaultValue={defaults.detail_strength}
+                            max={1}
+                            step={0.05}
+                        />
+                    </Box>
                     <SamplerSelectInput
                         name={`${name}.sampler`}
                         label='upsample_sampler'
-                        defaultValue='euler_ancestral'
+                        defaultValue={defaults.sampler}
                     />
                     <SchedulerSelectInput
                         name={`${name}.scheduler`}
                         label='upsample_scheduler'
-                        defaultValue='simple'
+                        defaultValue={defaults.scheduler}
                     />
                 </>
             )}

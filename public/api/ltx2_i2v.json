@@ -137,17 +137,6 @@
             "title": "CLIP Text Encode (Prompt)"
         }
     },
-    "92:68": {
-        "inputs": {
-            "lora_name": "ltx2/ltx-2-19b-distilled-lora-384.safetensors",
-            "strength_model": 1,
-            "model": ["92:1", 0]
-        },
-        "class_type": "LoraLoaderModelOnly",
-        "_meta": {
-            "title": "LoraLoaderModelOnly"
-        }
-    },
     "92:51": {
         "inputs": {
             "frames_number": ["92:62", 0],

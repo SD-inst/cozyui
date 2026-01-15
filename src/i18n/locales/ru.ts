@@ -194,6 +194,8 @@ const translation = {
         upsample_audio: 'улучшить аудио',
         upsample_sampler: 'сэмплер для улучшения',
         upsample_scheduler: 'планировщик для улучшения',
+        upsample_distill_strength: 'вес ускоряющей лоры',
+        upsample_detail_strength: 'вес детализирующей лоры',
         keyframes: 'ключевые кадры',
         keyframe_position: 'позиция кадра',
         keyframe_strength: 'сила кадра',

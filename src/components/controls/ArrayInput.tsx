@@ -8,10 +8,9 @@ import React, {
     useEffect,
 } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
-import { useWatchForm } from '../../hooks/useWatchForm';
+import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
-import toast from 'react-hot-toast';
 
 const cloneChildren = ({
     children,
@@ -68,8 +67,6 @@ const cloneChildren = ({
     );
 };
 
-const defaultValue: any[] = [];
-
 export const ArrayInput = ({
     label,
     name,
@@ -91,16 +88,18 @@ export const ArrayInput = ({
     targetFieldName?: string;
 } & PropsWithChildren) => {
     const tr = useTranslate();
-    const value: any = useWatchForm(name) || defaultValue;
-    const { unregister } = useFormContext();
+    const value: any[] = useWatch({ name });
+    const { unregister, setValue } = useFormContext();
     const { append, update } = useFieldArray({ name });
     useEffect(() => {
-        if (value.length < min && min > 0) {
+        if (value?.length < min && min > 0) {
             for (let i = 0; i < min; i++) {
                 append(clone(newValue));
             }
+        } else if (value === undefined) {
+            setValue(name, []);
         }
-    }, [append, min, newValue, value.length]);
+    }, [append, min, name, newValue, setValue, value, value?.length]);
     const handleAdd = () => {
         append(clone(newValue));
     };
@@ -113,7 +112,7 @@ export const ArrayInput = ({
             return;
         }
         unregister(receiverFieldName);
-        for (let index = 0; index < value.length; index++) {
+        for (let index = 0; index < value?.length; index++) {
             if (!value[index][targetFieldName]) {
                 update(index, {
                     ...value[index],
@@ -122,7 +121,7 @@ export const ArrayInput = ({
                 return;
             }
         }
-        if (value.length < max) {
+        if (value?.length < max) {
             append({
                 ...clone(newValue),
                 [targetFieldName]: receiverFieldValue,
@@ -164,7 +163,7 @@ export const ArrayInput = ({
                     })}
                 </Box>
             ))}
-            {(value.length < max || max === -1) && (
+            {(value?.length < max || max === -1) && (
                 <Button onClick={handleAdd}>
                     <Add />
                 </Button>

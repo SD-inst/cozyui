@@ -64,7 +64,7 @@ const Content = () => {
                     />
                     <SamplerSelectInput
                         name='sampler'
-                        defaultValue='euler_ancestral'
+                        defaultValue='euler'
                     />
                     <SchedulerSelectInput
                         name='scheduler'
