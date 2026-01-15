@@ -321,7 +321,7 @@
         },
         "class_type": "SamplerCustomAdvanced",
         "_meta": {
-            "title": "Sampling at half resolution"
+            "title": "Sampling"
         }
     },
     "92:94": {
