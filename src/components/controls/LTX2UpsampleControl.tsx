@@ -160,6 +160,7 @@ export const LTX2UpsampleControl = ({
                 };
                 samplesNode = [insertGraph(api, spatialUpscale) + ':2', 0];
             }
+            const modelNode = api[input_node_id].inputs.model;
             const wf: any = {
                 ':1': {
                     inputs: {
@@ -194,7 +195,7 @@ export const LTX2UpsampleControl = ({
                         lora_name:
                             'ltx2/ltx-2-19b-distilled-lora-384.safetensors',
                         strength_model: value.distill_strength,
-                        model: [model_node_id, 0],
+                        model: modelNode,
                     },
                     class_type: 'LoraLoaderModelOnly',
                     _meta: {

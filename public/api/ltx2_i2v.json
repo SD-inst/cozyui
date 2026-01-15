@@ -296,7 +296,7 @@
     },
     "92:116": {
         "inputs": {
-            "tile_size": 512,
+            "tile_size": 1024,
             "overlap": 64,
             "temporal_size": 4096,
             "temporal_overlap": 8,
