@@ -561,7 +561,7 @@
                     "field": "value"
                 },
                 "steps": {
-                    "id": "92:9",
+                    "id": "92:41",
                     "field": "steps"
                 },
                 "width": {
@@ -577,12 +577,16 @@
                     "field": "text"
                 },
                 "cfg": {
-                    "id": "92:47",
+                    "id": "92:41",
                     "field": "cfg"
                 },
                 "sampler": {
-                    "id": "92:8",
+                    "id": "92:41",
                     "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "92:41",
+                    "field": "scheduler"
                 },
                 "lora": {
                     "id": "handle"
@@ -621,7 +625,7 @@
                 "lora_params": {
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["92:68", "92:47"],
+                    "output_node_ids": ["92:68", "92:41"],
                     "output_idx": 0,
                     "class_name": "LoraLoaderModelOnly",
                     "strength_field_name": "strength_model",
@@ -657,7 +661,7 @@
                     "field": "img_compression"
                 },
                 "steps": {
-                    "id": "92:9",
+                    "id": "92:41",
                     "field": "steps"
                 },
                 "size": {
@@ -669,12 +673,16 @@
                     "field": "text"
                 },
                 "cfg": {
-                    "id": "92:47",
+                    "id": "92:41",
                     "field": "cfg"
                 },
                 "sampler": {
-                    "id": "92:8",
+                    "id": "92:41",
                     "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "92:41",
+                    "field": "scheduler"
                 },
                 "lora": {
                     "id": "handle"
@@ -714,7 +722,7 @@
                 "lora_params": {
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["92:68", "92:47"],
+                    "output_node_ids": ["92:68", "92:41"],
                     "output_idx": 0,
                     "class_name": "LoraLoaderModelOnly",
                     "strength_field_name": "strength_model",

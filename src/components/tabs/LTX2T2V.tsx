@@ -9,6 +9,7 @@ import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
 import { LTX2ReferenceAudioControl } from '../controls/LTX2ReferenceAudioControl';
 import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
+import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
@@ -56,6 +57,10 @@ const Content = () => {
                     <SamplerSelectInput
                         name='sampler'
                         defaultValue='euler_ancestral'
+                    />
+                    <SchedulerSelectInput
+                        name='scheduler'
+                        defaultValue='simple'
                     />
                     <LTX2UpsampleControl />
                 </AdvancedSettings>

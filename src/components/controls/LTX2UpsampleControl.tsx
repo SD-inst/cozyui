@@ -8,11 +8,16 @@ import { VerticalBox } from '../VerticalBox';
 import { SamplerSelectInput } from './SamplerSelectInput';
 import { ToggleInput } from './ToggleInput';
 import { keyframeHandler, TKeyframe } from './keyframeHandler';
+import { SchedulerSelectInput } from './SchedulerSelectInput';
+import { SliderInput } from './SliderInput';
 
 type TValue = {
     spatial: boolean;
     temporal: boolean;
+    audio: boolean;
+    steps: number;
     sampler: string;
+    scheduler: string;
 };
 
 export const LTX2UpsampleControl = ({
@@ -26,6 +31,7 @@ export const LTX2UpsampleControl = ({
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
     const keyframes: TKeyframe[] = useWatchForm('keyframes');
+    const value: TValue = useWatchForm(name);
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
             if (!value) {
@@ -144,18 +150,6 @@ export const LTX2UpsampleControl = ({
             const wf: any = {
                 ':1': {
                     inputs: {
-                        cfg: 1,
-                        model: [model_node_id, 0],
-                        positive: [condNodeID, 0],
-                        negative: [condNodeID, 1],
-                    },
-                    class_type: 'CFGGuider',
-                    _meta: {
-                        title: 'CFGGuider',
-                    },
-                },
-                ':2': {
-                    inputs: {
                         video_latent: samplesNode,
                         audio_latent: [separateNodeID, 1],
                     },
@@ -164,49 +158,27 @@ export const LTX2UpsampleControl = ({
                         title: 'LTXVConcatAVLatent',
                     },
                 },
-                ':3': {
+                ':2': {
                     inputs: {
-                        sigmas: '0.909375, 0.725, 0.421875, 0.0',
-                    },
-                    class_type: 'ManualSigmas',
-                    _meta: {
-                        title: 'ManualSigmas',
-                    },
-                },
-                ':4': {
-                    inputs: {
+                        seed: [seed_node_id, 0],
+                        steps: value.steps,
+                        cfg: 1,
                         sampler_name: value.sampler,
+                        scheduler: value.scheduler,
+                        denoise: 0.5,
+                        model: [model_node_id, 0],
+                        positive: [condNodeID, 0],
+                        negative: [condNodeID, 1],
+                        latent_image: [':1', 0],
                     },
-                    class_type: 'KSamplerSelect',
-                    _meta: {
-                        title: 'KSamplerSelect',
-                    },
-                },
-                ':5': {
-                    inputs: {
-                        noise_seed: [seed_node_id, 0],
-                    },
-                    class_type: 'RandomNoise',
-                    _meta: {
-                        title: 'RandomNoise',
-                    },
-                },
-                ':6': {
-                    inputs: {
-                        noise: [':5', 0],
-                        guider: [':1', 0],
-                        sampler: [':4', 0],
-                        sigmas: [':3', 0],
-                        latent_image: [':2', 0],
-                    },
-                    class_type: 'SamplerCustomAdvanced',
+                    class_type: 'KSampler',
                     _meta: {
                         title: '2x Upscale',
                     },
                 },
             };
             if (i2v) {
-                wf[':7'] = {
+                wf[':3'] = {
                     inputs: {
                         strength: 1,
                         bypass: false,
@@ -219,10 +191,10 @@ export const LTX2UpsampleControl = ({
                         title: 'LTXVImgToVideoInplace',
                     },
                 };
-                wf[':2'].inputs.video_latent = [':7', 0];
+                wf[':1'].inputs.video_latent = [':3', 0];
             }
             const wfNodeID = insertGraph(api, wf);
-            const upscaleOutputNode = [wfNodeID + ':6', 1];
+            const upscaleOutputNode = [wfNodeID + ':2', 0];
             if (keyframes?.length) {
                 keyframeHandler(
                     api,
@@ -240,15 +212,17 @@ export const LTX2UpsampleControl = ({
                     {
                         id: 'handle',
                         field: '',
-                        cond_node_id: wfNodeID + ':1',
+                        cond_node_id: wfNodeID + ':2',
                         vae_node_id,
-                        concat_node_id: wfNodeID + ':2',
+                        concat_node_id: wfNodeID + ':1',
                         crop_node_id,
                     }
                 );
             }
             api[output_node_id].inputs.av_latent = upscaleOutputNode;
-            api[audio_node_id].inputs.samples = [separateNodeID, 1];
+            if (!value.audio) {
+                api[audio_node_id].inputs.samples = [separateNodeID, 1];
+            }
         }
     );
     useRegisterHandler({ name, handler });
@@ -263,13 +237,35 @@ export const LTX2UpsampleControl = ({
                 <ToggleInput
                     name={`${name}.temporal`}
                     label='upsample_temporal'
+                    defaultValue={false}
+                />
+                <ToggleInput
+                    name={`${name}.audio`}
+                    label='upsample_audio'
+                    disabled={!value.temporal && !value.spatial}
+                    defaultValue={false}
                 />
             </Box>
-            <SamplerSelectInput
-                name={`${name}.sampler`}
-                label='upsample_sampler'
-                defaultValue='euler_ancestral'
-            />
+            {(value.temporal || value.spatial) && (
+                <>
+                    <SliderInput
+                        name={`${name}.steps`}
+                        label='steps'
+                        defaultValue={3}
+                        max={20}
+                    />
+                    <SamplerSelectInput
+                        name={`${name}.sampler`}
+                        label='upsample_sampler'
+                        defaultValue='euler_ancestral'
+                    />
+                    <SchedulerSelectInput
+                        name={`${name}.scheduler`}
+                        label='upsample_scheduler'
+                        defaultValue='simple'
+                    />
+                </>
+            )}
         </VerticalBox>
     );
 };

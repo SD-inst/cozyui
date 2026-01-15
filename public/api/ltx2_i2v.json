@@ -79,15 +79,6 @@
             "title": "INT to float"
         }
     },
-    "92:8": {
-        "inputs": {
-            "sampler_name": "euler"
-        },
-        "class_type": "KSamplerSelect",
-        "_meta": {
-            "title": "KSamplerSelect"
-        }
-    },
     "92:60": {
         "inputs": {
             "text_encoder": "gemma-3-12b-abliterated-text-encoder.safetensors",
@@ -169,15 +160,6 @@
             "title": "LTXV Empty Latent Audio"
         }
     },
-    "92:11": {
-        "inputs": {
-            "noise_seed": ["104", 0]
-        },
-        "class_type": "RandomNoise",
-        "_meta": {
-            "title": "RandomNoise"
-        }
-    },
     "92:106": {
         "inputs": {
             "longer_edge": 1536,
@@ -216,18 +198,6 @@
         "class_type": "LTXVPreprocess",
         "_meta": {
             "title": "LTXVPreprocess"
-        }
-    },
-    "92:47": {
-        "inputs": {
-            "cfg": 4,
-            "model": ["92:1", 0],
-            "positive": ["92:22", 0],
-            "negative": ["92:22", 1]
-        },
-        "class_type": "CFGGuider",
-        "_meta": {
-            "title": "CFGGuider"
         }
     },
     "92:89": {
@@ -297,29 +267,20 @@
             "title": "LTXVConcatAVLatent"
         }
     },
-    "92:9": {
-        "inputs": {
-            "steps": 20,
-            "max_shift": 2.05,
-            "base_shift": 0.95,
-            "stretch": true,
-            "terminal": 0.1,
-            "latent": ["92:56", 0]
-        },
-        "class_type": "LTXVScheduler",
-        "_meta": {
-            "title": "LTXVScheduler"
-        }
-    },
     "92:41": {
         "inputs": {
-            "noise": ["92:11", 0],
-            "guider": ["92:47", 0],
-            "sampler": ["92:8", 0],
-            "sigmas": ["92:9", 0],
-            "latent_image": ["92:56", 0]
+            "seed": ["104", 0],
+            "steps": 20,
+            "cfg": 4,
+            "sampler_name": "euler",
+            "scheduler": "simple",
+            "denoise": 1,
+            "model": ["92:1", 0],
+            "positive": ["92:22", 0],
+            "negative": ["92:22", 1],
+            "latent_image":  ["92:56", 0]
         },
-        "class_type": "SamplerCustomAdvanced",
+        "class_type": "KSampler",
         "_meta": {
             "title": "Sampling"
         }
