@@ -266,7 +266,13 @@ export const LTX2UpsampleControl = ({
     useRegisterHandler({ name, handler });
     return (
         <VerticalBox alignItems='flex-start'>
-            <Box display='flex' flexDirection='row' flexWrap='wrap' gap={2} {...props}>
+            <Box
+                display='flex'
+                flexDirection='row'
+                flexWrap='wrap'
+                gap={2}
+                {...props}
+            >
                 <ToggleInput
                     name={`${name}.spatial`}
                     label='upsample_spatial'
@@ -296,7 +302,7 @@ export const LTX2UpsampleControl = ({
                         display='flex'
                         flexDirection='row'
                         flexWrap='wrap'
-                        gap={2}
+                        gap={4}
                         width='100%'
                     >
                         <SliderInput
@@ -305,6 +311,7 @@ export const LTX2UpsampleControl = ({
                             defaultValue={defaults.distill_strength}
                             max={1}
                             step={0.05}
+                            sx={{ flex: 1, minWidth: 200 }}
                         />
                         <SliderInput
                             name={`${name}.detail_strength`}
@@ -312,6 +319,7 @@ export const LTX2UpsampleControl = ({
                             defaultValue={defaults.detail_strength}
                             max={1}
                             step={0.05}
+                            sx={{ flex: 1, minWidth: 200 }}
                         />
                     </Box>
                     <SamplerSelectInput
