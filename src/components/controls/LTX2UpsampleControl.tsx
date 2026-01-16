@@ -251,7 +251,7 @@ export const LTX2UpsampleControl = ({
                         id: 'handle',
                         field: '',
                         cond_node_id: wfNodeID + ':2',
-                        model_node_id,
+                        vae_node_id: model_node_id,
                         concat_node_id: wfNodeID + ':1',
                         crop_node_id,
                     }
