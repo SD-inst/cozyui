@@ -10,8 +10,7 @@ import { settings } from '../../hooks/settings';
 export const ThemeContext = ({ ...props }) => {
     const disable_help = useBooleanSetting(settings.disable_help);
     const theme = createTheme({
-        colorSchemes: { dark: true, light: true },
-        defaultColorScheme: 'dark',
+        colorSchemes: { dark: true },
         cssVariables: true,
         components: {
             MuiAutocomplete: {
