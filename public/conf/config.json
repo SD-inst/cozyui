@@ -611,7 +611,8 @@
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
-                    "crop_node_id": "92:95"
+                    "crop_node_id": "92:95",
+                    "set_field": "keyframe"
                 },
                 "reference_audio": {
                     "id": "handle",
@@ -707,7 +708,8 @@
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
-                    "crop_node_id": "92:95"
+                    "crop_node_id": "92:95",
+                    "set_field": "keyframe"
                 },
                 "reference_audio": {
                     "id": "handle",

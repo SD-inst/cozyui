@@ -88,18 +88,18 @@ export const ArrayInput = ({
     targetFieldName?: string;
 } & PropsWithChildren) => {
     const tr = useTranslate();
-    const value: any[] = useWatch({ name });
+    const value: any[] = useWatch({ name, defaultValue: [] });
     const { unregister, setValue } = useFormContext();
     const { append, update } = useFieldArray({ name });
     useEffect(() => {
-        if (value?.length < min && min > 0) {
+        if (value.length < min && min > 0) {
             for (let i = 0; i < min; i++) {
                 append(clone(newValue));
             }
         } else if (value === undefined) {
             setValue(name, []);
         }
-    }, [append, min, name, newValue, setValue, value, value?.length]);
+    }, [append, min, name, newValue, setValue, value, value.length]);
     const handleAdd = () => {
         append(clone(newValue));
     };
@@ -112,7 +112,7 @@ export const ArrayInput = ({
             return;
         }
         unregister(receiverFieldName);
-        for (let index = 0; index < value?.length; index++) {
+        for (let index = 0; index < value.length; index++) {
             if (!value[index][targetFieldName]) {
                 update(index, {
                     ...value[index],
@@ -121,7 +121,7 @@ export const ArrayInput = ({
                 return;
             }
         }
-        if (value?.length < max) {
+        if (value.length < max || max === -1) {
             append({
                 ...clone(newValue),
                 [targetFieldName]: receiverFieldValue,
@@ -144,7 +144,7 @@ export const ArrayInput = ({
     return (
         <Box display='flex' flexDirection='column' alignItems='center' gap={2}>
             {label ? tr(label) : tr('controls.' + name)}
-            {value?.map((val: any, index: number) => (
+            {value.map((val: any, index: number) => (
                 <Box
                     display='flex'
                     flexDirection='column'
@@ -163,7 +163,7 @@ export const ArrayInput = ({
                     })}
                 </Box>
             ))}
-            {(value?.length < max || max === -1) && (
+            {(value.length < max || max === -1) && (
                 <Button onClick={handleAdd}>
                     <Add />
                 </Button>
