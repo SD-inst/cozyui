@@ -11,10 +11,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { settings } from '../../hooks/settings';
 import { useApiURL } from '../../hooks/useApiURL';
+import { useBackupUpload } from '../../hooks/useBackupUpload';
 import { useImageURL } from '../../hooks/useImageURL';
-import { useBooleanSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
 import {
@@ -70,7 +69,7 @@ export const FileUpload = ({
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
     const reuploadAttempts = useRef(0);
-    const backupUploads = useBooleanSetting(settings.backup_uploads);
+    const [maybeBackupUpload, backupUploads] = useBackupUpload(props.name);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
@@ -126,12 +125,7 @@ export const FileUpload = ({
                 j.filename = j.name;
                 delete j.name;
                 field.onChange(j.filename);
-                if (backupUploads) {
-                    db.uploads.put({
-                        id: uploadKey,
-                        file: files[0],
-                    });
-                }
+                maybeBackupUpload(files[0]);
                 if (onUpload && j.filename) {
                     onUpload(file);
                 }

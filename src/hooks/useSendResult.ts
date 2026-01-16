@@ -1,11 +1,11 @@
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { makeOutputUrl } from '../api/utils';
+import { useTranslate } from '../i18n/I18nContext';
 import { useAppDispatch } from '../redux/hooks';
-import { setParams, actionEnum, setTab } from '../redux/tab';
+import { actionEnum, setParams, setTab } from '../redux/tab';
 import { useApiURL } from './useApiURL';
 import { useResult } from './useResult';
-import { useTranslate } from '../i18n/I18nContext';
 
 export const useSendResult = ({
     targetTab,
