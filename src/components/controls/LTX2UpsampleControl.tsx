@@ -266,7 +266,7 @@ export const LTX2UpsampleControl = ({
     useRegisterHandler({ name, handler });
     return (
         <VerticalBox alignItems='flex-start'>
-            <Box display='flex' flexDirection='row' gap={2} {...props}>
+            <Box display='flex' flexDirection='row' flexWrap='wrap' gap={2} {...props}>
                 <ToggleInput
                     name={`${name}.spatial`}
                     label='upsample_spatial'
@@ -295,6 +295,7 @@ export const LTX2UpsampleControl = ({
                     <Box
                         display='flex'
                         flexDirection='row'
+                        flexWrap='wrap'
                         gap={2}
                         width='100%'
                     >
