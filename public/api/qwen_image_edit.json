@@ -51,7 +51,7 @@
     },
     "37": {
         "inputs": {
-            "unet_name": "qwen/qwen_image_edit_2509_fp8_e4m3fn.safetensors",
+            "unet_name": "qwen/qwen_image_edit_2511_fp8mixed.safetensors",
             "weight_dtype": "default"
         },
         "class_type": "UNETLoader",
