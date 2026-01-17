@@ -201,6 +201,7 @@ const translation = {
         keyframe_strength: 'сила кадра',
         reference_audio_enabled: 'аудио-референс',
         trim: 'обрезать аудио (сек)',
+        text_encoder: 'модель кодирования текста',
     },
     settings: {
         select_language: 'Выбор языка',
