@@ -96,10 +96,10 @@ export const ArrayInput = ({
             for (let i = 0; i < min; i++) {
                 append(clone(newValue));
             }
-        } else if (value === undefined) {
+        } else if (!value.length) {
             setValue(name, []);
         }
-    }, [append, min, name, newValue, setValue, value, value.length]);
+    }, [append, min, name, newValue, setValue, value.length]);
     const handleAdd = () => {
         append(clone(newValue));
     };
