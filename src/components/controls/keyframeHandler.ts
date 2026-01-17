@@ -39,6 +39,7 @@ export const keyframeHandler = (
                     frame_load_cap: 0,
                     skip_first_frames: 0,
                     select_every_nth: 1,
+                    format: 'LTXV',
                 },
                 class_type: 'VHS_LoadVideo',
                 _meta: {

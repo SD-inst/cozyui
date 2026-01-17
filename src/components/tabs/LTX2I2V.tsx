@@ -9,6 +9,7 @@ import { LoraInput } from '../controls/LoraInput';
 import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
 import { LTX2ReferenceAudioControl } from '../controls/LTX2ReferenceAudioControl';
 import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -56,16 +57,20 @@ const Content = () => {
                         min={1}
                         max={50}
                     />
+                    <ModelSelectAutocomplete
+                        name='text_encoder'
+                        type='ltx_gemma'
+                        component='LTXAVTextEncoderLoader'
+                        field='text_encoder'
+                        defaultValue='gemma_3_12B_it_fp8_e4m3fn.safetensors'
+                    />
                     <SliderInput
                         name='compression'
                         defaultValue={33}
                         min={1}
                         max={50}
                     />
-                    <SamplerSelectInput
-                        name='sampler'
-                        defaultValue='euler'
-                    />
+                    <SamplerSelectInput name='sampler' defaultValue='euler' />
                     <SchedulerSelectInput
                         name='scheduler'
                         defaultValue='simple'

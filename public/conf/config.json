@@ -595,6 +595,11 @@
                     "id": "106",
                     "field": "value"
                 },
+                "text_encoder": {
+                    "id": "handle",
+                    "node_id": "92:60",
+                    "field": "text_encoder"
+                },
                 "upsample": {
                     "id": "handle",
                     "cond_node_id": "92:22",
@@ -690,6 +695,11 @@
                 "fps": {
                     "id": "107",
                     "field": "value"
+                },
+                "text_encoder": {
+                    "id": "handle",
+                    "node_id": "92:60",
+                    "field": "text_encoder"
                 },
                 "upsample": {
                     "id": "handle",
@@ -2933,6 +2943,9 @@
         },
         "ltx2": {
             "filter": "ltx2/"
+        },
+        "ltx_gemma": {
+            "filter": "gemma_3_12B"
         }
     },
     "api": "/cui"
