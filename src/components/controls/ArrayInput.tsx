@@ -7,7 +7,12 @@ import React, {
     ReactNode,
     useEffect,
 } from 'react';
-import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import {
+    useController,
+    useFieldArray,
+    useFormContext,
+    useWatch,
+} from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
@@ -88,18 +93,18 @@ export const ArrayInput = ({
     targetFieldName?: string;
 } & PropsWithChildren) => {
     const tr = useTranslate();
-    const value: any[] = useWatch({ name, defaultValue: [] });
-    const { unregister, setValue } = useFormContext();
+    const { unregister } = useFormContext();
+    const {
+        field: { value },
+    } = useController({ name, defaultValue: [] });
     const { append, update } = useFieldArray({ name });
     useEffect(() => {
         if (value.length < min && min > 0) {
             for (let i = 0; i < min; i++) {
                 append(clone(newValue));
             }
-        } else if (!value.length) {
-            setValue(name, []);
         }
-    }, [append, min, name, newValue, setValue, value.length]);
+    }, [append, min, newValue, value.length]);
     const handleAdd = () => {
         append(clone(newValue));
     };

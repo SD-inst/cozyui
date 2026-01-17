@@ -10,7 +10,7 @@ import { SamplerSelectInput } from './SamplerSelectInput';
 import { SchedulerSelectInput } from './SchedulerSelectInput';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
-import { useWatch } from 'react-hook-form';
+import { useController, useWatch } from 'react-hook-form';
 
 type TValue = {
     spatial: boolean;
@@ -44,8 +44,13 @@ export const LTX2UpsampleControl = ({
 } & BoxProps) => {
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
-    const keyframes: TKeyframe[] = useWatchForm('keyframes');
-    const value: TValue = useWatch({ name, defaultValue: defaults });
+    const keyframes: TKeyframe[] = useWatch({ name: 'keyframes' });
+    const {
+        field: { value },
+    }: { field: { value: TValue } } = useController({
+        name,
+        defaultValue: defaults,
+    });
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
             if (!value) {
