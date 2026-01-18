@@ -1,7 +1,8 @@
 import { useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
-import { useController, useFormContext, useWatch } from 'react-hook-form';
+import { useController, useWatch } from 'react-hook-form';
 import { insertGraph } from '../../api/utils';
+import { useSetObjectValue } from '../../hooks/useSetObjectValue';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { FileUpload } from './FileUpload';
@@ -26,7 +27,7 @@ export const LTX2ReferenceAudioControl = ({
 }: {
     name?: string;
 }) => {
-    const { setValue } = useFormContext();
+    const setValue = useSetObjectValue();
     const {
         field: { value },
     } = useController({
@@ -36,11 +37,13 @@ export const LTX2ReferenceAudioControl = ({
     useEffect(() => {
         if (typeof value === 'string') {
             // received audio file name from another tab/history
-            setValue(name, {
-                enabled: true,
-                audio: value,
-                trim: 60,
-            } as TReferenceAudio);
+            setValue({
+                [name]: {
+                    enabled: true,
+                    audio: value,
+                    trim: 60,
+                } as TReferenceAudio,
+            });
         }
     }, [name, setValue, value]);
     const enabled = useWatch({ name: `${name}.enabled` });

@@ -1,22 +1,18 @@
-import { Tab, Tabs, useEventCallback } from '@mui/material';
+import { Tab, Tabs } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { get } from 'lodash';
 import React, {
     Children,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
-import {
-    FormProvider,
-    useForm,
-    useFormContext,
-    useWatch
-} from 'react-hook-form';
+import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useCurrentTab } from '../hooks/useCurrentTab';
 import { useHiddenTabs } from '../hooks/useHiddenTabs';
+import { useRestoreValues } from '../hooks/useRestoreValues';
 import { useSetDefaults } from '../hooks/useSetDefaults';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
@@ -25,33 +21,6 @@ import { TabContextProvider } from './contexts/TabContextProvider';
 import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { db } from './history/db';
 import { VerticalBox } from './VerticalBox';
-
-const useRestoreValues = () => {
-    const tab_name = useTabName();
-    const api = useAppSelector((s) =>
-        get(s, ['config', 'tabs', tab_name], null)
-    );
-    const { setValue } = useFormContext();
-    return useEventCallback((key: string, value: any) => {
-        if (!api) {
-            console.log(
-                `Trying to set ${key} to ${value} but tab ${tab_name} isn't loaded yet`
-            );
-            return;
-        }
-        if (api.controls[key]) {
-            if (typeof value === 'string' && api.controls[key].set_field) {
-                // only use the set_field parameter for string values that are
-                // used with send/receive
-                setValue(api.controls[key].set_field, value, {
-                    shouldDirty: false,
-                });
-            } else {
-                setValue(key, value, { shouldDirty: false });
-            }
-        }
-    });
-};
 
 const ValuesRestore = () => {
     const ref = useRef<HTMLDivElement>(null);
@@ -62,9 +31,24 @@ const ValuesRestore = () => {
     const [initialized, setInitialized] = useState(false);
     const idb = useLiveQuery(
         async () => (await db.formState.get(tab_name)) ?? null,
-        [tab_name]
+        [tab_name],
     );
     const setValue = useRestoreValues();
+    const setObjectValues = useCallback(
+        (vals: any, prefix = '') => {
+            if (!vals) {
+                return;
+            }
+            Object.keys(vals).forEach((c) => {
+                if (typeof vals[c] === 'object') {
+                    setObjectValues(vals[c], c + '.');
+                } else {
+                    setValue(prefix + c, vals[c]);
+                }
+            });
+        },
+        [setValue],
+    );
     useEffect(() => {
         if (!initialized || tab !== tab_name || action !== actionEnum.RESTORE) {
             return;
@@ -72,9 +56,9 @@ const ValuesRestore = () => {
         dispatch(setParams({}));
         setTimeout(() => {
             ref.current?.scrollIntoView({ behavior: 'smooth' });
-            Object.keys(values).forEach((k) => setValue(k, values[k]));
+            setObjectValues(values);
         }, 0);
-    }, [action, dispatch, initialized, setValue, tab, tab_name, values]);
+    }, [action, dispatch, initialized, setObjectValues, tab, tab_name, values]);
     useEffect(() => {
         if (initialized || idb === undefined || !isLoaded) {
             // not loaded yet or already applied
@@ -88,12 +72,10 @@ const ValuesRestore = () => {
         }
         const vals = JSON.parse(idb.state);
         if (vals) {
-            Object.keys(vals).forEach((c) => {
-                setValue(c, vals[c]);
-            });
+            setObjectValues(vals);
         }
         setInitialized(true);
-    }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
+    }, [setObjectValues, idb, isLoaded, setDefaults, tab_name, initialized]);
     const vals = useWatch();
     useEffect(() => {
         if (!initialized) {
@@ -254,14 +236,14 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             return [];
         }
         return (props.children as any[]).filter(
-            (t) => !hiddenTabs.includes(t.props.value)
+            (t) => !hiddenTabs.includes(t.props.value),
         );
     }, [hiddenTabs, props.children]);
     // fill all available tabs
     useEffect(() => {
         const workflowTabs = Children.map(
             props.children as Array<React.Component<any>>,
-            (c) => c.props.value
+            (c) => c.props.value,
         );
         const r = Children.map(
             props.children as Array<React.Component<any>>,
@@ -273,7 +255,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
                     return result;
                 }
                 return null;
-            }
+            },
         );
         const receivers = r.reduce((p, v) => Object.assign(p, v), {});
         setWorkflowTabs(workflowTabs);
@@ -326,8 +308,8 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     useEffect(() => {
         const tabGroups = Object.fromEntries(
             Object.entries(groups).flatMap((e) =>
-                e[1].map((t) => [t.props.value, e[0]])
-            )
+                e[1].map((t) => [t.props.value, e[0]]),
+            ),
         );
         setWorkflowTabGroups(tabGroups);
     }, [groups, setWorkflowTabGroups]);
