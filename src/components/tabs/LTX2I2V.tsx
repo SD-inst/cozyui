@@ -63,6 +63,7 @@ const Content = () => {
                         component='LTXAVTextEncoderLoader'
                         field='text_encoder'
                         defaultValue='gemma_3_12B_it_fp8_e4m3fn.safetensors'
+                        sx={{ mb: 2 }}
                     />
                     <SliderInput
                         name='compression'

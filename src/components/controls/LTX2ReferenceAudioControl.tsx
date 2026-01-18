@@ -106,7 +106,7 @@ export const LTX2ReferenceAudioControl = ({
             };
             const nodeID = insertGraph(api, wf);
             api[concat_node_id].inputs.audio_latent = [nodeID + ':5', 0];
-        }
+        },
     );
     useRegisterHandler({ name, handler });
     return (
