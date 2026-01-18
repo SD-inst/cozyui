@@ -2,7 +2,6 @@ import { Tab, Tabs } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import React, {
     Children,
-    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -34,21 +33,6 @@ const ValuesRestore = () => {
         [tab_name],
     );
     const setValue = useRestoreValues();
-    const setObjectValues = useCallback(
-        (vals: any, prefix = '') => {
-            if (!vals) {
-                return;
-            }
-            Object.keys(vals).forEach((c) => {
-                if (typeof vals[c] === 'object') {
-                    setObjectValues(vals[c], c + '.');
-                } else {
-                    setValue(prefix + c, vals[c]);
-                }
-            });
-        },
-        [setValue],
-    );
     useEffect(() => {
         if (!initialized || tab !== tab_name || action !== actionEnum.RESTORE) {
             return;
@@ -56,9 +40,9 @@ const ValuesRestore = () => {
         dispatch(setParams({}));
         setTimeout(() => {
             ref.current?.scrollIntoView({ behavior: 'smooth' });
-            setObjectValues(values);
+            setValue('', values);
         }, 0);
-    }, [action, dispatch, initialized, setObjectValues, tab, tab_name, values]);
+    }, [action, dispatch, initialized, setValue, tab, tab_name, values]);
     useEffect(() => {
         if (initialized || idb === undefined || !isLoaded) {
             // not loaded yet or already applied
@@ -72,10 +56,10 @@ const ValuesRestore = () => {
         }
         const vals = JSON.parse(idb.state);
         if (vals) {
-            setObjectValues(vals);
+            setValue('', vals);
         }
         setInitialized(true);
-    }, [setObjectValues, idb, isLoaded, setDefaults, tab_name, initialized]);
+    }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
     const vals = useWatch();
     useEffect(() => {
         if (!initialized) {
