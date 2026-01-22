@@ -10,7 +10,6 @@ import { LTX2ReferenceAudioControl } from '../controls/LTX2ReferenceAudioControl
 import { LTX2UpsampleControl } from '../controls/LTX2UpsampleControl';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
-import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
@@ -64,10 +63,6 @@ const Content = () => {
                         sx={{ mb: 2 }}
                     />
                     <SamplerSelectInput name='sampler' defaultValue='euler' />
-                    <SchedulerSelectInput
-                        name='scheduler'
-                        defaultValue='simple'
-                    />
                     <LTX2UpsampleControl />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />

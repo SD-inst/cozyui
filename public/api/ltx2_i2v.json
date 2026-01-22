@@ -79,6 +79,15 @@
             "title": "INT to float"
         }
     },
+    "92:8": {
+        "inputs": {
+            "sampler_name": "euler"
+        },
+        "class_type": "KSamplerSelect",
+        "_meta": {
+            "title": "KSamplerSelect"
+        }
+    },
     "92:60": {
         "inputs": {
             "text_encoder": "gemma_3_12B_it_fp8_e4m3fn.safetensors",
@@ -137,6 +146,17 @@
             "title": "CLIP Text Encode (Prompt)"
         }
     },
+    "92:68": {
+        "inputs": {
+            "lora_name": "ltx2/ltx-2-19b-distilled-lora-384.safetensors",
+            "strength_model": 1,
+            "model": ["92:1", 0]
+        },
+        "class_type": "LoraLoaderModelOnly",
+        "_meta": {
+            "title": "LoraLoaderModelOnly"
+        }
+    },
     "92:51": {
         "inputs": {
             "frames_number": ["92:62", 0],
@@ -147,6 +167,15 @@
         "class_type": "LTXVEmptyLatentAudio",
         "_meta": {
             "title": "LTXV Empty Latent Audio"
+        }
+    },
+    "92:11": {
+        "inputs": {
+            "noise_seed": ["104", 0]
+        },
+        "class_type": "RandomNoise",
+        "_meta": {
+            "title": "RandomNoise"
         }
     },
     "92:106": {
@@ -187,6 +216,18 @@
         "class_type": "LTXVPreprocess",
         "_meta": {
             "title": "LTXVPreprocess"
+        }
+    },
+    "92:47": {
+        "inputs": {
+            "cfg": 4,
+            "model": ["92:1", 0],
+            "positive": ["92:22", 0],
+            "negative": ["92:22", 1]
+        },
+        "class_type": "CFGGuider",
+        "_meta": {
+            "title": "CFGGuider"
         }
     },
     "92:89": {
@@ -256,20 +297,29 @@
             "title": "LTXVConcatAVLatent"
         }
     },
+    "92:9": {
+        "inputs": {
+            "steps": 20,
+            "max_shift": 2.05,
+            "base_shift": 0.95,
+            "stretch": true,
+            "terminal": 0.1,
+            "latent": ["92:56", 0]
+        },
+        "class_type": "LTXVScheduler",
+        "_meta": {
+            "title": "LTXVScheduler"
+        }
+    },
     "92:41": {
         "inputs": {
-            "seed": ["104", 0],
-            "steps": 20,
-            "cfg": 4,
-            "sampler_name": "euler",
-            "scheduler": "simple",
-            "denoise": 1,
-            "model": ["92:1", 0],
-            "positive": ["92:22", 0],
-            "negative": ["92:22", 1],
-            "latent_image":  ["92:56", 0]
+            "noise": ["92:11", 0],
+            "guider": ["92:47", 0],
+            "sampler": ["92:8", 0],
+            "sigmas": ["92:9", 0],
+            "latent_image": ["92:56", 0]
         },
-        "class_type": "KSampler",
+        "class_type": "SamplerCustomAdvanced",
         "_meta": {
             "title": "Sampling"
         }

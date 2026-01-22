@@ -561,7 +561,7 @@
                     "field": "value"
                 },
                 "steps": {
-                    "id": "92:41",
+                    "id": "92:9",
                     "field": "steps"
                 },
                 "width": {
@@ -577,16 +577,12 @@
                     "field": "text"
                 },
                 "cfg": {
-                    "id": "92:41",
+                    "id": "92:47",
                     "field": "cfg"
                 },
                 "sampler": {
-                    "id": "92:41",
+                    "id": "92:8",
                     "field": "sampler_name"
-                },
-                "scheduler": {
-                    "id": "92:41",
-                    "field": "scheduler"
                 },
                 "lora": {
                     "id": "handle"
@@ -604,6 +600,7 @@
                     "id": "handle",
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
+                    "guider_node_id": "92:47",
                     "model_node_id": "92:1",
                     "seed_node_id": "104",
                     "output_node_id": "92:94",
@@ -630,7 +627,7 @@
                 "lora_params": {
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["92:41"],
+                    "output_node_ids": ["92:47"],
                     "output_idx": 0,
                     "class_name": "LoraLoaderModelOnly",
                     "strength_field_name": "strength_model",
@@ -650,8 +647,11 @@
                     "field": "text"
                 },
                 "image": {
-                    "id": "98",
-                    "field": "image"
+                    "id": "handle",
+                    "node_id": "98",
+                    "field": "image",
+                    "audio_vae_node_id": "92:48",
+                    "format": "LTXV"
                 },
                 "seed": {
                     "id": "104",
@@ -666,7 +666,7 @@
                     "field": "img_compression"
                 },
                 "steps": {
-                    "id": "92:41",
+                    "id": "92:9",
                     "field": "steps"
                 },
                 "size": {
@@ -678,16 +678,12 @@
                     "field": "text"
                 },
                 "cfg": {
-                    "id": "92:41",
+                    "id": "92:47",
                     "field": "cfg"
                 },
                 "sampler": {
-                    "id": "92:41",
+                    "id": "92:8",
                     "field": "sampler_name"
-                },
-                "scheduler": {
-                    "id": "92:41",
-                    "field": "scheduler"
                 },
                 "lora": {
                     "id": "handle"
@@ -705,6 +701,7 @@
                     "id": "handle",
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
+                    "guider_node_id": "92:47",
                     "model_node_id": "92:1",
                     "seed_node_id": "104",
                     "output_node_id": "92:94",
@@ -732,7 +729,7 @@
                 "lora_params": {
                     "lora_input_name": "model",
                     "api_input_name": "model",
-                    "output_node_ids": ["92:41"],
+                    "output_node_ids": ["92:47"],
                     "output_idx": 0,
                     "class_name": "LoraLoaderModelOnly",
                     "strength_field_name": "strength_model",

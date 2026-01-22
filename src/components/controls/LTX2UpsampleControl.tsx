@@ -1,4 +1,5 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
+import { useController, useWatch } from 'react-hook-form';
 import { insertGraph } from '../../api/utils';
 import { useResultParam } from '../../hooks/useResult';
 import { useWatchForm } from '../../hooks/useWatchForm';
@@ -7,10 +8,8 @@ import { useRegisterHandler } from '../contexts/TabContext';
 import { VerticalBox } from '../VerticalBox';
 import { keyframeHandler, TKeyframe } from './keyframeHandler';
 import { SamplerSelectInput } from './SamplerSelectInput';
-import { SchedulerSelectInput } from './SchedulerSelectInput';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
-import { useController, useWatch } from 'react-hook-form';
 
 type TValue = {
     spatial: boolean;
@@ -20,7 +19,6 @@ type TValue = {
     distill_strength: number;
     detail_strength: number;
     sampler: string;
-    scheduler: string;
 };
 
 const defaults: TValue = {
@@ -28,7 +26,6 @@ const defaults: TValue = {
     detail_strength: 0.3,
     distill_strength: 0.6,
     sampler: 'euler_ancestral',
-    scheduler: 'simple',
     spatial: true,
     steps: 3,
     temporal: false,
@@ -60,6 +57,7 @@ export const LTX2UpsampleControl = ({
                 input_node_id,
                 cond_node_id,
                 model_node_id,
+                guider_node_id,
                 seed_node_id,
                 output_node_id,
                 image_node_id,
@@ -165,9 +163,21 @@ export const LTX2UpsampleControl = ({
                 };
                 samplesNode = [insertGraph(api, spatialUpscale) + ':2', 0];
             }
-            const modelNode = api[input_node_id].inputs.model;
+            const modelNode = api[guider_node_id].inputs.model;
             const wf: any = {
                 ':1': {
+                    inputs: {
+                        cfg: 1,
+                        model: [':8', 0],
+                        positive: [condNodeID, 0],
+                        negative: [condNodeID, 1],
+                    },
+                    class_type: 'CFGGuider',
+                    _meta: {
+                        title: 'CFGGuider',
+                    },
+                },
+                ':2': {
                     inputs: {
                         video_latent: samplesNode,
                         audio_latent: [separateNodeID, 1],
@@ -177,25 +187,47 @@ export const LTX2UpsampleControl = ({
                         title: 'LTXVConcatAVLatent',
                     },
                 },
-                ':2': {
+                ':3': {
                     inputs: {
-                        seed: [seed_node_id, 0],
-                        steps: value.steps,
-                        cfg: 1,
-                        sampler_name: value.sampler,
-                        scheduler: value.scheduler,
-                        denoise: 0.5,
-                        model: [':4', 0],
-                        positive: [condNodeID, 0],
-                        negative: [condNodeID, 1],
-                        latent_image: [':1', 0],
+                        sigmas: '0.909375, 0.725, 0.421875, 0.0',
                     },
-                    class_type: 'KSampler',
+                    class_type: 'ManualSigmas',
+                    _meta: {
+                        title: 'ManualSigmas',
+                    },
+                },
+                ':4': {
+                    inputs: {
+                        sampler_name: value.sampler,
+                    },
+                    class_type: 'KSamplerSelect',
+                    _meta: {
+                        title: 'KSamplerSelect',
+                    },
+                },
+                ':5': {
+                    inputs: {
+                        noise_seed: [seed_node_id, 0],
+                    },
+                    class_type: 'RandomNoise',
+                    _meta: {
+                        title: 'RandomNoise',
+                    },
+                },
+                ':6': {
+                    inputs: {
+                        noise: [':5', 0],
+                        guider: [':1', 0],
+                        sampler: [':4', 0],
+                        sigmas: [':3', 0],
+                        latent_image: [':2', 0],
+                    },
+                    class_type: 'SamplerCustomAdvanced',
                     _meta: {
                         title: '2x Upscale',
                     },
                 },
-                ':3': {
+                ':7': {
                     inputs: {
                         lora_name:
                             'ltx2/ltx-2-19b-distilled-lora-384.safetensors',
@@ -207,12 +239,12 @@ export const LTX2UpsampleControl = ({
                         title: 'LoraLoaderModelOnly',
                     },
                 },
-                ':4': {
+                ':8': {
                     inputs: {
                         lora_name:
                             'ltx2/ltx-2-19b-ic-lora-detailer.safetensors',
                         strength_model: value.detail_strength,
-                        model: [':3', 0],
+                        model: [':7', 0],
                     },
                     class_type: 'LoraLoaderModelOnly',
                     _meta: {
@@ -221,7 +253,7 @@ export const LTX2UpsampleControl = ({
                 },
             };
             if (i2v) {
-                wf[':5'] = {
+                wf[':9'] = {
                     inputs: {
                         strength: 1,
                         bypass: false,
@@ -234,10 +266,10 @@ export const LTX2UpsampleControl = ({
                         title: 'LTXVImgToVideoInplace',
                     },
                 };
-                wf[':1'].inputs.video_latent = [':5', 0];
+                wf[':2'].inputs.video_latent = [':9', 0];
             }
             const wfNodeID = insertGraph(api, wf);
-            const upscaleOutputNode = [wfNodeID + ':2', 0];
+            const upscaleOutputNode = [wfNodeID + ':6', 1];
             if (keyframes?.length) {
                 keyframeHandler(
                     api,
@@ -245,7 +277,7 @@ export const LTX2UpsampleControl = ({
                         ? keyframes
                               .filter(
                                   (kf) =>
-                                      !kf.image.match(/\.(mp4|webm|avi|wmv)$/)
+                                      !kf.image.match(/\.(mp4|webm|avi|wmv)$/),
                               )
                               .map((kf) => ({
                                   ...kf,
@@ -255,18 +287,18 @@ export const LTX2UpsampleControl = ({
                     {
                         id: 'handle',
                         field: '',
-                        cond_node_id: wfNodeID + ':2',
+                        cond_node_id: wfNodeID + ':1',
                         vae_node_id: model_node_id,
-                        concat_node_id: wfNodeID + ':1',
+                        concat_node_id: wfNodeID + ':2',
                         crop_node_id,
-                    }
+                    },
                 );
             }
             api[output_node_id].inputs.av_latent = upscaleOutputNode;
             if (!value.audio) {
                 api[audio_node_id].inputs.samples = [separateNodeID, 1];
             }
-        }
+        },
     );
     useRegisterHandler({ name, handler });
     return (
@@ -331,11 +363,6 @@ export const LTX2UpsampleControl = ({
                         name={`${name}.sampler`}
                         label='upsample_sampler'
                         defaultValue={defaults.sampler}
-                    />
-                    <SchedulerSelectInput
-                        name={`${name}.scheduler`}
-                        label='upsample_scheduler'
-                        defaultValue={defaults.scheduler}
                     />
                 </>
             )}
