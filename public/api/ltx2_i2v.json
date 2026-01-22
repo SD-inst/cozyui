@@ -82,7 +82,7 @@
     "92:60": {
         "inputs": {
             "text_encoder": "gemma_3_12B_it_fp8_e4m3fn.safetensors",
-            "ckpt_name": "ltx/ltx-2-19b-dev-fp8.safetensors",
+            "ckpt_name": "ltx2/ltx-2-19b-dev-fp8.safetensors",
             "device": "default"
         },
         "class_type": "LTXAVTextEncoderLoader",
@@ -92,7 +92,7 @@
     },
     "92:48": {
         "inputs": {
-            "ckpt_name": "ltx/ltx-2-19b-dev-fp8.safetensors"
+            "ckpt_name": "ltx2/ltx-2-19b-dev-fp8.safetensors"
         },
         "class_type": "LTXVAudioVAELoader",
         "_meta": {
@@ -101,7 +101,7 @@
     },
     "92:1": {
         "inputs": {
-            "ckpt_name": "ltx/ltx-2-19b-dev-fp8.safetensors"
+            "ckpt_name": "ltx2/ltx-2-19b-dev-fp8.safetensors"
         },
         "class_type": "CheckpointLoaderSimple",
         "_meta": {
