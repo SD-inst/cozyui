@@ -153,7 +153,7 @@ export const FileUpload = ({
                 return {
                     'audio/*': ext[UploadType.AUDIO],
                 };
-            case UploadType.BOTH:
+            case UploadType.IMAGEORVIDEO:
                 return {
                     'image/*': ext[UploadType.IMAGE],
                     'video/*': ext[UploadType.VIDEO],
@@ -244,7 +244,7 @@ export const FileUpload = ({
                                         onError={handleUploadLost}
                                     />
                                 ) : filetype === UploadType.VIDEO ||
-                                  filetype === UploadType.BOTH ? (
+                                  filetype === UploadType.IMAGEORVIDEO ? (
                                     <video
                                         style={{ ...style, width: 200 }}
                                         src={imageURL}
