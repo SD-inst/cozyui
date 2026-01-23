@@ -165,10 +165,21 @@ export const LTX2UpsampleControl = ({
             }
             const modelNode = api[guider_node_id].inputs.model;
             const wf: any = {
+                ':1.1': {
+                    inputs: {
+                        preview_rate: 8,
+                        model: [':8', 0],
+                        vae: [model_node_id, 2],
+                    },
+                    class_type: 'LTX2SamplingPreviewOverride',
+                    _meta: {
+                        title: 'LTX2 Sampling Preview Override',
+                    },
+                },
                 ':1': {
                     inputs: {
                         cfg: 1,
-                        model: [':8', 0],
+                        model: [':1.1', 0],
                         positive: [condNodeID, 0],
                         negative: [condNodeID, 1],
                     },
