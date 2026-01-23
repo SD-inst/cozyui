@@ -69,7 +69,7 @@ const Content = () => {
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>
-                <VideoResult />
+                <VideoResult fps={fps} />
             </GridRight>
             <GridBottom>
                 <GenerateButton />
