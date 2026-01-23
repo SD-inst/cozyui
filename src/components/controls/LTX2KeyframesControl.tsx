@@ -1,4 +1,4 @@
-import { useWatchForm } from '../../hooks/useWatchForm';
+import { useWatch } from 'react-hook-form';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { ArrayInput } from './ArrayInput';
 import { FileUpload } from './FileUpload';
@@ -13,7 +13,7 @@ export const LTX2KeyframesControl = ({
     receiverFieldName = 'keyframe',
 }) => {
     useRegisterHandler({ name, handler: keyframeHandler });
-    const fps = useWatchForm('fps');
+    const fps = useWatch({ name: 'fps', defaultValue: 24 });
     return (
         <ArrayInput
             name={name}

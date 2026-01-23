@@ -1,4 +1,4 @@
-import { useWatchForm } from '../../hooks/useWatchForm';
+import { useWatch } from 'react-hook-form';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -18,7 +18,7 @@ import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {
-    const fps = useWatchForm('fps');
+    const fps = useWatch({ name: 'fps', defaultValue: 24 });
     return (
         <Layout>
             <GridLeft>
