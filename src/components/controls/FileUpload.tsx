@@ -83,7 +83,7 @@ export const FileUpload = ({
                 ext[k].some(
                     (e) =>
                         typeof field.value === 'string' &&
-                        field.value.endsWith(e)
+                        field.value.endsWith(e),
                 )
             ) {
                 return k;
@@ -101,7 +101,7 @@ export const FileUpload = ({
             if (extraHandler) {
                 extraHandler(api, val, control);
             }
-        }
+        },
     );
     useRegisterHandler({ name: props.name, handler });
     const tabName = useTabName();
@@ -112,7 +112,7 @@ export const FileUpload = ({
             const file = new File(
                 [files[0]],
                 new Date().getTime() + '_' + files[0].name,
-                { type: files[0].type }
+                { type: files[0].type },
             );
             formData.append('image', file);
             try {
@@ -137,7 +137,7 @@ export const FileUpload = ({
         },
     });
     const onDrop = useEventCallback((acceptedFiles: any) =>
-        mutate(acceptedFiles)
+        mutate(acceptedFiles),
     );
     const accept = useMemo(() => {
         switch (type) {
