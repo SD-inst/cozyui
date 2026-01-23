@@ -651,6 +651,8 @@
                     "node_id": "98",
                     "field": "image",
                     "audio_vae_node_id": "92:48",
+                    "vae_node_id": "92:1",
+                    "concat_node_id": "92:56",
                     "format": "LTXV"
                 },
                 "seed": {
@@ -706,8 +708,10 @@
                     "seed_node_id": "104",
                     "output_node_id": "92:94",
                     "image_node_id": "92:99",
+                    "load_image_node_id": "98",
                     "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
+                    "concat_node_id": "92:56",
                     "audio_node_id": "92:96"
                 },
                 "keyframes": {

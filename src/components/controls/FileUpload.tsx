@@ -38,7 +38,7 @@ const ext: { [type: string]: string[] } = {
     [UploadType.AUDIO]: ['.mp3', '.ogg', '.wav', '.flac', '.wma', '.aac'],
 };
 
-const video_node = (video: string) => ({
+const video_node = (video: string, format = 'AnimateDiff') => ({
     inputs: {
         video,
         force_rate: 0,
@@ -48,6 +48,7 @@ const video_node = (video: string) => ({
         frame_load_cap: 0,
         skip_first_frames: 0,
         select_every_nth: 1,
+        format,
     },
     class_type: 'VHS_LoadVideo',
     _meta: {
@@ -96,7 +97,7 @@ export const FileUpload = ({
             if (filetype === UploadType.IMAGE) {
                 api[control.node_id].inputs[control.field] = val;
             } else {
-                api[control.node_id] = video_node(val);
+                api[control.node_id] = video_node(val, control.format);
             }
             if (extraHandler) {
                 extraHandler(api, val, control);

@@ -55,12 +55,14 @@ export const LTX2UpsampleControl = ({
             }
             const {
                 input_node_id,
+                concat_node_id,
                 cond_node_id,
                 model_node_id,
                 guider_node_id,
                 seed_node_id,
                 output_node_id,
                 image_node_id,
+                load_image_node_id,
                 crop_node_id,
                 scale_node_id,
                 audio_node_id,
@@ -278,6 +280,21 @@ export const LTX2UpsampleControl = ({
                     },
                 };
                 wf[':2'].inputs.video_latent = [':9', 0];
+                if (api[load_image_node_id].class_type == 'VHS_LoadVideo') {
+                    // video loaded, need to find and copy the mask node
+                    const [maskNodeID] =
+                        api[concat_node_id].inputs.video_latent;
+                    wf[':10'] = {
+                        ...api[maskNodeID],
+                        inputs: {
+                            ...api[maskNodeID].inputs,
+                            video_latent: wf[':2'].inputs.video_latent,
+                            audio_latent: wf[':2'].inputs.audio_latent,
+                        },
+                    };
+                    wf[':2'].inputs.video_latent = [':10', 0];
+                    wf[':2'].inputs.audio_latent = [':10', 1];
+                }
             }
             const wfNodeID = insertGraph(api, wf);
             const upscaleOutputNode = [wfNodeID + ':6', 1];

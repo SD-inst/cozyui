@@ -1,4 +1,7 @@
-import { useWatch } from 'react-hook-form';
+import { useEventCallback } from '@mui/material';
+import { insertGraph } from '../../api/utils';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { controlType } from '../../redux/config';
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
 import { FileUpload } from '../controls/FileUpload';
@@ -14,6 +17,7 @@ import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { TextInput } from '../controls/TextInput';
+import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { ChatComponent } from './ChatComponent';
@@ -49,16 +53,97 @@ const llmPrompt = `You are a Creative Assistant writing concise, action-focused 
 #### Example output:
 Style: realistic - cinematic - The woman glances at her watch and smiles warmly. She speaks in a cheerful, friendly voice, "I think we're right on time!" In the background, a café barista prepares drinks at the counter. The barista calls out in a clear, upbeat tone, "Two cappuccinos ready!" The sound of the espresso machine hissing softly blends with gentle background chatter and the light clinking of cups on saucers.`;
 
+type nodes = {
+    audio_vae_node_id: string;
+    video_node_id: string;
+    concat_node_id: string;
+};
+
+const videoHandler = (
+    api: any,
+    nodes: nodes,
+    fps: number,
+    length: number,
+) => {
+    api[nodes.video_node_id].force_rate = fps;
+    const graph = {
+        ':1': {
+            inputs: {
+                audio_latent: [':3', 0],
+                video_fps: fps,
+                video_start_time: [':2', 2],
+                video_end_time: length / fps,
+                audio_start_time: [':2', 2],
+                audio_end_time: length / fps,
+                max_length: 'pad',
+            },
+            class_type: 'LTXVAudioVideoMask',
+            _meta: {
+                title: 'LTXV Audio/Video Mask',
+            },
+        },
+        ':2': {
+            inputs: {
+                video_info: [nodes.video_node_id, 3],
+            },
+            class_type: 'VHS_VideoInfoLoaded',
+            _meta: {
+                title: 'Video Info (Loaded) 🎥🅥🅗🅢',
+            },
+        },
+        ':3': {
+            inputs: {
+                audio: [nodes.video_node_id, 2],
+                audio_vae: ['92:48', 0],
+            },
+            class_type: 'LTXVAudioVAEEncode',
+            _meta: {
+                title: 'LTXV Audio VAE Encode',
+            },
+        },
+    };
+    const graphNodeID = insertGraph(api, graph);
+    const maskNodeID = graphNodeID + ':1';
+    api[maskNodeID].inputs.video_latent =
+        api[nodes.concat_node_id].inputs.video_latent;
+    api[nodes.concat_node_id].inputs.video_latent = [maskNodeID, 0];
+    api[nodes.concat_node_id].inputs.audio_latent = [maskNodeID, 1];
+};
+
 const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });
+    const { getValues } = useFormContext();
+    const handler = useEventCallback(
+        (api: any, _value: string, control: controlType) => {
+            const fps = getValues('fps');
+            const length = getValues('length');
+            return videoHandler(
+                api,
+                {
+                    audio_vae_node_id: control.audio_vae_node_id,
+                    video_node_id: control.node_id,
+                    concat_node_id: control.concat_node_id,
+                },
+                fps,
+                length,
+            );
+        },
+    );
     return (
         <Layout>
             <GridLeft>
-                <FileUpload name='image' />
+                <FileUpload
+                    name='image'
+                    type={UploadType.IMAGEORVIDEO}
+                    extraHandler={handler}
+                />
                 <LTX2KeyframesControl />
                 <LTX2ReferenceAudioControl />
                 <TextInput name='prompt' multiline />
-                <ChatComponent systemPrompt={llmPrompt} imageFieldName='image' />
+                <ChatComponent
+                    systemPrompt={llmPrompt}
+                    imageFieldName='image'
+                />
                 <SliderInput
                     name='size'
                     label='size_mp'
