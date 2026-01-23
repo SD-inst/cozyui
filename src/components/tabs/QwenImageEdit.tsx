@@ -128,7 +128,7 @@ const Content = () => {
                         name='model'
                         type='qwen'
                         extraFilter={(v) => v.includes('_edit_')}
-                        defaultValue='qwen/qwen_image_edit_2509_fp8_e4m3fn.safetensors'
+                        defaultValue='qwen/qwen_image_edit_2511_fp8mixed.safetensors'
                         sx={{ mb: 2, mt: 2 }}
                     />
                     <TeaCacheInput />
