@@ -9,6 +9,7 @@ import {
     CardHeader,
     Typography,
 } from '@mui/material';
+import { RefObject } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export interface ImagePart {
@@ -25,12 +26,14 @@ interface ChatMessageProps {
     content: string | ImagePart[];
     onSendToPrompt?: (text: string) => void;
     isComplete?: boolean;
+    msgRef?: RefObject<HTMLElement>;
 }
 
 export const ChatMessage = ({
     role,
     content,
     onSendToPrompt,
+    msgRef,
 }: ChatMessageProps) => {
     const tr = useTranslate();
 
@@ -60,6 +63,7 @@ export const ChatMessage = ({
             }}
         >
             <CardHeader
+                ref={msgRef}
                 avatar={
                     role === 'assistant' ? (
                         <Avatar
@@ -141,7 +145,7 @@ export const ChatMessage = ({
                                     >
                                         <img
                                             src={part.image_url?.url || ''}
-                                            alt="User image"
+                                            alt='User image'
                                             style={{
                                                 maxWidth: '100%',
                                                 maxHeight: '100%',
@@ -176,7 +180,8 @@ export const ChatMessage = ({
                             </Avatar>
                         }
                         onClick={() => {
-                            const text = typeof content === 'string' ? content : '';
+                            const text =
+                                typeof content === 'string' ? content : '';
                             if (text) {
                                 onSendToPrompt(text);
                             }

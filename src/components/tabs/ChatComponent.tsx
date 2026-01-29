@@ -141,6 +141,11 @@ export const ChatComponent = ({
                     >
                         {visibleMessages.map((msg, idx) => (
                             <ChatMessage
+                                msgRef={
+                                    idx < visibleMessages.length - 1
+                                        ? undefined
+                                        : messagesEndRef
+                                }
                                 key={idx}
                                 role={msg.role}
                                 content={msg.content}
@@ -167,7 +172,6 @@ export const ChatComponent = ({
                                 </Typography>
                             </Box>
                         )}
-                        <div ref={messagesEndRef} />
                     </Box>
                     <FormProvider {...form}>
                         <Box
