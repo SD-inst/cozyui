@@ -1,4 +1,4 @@
-import { ExpandMore, Person, Send } from '@mui/icons-material';
+import { Cancel, ExpandMore, Person, Send } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -87,7 +87,6 @@ export const ChatComponent = ({
         if (!input.trim()) return;
 
         form.setValue('input', '');
-        console.log(imageFieldName, imageURL);
         await sendMessage(input.trim(), imageFieldName ? imageURL : undefined);
     };
 
@@ -130,10 +129,7 @@ export const ChatComponent = ({
                 >
                     {tr('controls.chat_title')}
                 </AccordionSummary>
-                <AccordionDetails
-                    ref={messagesEndRef}
-                    sx={{ p: { xs: 0, md: 2 } }}
-                >
+                <AccordionDetails sx={{ p: { xs: 0, md: 2 } }}>
                     <Box
                         sx={{
                             flex: 1,
@@ -245,13 +241,7 @@ export const ChatComponent = ({
                                     size='medium'
                                     color='primary'
                                     startIcon={<Send />}
-                                    sx={{
-                                        boxShadow: 1,
-                                        '&:hover': {
-                                            boxShadow: 2,
-                                        },
-                                        ...buttonSx,
-                                    }}
+                                    sx={buttonSx}
                                 >
                                     {tr('controls.chat_send')}
                                 </Button>
@@ -278,7 +268,7 @@ export const ChatComponent = ({
                                                 variant='outlined'
                                                 size='medium'
                                                 color='error'
-                                                startIcon={<Person />}
+                                                startIcon={<Cancel />}
                                                 sx={buttonSx}
                                             >
                                                 {tr('controls.chat_interrupt')}
