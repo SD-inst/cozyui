@@ -2945,5 +2945,10 @@
             "filter": "gemma_3_12B"
         }
     },
-    "api": "/cui"
+    "api": "/cui",
+    "llm": {
+        "apiKey": "your-api-key",
+        "baseURL": "https://any-openai-compatible-url.com/v1",
+        "model": ""
+    }
 }

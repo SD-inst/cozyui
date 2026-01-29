@@ -52,6 +52,12 @@ export type loraDefaults = {
     };
 };
 
+export type llmConfigType = {
+    apiKey: string;
+    baseURL: string;
+    model: string;
+};
+
 export type configType = {
     tabs: {
         [tabName: string]: tabConfigType;
@@ -91,6 +97,7 @@ export type configType = {
         };
     };
     api: string;
+    llm?: llmConfigType;
     client_id: string;
     loaded: boolean[];
     preview_root: string;
