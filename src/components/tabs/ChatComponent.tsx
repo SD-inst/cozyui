@@ -1,8 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { useOpenAIChat } from '../../hooks/useOpenAIChat';
-import { useTranslate } from '../../i18n/I18nContext';
-import { useAppSelector } from '../../redux/hooks';
+import { ExpandMore, Person, Send } from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -15,14 +11,22 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { ExpandMore, Person, Send } from '@mui/icons-material';
+import { useEffect, useRef, useState } from 'react';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { useImageURL } from '../../hooks/useImageURL';
+import { useOpenAIChat } from '../../hooks/useOpenAIChat';
+import { useTranslate } from '../../i18n/I18nContext';
+import { useAppSelector } from '../../redux/hooks';
 import { ChatMessage } from './ChatMessage';
+import { ThinkingIndicator } from './ThinkingIndicator';
 
 export const ChatComponent = ({
     promptFieldName = 'prompt',
+    imageFieldName,
     systemPrompt = 'You are a helpful assistant.',
 }: {
     promptFieldName?: string;
+    imageFieldName?: string;
     systemPrompt?: string;
 }) => {
     const tr = useTranslate();
@@ -40,12 +44,14 @@ export const ChatComponent = ({
             stream: true,
         },
     });
-    const { setValue } = useFormContext();
+    const { setValue, watch } = useFormContext();
     const stream = form.watch('stream');
     const input = form.watch('input');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const image = watch(imageFieldName || '');
+    const imageURL = useImageURL(image);
 
     const {
         messages,
@@ -55,6 +61,7 @@ export const ChatComponent = ({
         abort,
         isComplete,
         isGenerating,
+        isThinking,
     } = useOpenAIChat({
         stream,
         initialMessages: [
@@ -71,7 +78,7 @@ export const ChatComponent = ({
         }
     }, [isComplete, isGenerating]);
 
-    if (!llmConfig?.model) {
+    if (!llmConfig?.model || (!!imageFieldName && !llmConfig?.modelVision)) {
         return null;
     }
 
@@ -79,8 +86,9 @@ export const ChatComponent = ({
         e.preventDefault();
         if (!input.trim()) return;
 
-        form.reset({ ...form.getValues(), input: '' });
-        await sendMessage(input.trim());
+        form.setValue('input', '');
+        console.log(imageFieldName, imageURL);
+        await sendMessage(input.trim(), imageFieldName ? imageURL : undefined);
     };
 
     const handleResetChat = () => {
@@ -95,7 +103,9 @@ export const ChatComponent = ({
         setValue(promptFieldName, text);
     };
 
-    const visibleMessages = messages.filter((m) => m.role !== 'system');
+    const visibleMessages = messages.filter((m) => {
+        return m.role !== 'system' && !(m.role === 'assistant' && !m.content);
+    });
     return (
         <Box
             sx={{
@@ -146,6 +156,7 @@ export const ChatComponent = ({
                                 }
                             />
                         ))}
+                        {isThinking && isGenerating && <ThinkingIndicator />}
                         {error && (
                             <Box
                                 sx={{
@@ -180,6 +191,27 @@ export const ChatComponent = ({
                                 size='small'
                                 inputRef={inputRef}
                             />
+                            {imageURL && (
+                                <Box
+                                    sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1,
+                                        mt: 1,
+                                    }}
+                                >
+                                    <img
+                                        src={imageURL}
+                                        alt='Attached image'
+                                        style={{
+                                            maxWidth: '200px',
+                                            maxHeight: '200px',
+                                            objectFit: 'contain',
+                                            borderRadius: '4px',
+                                        }}
+                                    />
+                                </Box>
+                            )}
                             <Box
                                 sx={{
                                     display: 'flex',
@@ -235,6 +267,7 @@ export const ChatComponent = ({
                                             color='info'
                                             startIcon={<Person />}
                                             sx={buttonSx}
+                                            disabled={isGenerating}
                                         >
                                             {tr('controls.chat_new_chat')}
                                         </Button>

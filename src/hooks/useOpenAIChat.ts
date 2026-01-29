@@ -1,11 +1,21 @@
-import { useCallback, useEffect, useState, useRef } from 'react';
-import { RootState } from '../redux/store';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { llmConfigType } from '../redux/config';
 import { useAppSelector } from '../redux/hooks';
+import { RootState } from '../redux/store';
+import { useMessageProcessor } from './useMessageProcessor';
+
+export interface ImagePart {
+    type: 'text' | 'image_url';
+    text?: string;
+    image_url?: {
+        url: string;
+        detail?: 'auto' | 'low' | 'high';
+    };
+}
 
 export interface OpenAIMessage {
     role: 'system' | 'user' | 'assistant';
-    content: string;
+    content: string | Array<ImagePart>;
 }
 
 export interface UseOpenAIChatOptions {
@@ -18,8 +28,9 @@ export interface UseOpenAIChatReturn {
     messages: OpenAIMessage[];
     isComplete: boolean;
     isGenerating: boolean;
+    isThinking: boolean;
     error: Error | null;
-    sendMessage: (content: string) => Promise<void>;
+    sendMessage: (content: string, image?: string) => Promise<void>;
     abort: () => void;
     reset: () => void;
 }
@@ -37,6 +48,7 @@ export function useOpenAIChat({
         useState<OpenAIMessage[]>(initialMessages);
     const [isComplete, setIsComplete] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [isThinking, setIsThinking] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -53,8 +65,10 @@ export function useOpenAIChat({
         }
     }, []);
 
+    const { processUserMessage } = useMessageProcessor();
+
     const sendMessage = useCallback(
-        async (content: string) => {
+        async (content: string, image?: string) => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
             }
@@ -64,18 +78,22 @@ export function useOpenAIChat({
             const baseURL = llmConfig.baseURL;
             const apiKey = llmConfig.apiKey;
 
-            const userMessage: OpenAIMessage = {
-                role: 'user',
-                content,
-            };
-
-            setMessagesState((prev) => [...prev, userMessage]);
+            const userMessage = await processUserMessage(content, image);
+            let assistantContent = '';
+            setMessagesState((prev) => [
+                ...prev,
+                userMessage,
+                {
+                    role: 'assistant',
+                    content: '',
+                },
+            ]);
             setIsComplete(false);
             setIsGenerating(true);
+            setIsThinking(!stream);
             setError(null);
 
             try {
-                let assistantContent = '';
                 const response = await fetch(`${baseURL}/chat/completions`, {
                     method: 'POST',
                     headers: {
@@ -83,7 +101,7 @@ export function useOpenAIChat({
                         Authorization: `Bearer ${apiKey}`,
                     },
                     body: JSON.stringify({
-                        model: llmConfig.model,
+                        model: image ? llmConfig.modelVision : llmConfig.model,
                         messages: [...messagesState, userMessage],
                         stream,
                     }),
@@ -104,10 +122,6 @@ export function useOpenAIChat({
                         throw new Error('No reader available');
                     }
 
-                    setMessagesState((prev) => [
-                        ...prev,
-                        { role: 'assistant', content: '' },
-                    ]);
                     while (true) {
                         const { done, value } = await reader.read();
 
@@ -127,17 +141,12 @@ export function useOpenAIChat({
                                     const data = JSON.parse(trimmed.slice(6));
                                     const chunkContent =
                                         data.choices?.[0]?.delta?.content || '';
-                                    if (
+                                    const reasoningContent =
                                         data.choices?.[0]?.delta
-                                            ?.reasoning_content
-                                    ) {
-                                        setMessagesState((prev) => [
-                                            ...prev.slice(0, -1),
-                                            {
-                                                role: 'assistant',
-                                                content: '*thinking*',
-                                            },
-                                        ]);
+                                            ?.reasoning_content;
+
+                                    if (reasoningContent) {
+                                        setIsThinking(true);
                                     }
                                     if (chunkContent) {
                                         assistantContent += chunkContent;
@@ -160,9 +169,13 @@ export function useOpenAIChat({
                     assistantContent =
                         data.choices?.[0]?.message?.content || '';
                     setMessagesState((prev) => [
-                        ...prev,
-                        { role: 'assistant', content: assistantContent },
+                        ...prev.slice(0, -1),
+                        {
+                            role: 'assistant',
+                            content: assistantContent,
+                        },
                     ]);
+                    setIsThinking(false);
                 }
                 setIsComplete(true);
             } catch (err) {
@@ -187,7 +200,7 @@ export function useOpenAIChat({
                 abortControllerRef.current = null;
             }
         },
-        [messagesState, llmConfig, onError, stream],
+        [messagesState, llmConfig, onError, stream, processUserMessage],
     );
 
     useEffect(() => {
@@ -200,6 +213,7 @@ export function useOpenAIChat({
         messages: messagesState,
         isComplete,
         isGenerating,
+        isThinking,
         error,
         sendMessage,
         abort,

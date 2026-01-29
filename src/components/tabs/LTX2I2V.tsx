@@ -58,7 +58,7 @@ const Content = () => {
                 <LTX2KeyframesControl />
                 <LTX2ReferenceAudioControl />
                 <TextInput name='prompt' multiline />
-                <ChatComponent systemPrompt={llmPrompt} />
+                <ChatComponent systemPrompt={llmPrompt} imageFieldName='image' />
                 <SliderInput
                     name='size'
                     label='size_mp'

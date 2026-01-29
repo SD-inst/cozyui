@@ -1,6 +1,7 @@
 import { Person, SmartToy } from '@mui/icons-material';
 import {
     Avatar,
+    Box,
     Button,
     Card,
     CardActions,
@@ -10,10 +11,20 @@ import {
 } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
 
+export interface ImagePart {
+    type: 'text' | 'image_url';
+    text?: string;
+    image_url?: {
+        url: string;
+        detail?: 'auto' | 'low' | 'high';
+    };
+}
+
 interface ChatMessageProps {
     role: 'user' | 'assistant' | 'system';
-    content: string;
+    content: string | ImagePart[];
     onSendToPrompt?: (text: string) => void;
+    isComplete?: boolean;
 }
 
 export const ChatMessage = ({
@@ -85,15 +96,66 @@ export const ChatMessage = ({
                 }
             />
             <CardContent sx={{ p: 2 }}>
-                <Typography
-                    variant='body1'
-                    sx={{
-                        lineHeight: 1.6,
-                        fontSize: '0.9rem',
-                    }}
-                >
-                    {content}
-                </Typography>
+                {typeof content === 'string' ? (
+                    <Typography
+                        variant='body1'
+                        sx={{
+                            lineHeight: 1.6,
+                            fontSize: '0.9rem',
+                        }}
+                    >
+                        {content}
+                    </Typography>
+                ) : (
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: 1,
+                        }}
+                    >
+                        {content.map((part, index) => {
+                            if (part.type === 'text') {
+                                return (
+                                    <Typography
+                                        key={index}
+                                        variant='body1'
+                                        sx={{
+                                            lineHeight: 1.6,
+                                            fontSize: '0.9rem',
+                                        }}
+                                    >
+                                        {part.text}
+                                    </Typography>
+                                );
+                            }
+                            if (part.type === 'image_url') {
+                                return (
+                                    <Box
+                                        key={index}
+                                        sx={{
+                                            maxWidth: '400px',
+                                            maxHeight: '400px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <img
+                                            src={part.image_url?.url || ''}
+                                            alt="User image"
+                                            style={{
+                                                maxWidth: '100%',
+                                                maxHeight: '100%',
+                                                objectFit: 'contain',
+                                                borderRadius: '4px',
+                                            }}
+                                        />
+                                    </Box>
+                                );
+                            }
+                            return null;
+                        })}
+                    </Box>
+                )}
             </CardContent>
             {role === 'assistant' && onSendToPrompt && (
                 <CardActions>
@@ -113,7 +175,12 @@ export const ChatMessage = ({
                                 <Person sx={{ fontSize: 12 }} />
                             </Avatar>
                         }
-                        onClick={() => onSendToPrompt(content)}
+                        onClick={() => {
+                            const text = typeof content === 'string' ? content : '';
+                            if (text) {
+                                onSendToPrompt(text);
+                            }
+                        }}
                         sx={{
                             boxShadow: 1,
                             '&:hover': {

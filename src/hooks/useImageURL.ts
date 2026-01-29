@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
 import { useApiURL } from './useApiURL';
 
-export const useImageURL = (filename: string) => {
+export const useImageURL = (filename?: string) => {
     const apiUrl = useApiURL();
     const imageURL = useMemo(() => {
+        if (!filename) {
+            return '';
+        }
         const params = new URLSearchParams();
         params.set('subfolder', '');
         params.set('type', 'input');

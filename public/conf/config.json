@@ -2949,6 +2949,7 @@
     "llm": {
         "apiKey": "your-api-key",
         "baseURL": "https://any-openai-compatible-url.com/v1",
-        "model": ""
+        "model": "",
+        "modelVision": ""
     }
 }

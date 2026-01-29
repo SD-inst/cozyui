@@ -56,6 +56,7 @@ export type llmConfigType = {
     apiKey: string;
     baseURL: string;
     model: string;
+    modelVision?: string;
 };
 
 export type configType = {
