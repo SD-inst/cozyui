@@ -2950,6 +2950,7 @@
         "apiKey": "your-api-key",
         "baseURL": "https://any-openai-compatible-url.com/v1",
         "model": "",
-        "modelVision": ""
+        "modelVision": "",
+        "temperature": 1.0
     }
 }

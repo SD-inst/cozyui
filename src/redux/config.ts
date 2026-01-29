@@ -57,6 +57,7 @@ export type llmConfigType = {
     baseURL: string;
     model: string;
     modelVision?: string;
+    temperature?: number;
 };
 
 export type configType = {

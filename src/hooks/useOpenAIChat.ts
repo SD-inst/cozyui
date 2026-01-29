@@ -104,6 +104,7 @@ export function useOpenAIChat({
                         model: image ? llmConfig.modelVision : llmConfig.model,
                         messages: [...messagesState, userMessage],
                         stream,
+                        temperature: llmConfig.temperature ?? 0.7,
                     }),
                     signal,
                 });
