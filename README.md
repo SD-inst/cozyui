@@ -14,6 +14,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - T2V
         - Hunyuan 1/1.5 (Native/Kijai)
         - Wan (Kijai)
+        - LTX-2 T2V
     - I2V
         - Hunyuan 1.5
         - Hunyuan 1 (leapfusion lora)
@@ -21,6 +22,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Wan 2.1 two-step
         - Wan 2.1 InfiniteTalk (Kijai)
         - Framepack
+        - LTX-2 I2V
         - LTX I2V
     - T2I
         - StableDiffusion 1.5/SDXL
