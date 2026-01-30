@@ -212,6 +212,7 @@ const translation = {
         chat_placeholder_right: 'Чат с AI для подсказок',
         stream: 'стриминг',
         send_to_prompt: 'Отправить в промпт',
+        regenerate: 'Перегенерировать',
     },
     settings: {
         select_language: 'Выбор языка',

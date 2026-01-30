@@ -30,7 +30,11 @@ export interface UseOpenAIChatReturn {
     isGenerating: boolean;
     isThinking: boolean;
     error: Error | null;
-    sendMessage: (content: string, image?: string) => Promise<void>;
+    sendMessage: (
+        content: string | OpenAIMessage,
+        context?: OpenAIMessage[],
+        image?: string,
+    ) => Promise<void>;
     abort: () => void;
     reset: () => void;
 }
@@ -68,7 +72,11 @@ export function useOpenAIChat({
     const { processUserMessage } = useMessageProcessor();
 
     const sendMessage = useCallback(
-        async (content: string, image?: string) => {
+        async (
+            content: string | OpenAIMessage,
+            context?: OpenAIMessage[],
+            image?: string,
+        ) => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
             }
@@ -78,10 +86,14 @@ export function useOpenAIChat({
             const baseURL = llmConfig.baseURL;
             const apiKey = llmConfig.apiKey;
 
-            const userMessage = await processUserMessage(content, image);
+            const userMessage =
+                typeof content === 'string'
+                    ? await processUserMessage(content, image)
+                    : content;
             let assistantContent = '';
-            setMessagesState((prev) => [
-                ...prev,
+            const finalContext = context ?? messagesState;
+            setMessagesState(() => [
+                ...finalContext,
                 userMessage,
                 {
                     role: 'assistant',
@@ -101,8 +113,11 @@ export function useOpenAIChat({
                         Authorization: `Bearer ${apiKey}`,
                     },
                     body: JSON.stringify({
-                        model: image ? llmConfig.modelVision : llmConfig.model,
-                        messages: [...messagesState, userMessage],
+                        model:
+                            image || typeof content !== 'string'
+                                ? llmConfig.modelVision
+                                : llmConfig.model,
+                        messages: [...finalContext, userMessage],
                         stream,
                         temperature: llmConfig.temperature ?? 0.7,
                     }),

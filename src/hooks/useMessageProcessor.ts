@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useImageProcessor } from './useImageProcessor';
+import { OpenAIMessage } from './useOpenAIChat';
 
 export interface ImagePart {
     type: 'text' | 'image_url';
@@ -10,16 +11,11 @@ export interface ImagePart {
     };
 }
 
-export interface ProcessedMessage {
-    role: 'user';
-    content: string | Array<ImagePart>;
-}
-
 export const useMessageProcessor = () => {
     const { processImage } = useImageProcessor();
 
     const processUserMessage = useCallback(
-        async (text: string, imageUrl?: string): Promise<ProcessedMessage> => {
+        async (text: string, imageUrl?: string): Promise<OpenAIMessage> => {
             if (!imageUrl) {
                 return {
                     role: 'user',

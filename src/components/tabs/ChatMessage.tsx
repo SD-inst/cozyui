@@ -1,4 +1,4 @@
-import { Person, SmartToy } from '@mui/icons-material';
+import { Person, Refresh, SmartToy } from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -25,6 +25,7 @@ interface ChatMessageProps {
     role: 'user' | 'assistant' | 'system';
     content: string | ImagePart[];
     onSendToPrompt?: (text: string) => void;
+    onRegenerate?: () => void;
     isComplete?: boolean;
     msgRef?: RefObject<HTMLElement>;
 }
@@ -34,6 +35,7 @@ export const ChatMessage = ({
     content,
     onSendToPrompt,
     msgRef,
+    onRegenerate,
 }: ChatMessageProps) => {
     const tr = useTranslate();
 
@@ -195,6 +197,22 @@ export const ChatMessage = ({
                     >
                         {tr('controls.send_to_prompt')}
                     </Button>
+                    {onRegenerate && (
+                        <Button
+                            variant='outlined'
+                            size='small'
+                            color='secondary'
+                            startIcon={<Refresh sx={{ fontSize: 16 }} />}
+                            onClick={onRegenerate}
+                            sx={{
+                                '&:hover': {
+                                    backgroundColor: 'secondary.light',
+                                },
+                            }}
+                        >
+                            {tr('controls.regenerate')}
+                        </Button>
+                    )}
                 </CardActions>
             )}
         </Card>

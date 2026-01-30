@@ -213,6 +213,7 @@ const translation = {
         chat_placeholder_right: 'Chat with AI for prompt suggestions',
         stream: 'stream',
         send_to_prompt: 'Send to prompt',
+        regenerate: 'Regenerate',
     },
     settings: {
         select_language: 'Select language',

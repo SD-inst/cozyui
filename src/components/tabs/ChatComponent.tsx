@@ -17,10 +17,10 @@ import { useImageURL } from '../../hooks/useImageURL';
 import { useOpenAIChat } from '../../hooks/useOpenAIChat';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useAppSelector } from '../../redux/hooks';
-import { ChatMessage } from './ChatMessage';
-import { ThinkingIndicator } from './ThinkingIndicator';
 import { ext } from '../controls/fileExts';
 import { UploadType } from '../controls/UploadType';
+import { ChatMessage } from './ChatMessage';
+import { ThinkingIndicator } from './ThinkingIndicator';
 
 const isVideo = (filename?: string): boolean => {
     if (!filename) return false;
@@ -98,6 +98,7 @@ export const ChatComponent = ({
         form.setValue('input', '');
         await sendMessage(
             input.trim(),
+            undefined,
             imageFieldName && !isVideo(image) ? imageURL : undefined,
         );
     };
@@ -114,9 +115,21 @@ export const ChatComponent = ({
         setValue(promptFieldName, text);
     };
 
-    const visibleMessages = messages.filter((m) => {
-        return m.role !== 'system' && !(m.role === 'assistant' && !m.content);
-    });
+    const handleRegenerate = (assistantIndex: number) => {
+        const contextAbove = messages.slice(0, assistantIndex - 1);
+        const userMessage = messages
+            .slice(0, assistantIndex)
+            .reverse()
+            .find((v) => v.role === 'user');
+        if (!userMessage) {
+            return;
+        }
+        sendMessage(
+            { role: 'user', content: userMessage.content },
+            contextAbove,
+        );
+    };
+
     return (
         <Box
             sx={{
@@ -151,24 +164,34 @@ export const ChatComponent = ({
                             gap: 1.5,
                         }}
                     >
-                        {visibleMessages.map((msg, idx) => (
-                            <ChatMessage
-                                msgRef={
-                                    idx < visibleMessages.length - 1
-                                        ? undefined
-                                        : messagesEndRef
-                                }
-                                key={idx}
-                                role={msg.role}
-                                content={msg.content}
-                                onSendToPrompt={
-                                    isComplete ||
-                                    idx < visibleMessages.length - 1
-                                        ? handleSendToPrompt
-                                        : undefined
-                                }
-                            />
-                        ))}
+                        {messages.map(
+                            (msg, idx) =>
+                                msg.role !== 'system' &&
+                                !(msg.role === 'assistant' && !msg.content) && (
+                                    <ChatMessage
+                                        msgRef={
+                                            idx < messages.length - 1
+                                                ? undefined
+                                                : messagesEndRef
+                                        }
+                                        key={idx}
+                                        role={msg.role}
+                                        content={msg.content}
+                                        onSendToPrompt={
+                                            isComplete ||
+                                            idx < messages.length - 1
+                                                ? handleSendToPrompt
+                                                : undefined
+                                        }
+                                        onRegenerate={
+                                            msg.role === 'assistant' &&
+                                            !isGenerating
+                                                ? () => handleRegenerate(idx)
+                                                : undefined
+                                        }
+                                    />
+                                ),
+                        )}
                         {isThinking && isGenerating && <ThinkingIndicator />}
                         {error && (
                             <Box
