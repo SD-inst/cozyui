@@ -21,7 +21,11 @@ export const LTX2KeyframesControl = ({
             receiverFieldName={receiverFieldName}
             targetFieldName='image'
         >
-            <FileUpload name='image' label='image' type={UploadType.IMAGEORVIDEO} />
+            <FileUpload
+                name='image'
+                label='image'
+                type={UploadType.IMAGEORVIDEO}
+            />
             <LengthInput
                 name='position'
                 label='keyframe_position'
