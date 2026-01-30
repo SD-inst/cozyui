@@ -1,5 +1,5 @@
 import { modelType } from '../../redux/config';
-import { useHyvModelChoices } from '../tabs/hyv_models';
+import { useHyvModelChoices } from '../../hooks/hyv_models';
 import { ModelSelectInput } from './ModelSelectInput';
 import { CustomSelectInputProps } from './SelectInput';
 
