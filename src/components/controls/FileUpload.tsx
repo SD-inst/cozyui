@@ -61,7 +61,12 @@ export const FileUpload = ({
     label?: string;
     type?: UploadType;
     onUpload?: (file: File) => void;
-    extraHandler?: (api: any, value: string, control: controlType) => void;
+    extraHandler?: (
+        api: any,
+        value: string,
+        control: controlType,
+        filetype: UploadType,
+    ) => void;
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
     const reuploadAttempts = useRef(0);
@@ -70,7 +75,7 @@ export const FileUpload = ({
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
     const imageURL = useImageURL(field.value);
-    const filetype = useMemo(() => {
+    const filetype = useMemo((): UploadType => {
         if (!field.value) {
             return UploadType.IMAGE;
         }
@@ -82,7 +87,7 @@ export const FileUpload = ({
                         field.value.endsWith(e),
                 )
             ) {
-                return k;
+                return k as UploadType;
             }
         }
         return UploadType.IMAGE;
@@ -95,7 +100,7 @@ export const FileUpload = ({
                 api[control.node_id] = video_node(val, control.format);
             }
             if (extraHandler) {
-                extraHandler(api, val, control);
+                extraHandler(api, val, control, filetype);
             }
         },
     );

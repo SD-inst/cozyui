@@ -59,12 +59,7 @@ type nodes = {
     concat_node_id: string;
 };
 
-const videoHandler = (
-    api: any,
-    nodes: nodes,
-    fps: number,
-    length: number,
-) => {
+const videoHandler = (api: any, nodes: nodes, fps: number, length: number) => {
     api[nodes.video_node_id].force_rate = fps;
     const graph = {
         ':1': {
@@ -114,7 +109,15 @@ const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, _value: string, control: controlType) => {
+        (
+            api: any,
+            _value: string,
+            control: controlType,
+            filetype: UploadType,
+        ) => {
+            if (filetype !== UploadType.VIDEO) {
+                return;
+            }
             const fps = getValues('fps');
             const length = getValues('length');
             return videoHandler(
