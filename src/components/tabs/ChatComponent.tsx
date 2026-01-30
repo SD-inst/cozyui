@@ -225,6 +225,7 @@ export const ChatComponent = ({
                                 placeholder={tr('controls.chat_placeholder')}
                                 size='small'
                                 inputRef={inputRef}
+                                multiline
                             />
                             {imageURL && !isVideo(image) && (
                                 <Box
