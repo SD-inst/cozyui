@@ -226,6 +226,15 @@ export const ChatComponent = ({
                                 size='small'
                                 inputRef={inputRef}
                                 multiline
+                                onKeyDown={(e) => {
+                                    if (
+                                        e.ctrlKey &&
+                                        e.key === 'Enter' &&
+                                        !e.shiftKey
+                                    ) {
+                                        handleSubmit(e);
+                                    }
+                                }}
                             />
                             {imageURL && !isVideo(image) && (
                                 <Box
