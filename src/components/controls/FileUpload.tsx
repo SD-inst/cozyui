@@ -23,6 +23,7 @@ import {
 } from '../contexts/TabContext';
 import { db } from '../history/db';
 import { UploadType } from './UploadType';
+import { ext } from './fileExts';
 
 const style = {
     maxWidth: 200,
@@ -30,12 +31,6 @@ const style = {
     padding: 5,
     marginTop: 10,
     border: '1px solid gray',
-};
-
-const ext: { [type: string]: string[] } = {
-    [UploadType.IMAGE]: ['.jpg', '.gif', '.png', '.webp'],
-    [UploadType.VIDEO]: ['.webm', '.avi', '.mp4'],
-    [UploadType.AUDIO]: ['.mp3', '.ogg', '.wav', '.flac', '.wma', '.aac'],
 };
 
 const video_node = (video: string, format = 'AnimateDiff') => ({

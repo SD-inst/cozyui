@@ -19,6 +19,15 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { useAppSelector } from '../../redux/hooks';
 import { ChatMessage } from './ChatMessage';
 import { ThinkingIndicator } from './ThinkingIndicator';
+import { ext } from '../controls/fileExts';
+import { UploadType } from '../controls/UploadType';
+
+const isVideo = (filename?: string): boolean => {
+    if (!filename) return false;
+    return ext[UploadType.VIDEO].some((ext) =>
+        filename.toLowerCase().endsWith(ext),
+    );
+};
 
 export const ChatComponent = ({
     promptFieldName = 'prompt',
@@ -87,7 +96,10 @@ export const ChatComponent = ({
         if (!input.trim()) return;
 
         form.setValue('input', '');
-        await sendMessage(input.trim(), imageFieldName ? imageURL : undefined);
+        await sendMessage(
+            input.trim(),
+            imageFieldName && !isVideo(image) ? imageURL : undefined,
+        );
     };
 
     const handleResetChat = () => {
@@ -191,7 +203,7 @@ export const ChatComponent = ({
                                 size='small'
                                 inputRef={inputRef}
                             />
-                            {imageURL && (
+                            {imageURL && !isVideo(image) && (
                                 <Box
                                     sx={{
                                         display: 'flex',
