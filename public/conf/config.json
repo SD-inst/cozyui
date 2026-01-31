@@ -596,6 +596,11 @@
                     "node_id": "92:60",
                     "field": "text_encoder"
                 },
+                "model": {
+                    "id": "handle",
+                    "node_id": "92:2",
+                    "field": "ckpt_name"
+                },
                 "upsample": {
                     "id": "handle",
                     "cond_node_id": "92:22",
@@ -698,6 +703,11 @@
                     "id": "handle",
                     "node_id": "92:60",
                     "field": "text_encoder"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "92:2",
+                    "field": "ckpt_name"
                 },
                 "upsample": {
                     "id": "handle",

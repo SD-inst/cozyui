@@ -117,6 +117,16 @@
             "title": "Load Checkpoint"
         }
     },
+    "92:2": {
+        "inputs": {
+            "unet_name": "ltx2/ltx-2-19b-dev-fp8.safetensors",
+            "weight_dtype": "default"
+        },
+        "class_type": "UNETLoader",
+        "_meta": {
+            "title": "Load Diffusion Model"
+        }
+    },
     "92:62": {
         "inputs": {
             "value": 125
@@ -144,17 +154,6 @@
         "class_type": "CLIPTextEncode",
         "_meta": {
             "title": "CLIP Text Encode (Prompt)"
-        }
-    },
-    "92:68": {
-        "inputs": {
-            "lora_name": "ltx2/ltx-2-19b-distilled-lora-384.safetensors",
-            "strength_model": 1,
-            "model": ["92:1", 0]
-        },
-        "class_type": "LoraLoaderModelOnly",
-        "_meta": {
-            "title": "LoraLoaderModelOnly"
         }
     },
     "92:51": {
@@ -221,7 +220,7 @@
     "92:46": {
         "inputs": {
             "preview_rate": 8,
-            "model": ["92:1", 0],
+            "model": ["92:2", 0],
             "vae": ["92:1", 2]
         },
         "class_type": "LTX2SamplingPreviewOverride",

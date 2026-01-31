@@ -178,6 +178,14 @@ const Content = () => {
                         max={50}
                     />
                     <ModelSelectAutocomplete
+                        name='model'
+                        type='ltx2'
+                        component='UNETLoader'
+                        field='unet_name'
+                        defaultValue='ltx2/ltx-2-19b-dev-fp8.safetensors'
+                        sx={{ mb: 2 }}
+                    />
+                    <ModelSelectAutocomplete
                         name='text_encoder'
                         type='ltx_gemma'
                         component='LTXAVTextEncoderLoader'

@@ -85,6 +85,16 @@
             "title": "Load Checkpoint"
         }
     },
+    "92:2": {
+        "inputs": {
+            "unet_name": "ltx2/ltx-2-19b-dev-fp8.safetensors",
+            "weight_dtype": "default"
+        },
+        "class_type": "UNETLoader",
+        "_meta": {
+            "title": "Load Diffusion Model"
+        }
+    },
     "92:62": {
         "inputs": {
             "value": 125
@@ -192,7 +202,7 @@
     "92:46": {
         "inputs": {
             "preview_rate": 8,
-            "model": ["92:1", 0],
+            "model": ["92:2", 0],
             "vae": ["92:1", 2]
         },
         "class_type": "LTX2SamplingPreviewOverride",
