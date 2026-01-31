@@ -252,27 +252,6 @@ export const ChatComponent = ({
                                     }
                                 }}
                             />
-                            {imageURL && !isVideo(image) && (
-                                <Box
-                                    sx={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: 1,
-                                        mt: 1,
-                                    }}
-                                >
-                                    <img
-                                        src={imageURL}
-                                        alt='Attached image'
-                                        style={{
-                                            maxWidth: '200px',
-                                            maxHeight: '200px',
-                                            objectFit: 'contain',
-                                            borderRadius: '4px',
-                                        }}
-                                    />
-                                </Box>
-                            )}
                             <Box
                                 sx={{
                                     display: 'flex',

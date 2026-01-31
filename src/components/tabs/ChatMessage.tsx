@@ -149,8 +149,8 @@ export const ChatMessage = ({
                                             src={part.image_url?.url || ''}
                                             alt='User image'
                                             style={{
-                                                maxWidth: '100%',
-                                                maxHeight: '100%',
+                                                maxWidth: 100,
+                                                maxHeight: 100,
                                                 objectFit: 'contain',
                                                 borderRadius: '4px',
                                             }}
