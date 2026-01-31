@@ -228,11 +228,27 @@ export const ChatComponent = ({
                                 multiline
                                 onKeyDown={(e) => {
                                     if (
-                                        e.ctrlKey &&
                                         e.key === 'Enter' &&
-                                        !e.shiftKey
+                                        !e.shiftKey &&
+                                        !e.ctrlKey
                                     ) {
                                         handleSubmit(e);
+                                    } else if (
+                                        e.key === 'Enter' &&
+                                        e.shiftKey &&
+                                        !e.ctrlKey
+                                    ) {
+                                        const input = e.currentTarget as
+                                            | HTMLInputElement
+                                            | HTMLTextAreaElement;
+                                        const start = input.selectionStart ?? 0;
+                                        const end = input.selectionEnd ?? 0;
+                                        const text = input.value;
+                                        const newText =
+                                            text.slice(0, start) +
+                                            '\n' +
+                                            text.slice(end);
+                                        form.setValue('input', newText);
                                     }
                                 }}
                             />
