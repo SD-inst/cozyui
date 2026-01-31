@@ -42,9 +42,8 @@ export const LTX2UpsampleControl = ({
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
     const keyframes: TKeyframe[] = useWatch({ name: 'keyframes' });
-    const {
-        field: { value },
-    }: { field: { value: TValue } } = useController({
+    const value = useWatch({ name });
+    useController({
         name,
         defaultValue: defaults,
     });
