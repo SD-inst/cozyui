@@ -357,10 +357,10 @@
     },
     "92:116": {
         "inputs": {
-            "tile_size": 512,
-            "overlap": 64,
-            "temporal_size": 4096,
-            "temporal_overlap": 8,
+            "tile_size": 1280,
+            "overlap": 128,
+            "temporal_size": 480,
+            "temporal_overlap": 50,
             "samples": ["92:95", 2],
             "vae": ["92:1", 2]
         },
