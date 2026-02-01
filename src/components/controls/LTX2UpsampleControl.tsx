@@ -56,7 +56,7 @@ export const LTX2UpsampleControl = ({
                 input_node_id,
                 concat_node_id,
                 cond_node_id,
-                model_node_id,
+                vae_node_id,
                 guider_node_id,
                 seed_node_id,
                 output_node_id,
@@ -114,7 +114,7 @@ export const LTX2UpsampleControl = ({
                         inputs: {
                             samples: samplesNode,
                             upscale_model: [':1', 0],
-                            vae: [model_node_id, 2],
+                            vae: [vae_node_id, 0],
                         },
                         class_type: 'LTXVLatentUpsampler',
                         _meta: {
@@ -154,7 +154,7 @@ export const LTX2UpsampleControl = ({
                         inputs: {
                             samples: samplesNode,
                             upscale_model: [':1', 0],
-                            vae: [model_node_id, 2],
+                            vae: [vae_node_id, 0],
                         },
                         class_type: 'LTXVLatentUpsampler',
                         _meta: {
@@ -170,7 +170,7 @@ export const LTX2UpsampleControl = ({
                     inputs: {
                         preview_rate: 8,
                         model: [':8', 0],
-                        vae: [model_node_id, 2],
+                        vae: [vae_node_id, 0],
                     },
                     class_type: 'LTX2SamplingPreviewOverride',
                     _meta: {
@@ -269,7 +269,7 @@ export const LTX2UpsampleControl = ({
                     inputs: {
                         strength: 1,
                         bypass: false,
-                        vae: [model_node_id, 2],
+                        vae: [vae_node_id, 2],
                         image: [image_node_id, 0],
                         latent: samplesNode,
                     },
@@ -315,7 +315,7 @@ export const LTX2UpsampleControl = ({
                         id: 'handle',
                         field: '',
                         cond_node_id: wfNodeID + ':1',
-                        vae_node_id: model_node_id,
+                        vae_node_id,
                         concat_node_id: wfNodeID + ':2',
                         crop_node_id,
                     },

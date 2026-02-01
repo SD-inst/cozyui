@@ -69,7 +69,7 @@
     },
     "92:48": {
         "inputs": {
-            "ckpt_name": "ltx2/ltx-2-19b-dev-fp8.safetensors"
+            "ckpt_name": "ltx2/ltx2_audiovae.safetensors"
         },
         "class_type": "LTXVAudioVAELoader",
         "_meta": {
@@ -78,11 +78,11 @@
     },
     "92:1": {
         "inputs": {
-            "ckpt_name": "ltx2/ltx-2-19b-dev-fp8.safetensors"
+            "vae_name": "ltx2_vae.safetensors"
         },
-        "class_type": "CheckpointLoaderSimple",
+        "class_type": "VAELoader",
         "_meta": {
-            "title": "Load Checkpoint"
+            "title": "Load VAE"
         }
     },
     "92:2": {
@@ -203,7 +203,7 @@
         "inputs": {
             "preview_rate": 8,
             "model": ["92:2", 0],
-            "vae": ["92:1", 2]
+            "vae": ["92:1", 0]
         },
         "class_type": "LTX2SamplingPreviewOverride",
         "_meta": {
@@ -298,7 +298,7 @@
             "temporal_size": 480,
             "temporal_overlap": 50,
             "samples": ["92:95", 2],
-            "vae": ["92:1", 2]
+            "vae": ["92:1", 0]
         },
         "class_type": "VAEDecodeTiled",
         "_meta": {
