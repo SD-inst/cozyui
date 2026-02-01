@@ -101,7 +101,6 @@ const Content = () => {
                         name='model'
                         type='ltx2'
                         component='UNETLoader'
-                        field='unet_name'
                         defaultValue='ltx2/ltx-2-19b-dev-fp8.safetensors'
                         sx={{ mb: 2 }}
                     />

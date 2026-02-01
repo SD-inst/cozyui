@@ -599,7 +599,7 @@
                 "model": {
                     "id": "handle",
                     "node_id": "92:2",
-                    "field": "ckpt_name"
+                    "field": "unet_name"
                 },
                 "upsample": {
                     "id": "handle",
@@ -707,7 +707,7 @@
                 "model": {
                     "id": "handle",
                     "node_id": "92:2",
-                    "field": "ckpt_name"
+                    "field": "unet_name"
                 },
                 "upsample": {
                     "id": "handle",
