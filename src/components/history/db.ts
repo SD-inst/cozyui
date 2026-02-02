@@ -41,12 +41,19 @@ export interface Uploads {
     file: File;
 }
 
+export interface ChatLog {
+    tab: string;
+    id: string;
+    messages: string; // serialized JSON
+}
+
 export const db = new Dexie('task_results') as Dexie & {
     taskResults: EntityTable<TaskResult, 'id'>;
     settings: Table<Settings, string>;
     formState: Table<FormState, string>;
     tags: Table<Tags, string>;
     uploads: Table<Uploads, string>;
+    chatLogs: Table<ChatLog, string>;
 };
 
 db.version(2)
@@ -79,6 +86,7 @@ db.version(5).stores({ uploads: '&id' });
 db.version(6).upgrade((tx) =>
     tx.table('settings').put({ name: settings.chat_stream, value: 'true' }),
 );
+db.version(7).stores({ chatLogs: '&[tab+id]' });
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

@@ -5,6 +5,8 @@ import { RootState } from '../redux/store';
 import { useMessageProcessor } from './useMessageProcessor';
 import { useBooleanSetting } from './useSetting';
 import { settings } from './settings';
+import { db } from '../components/history/db';
+import { useTabName } from '../components/contexts/TabContext';
 
 export interface ImagePart {
     type: 'text' | 'image_url';
@@ -23,7 +25,7 @@ export interface OpenAIMessage {
 export interface UseOpenAIChatOptions {
     initialMessages?: OpenAIMessage[];
     onError?: (error: Error) => void;
-    stream?: boolean;
+    id?: string;
 }
 
 export interface UseOpenAIChatReturn {
@@ -44,6 +46,7 @@ export interface UseOpenAIChatReturn {
 export function useOpenAIChat({
     initialMessages = [],
     onError,
+    id = 'main',
 }: UseOpenAIChatOptions): UseOpenAIChatReturn {
     const llmConfig: llmConfigType = useAppSelector(
         (state: RootState) => state.config.llm || ({} as llmConfigType),
@@ -56,13 +59,16 @@ export function useOpenAIChat({
     const [isThinking, setIsThinking] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const messagesLoaded = useRef<boolean>(false);
     const stream = useBooleanSetting(settings.chat_stream);
 
+    const tab = useTabName();
     const reset = useCallback(() => {
         setMessagesState(initialMessages);
         setIsComplete(false);
         setError(null);
-    }, [initialMessages]);
+        db.chatLogs.where({ tab, id }).delete();
+    }, [id, initialMessages, tab]);
 
     const abort = useCallback(() => {
         if (abortControllerRef.current) {
@@ -72,6 +78,31 @@ export function useOpenAIChat({
     }, []);
 
     const { processUserMessage } = useMessageProcessor();
+    useEffect(() => {
+        if (isComplete) {
+            db.chatLogs.put({
+                tab,
+                id,
+                messages: JSON.stringify(messagesState),
+            });
+        } else {
+            if (!messagesLoaded.current) {
+                db.chatLogs
+                    .where({ tab, id })
+                    .first()
+                    .then((m) => (m?.messages ? JSON.parse(m.messages) : []))
+                    .then((messages) => {
+                        if (messages && messages.length > 0) {
+                            setMessagesState(messages);
+                        }
+                    })
+                    .catch((e) => {
+                        console.log('Failed to load messages from IDB:', e);
+                    });
+                messagesLoaded.current = true;
+            }
+        }
+    }, [id, isComplete, messagesState, tab]);
 
     const sendMessage = useCallback(
         async (
