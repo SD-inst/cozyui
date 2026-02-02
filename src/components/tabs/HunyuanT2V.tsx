@@ -5,11 +5,11 @@ import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYLengthInput } from '../controls/HYLengthInput';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { HYNAG } from '../controls/HYNAG';
 import { HYRiflexInput } from '../controls/HYRiflexInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
@@ -76,7 +76,11 @@ const Content = () => {
                 <GuidanceInput />
                 <FlowShiftInput />
                 <AdvancedSettings>
-                    <HYModelSelectInput name='model' />
+                    <ModelSelectAutocomplete
+                        type='hunyuan'
+                        name='model'
+                        sx={{ mb: 2 }}
+                    />
                     <ClipSelectInput name='clip_model' />
                     <SamplerSelectInput name='sampler' />
                     <SchedulerSelectInput name='scheduler' />

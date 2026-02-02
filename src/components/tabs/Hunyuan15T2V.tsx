@@ -34,12 +34,12 @@ const Content = () => {
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'
-                        type='hunyuan'
+                        type='hunyuan15'
                         extraFilter={(v) =>
                             v.includes('hunyuanvideo1.5') && v.includes('_t2v_')
                         }
                         defaultValue={
-                            'hyvid/hunyuanvideo1.5_720p_t2v_fp16.safetensors'
+                            'hyvid15/hunyuanvideo1.5_720p_t2v_fp16.safetensors'
                         }
                         sx={{ mb: 2 }}
                     />
@@ -58,7 +58,7 @@ const Content = () => {
                     <CompileModelToggle />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
-                <LoraInput name='lora' type='hunyuan' />
+                <LoraInput name='lora' type='hunyuan15' />
                 <VideoImageOverride />
             </GridLeft>
             <GridRight

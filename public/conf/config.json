@@ -2922,6 +2922,9 @@
         "hunyuan": {
             "filter": "hyvid/"
         },
+        "hunyuan15": {
+            "filter": "hyvid15/"
+        },
         "flux": {
             "filter": "flux/"
         },
