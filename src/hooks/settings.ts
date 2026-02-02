@@ -10,4 +10,5 @@ export enum settings {
     backup_uploads = 'backup_uploads',
     tag_number = 'tag_number',
     tag_enabled_tabs = 'tag_enabled_tabs',
+    chat_stream = 'chat_stream',
 }

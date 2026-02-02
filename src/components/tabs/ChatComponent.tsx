@@ -5,9 +5,6 @@ import {
     AccordionSummary,
     Box,
     Button,
-    Checkbox,
-    FormControl,
-    FormControlLabel,
     TextField,
     Typography,
 } from '@mui/material';
@@ -29,6 +26,12 @@ const isVideo = (filename?: string): boolean => {
     );
 };
 
+const buttonSx = {
+    minWidth: { xs: 100, sm: 120 },
+    px: { xs: 2, sm: 3 },
+    gap: 0.5,
+};
+
 export const ChatComponent = ({
     promptFieldName = 'prompt',
     imageFieldName,
@@ -41,20 +44,12 @@ export const ChatComponent = ({
     const tr = useTranslate();
     const llmConfig = useAppSelector((state) => state.config.llm);
 
-    const buttonSx = {
-        minWidth: { xs: 100, sm: 120 },
-        px: { xs: 2, sm: 3 },
-        gap: 0.5,
-    };
-
     const form = useForm({
         defaultValues: {
             input: '',
-            stream: true,
         },
     });
     const { setValue, watch } = useFormContext();
-    const stream = form.watch('stream');
     const input = form.watch('input');
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -72,7 +67,6 @@ export const ChatComponent = ({
         isGenerating,
         isThinking,
     } = useOpenAIChat({
-        stream,
         initialMessages: [
             {
                 role: 'system',
@@ -260,24 +254,6 @@ export const ChatComponent = ({
                                     flexWrap: { xs: 'wrap', sm: 'nowrap' },
                                 }}
                             >
-                                <FormControl
-                                    sx={{
-                                        flexDirection: 'row',
-                                        flexShrink: 0,
-                                        width: { xs: 'auto', sm: 'auto' },
-                                    }}
-                                >
-                                    <FormControlLabel
-                                        control={
-                                            <Checkbox
-                                                {...form.register('stream')}
-                                                checked={stream}
-                                                size='small'
-                                            />
-                                        }
-                                        label={tr('controls.stream')}
-                                    />
-                                </FormControl>
                                 <Button
                                     type='submit'
                                     disabled={!input.trim()}

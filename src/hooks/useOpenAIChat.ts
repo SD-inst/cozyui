@@ -3,6 +3,8 @@ import { llmConfigType } from '../redux/config';
 import { useAppSelector } from '../redux/hooks';
 import { RootState } from '../redux/store';
 import { useMessageProcessor } from './useMessageProcessor';
+import { useBooleanSetting } from './useSetting';
+import { settings } from './settings';
 
 export interface ImagePart {
     type: 'text' | 'image_url';
@@ -42,7 +44,6 @@ export interface UseOpenAIChatReturn {
 export function useOpenAIChat({
     initialMessages = [],
     onError,
-    stream = false,
 }: UseOpenAIChatOptions): UseOpenAIChatReturn {
     const llmConfig: llmConfigType = useAppSelector(
         (state: RootState) => state.config.llm || ({} as llmConfigType),
@@ -55,6 +56,7 @@ export function useOpenAIChat({
     const [isThinking, setIsThinking] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
+    const stream = useBooleanSetting(settings.chat_stream);
 
     const reset = useCallback(() => {
         setMessagesState(initialMessages);

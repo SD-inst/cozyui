@@ -56,6 +56,7 @@ export const AppSettings = () => {
                     <SettingCheckbox name={settings.enable_previews} />
                     <SettingCheckbox name={settings.tag_completion} />
                     <SettingCheckbox name={settings.backup_uploads} />
+                    <SettingCheckbox name={settings.chat_stream} />
                 </Box>
                 {tag_enabled && (
                     <Box

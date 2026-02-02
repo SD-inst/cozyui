@@ -1,4 +1,5 @@
 import Dexie, { EntityTable, Table } from 'dexie';
+import { settings } from '../../hooks/settings';
 
 export enum markEnum {
     NONE,
@@ -75,6 +76,9 @@ db.version(3)
 
 db.version(4).stores({ tags: '&name, color, *index' });
 db.version(5).stores({ uploads: '&id' });
+db.version(6).upgrade((tx) =>
+    tx.table('settings').put({ name: settings.chat_stream, value: 'true' }),
+);
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {
@@ -90,10 +94,13 @@ const indexPrompt = (obj: TaskResult) => {
         .flatMap((w) => w.split('\n'))
         .filter((w) => !!w)
         .map((w) => w.replace(/[,.!?:;'"()-]/g, '').toLowerCase());
-    const wordset = words.reduce((prev, cur) => {
-        prev[cur] = true;
-        return prev;
-    }, {} as { [word: string]: boolean });
+    const wordset = words.reduce(
+        (prev, cur) => {
+            prev[cur] = true;
+            return prev;
+        },
+        {} as { [word: string]: boolean },
+    );
     obj.words = Object.keys(wordset);
     return obj;
 };
