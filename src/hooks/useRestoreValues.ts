@@ -25,11 +25,17 @@ export const useRestoreValues = () => {
                         setObjectValues(field, value[c]);
                     }
                 } else {
-                    setValue(field, value[c], { shouldDirty: false });
+                    setValue(
+                        api?.controls[field]?.set_field || field,
+                        value[c],
+                        {
+                            shouldDirty: false,
+                        },
+                    );
                 }
             });
         },
-        [setValue],
+        [api?.controls, setValue],
     );
     return useEventCallback((key: string, value: any) => {
         if (!api) {
@@ -40,19 +46,7 @@ export const useRestoreValues = () => {
         }
         const apiKey = key.split('.')[0]; // use the first name component for API lookups
         if (key === '' || api.controls[apiKey]) {
-            if (
-                typeof value === 'string' &&
-                key !== '' &&
-                api.controls[apiKey].set_field
-            ) {
-                // only use the set_field parameter for string values that are
-                // used with send/receive
-                setValue(api.controls[apiKey].set_field, value, {
-                    shouldDirty: false,
-                });
-            } else {
-                setObjectValues(key, value);
-            }
+            setObjectValues(key, value);
         }
     });
 };
