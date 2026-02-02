@@ -95,7 +95,7 @@ const Content = () => {
                 />
             </GridRight>
             <GridBottom>
-                <GenerateButton />
+                <GenerateButton requiredControls={['model']} />
             </GridBottom>
         </Layout>
     );
