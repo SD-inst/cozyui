@@ -37,7 +37,6 @@ const video_node = (video: string, format = 'AnimateDiff') => ({
     inputs: {
         video,
         force_rate: 0,
-        force_size: 'Disabled',
         custom_width: 0,
         custom_height: 0,
         frame_load_cap: 0,

@@ -33,7 +33,6 @@ export const keyframeHandler = (
                 inputs: {
                     video: v.image,
                     force_rate: 0,
-                    force_size: 'Disabled',
                     custom_width: 0,
                     custom_height: 0,
                     frame_load_cap: 0,
