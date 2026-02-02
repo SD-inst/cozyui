@@ -49,7 +49,7 @@ export const keyframeHandler = (
                 inputs: {
                     ...prevNodeCond,
                     ...prevNodeLatent,
-                    vae: [vae_node_id, 2],
+                    vae: [vae_node_id, 0],
                     frame_idx: v.position,
                     strength: v.strength,
                     image: [':1', 0],
