@@ -160,59 +160,69 @@ export const ChatComponent = ({
                 >
                     {tr('controls.chat_title')}
                 </AccordionSummary>
-                <AccordionDetails sx={{ p: { xs: 0, md: 2 } }}>
-                    <Box
-                        sx={{
-                            flex: 1,
-                            overflowY: 'auto',
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1.5,
-                        }}
-                    >
-                        {messages.map(
-                            (msg, idx) =>
-                                msg.role !== 'system' &&
-                                !(msg.role === 'assistant' && !msg.content) && (
-                                    <ChatMessage
-                                        msgRef={
-                                            idx < messages.length - 1
-                                                ? undefined
-                                                : messagesEndRef
-                                        }
-                                        key={idx}
-                                        role={msg.role}
-                                        content={msg.content}
-                                        onSendToPrompt={
-                                            isComplete ||
-                                            idx < messages.length - 1
-                                                ? handleSendToPrompt
-                                                : undefined
-                                        }
-                                        onRegenerate={
-                                            msg.role === 'assistant' &&
-                                            !isGenerating
-                                                ? () => handleRegenerate(idx)
-                                                : undefined
-                                        }
-                                    />
-                                ),
-                        )}
-                        {isThinking && isGenerating && <ThinkingIndicator />}
-                        {error && (
-                            <Box
-                                sx={{
-                                    maxWidth: '95%',
-                                    p: 1,
-                                    borderRadius: 1,
-                                    textAlign: 'center',
-                                }}
-                            >
-                                <Typography variant='caption' color='error'>
-                                    {error.message}
-                                </Typography>
-                            </Box>
-                        )}
+                <AccordionDetails
+                    sx={{
+                        p: { xs: 0, md: 2 },
+                    }}
+                >
+                    <Box sx={{ maxHeight: 500, overflowY: 'auto' }}>
+                        <Box
+                            sx={{
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 1.5,
+                            }}
+                        >
+                            {messages.map(
+                                (msg, idx) =>
+                                    msg.role !== 'system' &&
+                                    !(
+                                        msg.role === 'assistant' && !msg.content
+                                    ) && (
+                                        <ChatMessage
+                                            msgRef={
+                                                idx < messages.length - 1
+                                                    ? undefined
+                                                    : messagesEndRef
+                                            }
+                                            key={idx}
+                                            role={msg.role}
+                                            content={msg.content}
+                                            onSendToPrompt={
+                                                isComplete ||
+                                                idx < messages.length - 1
+                                                    ? handleSendToPrompt
+                                                    : undefined
+                                            }
+                                            onRegenerate={
+                                                msg.role === 'assistant' &&
+                                                !isGenerating
+                                                    ? () =>
+                                                          handleRegenerate(idx)
+                                                    : undefined
+                                            }
+                                        />
+                                    ),
+                            )}
+                            {isThinking && isGenerating && (
+                                <ThinkingIndicator />
+                            )}
+                            {error && (
+                                <Box
+                                    sx={{
+                                        maxWidth: '95%',
+                                        p: 1,
+                                        borderRadius: 1,
+                                        textAlign: 'center',
+                                    }}
+                                >
+                                    <Typography variant='caption' color='error'>
+                                        {error.message}
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Box>
                     </Box>
                     <FormProvider {...form}>
                         <Box

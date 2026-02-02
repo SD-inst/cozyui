@@ -58,8 +58,8 @@ export const ChatMessage = ({
     return (
         <Card
             sx={{
-                maxWidth: '80%',
-                alignSelf: role === 'user' ? 'flex-end' : 'flex-start',
+                maxWidth: { sm: '80%' },
+                alignSelf: { sm: role === 'user' ? 'flex-end' : 'flex-start' },
                 boxShadow: 1,
                 backgroundColor: 'action.selected',
             }}
