@@ -1,4 +1,10 @@
-import { Cancel, ExpandMore, Person, Send } from '@mui/icons-material';
+import {
+    Cancel,
+    ClearAll,
+    ExpandMore,
+    Person,
+    Send,
+} from '@mui/icons-material';
 import {
     Accordion,
     AccordionDetails,
@@ -97,10 +103,16 @@ export const ChatComponent = ({
         );
     };
 
-    const handleResetChat = () => {
+    const handleResetChat = (full?: boolean) => {
+        const firstMsg = messages.find((m) => m.role === 'user')?.content;
         reset();
-        form.setValue('input', '');
         setTimeout(() => {
+            if (!full && Array.isArray(firstMsg)) {
+                form.setValue(
+                    'input',
+                    firstMsg.find((m) => m.type === 'text')?.text || '',
+                );
+            }
             inputRef.current?.focus();
         }, 100);
     };
@@ -270,8 +282,9 @@ export const ChatComponent = ({
                                 ) && (
                                     <>
                                         <Button
-                                            type='button'
-                                            onClick={handleResetChat}
+                                            onClick={() =>
+                                                handleResetChat(false)
+                                            }
                                             variant='outlined'
                                             size='medium'
                                             color='info'
@@ -281,9 +294,21 @@ export const ChatComponent = ({
                                         >
                                             {tr('controls.chat_new_chat')}
                                         </Button>
+                                        <Button
+                                            onClick={() =>
+                                                handleResetChat(true)
+                                            }
+                                            variant='outlined'
+                                            size='medium'
+                                            color='info'
+                                            startIcon={<ClearAll />}
+                                            sx={buttonSx}
+                                            disabled={isGenerating}
+                                        >
+                                            {tr('controls.chat_clear')}
+                                        </Button>
                                         {isGenerating && (
                                             <Button
-                                                type='button'
                                                 onClick={() => abort()}
                                                 variant='outlined'
                                                 size='medium'

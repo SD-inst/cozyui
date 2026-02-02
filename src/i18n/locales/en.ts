@@ -210,6 +210,7 @@ const translation = {
         chat_avatar_assistant: 'Assistant',
         chat_interrupt: 'Interrupt',
         chat_new_chat: 'New Chat',
+        chat_clear: 'Clear',
         chat_placeholder_right: 'Chat with AI for prompt suggestions',
         send_to_prompt: 'Send to prompt',
         regenerate: 'Regenerate',

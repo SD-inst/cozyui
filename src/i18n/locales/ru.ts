@@ -209,6 +209,7 @@ const translation = {
         chat_avatar_assistant: 'Ассистент',
         chat_interrupt: 'Прервать',
         chat_new_chat: 'Новый чат',
+        chat_clear: 'Очистить',
         chat_placeholder_right: 'Чат с AI для подсказок',
         send_to_prompt: 'Отправить в промпт',
         regenerate: 'Перегенерировать',
