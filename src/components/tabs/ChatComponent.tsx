@@ -58,6 +58,7 @@ export const ChatComponent = ({
     const { setValue, watch } = useFormContext();
     const input = form.watch('input');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const lastMsgCount = useRef(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isExpanded, setIsExpanded] = useState(false);
     const image = watch(imageFieldName || '');
@@ -82,10 +83,13 @@ export const ChatComponent = ({
     });
 
     useEffect(() => {
-        if (!isGenerating && isComplete) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (messages.length !== lastMsgCount.current || isComplete) {
+            lastMsgCount.current = messages.length;
+            messagesEndRef.current?.scrollIntoView({
+                behavior: 'smooth',
+            });
         }
-    }, [isComplete, isGenerating]);
+    }, [isComplete, messages.length]);
 
     if (!llmConfig?.model || (!!imageFieldName && !llmConfig?.modelVision)) {
         return null;
@@ -96,10 +100,13 @@ export const ChatComponent = ({
         if (!input.trim()) return;
 
         form.setValue('input', '');
+        const firstMessage = !messages.some((m) => m.role === 'user');
         await sendMessage(
             input.trim(),
             undefined,
-            imageFieldName && !isVideo(image) ? imageURL : undefined,
+            imageFieldName && !isVideo(image) && firstMessage
+                ? imageURL
+                : undefined,
         );
     };
 
@@ -181,11 +188,7 @@ export const ChatComponent = ({
                                         msg.role === 'assistant' && !msg.content
                                     ) && (
                                         <ChatMessage
-                                            msgRef={
-                                                idx < messages.length - 1
-                                                    ? undefined
-                                                    : messagesEndRef
-                                            }
+                                            msgRef={messagesEndRef}
                                             key={idx}
                                             role={msg.role}
                                             content={msg.content}
