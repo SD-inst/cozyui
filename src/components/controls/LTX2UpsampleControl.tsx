@@ -269,7 +269,7 @@ export const LTX2UpsampleControl = ({
                     inputs: {
                         strength: 1,
                         bypass: false,
-                        vae: [vae_node_id, 2],
+                        vae: [vae_node_id, 0],
                         image: [image_node_id, 0],
                         latent: samplesNode,
                     },
