@@ -10,9 +10,9 @@ import {
 import { useContext, useRef, useState } from 'react';
 import { useResult, useResultParam } from '../../hooks/useResult';
 import { useSendResult } from '../../hooks/useSendResult';
+import { useTabVisibility } from '../../hooks/useTabVisibility';
 import { useTranslate } from '../../i18n/I18nContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
-import { useHiddenTabs } from '../../hooks/useHiddenTabs';
 
 export type SendResultButtonProps = ButtonProps & {
     targetTab?: string;
@@ -70,14 +70,12 @@ export const SendResultButton = ({
     const [anchor, setAnchor] = useState(null);
     const handleSend = useSendResult({ targetTab, fields, index, fileField });
     const { receivers } = useContext(WorkflowTabsContext);
-    const hiddenTabs = useHiddenTabs();
+    const { userFilteredTabs } = useTabVisibility();
     const menu = Object.keys(receivers)
+        .filter((tab) => userFilteredTabs.includes(tab))
         .flatMap((tab, ti) =>
             receivers[tab].map((field, fi): [JSX.Element, number] | null => {
-                if (
-                    field.acceptedTypes.includes(type) &&
-                    !hiddenTabs?.includes(tab)
-                ) {
+                if (field.acceptedTypes.includes(type)) {
                     return [
                         <SendMenuItem
                             targetTab={tab}
@@ -91,7 +89,7 @@ export const SendResultButton = ({
                     ];
                 }
                 return null;
-            })
+            }),
         )
         .filter((e) => !!e)
         .sort((a, b) => a[1] - b[1])

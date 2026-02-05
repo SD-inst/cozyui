@@ -103,6 +103,10 @@ export type configType = {
     client_id: string;
     loaded: boolean[];
     preview_root: string;
+    tab_visibility: {
+        show_only: string[]; // Only show these tabs
+        hide_only: string[]; // Only hide these tabs
+    };
 };
 
 const slice = createSlice({
@@ -114,6 +118,10 @@ const slice = createSlice({
         models: {},
         loras: {},
         loaded: [false, false],
+        tab_visibility: {
+            show_only: [] as string[],
+            hide_only: [] as string[],
+        },
     } as configType,
     reducers: {
         setConfig: (s: configType, action: PayloadAction<configType>) => ({
@@ -128,7 +136,7 @@ const slice = createSlice({
             action: PayloadAction<{
                 config: Partial<configType>;
                 concatArrays: boolean;
-            }>
+            }>,
         ) =>
             mergeWith({}, s, action.payload.config, (objValue, srcValue) => {
                 if (isArray(objValue)) {

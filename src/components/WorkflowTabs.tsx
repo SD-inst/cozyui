@@ -10,9 +10,9 @@ import React, {
 } from 'react';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useCurrentTab } from '../hooks/useCurrentTab';
-import { useHiddenTabs } from '../hooks/useHiddenTabs';
 import { useRestoreValues } from '../hooks/useRestoreValues';
 import { useSetDefaults } from '../hooks/useSetDefaults';
+import { useTabVisibility } from '../hooks/useTabVisibility';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { useTabName } from './contexts/TabContext';
@@ -214,15 +214,14 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         setReceivers,
         workflowTabGroups,
     } = useContext(WorkflowTabsContext);
-    const hiddenTabs = useHiddenTabs();
-    const visibleTabs = useMemo(() => {
-        if (hiddenTabs === undefined) {
-            return [];
-        }
-        return (props.children as any[]).filter(
-            (t) => !hiddenTabs.includes(t.props.value),
-        );
-    }, [hiddenTabs, props.children]);
+    const { userFilteredTabs } = useTabVisibility();
+    const visibleTabs = useMemo(
+        () =>
+            (props.children as any[]).filter((t) =>
+                userFilteredTabs.includes(t.props.value),
+            ),
+        [props.children, userFilteredTabs],
+    );
     // fill all available tabs
     useEffect(() => {
         const workflowTabs = Children.map(
@@ -247,27 +246,20 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     }, [props.children, setReceivers, setWorkflowTabs]);
     // switch to first visible tab if none are selected
     useEffect(() => {
-        if (
-            !props.children ||
-            !(props.children as any).length ||
-            current_tab ||
-            hiddenTabs === undefined
-        ) {
+        if (!props.children || !(props.children as any).length || current_tab) {
             return;
         }
         if (visibleTabs.length) {
             dispatch(setTab(visibleTabs[0].props.value));
         }
-    }, [dispatch, props.children, current_tab, hiddenTabs, visibleTabs]);
+    }, [dispatch, props.children, current_tab, visibleTabs]);
     // if a hidden tab is selected, unselect tab
     useEffect(() => {
-        if (hiddenTabs === undefined || !hiddenTabs.includes(current_tab)) {
-            return;
-        }
-        if (hiddenTabs.includes(current_tab)) {
+        if (current_tab && !userFilteredTabs.includes(current_tab)) {
+            console.log(userFilteredTabs, current_tab);
             dispatch(setTab(''));
         }
-    }, [current_tab, dispatch, hiddenTabs, props.children, setWorkflowTabs]);
+    }, [current_tab, dispatch, userFilteredTabs]);
     const ref = useRef<HTMLDivElement>(null);
     useScroller(ref.current);
     const groups = useMemo(() => {
@@ -276,7 +268,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             if (
                 !React.isValidElement(c) ||
                 !c.props.group ||
-                hiddenTabs?.includes(c.props.value)
+                !userFilteredTabs.includes(c.props.value)
             ) {
                 return;
             }
@@ -287,7 +279,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             }
         });
         return result;
-    }, [hiddenTabs, props.children]);
+    }, [props.children, userFilteredTabs]);
     // index tab groups
     useEffect(() => {
         const tabGroups = Object.fromEntries(
@@ -296,7 +288,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             ),
         );
         setWorkflowTabGroups(tabGroups);
-    }, [groups, setWorkflowTabGroups]);
+    }, [groups, setWorkflowTabGroups, userFilteredTabs.length]);
     const selectedGroupTab = workflowTabGroups[current_tab];
     const activeTab =
         Object.keys(workflowTabGroups).length > 0
