@@ -114,11 +114,15 @@ export const ChatComponent = ({
         const firstMsg = messages.find((m) => m.role === 'user')?.content;
         reset();
         setTimeout(() => {
-            if (!full && Array.isArray(firstMsg)) {
-                form.setValue(
-                    'input',
-                    firstMsg.find((m) => m.type === 'text')?.text || '',
-                );
+            if (!full) {
+                if (Array.isArray(firstMsg)) {
+                    form.setValue(
+                        'input',
+                        firstMsg.find((m) => m.type === 'text')?.text || '',
+                    );
+                } else if (firstMsg) {
+                    form.setValue('input', firstMsg);
+                }
             }
             inputRef.current?.focus();
         }, 100);
