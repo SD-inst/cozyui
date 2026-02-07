@@ -76,7 +76,7 @@ const Content = () => {
                     max={16}
                     defaultValue={1}
                 />
-                <LoraInput name='lora' type='sd' />
+                <LoraInput name='lora' type='anima' />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
