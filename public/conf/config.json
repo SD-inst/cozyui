@@ -1566,6 +1566,72 @@
                     "api_input_name": "model",
                     "output_node_ids": ["3"],
                     "output_idx": 0,
+                    "output_clip_ids": ["11", "12"],
+                    "class_name": "LoraLoader",
+                    "strength_field_name": "strength_model",
+                    "clip_strength_field_name": "strength_clip",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
+        "Anima": {
+            "api": "api/anima.json",
+            "controls": {
+                "prompt": {
+                    "id": "11",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "12",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "28",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "28",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "19",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "19",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "47",
+                    "field": "value"
+                },
+                "cfg": {
+                    "id": "19",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "19",
+                    "field": "sampler_name"
+                },
+                "batch_size": {
+                    "id": "28",
+                    "field": "batch_size"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": {
+                "id": "46",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "clip_input_name": "clip",
+                    "api_input_name": "model",
+                    "output_node_ids": ["19"],
+                    "output_idx": 0,
                     "output_clip_ids": ["6", "7"],
                     "class_name": "LoraLoader",
                     "strength_field_name": "strength_model",
@@ -2960,6 +3026,9 @@
         },
         "ltx_gemma": {
             "filter": "gemma_3_12B"
+        },
+        "anima": {
+            "filter": "anima/"
         }
     },
     "api": "/cui",

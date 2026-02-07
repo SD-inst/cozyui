@@ -52,6 +52,7 @@ import { WanI2VITTab } from './components/tabs/WanI2VIT';
 import { WanT2VTab } from './components/tabs/WanT2V';
 import { ZImageTab } from './components/tabs/ZImage';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
+import { AnimaTab } from './components/tabs/Anima';
 
 function App() {
     return (
@@ -72,6 +73,7 @@ function App() {
                                 {OviT2VTab}
                                 {ChromaTab}
                                 {SDTab}
+                                {AnimaTab}
                                 {ZImageTab}
                                 {QwenImageTab}
                                 {FluxKontextTab}

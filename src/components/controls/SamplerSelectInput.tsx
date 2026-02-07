@@ -18,6 +18,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'DEIS', value: 'deis' },
                 { text: 'DEIS 2M', value: 'deis_2m' },
                 { text: 'DEIS 3M', value: 'deis_3m' },
+                { text: 'ER SDE', value: 'er_sde' },
                 { text: 'Res 2S', value: 'res_2s' },
                 { text: 'Res 3S', value: 'res_3s' },
                 { text: 'Res 2M', value: 'res_2m' },
