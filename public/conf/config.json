@@ -1628,14 +1628,11 @@
             "handler_options": {
                 "lora_params": {
                     "lora_input_name": "model",
-                    "clip_input_name": "clip",
                     "api_input_name": "model",
                     "output_node_ids": ["19"],
                     "output_idx": 0,
-                    "output_clip_ids": ["6", "7"],
-                    "class_name": "LoraLoader",
+                    "class_name": "LoraLoaderModelOnly",
                     "strength_field_name": "strength_model",
-                    "clip_strength_field_name": "strength_clip",
                     "name_field_name": "lora_name"
                 }
             }
