@@ -1,5 +1,7 @@
+import { AutoFixHigh } from '@mui/icons-material';
 import {
     Button,
+    Fab,
     FormControl,
     FormHelperText,
     useEventCallback,
@@ -11,7 +13,9 @@ import toast from 'react-hot-toast';
 import { settings } from '../../hooks/settings';
 import { useAPI } from '../../hooks/useAPI';
 import { useApiURL } from '../../hooks/useApiURL';
+import { useElementVisibility } from '../../hooks/useElementVisibility';
 import { useGet } from '../../hooks/useGet';
+import { useIsPhone } from '../../hooks/useIsPhone';
 import { useBooleanSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
@@ -82,6 +86,9 @@ export const GenerateButton = ({
     const status = useAppSelector((s) => s.progress.status);
     const tabs = useAppSelector((s) => s.config.tabs);
     const connected = useAppSelector((s) => s.progress.connected);
+    const { visible, ref } = useElementVisibility();
+    const isPhone = useIsPhone();
+    const finalVisible = visible || !isPhone;
     const generation_disabled =
         (status &&
             (status === statusEnum.WAITING || status === statusEnum.RUNNING)) ||
@@ -144,7 +151,7 @@ export const GenerateButton = ({
                 } catch (e) {
                     console.log(e);
                     toast.error(
-                        tr('toasts.error_processing_handler', { name, err: e })
+                        tr('toasts.error_processing_handler', { name, err: e }),
                     );
                     dispatch(setStatus(statusEnum.ERROR));
                     return Promise.reject();
@@ -184,7 +191,7 @@ export const GenerateButton = ({
         console.log(
             '%cGeneration params: %O',
             'color: green; font-weight: bold; font-size: 1.5em',
-            params
+            params,
         );
         dispatch(setApi(params.prompt));
         if (noexec) {
@@ -205,7 +212,7 @@ export const GenerateButton = ({
                         action: actionEnum.STORE,
                         tab: tab_name,
                         values: cloneDeep(vals),
-                    })
+                    }),
                 );
                 return;
             }
@@ -217,7 +224,7 @@ export const GenerateButton = ({
                     setStatusMessage({
                         status: statusEnum.ERROR,
                         message: j.error.message,
-                    })
+                    }),
                 );
             }
         });
@@ -240,15 +247,35 @@ export const GenerateButton = ({
     }, [handleCtrlEnter, setValue]);
     return (
         <FormControl>
-            <Button
-                variant='contained'
-                color='warning'
-                onClick={() => sendPrompt()}
-                disabled={generation_disabled || !apiSuccess}
-                sx={{ mt: 1, mb: 1 }}
-            >
-                {tr(`controls.${text}`)}
-            </Button>
+            <div ref={ref}>
+                <Button
+                    variant='contained'
+                    color='warning'
+                    onClick={() => sendPrompt()}
+                    disabled={generation_disabled || !apiSuccess}
+                    sx={{
+                        mt: 1,
+                        mb: 1,
+                        visibility: finalVisible ? 'visible' : 'hidden',
+                    }}
+                >
+                    {tr(`controls.${text}`)}
+                </Button>
+                <Fab
+                    variant='circular'
+                    color='warning'
+                    onClick={() => sendPrompt()}
+                    disabled={generation_disabled || !apiSuccess}
+                    sx={{
+                        position: 'fixed',
+                        bottom: 16,
+                        right: 16,
+                        visibility: finalVisible ? 'hidden' : 'visible',
+                    }}
+                >
+                    <AutoFixHigh />
+                </Fab>
+            </div>
             {!hideErrors && errors.controls.length ? (
                 <FormHelperText error>
                     {tr('errors.missing_controls', {
