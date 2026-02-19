@@ -5,9 +5,9 @@ import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
-import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
+import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -42,7 +42,11 @@ const Content = () => {
                 <GuidanceInput />
                 <FlowShiftInput />
                 <AdvancedSettings>
-                    <HYModelSelectInput name='model' />
+                    <ModelSelectAutocomplete
+                        type='hunyuan'
+                        name='model'
+                        sx={{ mb: 2 }}
+                    />
                     <SamplerSelectInput name='sampler' />
                     <SchedulerSelectInput name='scheduler' />
                     <VirtualVRAMSliderInput name='virtual_vram' />
