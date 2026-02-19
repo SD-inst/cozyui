@@ -5,6 +5,7 @@ import { TextInputBase } from './TextInputBase';
 export type TextInputProps = {
     defaultValue?: any;
     name: string;
+    label?: string;
     tooltip?: string;
 } & TextFieldProps;
 

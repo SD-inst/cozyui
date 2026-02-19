@@ -1,6 +1,7 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { ClipSelectInput } from '../controls/ClipSelectInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
+import { DoublePromptInput } from '../controls/DoublePromptInput';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
@@ -10,7 +11,6 @@ import { HYRiflexInput } from '../controls/HYRiflexInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
-import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -68,7 +68,7 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <PromptInput name='prompt' />
+                <DoublePromptInput name='prompt' />
                 <ChatComponent systemPrompt={llmPrompt} />
                 <WidthHeight defaultWidth={848} defaultHeight={480} />
                 <HYLengthInput />

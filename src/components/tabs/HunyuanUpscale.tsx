@@ -1,5 +1,6 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
+import { DoublePromptInput } from '../controls/DoublePromptInput';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -7,7 +8,6 @@ import { GuidanceInput } from '../controls/GuidanceInput';
 import { HYModelSelectInput } from '../controls/HYModelSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
-import { PromptInput } from '../controls/PromptInput';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -23,7 +23,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <FileUpload name='image' type={UploadType.IMAGEORVIDEO} />
-                <PromptInput name='prompt' multiline sx={{ mb: 2 }} />
+                <DoublePromptInput name='prompt' multiline sx={{ mb: 2 }} />
                 <SliderInput
                     name='upscale'
                     defaultValue={2}

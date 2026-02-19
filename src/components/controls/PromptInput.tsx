@@ -204,7 +204,7 @@ export const PromptInput = ({ ...props }: TextInputProps) => {
         setTimeout(
             () =>
                 inputRef.current?.setSelectionRange(segment_start, segment_end),
-            0
+            0,
         );
     };
     const tagsctl = useTagsController();

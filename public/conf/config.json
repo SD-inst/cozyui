@@ -4,7 +4,8 @@
             "api": "api/hunyuan_t2v_native.json",
             "controls": {
                 "prompt": {
-                    "id": "8",
+                    "id": "handle",
+                    "node_id": "8",
                     "field": "text"
                 },
                 "neg_prompt": {
@@ -294,7 +295,8 @@
             "api": "api/hunyuan_upscale.json",
             "controls": {
                 "prompt": {
-                    "id": "12",
+                    "id": "handle",
+                    "node_id": "12",
                     "field": "text"
                 },
                 "image": {

@@ -1,20 +1,19 @@
 import { Casino } from '@mui/icons-material';
-import { Box, Button, TextFieldProps, Tooltip } from '@mui/material';
+import { Box, Button, Tooltip } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
 import { bigRandom } from '../../api/utils';
 import { useTranslate } from '../../i18n/I18nContext';
 import { HelpButton } from './HelpButton';
-import { TextInput } from './TextInput';
+import { TextInput, TextInputProps } from './TextInput';
 
 export const SeedInput = ({
     seedLength = 13,
     defaultValue = 1024,
     ...props
 }: {
-    name: string;
     seedLength?: number;
     defaultValue?: number;
-} & TextFieldProps) => {
+} & TextInputProps) => {
     const { setValue } = useFormContext();
     const tr = useTranslate();
     const randomize = () => {

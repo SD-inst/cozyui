@@ -214,6 +214,7 @@ const translation = {
         chat_placeholder_right: 'Chat with AI for prompt suggestions',
         send_to_prompt: 'Send to prompt',
         regenerate: 'Regenerate',
+        prompt_duplicate: 'duplicate prompt',
     },
     settings: {
         select_language: 'Select language',

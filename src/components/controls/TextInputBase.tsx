@@ -1,18 +1,21 @@
 import { Box, TextField } from '@mui/material';
+import { Ref } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useCtrlEnter } from '../contexts/TabContext';
 import { HelpButton } from './HelpButton';
 import { Optional } from './optional';
 import { TextInputProps } from './TextInput';
-import { Ref } from 'react';
 
 export const TextInputBase = ({
     name,
+    label,
     tooltip,
     fullWidth,
     baseRef,
     ...props
-}: Optional<TextInputProps, 'name'> & { baseRef?: Ref<any> }) => {
+}: Optional<TextInputProps, 'name'> & {
+    baseRef?: Ref<any>;
+}) => {
     const tr = useTranslate();
     const ceHandler = useCtrlEnter();
     return (
@@ -20,7 +23,13 @@ export const TextInputBase = ({
             sx={{ position: 'relative', width: fullWidth ? '100%' : undefined }}
         >
             <TextField
-                label={name ? tr('controls.' + name) : undefined}
+                label={
+                    label
+                        ? tr('controls.' + label)
+                        : name
+                          ? tr('controls.' + name)
+                          : undefined
+                }
                 fullWidth
                 onKeyUp={(e) => {
                     if (props.onKeyUp) {

@@ -93,7 +93,10 @@ const indexPrompt = (obj: TaskResult) => {
         return;
     }
     const params = JSON.parse(obj.params);
-    const prompt: string = params.values?.prompt;
+    const prompt: string =
+        typeof params.values?.prompt === 'string'
+            ? params.values?.prompt
+            : params.values?.prompt?.text;
     if (!prompt) {
         return;
     }
