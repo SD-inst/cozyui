@@ -214,6 +214,18 @@ export const GenerateButton = ({
                         values: cloneDeep(vals),
                     }),
                 );
+                const previewElement = document.querySelector(
+                    `[data-tab="${tab_name}"][data-preview="true"]`,
+                );
+                if (previewElement) {
+                    setTimeout(
+                        () =>
+                            previewElement.scrollIntoView({
+                                behavior: 'smooth',
+                            }),
+                        100,
+                    );
+                }
                 return;
             }
             const j = await r.json();

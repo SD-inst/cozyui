@@ -4,8 +4,10 @@ import { useActiveTab } from '../../hooks/useActiveTab';
 import { useBooleanSetting } from '../../hooks/useSetting';
 import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
+import { useTabName } from '../contexts/TabContext';
 
 export const ImagePreview = ({ size }: { size: number }) => {
+    const tab_name = useTabName();
     const enabled = useBooleanSetting(settings.enable_previews);
     const status = useAppSelector((s) => s.progress.status);
     const ref = useRef<HTMLCanvasElement>(null);
@@ -31,18 +33,18 @@ export const ImagePreview = ({ size }: { size: number }) => {
         const tiles_x_f = Math.max(
             Math.min(
                 frames.length,
-                Math.floor(Math.sqrt(frames.length / image_aspect))
+                Math.floor(Math.sqrt(frames.length / image_aspect)),
             ),
-            1
+            1,
         );
         const tiles_y_f = Math.ceil(frames.length / tiles_x_f);
 
         const tiles_x_c = Math.max(
             Math.min(
                 frames.length,
-                Math.ceil(Math.sqrt(frames.length / image_aspect))
+                Math.ceil(Math.sqrt(frames.length / image_aspect)),
             ),
-            1
+            1,
         );
         const tiles_y_c = Math.ceil(frames.length / tiles_x_c);
 
@@ -77,6 +79,8 @@ export const ImagePreview = ({ size }: { size: number }) => {
     return (
         <canvas
             ref={ref}
+            data-preview='true'
+            data-tab={tab_name}
             style={{
                 display: active ? 'block' : 'none',
             }}

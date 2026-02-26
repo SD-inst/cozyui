@@ -11,8 +11,8 @@ import { useSaveToHistory } from '../../hooks/useSaveToHistory';
 import { useTranslate } from '../../i18n/I18nContext';
 import { VerticalBox } from '../VerticalBox';
 
-import 'yet-another-react-lightbox/styles.css';
 import 'yet-another-react-lightbox/plugins/counter.css';
+import 'yet-another-react-lightbox/styles.css';
 import {
     DownloadImageButton,
     DownloadImageButtonLightbox,

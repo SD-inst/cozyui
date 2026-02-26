@@ -122,6 +122,7 @@ const slice = createSlice({
             show_only: [] as string[],
             hide_only: [] as string[],
         },
+        llm: {},
     } as configType,
     reducers: {
         setConfig: (s: configType, action: PayloadAction<configType>) => ({
