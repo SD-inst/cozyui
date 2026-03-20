@@ -53,6 +53,8 @@ import { WanT2VTab } from './components/tabs/WanT2V';
 import { ZImageTab } from './components/tabs/ZImage';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { AnimaTab } from './components/tabs/Anima';
+import { LTX23T2VTab } from './components/tabs/LTX23T2V';
+import { LTX23I2VTab } from './components/tabs/LTX23I2V';
 
 function App() {
     return (
@@ -67,6 +69,7 @@ function App() {
                             <WorkflowTabs>
                                 {HunyanT2VTab}
                                 {LTX2T2VTab}
+                                {LTX23T2VTab}
                                 {Hunyan15T2VTab}
                                 {WanI2VTab}
                                 {WanT2VTab}
@@ -80,6 +83,7 @@ function App() {
                                 {QwenImageEditTab}
                                 {WanI2VITTab}
                                 {LTX2I2VTab}
+                                {LTX23I2VTab}
                                 {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}

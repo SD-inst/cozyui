@@ -757,6 +757,216 @@
                 "type": "gifs"
             }
         },
+        "LTX-2.3 T2V": {
+            "api": "api/ltx2.3_t2v.json",
+            "controls": {
+                "prompt": {
+                    "id": "92:3",
+                    "field": "text"
+                },
+                "seed": {
+                    "id": "104",
+                    "field": "value"
+                },
+                "length": {
+                    "id": "92:62",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "92:9",
+                    "field": "steps"
+                },
+                "width": {
+                    "id": "92:89",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "92:89",
+                    "field": "height"
+                },
+                "neg_prompt": {
+                    "id": "92:4",
+                    "field": "text"
+                },
+                "cfg": {
+                    "id": "92:47",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "92:8",
+                    "field": "sampler_name"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "fps": {
+                    "id": "106",
+                    "field": "value"
+                },
+                "text_encoder": {
+                    "id": "handle",
+                    "node_id": "92:60",
+                    "field": "clip_name1"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "92:2",
+                    "field": "unet_name"
+                },
+                "upsample": {
+                    "id": "handle",
+                    "cond_node_id": "92:22",
+                    "input_node_id": "92:41",
+                    "guider_node_id": "92:47",
+                    "vae_node_id": "92:1",
+                    "seed_node_id": "104",
+                    "output_node_id": "92:94",
+                    "crop_node_id": "92:95",
+                    "scale_node_id": "92:90",
+                    "audio_node_id": "92:96"
+                },
+                "keyframes": {
+                    "id": "handle",
+                    "cond_node_id": "92:22",
+                    "vae_node_id": "92:1",
+                    "concat_node_id": "92:56",
+                    "crop_node_id": "92:95",
+                    "set_field": "keyframe"
+                },
+                "reference_audio": {
+                    "id": "handle",
+                    "audio_vae_node_id": "92:48",
+                    "size_node_id": "92:91",
+                    "concat_node_id": "92:56"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["92:47"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "103",
+                "type": "gifs"
+            }
+        },
+        "LTX-2.3 I2V": {
+            "api": "api/ltx2.3_i2v.json",
+            "controls": {
+                "prompt": {
+                    "id": "92:3",
+                    "field": "text"
+                },
+                "image": {
+                    "id": "handle",
+                    "node_id": "98",
+                    "field": "image",
+                    "audio_vae_node_id": "92:48",
+                    "vae_node_id": "92:1",
+                    "concat_node_id": "92:56",
+                    "format": "LTXV"
+                },
+                "seed": {
+                    "id": "104",
+                    "field": "value"
+                },
+                "length": {
+                    "id": "92:62",
+                    "field": "value"
+                },
+                "compression": {
+                    "id": "92:99",
+                    "field": "img_compression"
+                },
+                "steps": {
+                    "id": "92:9",
+                    "field": "steps"
+                },
+                "size": {
+                    "id": "106",
+                    "field": "megapixels"
+                },
+                "neg_prompt": {
+                    "id": "92:4",
+                    "field": "text"
+                },
+                "cfg": {
+                    "id": "92:47",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "92:8",
+                    "field": "sampler_name"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "fps": {
+                    "id": "107",
+                    "field": "value"
+                },
+                "text_encoder": {
+                    "id": "handle",
+                    "node_id": "92:60",
+                    "field": "clip_name1"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "92:2",
+                    "field": "unet_name"
+                },
+                "upsample": {
+                    "id": "handle",
+                    "cond_node_id": "92:22",
+                    "input_node_id": "92:41",
+                    "guider_node_id": "92:47",
+                    "vae_node_id": "92:1",
+                    "seed_node_id": "104",
+                    "output_node_id": "92:94",
+                    "image_node_id": "92:99",
+                    "load_image_node_id": "98",
+                    "crop_node_id": "92:95",
+                    "scale_node_id": "92:90",
+                    "concat_node_id": "92:56",
+                    "audio_node_id": "92:96"
+                },
+                "keyframes": {
+                    "id": "handle",
+                    "cond_node_id": "92:22",
+                    "vae_node_id": "92:1",
+                    "concat_node_id": "92:56",
+                    "crop_node_id": "92:95",
+                    "set_field": "keyframe"
+                },
+                "reference_audio": {
+                    "id": "handle",
+                    "audio_vae_node_id": "92:48",
+                    "size_node_id": "92:91",
+                    "concat_node_id": "92:56"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["92:47"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "103",
+                "type": "gifs"
+            }
+        },
         "Hunyuan I2V KJ": {
             "api": "api/hunyuan_i2v_kj.json",
             "controls": {
