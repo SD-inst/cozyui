@@ -30,7 +30,7 @@
     },
     "105": {
         "inputs": {
-            "prefix": "LTX2_T2V_",
+            "prefix": "LTX2_3_T2V_",
             "suffix": "",
             "input": ["104", 0]
         },
