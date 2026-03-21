@@ -10,7 +10,14 @@ import {
     useTheme,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+    KeyboardEvent,
+    useContext,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from 'react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
@@ -40,10 +47,29 @@ const VideoCompare = () => {
         }
         refs.forEach((r) => r.current?.play());
     }, [loaded, refs]);
-    const tasks = useLiveQuery(() =>
-        Promise.all([
-            db.taskResults.get(A_id || 0),
-            db.taskResults.get(B_id || 0),
+    useEffect(() => {
+        const handleFullscreenChange = () => {
+            if (document.fullscreenElement) {
+                setTimeout(
+                    () => (document.fullscreenElement as HTMLElement).focus(),
+                    0,
+                );
+            }
+        };
+
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        return () => {
+            document.removeEventListener(
+                'fullscreenchange',
+                handleFullscreenChange,
+            );
+        };
+    }, []);
+    const tasks = useLiveQuery(
+        () =>
+            Promise.all([
+                db.taskResults.get(A_id || 0),
+                db.taskResults.get(B_id || 0),
         ]), [A_id, B_id]
     );
     if (!tasks || !tasks[0] || !tasks[1]) {
@@ -83,7 +109,20 @@ const VideoCompare = () => {
                 refs[1 - i].current!.currentTime = refs[i].current.currentTime;
             }}
             style={{ maxWidth: '100%' }}
-        />
+            onKeyDown={(e: KeyboardEvent<HTMLVideoElement>) => {
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    refs[1 - i].current?.requestFullscreen();
+                }
+            }}
+        >
+            <track
+                label='Numbers'
+                kind='subtitles'
+                default
+                src={`subs/${i + 1}.vtt`}
+            />
+        </video>
     );
     const ImageViewer = ({ i }: { i: number }) => (
         <img
@@ -112,6 +151,7 @@ const VideoCompare = () => {
                             lg: 400,
                         },
                     }}
+                    key={i}
                 >
                     {tasks[i]?.type === 'gifs' ? <VideoViewer i={i} /> : null}
                     {tasks[i]?.type === 'images' ? <ImageViewer i={i} /> : null}

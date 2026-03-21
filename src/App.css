@@ -5,3 +5,11 @@
     width: 100%;
     box-sizing: border-box;
 }
+
+video::cue {
+    background: none;
+}
+
+video {
+    outline: none;
+}
