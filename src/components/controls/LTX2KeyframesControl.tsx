@@ -40,7 +40,7 @@ export const LTX2KeyframesControl = ({
                 label='keyframe_strength'
                 min={0}
                 max={1}
-                defaultValue={1}
+                defaultValue={0.5}
                 step={0.01}
             />
             <ToggleInput name='enabled' label='enabled' />
