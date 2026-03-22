@@ -1,6 +1,6 @@
 import { useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
-import { useController, useWatch } from 'react-hook-form';
+import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { insertGraph } from '../../api/utils';
 import { useRestoreValues } from '../../hooks/useRestoreValues';
 import { controlType } from '../../redux/config';
@@ -19,7 +19,7 @@ type TReferenceAudio = {
 const defaultValue: TReferenceAudio = {
     enabled: false,
     audio: '',
-    trim: 60,
+    trim: 30,
 };
 
 export const LTX2ReferenceAudioControl = ({
@@ -40,17 +40,21 @@ export const LTX2ReferenceAudioControl = ({
             setValue(name, {
                 enabled: true,
                 audio: value,
-                trim: 60,
+                trim: 30,
             } as TReferenceAudio);
         }
     }, [name, setValue, value]);
     const enabled = useWatch({ name: `${name}.enabled` });
+    const { getValues } = useFormContext();
     const handler = useEventCallback(
         (api: any, value: TReferenceAudio, control: controlType) => {
             if (!value || !value.enabled || !value.audio) {
                 return;
             }
-            const { audio_vae_node_id, size_node_id, concat_node_id } = control;
+            const length = getValues('length');
+            const fps = getValues('fps');
+            const duration = length / fps;
+            const { audio_vae_node_id, concat_node_id } = control;
             const wf = {
                 ':1': {
                     inputs: {
@@ -64,49 +68,33 @@ export const LTX2ReferenceAudioControl = ({
                 },
                 ':2': {
                     inputs: {
-                        start_index: 0,
-                        duration: value.trim,
-                        audio: [':1', 0],
-                    },
-                    class_type: 'TrimAudioDuration',
-                    _meta: {
-                        title: 'Trim Audio Duration',
-                    },
-                },
-                ':3': {
-                    inputs: {
                         audio_vae: [audio_vae_node_id, 0],
-                        audio: [':2', 0],
+                        audio: [':1', 0],
                     },
                     class_type: 'LTXVAudioVAEEncode',
                     _meta: {
                         title: 'LTXV Audio VAE Encode',
                     },
                 },
-                ':4': {
+                ':3': {
                     inputs: {
-                        value: 0,
-                        width: [size_node_id, 0],
-                        height: [size_node_id, 1],
+                        video_fps: fps,
+                        video_start_time: 0,
+                        video_end_time: duration,
+                        audio_latent: [':2', 0],
+                        audio_start_time:
+                            value.trim < duration ? value.trim : duration,
+                        audio_end_time: duration,
+                        max_length: 'pad',
                     },
-                    class_type: 'SolidMask',
+                    class_type: 'LTXVAudioVideoMask',
                     _meta: {
-                        title: 'SolidMask',
-                    },
-                },
-                ':5': {
-                    inputs: {
-                        samples: [':3', 0],
-                        mask: [':4', 0],
-                    },
-                    class_type: 'SetLatentNoiseMask',
-                    _meta: {
-                        title: 'Set Latent Noise Mask',
+                        title: 'LTXV Audio/Video Mask',
                     },
                 },
             };
             const nodeID = insertGraph(api, wf);
-            api[concat_node_id].inputs.audio_latent = [nodeID + ':5', 0];
+            api[concat_node_id].inputs.audio_latent = [nodeID + ':3', 1];
         },
     );
     useRegisterHandler({ name, handler });
