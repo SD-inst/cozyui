@@ -2107,6 +2107,10 @@
                     "id": "6",
                     "field": "text"
                 },
+                "neg_prompt": {
+                    "id": "7",
+                    "field": "text"
+                },
                 "model": {
                     "id": "handle",
                     "node_id": "16",
@@ -2119,6 +2123,10 @@
                 "height": {
                     "id": "13",
                     "field": "height"
+                },
+                "cfg": {
+                    "id": "3",
+                    "field": "cfg"
                 },
                 "steps": {
                     "id": "3",
@@ -2142,6 +2150,10 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "flow_shift": {
+                    "id": "30",
+                    "field": "shift"
                 }
             },
             "result": {

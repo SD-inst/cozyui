@@ -11,7 +11,7 @@
       "scheduler": "simple",
       "denoise": 1,
       "model": [
-        "16",
+        "30",
         0
       ],
       "positive": [
@@ -152,6 +152,19 @@
     "class_type": "SomethingToString",
     "_meta": {
       "title": "Something To String"
+    }
+  },
+  "30": {
+    "inputs": {
+      "shift": 3,
+      "model": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "ModelSamplingAuraFlow",
+    "_meta": {
+      "title": "ModelSamplingAuraFlow"
     }
   }
 }

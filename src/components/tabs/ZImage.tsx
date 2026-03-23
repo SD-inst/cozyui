@@ -1,3 +1,6 @@
+import { AdvancedSettings } from '../controls/AdvancedSettings';
+import { CFGInput } from '../controls/CFGInput';
+import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -18,21 +21,29 @@ const Content = () => {
                 <PromptInput name='prompt' />
                 <WidthHeight maxWidth={4096} maxHeight={4096} />
                 <SliderInput name='steps' defaultValue={10} min={1} max={40} />
-                <SamplerSelectInput name='sampler' defaultValue='uni_pc' />
-                <SchedulerSelectInput name='scheduler' defaultValue='simple' />
+                <AdvancedSettings>
+                    <PromptInput name='neg_prompt' />
+                    <CFGInput defaultValue={1} sx={{ mb: 2 }} />
+                    <FlowShiftInput defaultValue={3} />
+                    <SamplerSelectInput name='sampler' defaultValue='uni_pc' />
+                    <SchedulerSelectInput
+                        name='scheduler'
+                        defaultValue='simple'
+                    />
+                    <ModelSelectAutocomplete
+                        name='model'
+                        type='zimage'
+                        defaultValue='zimage/z_image_turbo_bf16.safetensors'
+                        sx={{ mb: 2 }}
+                    />
+                </AdvancedSettings>
                 <SliderInput
                     name='batch_size'
                     min={1}
                     max={16}
                     defaultValue={1}
                 />
-                <ModelSelectAutocomplete
-                    name='model'
-                    type='zimage'
-                    defaultValue='zimage/z_image_turbo_bf16.safetensors'
-                    sx={{ mb: 2 }}
-                />
-                <LoraInput name='lora' type='zimage' />
+                <LoraInput name='lora' type='zimage' sx={{ mb: 2 }} />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight
