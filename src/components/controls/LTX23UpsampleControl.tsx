@@ -15,7 +15,6 @@ type TValue = {
     spatial: boolean;
     temporal: boolean;
     audio: boolean;
-    steps: number;
     distill_strength: number;
     detail_strength: number;
     sampler: string;
@@ -27,7 +26,6 @@ const defaults: TValue = {
     distill_strength: 0.6,
     sampler: 'euler_ancestral',
     spatial: true,
-    steps: 3,
     temporal: false,
 };
 
@@ -358,12 +356,6 @@ export const LTX23UpsampleControl = ({
                 display={value?.temporal || value?.spatial ? 'block' : 'none'}
                 width='100%'
             >
-                <SliderInput
-                    name={`${name}.steps`}
-                    label='steps'
-                    defaultValue={defaults.steps}
-                    max={20}
-                />
                 <Box
                     display='flex'
                     flexDirection='row'
