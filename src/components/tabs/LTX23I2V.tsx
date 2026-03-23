@@ -62,6 +62,13 @@ const Content = () => {
                     type={UploadType.IMAGEORVIDEO}
                     extraHandler={handler}
                 />
+                <SliderInput
+                    name='strength'
+                    defaultValue={1}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                />
                 <LTX2KeyframesControl />
                 <LTX2ReferenceAudioControl />
                 <TextInput name='prompt' multiline />
