@@ -215,6 +215,8 @@ const translation = {
         send_to_prompt: 'Send to prompt',
         regenerate: 'Regenerate',
         prompt_duplicate: 'duplicate prompt',
+        source: 'as source audio',
+        igc: 'identity guidance scale',
     },
     settings: {
         select_language: 'Select language',

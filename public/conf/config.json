@@ -613,6 +613,7 @@
                     "output_node_id": "92:94",
                     "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
+                    "audio_vae_node_id": "92:48",
                     "audio_node_id": "92:96"
                 },
                 "keyframes": {
@@ -626,7 +627,7 @@
                 "reference_audio": {
                     "id": "handle",
                     "audio_vae_node_id": "92:48",
-                    "size_node_id": "92:91",
+                    "guider_node_id": "92:47",
                     "concat_node_id": "92:56"
                 }
             },
@@ -724,6 +725,7 @@
                     "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
                     "concat_node_id": "92:56",
+                    "audio_vae_node_id": "92:48",
                     "audio_node_id": "92:96"
                 },
                 "keyframes": {
@@ -737,7 +739,7 @@
                 "reference_audio": {
                     "id": "handle",
                     "audio_vae_node_id": "92:48",
-                    "size_node_id": "92:91",
+                    "guider_node_id": "92:47",
                     "concat_node_id": "92:56"
                 }
             },
@@ -823,6 +825,7 @@
                     "output_node_id": "92:94",
                     "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
+                    "audio_vae_node_id": "92:48",
                     "audio_node_id": "92:96"
                 },
                 "keyframes": {
@@ -836,7 +839,7 @@
                 "reference_audio": {
                     "id": "handle",
                     "audio_vae_node_id": "92:48",
-                    "size_node_id": "92:91",
+                    "guider_node_id": "92:47",
                     "concat_node_id": "92:56"
                 }
             },
@@ -938,6 +941,7 @@
                     "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
                     "concat_node_id": "92:56",
+                    "audio_vae_node_id": "92:48",
                     "audio_node_id": "92:96"
                 },
                 "keyframes": {
@@ -951,7 +955,7 @@
                 "reference_audio": {
                     "id": "handle",
                     "audio_vae_node_id": "92:48",
-                    "size_node_id": "92:91",
+                    "guider_node_id": "92:47",
                     "concat_node_id": "92:56"
                 }
             },

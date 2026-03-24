@@ -214,6 +214,8 @@ const translation = {
         send_to_prompt: 'Отправить в промпт',
         regenerate: 'Перегенерировать',
         prompt_duplicate: 'повторить промпт',
+        source: 'аудио в качестве источника',
+        igc: 'коэффициент усиления идентичности',
     },
     settings: {
         select_language: 'Выбор языка',

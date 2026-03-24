@@ -10,6 +10,10 @@ import { keyframeHandler, TKeyframe } from './keyframeHandler';
 import { SamplerSelectInput } from './SamplerSelectInput';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
+import {
+    TReferenceAudio,
+    useReferenceAudioHandler,
+} from './referenceAudioHandler';
 
 type TValue = {
     spatial: boolean;
@@ -40,11 +44,15 @@ export const LTX23UpsampleControl = ({
     const fps = useWatchForm('fps');
     const { id: resultNodeID } = useResultParam();
     const keyframes: TKeyframe[] = useWatch({ name: 'keyframes' });
+    const referenceAudio: TReferenceAudio = useWatch({
+        name: 'reference_audio',
+    });
     const value = useWatch({ name, defaultValue: defaults });
     useController({
         name,
         defaultValue: defaults,
     });
+    const raHandler = useReferenceAudioHandler();
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
             if (!value) {
@@ -62,6 +70,7 @@ export const LTX23UpsampleControl = ({
                 load_image_node_id,
                 crop_node_id,
                 scale_node_id,
+                audio_vae_node_id,
                 audio_node_id,
             } = control;
             if (!value.spatial) {
@@ -318,6 +327,18 @@ export const LTX23UpsampleControl = ({
                         crop_node_id,
                     },
                 );
+            }
+            if (
+                referenceAudio?.enabled &&
+                referenceAudio?.audio &&
+                !referenceAudio?.source
+            ) {
+                raHandler(api, referenceAudio, {
+                    id: 'handle',
+                    field: '',
+                    audio_vae_node_id,
+                    guider_node_id: wfNodeID + ':1',
+                });
             }
             api[output_node_id].inputs.av_latent = upscaleOutputNode;
             if (!value.audio) {
