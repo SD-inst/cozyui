@@ -23,6 +23,7 @@ export const SettingNumber = ({
             slotProps={{ input: { type: 'number' } }}
             onChange={(e) => updateSetting(e.target.value)}
             label={tr(`settings.${name}`)}
+            aria-label={tr(`settings.${name}`)}
             size='small'
             {...props}
         />

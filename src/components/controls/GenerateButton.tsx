@@ -265,6 +265,8 @@ export const GenerateButton = ({
                     color='warning'
                     onClick={() => sendPrompt()}
                     disabled={generation_disabled || !apiSuccess}
+                    aria-label={tr(`controls.${text}`)}
+                    aria-disabled={generation_disabled || !apiSuccess}
                     sx={{
                         mt: 1,
                         mb: 1,
@@ -278,6 +280,8 @@ export const GenerateButton = ({
                     color='warning'
                     onClick={() => sendPrompt()}
                     disabled={generation_disabled || !apiSuccess}
+                    aria-label={tr(`controls.${text}`)}
+                    aria-disabled={generation_disabled || !apiSuccess}
                     sx={{
                         position: 'fixed',
                         bottom: 16,

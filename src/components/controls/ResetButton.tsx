@@ -34,6 +34,8 @@ export const ResetButton = ({ ...props }: ButtonProps) => {
                 color='error'
                 onClick={() => setOpen(true)}
                 disabled={!isLoaded}
+                aria-label={tr('controls.reset_form')}
+                aria-disabled={!isLoaded}
                 {...props}
             >
                 {tr('controls.reset_form')}
@@ -42,14 +44,19 @@ export const ResetButton = ({ ...props }: ButtonProps) => {
                 open={open}
                 onClose={() => setOpen(false)}
                 onKeyUp={(e) => e.key === 'Enter' && handleOK()}
+                aria-label={tr('controls.confirm_reset')}
+                role="dialog"
+                aria-modal="true"
             >
                 <DialogTitle>{tr('controls.confirm_reset')}</DialogTitle>
                 <DialogContent>
                     {tr('controls.confirm_reset_content')}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleOK}>{tr('controls.ok')}</Button>
-                    <Button onClick={() => setOpen(false)}>
+                    <Button onClick={handleOK} aria-label={tr('controls.ok')}>
+                        {tr('controls.ok')}
+                    </Button>
+                    <Button onClick={() => setOpen(false)} aria-label={tr('controls.cancel')}>
                         {tr('controls.cancel')}
                     </Button>
                 </DialogActions>

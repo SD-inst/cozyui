@@ -65,9 +65,11 @@ export const AudioResult = ({
                             src={url}
                             controls
                             loop={loop}
+                            aria-label="audio result"
+                            role="application"
                         />
                         <a download href={url}>
-                            <Button variant='contained' color='success'>
+                            <Button variant='contained' color='success' aria-label={tr('controls.download')}>
                                 {tr('controls.download')}
                             </Button>
                         </a>

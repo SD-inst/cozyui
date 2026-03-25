@@ -9,8 +9,9 @@ export const HelpButton = ({
 }: { title: string } & Omit<TooltipProps, 'children'>) => {
     const disable_help = useBooleanSetting(settings.disable_help, true) ?? true;
     const tr = useTranslate();
+    const helpTitle = tr(`help.${props.title}`);
     return (
-        <Tooltip arrow {...props} title={tr(`help.${props.title}`)}>
+        <Tooltip arrow {...props} title={helpTitle}>
             <Help
                 sx={{
                     cursor: 'pointer',
@@ -22,6 +23,7 @@ export const HelpButton = ({
                     display: disable_help ? 'none' : undefined,
                 }}
                 color='info'
+                aria-label={helpTitle}
             />
         </Tooltip>
     );

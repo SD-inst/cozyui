@@ -15,6 +15,7 @@ export const SelectControl = <T,>({
     ...props
 }: { selectRef?: Ref<any> } & SelectControlProps<T>) => {
     const tr = useTranslate();
+    const selectLabel = tr(label);
     return (
         <FormControl
             fullWidth
@@ -27,10 +28,11 @@ export const SelectControl = <T,>({
             }}
         >
             <InputLabel size={props.size === 'small' ? 'small' : undefined}>
-                {tr(label)}
+                {selectLabel}
             </InputLabel>
             <Select
-                label={tr(label)}
+                label={selectLabel}
+                aria-label={selectLabel}
                 sx={{
                     '& .MuiSelect-select': {
                         whiteSpace: 'normal !important',

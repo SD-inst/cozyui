@@ -25,6 +25,7 @@ export const SettingCheckbox = ({
                 <Checkbox
                     checked={value}
                     onChange={(_, c) => updateSetting(c)}
+                    aria-label={tr(`settings.${name}`)}
                 />
             }
             label={tr(`settings.${name}`)}

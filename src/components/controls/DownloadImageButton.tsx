@@ -43,11 +43,11 @@ export const DownloadImageButton = ({
         return (
             <Box sx={{ mt: 1, ...sx }}>
                 <ButtonGroup variant='outlined' color='success' size='small'>
-                    <Button onClick={handleSaveJPG}>
+                    <Button onClick={handleSaveJPG} aria-label={tr('controls.download_jpg')}>
                         <Download />
                     </Button>
                     <a download href={url}>
-                        <Button>
+                        <Button aria-label={tr('controls.download_png')}>
                             PNG <Download />
                         </Button>
                     </a>
@@ -57,11 +57,11 @@ export const DownloadImageButton = ({
     } else {
         return (
             <ButtonGroup variant='contained' sx={sx}>
-                <Button color='success' onClick={handleSaveJPG}>
+                <Button color='success' onClick={handleSaveJPG} aria-label={tr('controls.download')}>
                     {tr('controls.download')}
                 </Button>
                 <a download href={url}>
-                    <Button color='success'>
+                    <Button color='success' aria-label={tr('controls.download_png')}>
                         {tr('controls.download_png')}
                     </Button>
                 </a>

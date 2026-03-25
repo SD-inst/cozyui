@@ -118,6 +118,7 @@ export const SendResultButton = ({
                             color='secondary'
                             onClick={handleClick}
                             size='small'
+                            aria-label={tr('controls.send_result')}
                         >
                             <Reply transform='scale(-1, 1)' />
                         </Button>
@@ -126,6 +127,7 @@ export const SendResultButton = ({
                             color='secondary'
                             size='small'
                             onClick={() => setAnchor(bgref.current || null)}
+                            aria-label={tr('controls.send_to')}
                         >
                             <ExpandMore />
                         </Button>
@@ -139,6 +141,7 @@ export const SendResultButton = ({
                         color='secondary'
                         size='small'
                         onClick={() => setAnchor(bgref.current || null)}
+                        aria-label={tr('controls.send_to')}
                     >
                         {anchor ? <ExpandLess /> : <ExpandMore />}
                     </Button>
@@ -150,6 +153,7 @@ export const SendResultButton = ({
                         variant='contained'
                         color='secondary'
                         onClick={handleClick}
+                        aria-label={tr('controls.' + label)}
                         {...props}
                     >
                         {tr('controls.' + label)}
@@ -159,6 +163,7 @@ export const SendResultButton = ({
                         color='secondary'
                         size='small'
                         onClick={() => setAnchor(bgref.current || null)}
+                        aria-label={tr('controls.send_to')}
                     >
                         <ExpandMore />
                     </Button>
@@ -170,6 +175,7 @@ export const SendResultButton = ({
                     variant='contained'
                     color='secondary'
                     onClick={() => setAnchor(bgref.current || null)}
+                    aria-label={tr('controls.send_to')}
                 >
                     {tr('controls.send_to')}
                 </Button>

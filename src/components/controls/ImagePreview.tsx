@@ -81,6 +81,7 @@ export const ImagePreview = ({ size }: { size: number }) => {
             ref={ref}
             data-preview='true'
             data-tab={tab_name}
+            aria-label="image preview"
             style={{
                 display: active ? 'block' : 'none',
             }}

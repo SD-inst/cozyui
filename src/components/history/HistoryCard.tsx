@@ -23,9 +23,11 @@ import { LoadParamsButton } from './LoadParamsButton';
 import { DeleteButton } from './DeleteButton';
 import { SendResultButton } from '../controls/SendResultButton';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const cache = useRef('');
+    const tr = useTranslate();
     const avatar = (type: string) => {
         switch (type) {
             case 'gifs':
@@ -91,7 +93,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
                 <a download={filename} href={url}>
-                    <Button variant='outlined' color='success' size='small'>
+                    <Button variant='outlined' color='success' size='small' aria-label={tr('controls.download')}>
                         <Download />
                     </Button>
                 </a>

@@ -31,6 +31,7 @@ export const SliderInputBase = ({
 }) => {
     const [edit, setEdit] = useState(false);
     const tr = useTranslate();
+    const sliderLabel = tr(`controls.${label || name}`);
     const commitValue = useEventCallback(() => {
         onChange(value - (value % (props.step || 1)));
         setEdit(false);
@@ -40,7 +41,7 @@ export const SliderInputBase = ({
             {/* relative position to align the help elements inside the box */}
             <Box width='100%' display='flex' alignItems='center' gap={1}>
                 <Typography variant='body1'>
-                    {tr(`controls.${label || name}`)}
+                    {sliderLabel}
                     {props.suffix ? ' ' + props.suffix : ''}:
                 </Typography>
                 {edit ? (
@@ -76,6 +77,7 @@ export const SliderInputBase = ({
                 valueLabelDisplay='auto'
                 value={value}
                 onChange={(_, v) => onChange(v)}
+                aria-label={sliderLabel}
                 {...props}
             />
         </Box>

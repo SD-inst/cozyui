@@ -18,19 +18,20 @@ export const TextInputBase = ({
 }) => {
     const tr = useTranslate();
     const ceHandler = useCtrlEnter();
+    const inputLabel = label
+        ? tr('controls.' + label)
+        : name
+          ? tr('controls.' + name)
+          : undefined;
+
     return (
         <Box
             sx={{ position: 'relative', width: fullWidth ? '100%' : undefined }}
         >
             <TextField
-                label={
-                    label
-                        ? tr('controls.' + label)
-                        : name
-                          ? tr('controls.' + name)
-                          : undefined
-                }
+                label={inputLabel}
                 fullWidth
+                aria-label={inputLabel}
                 onKeyUp={(e) => {
                     if (props.onKeyUp) {
                         props.onKeyUp(e);
