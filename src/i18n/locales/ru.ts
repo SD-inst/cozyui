@@ -216,6 +216,7 @@ const translation = {
         prompt_duplicate: 'повторить промпт',
         source: 'аудио в качестве источника',
         igc: 'коэффициент усиления идентичности',
+        keep_size: 'оригинальный размер',
     },
     settings: {
         select_language: 'Выбор языка',

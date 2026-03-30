@@ -957,6 +957,10 @@
                     "audio_vae_node_id": "92:48",
                     "guider_node_id": "92:47",
                     "concat_node_id": "92:56"
+                },
+                "keep_size": {
+                    "id": "handle",
+                    "node_id": "92:105"
                 }
             },
             "handler_options": {

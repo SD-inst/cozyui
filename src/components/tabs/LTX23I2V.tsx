@@ -19,6 +19,7 @@ import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { ChatComponent } from './ChatComponent';
+import { LTXKeepSizeToggle } from '../controls/LTXKeepSizeToggle';
 
 const llmPrompt = `You are a Creative Assistant writing concise, action-focused image-to-video prompts. Given an image (first frame) and user Raw Input Prompt, generate a prompt to guide video generation from that image.
 
@@ -84,6 +85,7 @@ const Content = () => {
                     max={2}
                     step={0.01}
                 />
+                <LTXKeepSizeToggle name='keep_size' />
                 <LengthInput
                     name='length'
                     min={9}

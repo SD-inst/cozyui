@@ -217,6 +217,7 @@ const translation = {
         prompt_duplicate: 'duplicate prompt',
         source: 'as source audio',
         igc: 'identity guidance scale',
+        keep_size: 'keep original size',
     },
     settings: {
         select_language: 'Select language',
