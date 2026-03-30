@@ -77,7 +77,7 @@ const Content = () => {
                 />
                 <LengthInput
                     name='length'
-                    min={9}
+                    min={1}
                     max={601}
                     step={8}
                     defaultValue={129}
