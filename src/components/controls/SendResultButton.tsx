@@ -118,7 +118,7 @@ export const SendResultButton = ({
                             color='secondary'
                             onClick={handleClick}
                             size='small'
-                            aria-label={tr('controls.send_result')}
+                            aria-label={`${tr('controls.send_result')} ${results[index]?.filename || ''}`}
                         >
                             <Reply transform='scale(-1, 1)' />
                         </Button>

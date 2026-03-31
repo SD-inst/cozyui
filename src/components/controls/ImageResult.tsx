@@ -67,6 +67,7 @@ export const ImageResult = ({
                 {urls.map((url: any, i: number) => (
                     <img
                         key={url}
+                        aria-label={`${tr('controls.image')} ${i + 1}`}
                         style={{
                             maxHeight: 500,
                             maxWidth: 300,

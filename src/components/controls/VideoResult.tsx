@@ -58,7 +58,7 @@ export const VideoResult = ({
                                 style={{ width: '100%' }}
                                 src={url}
                                 alt=""
-                                aria-label="video result image"
+                                aria-label={`${tr('controls.video')} ${r.filename}`}
                             />
                         ) : (
                             <video
@@ -69,14 +69,14 @@ export const VideoResult = ({
                                 autoPlay={!paused}
                                 loop
                                 muted={!sound}
-                                aria-label="video result"
+                                aria-label={`${tr('controls.video')} ${r.filename}`}
                                 role="application"
                                 onPause={() => setPaused(true)}
                                 onPlay={() => setPaused(false)}
                             />
                         )}
                         <a download href={url}>
-                            <Button variant='contained' color='success' aria-label={tr('controls.download')}>
+                            <Button variant='contained' color='success' aria-label={`${tr('controls.download')} ${r.filename}`}>
                                 {tr('controls.download')}
                             </Button>
                         </a>
