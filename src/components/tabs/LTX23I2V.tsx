@@ -5,6 +5,7 @@ import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
+import { LTX2NoAudioToggle } from '../controls/LTX2NoAudioToggle';
 import { LoraInput } from '../controls/LoraInput';
 import { LTX23UpsampleControl } from '../controls/LTX23UpsampleControl';
 import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
@@ -63,6 +64,7 @@ const Content = () => {
                     type={UploadType.IMAGEORVIDEO}
                     extraHandler={handler}
                 />
+                <LTX2NoAudioToggle name='no_audio' defaultValue={false} />
                 <SliderInput
                     name='strength'
                     defaultValue={1}

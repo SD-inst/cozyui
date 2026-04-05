@@ -39,6 +39,7 @@ const translation = {
         advanced_parameters: 'Расширенные параметры',
         video: 'Видео',
         audio: 'Аудио',
+        no_audio: 'без аудио',
         download: 'Скачать',
         download_png: 'Скачать PNG',
         blocks_to_swap: 'Выгружать блоков',

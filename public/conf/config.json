@@ -961,6 +961,9 @@
                 "keep_size": {
                     "id": "handle",
                     "node_id": "92:105"
+                },
+                "no_audio": {
+                    "id": "skip"
                 }
             },
             "handler_options": {

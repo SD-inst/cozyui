@@ -39,6 +39,7 @@ const translation = {
         advanced_parameters: 'Advanced parameters',
         video: 'Video',
         audio: 'Audio',
+        no_audio: 'no audio',
         download: 'Download',
         download_png: 'Download PNG',
         blocks_to_swap: 'Blocks to swap',
