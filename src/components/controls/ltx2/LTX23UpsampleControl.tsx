@@ -1,5 +1,5 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
-import { useController, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { insertGraph } from '../../../api/utils';
 import { useResultParam } from '../../../hooks/useResult';
 import { useWatchForm } from '../../../hooks/useWatchForm';
@@ -24,9 +24,9 @@ type TValue = {
     sampler: string;
 };
 
-const defaults: TValue = {
+const defaultValue: TValue = {
     audio: true,
-    detail_strength: 0,
+    detail_strength: 0.3,
     distill_strength: 0.6,
     sampler: 'euler_ancestral',
     spatial: true,
@@ -47,11 +47,7 @@ export const LTX23UpsampleControl = ({
     const referenceAudio: TReferenceAudio = useWatch({
         name: 'reference_audio',
     });
-    const value = useWatch({ name, defaultValue: defaults });
-    useController({
-        name,
-        defaultValue: defaults,
-    });
+    const value = useWatch({ name, defaultValue });
     const raHandler = useReferenceAudioHandler();
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
@@ -359,18 +355,18 @@ export const LTX23UpsampleControl = ({
                 <ToggleInput
                     name={`${name}.spatial`}
                     label='upsample_spatial'
-                    defaultValue={defaults.spatial}
+                    defaultValue={defaultValue.spatial}
                 />
                 <ToggleInput
                     name={`${name}.temporal`}
                     label='upsample_temporal'
-                    defaultValue={defaults.temporal}
+                    defaultValue={defaultValue.temporal}
                 />
                 <ToggleInput
                     name={`${name}.audio`}
                     label='upsample_audio'
                     disabled={!value?.temporal && !value?.spatial}
-                    defaultValue={defaults.audio}
+                    defaultValue={defaultValue.audio}
                 />
             </Box>
             <Box
@@ -387,7 +383,7 @@ export const LTX23UpsampleControl = ({
                     <SliderInput
                         name={`${name}.distill_strength`}
                         label='upsample_distill_strength'
-                        defaultValue={defaults.distill_strength}
+                        defaultValue={defaultValue.distill_strength}
                         max={1}
                         step={0.05}
                         sx={{ flex: 1, minWidth: 200 }}
@@ -395,7 +391,7 @@ export const LTX23UpsampleControl = ({
                     <SliderInput
                         name={`${name}.detail_strength`}
                         label='upsample_detail_strength'
-                        defaultValue={defaults.detail_strength}
+                        defaultValue={defaultValue.detail_strength}
                         max={1}
                         step={0.05}
                         sx={{ flex: 1, minWidth: 200 }}
@@ -404,7 +400,7 @@ export const LTX23UpsampleControl = ({
                 <SamplerSelectInput
                     name={`${name}.sampler`}
                     label='upsample_sampler'
-                    defaultValue={defaults.sampler}
+                    defaultValue={defaultValue.sampler}
                 />
             </Box>
         </VerticalBox>
