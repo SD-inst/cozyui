@@ -83,13 +83,16 @@ export const ChatComponent = ({
     });
 
     useEffect(() => {
-        if (messages.length !== lastMsgCount.current || isComplete) {
+        if (
+            isExpanded &&
+            (messages.length !== lastMsgCount.current || isComplete)
+        ) {
             lastMsgCount.current = messages.length;
             messagesEndRef.current?.scrollIntoView({
                 behavior: 'smooth',
             });
         }
-    }, [isComplete, messages.length]);
+    }, [isComplete, isExpanded, messages.length]);
 
     if (!llmConfig?.model || (!!imageFieldName && !llmConfig?.modelVision)) {
         return null;
