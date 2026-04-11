@@ -34,6 +34,7 @@ import {
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
+import { controlType } from '../../redux/config';
 
 type error = {
     controls: string[];
@@ -56,6 +57,16 @@ export type GenerateButtonProps = {
     noreset?: boolean;
     disabled?: boolean;
     requiredControls?: string | readonly string[];
+};
+
+const order = (c: controlType): number => {
+    if (typeof c.order === 'number') {
+        return c.order;
+    }
+    if (c.id === 'handle') {
+        return 100;
+    }
+    return 0;
 };
 
 export const GenerateButton = ({
@@ -129,7 +140,10 @@ export const GenerateButton = ({
             };
         }
 
-        for (const name in controls) {
+        const sortedNames = Object.keys(controls).sort(
+            (a, b) => order(controls[a]) - order(controls[b]),
+        );
+        for (const name of sortedNames) {
             if (!controls[name].id || controls[name].id === 'skip') {
                 // way to ignore unrelated controls
                 continue;

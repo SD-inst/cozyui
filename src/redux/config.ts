@@ -5,6 +5,7 @@ import { mergeType } from '../api/mergeType';
 export type controlType = {
     id: string;
     field: string;
+    order?: number;
     [key: string]: any;
 };
 
