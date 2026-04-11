@@ -1,7 +1,6 @@
 import { useWatch } from 'react-hook-form';
-import { useTranslate } from '../../../i18n/I18nContext';
-import { ToggleInput, ToggleInputProps } from '../ToggleInput';
 import { ext } from '../fileExts';
+import { ToggleInput, ToggleInputProps } from '../ToggleInput';
 import { UploadType } from '../UploadType';
 
 const videoExts = ext[UploadType.VIDEO];
@@ -13,7 +12,6 @@ const isVideoFile = (filename: string): boolean => {
 };
 
 export const LTX2NoAudioToggle = (props: ToggleInputProps) => {
-    const tr = useTranslate();
     const imageValue = useWatch({ name: 'image' });
     const showToggle = isVideoFile(imageValue as string);
 
@@ -21,5 +19,5 @@ export const LTX2NoAudioToggle = (props: ToggleInputProps) => {
         return null;
     }
 
-    return <ToggleInput label={tr('no_audio')} {...props} />;
+    return <ToggleInput label='no_audio' {...props} />;
 };
