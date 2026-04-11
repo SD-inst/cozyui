@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import { useContext, useMemo } from 'react';
 import { TabContext } from '../components/contexts/TabContext';
-import { tabConfigType } from '../redux/config';
+import { controlType, tabConfigType } from '../redux/config';
 import { useAppSelector } from '../redux/hooks';
 
 const emptyParams = {
@@ -19,7 +19,7 @@ const emptyApi = {};
 export const useAPI = () => {
     const { api, tab_name } = useContext(TabContext);
     return useAppSelector((s) =>
-        get(s, ['config', 'tabs', api || tab_name], emptyParams)
+        get(s, ['config', 'tabs', api || tab_name], emptyParams),
     ) as tabConfigType;
 };
 
@@ -45,4 +45,9 @@ export const useFindNode = (nodeClass: string) => {
     return nodeIndex[nodeClass] && nodeIndex[nodeClass].length === 1
         ? nodeIndex[nodeClass]
         : null;
+};
+
+export const useControl = (name: string): controlType => {
+    const { controls } = useAPI();
+    return controls[name];
 };

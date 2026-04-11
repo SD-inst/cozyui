@@ -5,13 +5,14 @@ export type TKeyframe = {
     image: string;
     position: number;
     strength: number;
+    trim: number;
     enabled: boolean;
 };
 
 export const keyframeHandler = (
     api: any,
     value: TKeyframe[],
-    control: controlType
+    control: controlType,
 ) => {
     if (!value) {
         return;
@@ -28,7 +29,7 @@ export const keyframeHandler = (
         if (!v.enabled) {
             return;
         }
-        const graph = {
+        const graph: any = {
             ':1': {
                 inputs: {
                     video: v.image,
@@ -60,6 +61,20 @@ export const keyframeHandler = (
                 },
             },
         };
+        if (v.trim > 0) {
+            graph[':3'] = {
+                inputs: {
+                    batch_index: 0,
+                    length: v.trim,
+                    image: [':1', 0],
+                },
+                class_type: 'ImageFromBatch',
+                _meta: {
+                    title: 'ImageFromBatch',
+                },
+            };
+            graph[':2'].inputs.image = [':3', 0];
+        }
         const newNodeID = insertGraph(api, graph) + ':2';
         prevNodeCond.positive = [newNodeID, 0];
         prevNodeCond.negative = [newNodeID, 1];

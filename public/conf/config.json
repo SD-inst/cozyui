@@ -964,6 +964,10 @@
                 },
                 "no_audio": {
                     "id": "skip"
+                },
+                "loop": {
+                    "id": "handle",
+                    "order": 200
                 }
             },
             "handler_options": {

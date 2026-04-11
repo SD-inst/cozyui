@@ -7,6 +7,7 @@ import { LengthInput } from '../LengthSlider';
 import { SliderInput } from '../SliderInput';
 import { ToggleInput } from '../ToggleInput';
 import { UploadType } from '../UploadType';
+import { Box } from '@mui/material';
 
 export const LTX2KeyframesControl = ({
     name = 'keyframes',
@@ -35,14 +36,27 @@ export const LTX2KeyframesControl = ({
                 step={8}
                 defaultValue={0}
             />
-            <SliderInput
-                name='strength'
-                label='keyframe_strength'
-                min={0}
-                max={1}
-                defaultValue={0.5}
-                step={0.01}
-            />
+            <Box display='flex' flexWrap='wrap' gap={2}>
+                <SliderInput
+                    name='strength'
+                    label='keyframe_strength'
+                    min={0}
+                    max={1}
+                    defaultValue={0.5}
+                    step={0.01}
+                    sx={{ minWidth: 200, flex: 1 }}
+                />
+                <LengthInput
+                    name='trim'
+                    label='keyframe_trim'
+                    min={0}
+                    max={120}
+                    fps={fps}
+                    defaultValue={0}
+                    step={8}
+                    sx={{ minWidth: 200, flex: 1 }}
+                />
+            </Box>
             <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>
     );

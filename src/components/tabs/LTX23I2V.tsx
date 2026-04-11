@@ -21,6 +21,7 @@ import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { ChatComponent } from './ChatComponent';
 import { LTXKeepSizeToggle } from '../controls/ltx2/LTXKeepSizeToggle';
+import { LTX2LoopControl } from '../controls/ltx2/LTX2LoopControl';
 
 const llmPrompt = `You are a Creative Assistant writing concise, action-focused image-to-video prompts. Given an image (first frame) and user Raw Input Prompt, generate a prompt to guide video generation from that image.
 
@@ -134,6 +135,7 @@ const Content = () => {
                     />
                     <SamplerSelectInput name='sampler' defaultValue='euler' />
                     <LTX23UpsampleControl i2v />
+                    <LTX2LoopControl name='loop' />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />

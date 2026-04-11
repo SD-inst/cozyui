@@ -218,6 +218,9 @@ const translation = {
         source: 'аудио в качестве источника',
         igc: 'коэффициент усиления идентичности',
         keep_size: 'оригинальный размер',
+        'loop.enabled': 'зациклить',
+        'loop.overlap': 'перекрытие кадров',
+        keyframe_trim: 'обрезать видео',
     },
     settings: {
         select_language: 'Выбор языка',

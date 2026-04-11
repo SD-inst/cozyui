@@ -219,6 +219,9 @@ const translation = {
         source: 'as source audio',
         igc: 'identity guidance scale',
         keep_size: 'keep original size',
+        'loop.enabled': 'loop enabled',
+        'loop.overlap': 'overlap frames',
+        keyframe_trim: 'trim',
     },
     settings: {
         select_language: 'Select language',
