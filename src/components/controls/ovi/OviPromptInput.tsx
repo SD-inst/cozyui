@@ -1,9 +1,9 @@
 import { Box, Button, ButtonProps } from '@mui/material';
 import { RefObject, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useWatchForm } from '../../hooks/useWatchForm';
-import { useTranslate } from '../../i18n/I18nContext';
-import { TextInput, TextInputProps } from './TextInput';
+import { useWatchForm } from '../../../hooks/useWatchForm';
+import { useTranslate } from '../../../i18n/I18nContext';
+import { TextInput, TextInputProps } from '../TextInput';
 
 const TagButton = ({
     name,

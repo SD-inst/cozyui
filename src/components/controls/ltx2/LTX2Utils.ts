@@ -1,7 +1,7 @@
 import { useEventCallback } from 'yet-another-react-lightbox';
-import { insertGraph } from '../../api/utils';
-import { controlType } from '../../redux/config';
-import { UploadType } from './UploadType';
+import { insertGraph } from '../../../api/utils';
+import { controlType } from '../../../redux/config';
+import { UploadType } from '../UploadType';
 import { useFormContext } from 'react-hook-form';
 
 type nodes = {

@@ -1,7 +1,7 @@
 import { useEventCallback } from 'yet-another-react-lightbox';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { ToggleInput, ToggleInputProps } from './ToggleInput';
-import { controlType } from '../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { ToggleInput, ToggleInputProps } from '../ToggleInput';
+import { controlType } from '../../../redux/config';
 
 export const LTXKeepSizeToggle = ({ name, ...props }: ToggleInputProps) => {
     const handler = useEventCallback(

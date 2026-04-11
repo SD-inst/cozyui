@@ -1,5 +1,5 @@
-import { Optional } from './optional';
-import { SelectInput, SelectInputProps } from './SelectInput';
+import { Optional } from '../optional';
+import { SelectInput, SelectInputProps } from '../SelectInput';
 
 export const WanSampler = ({
     ...props

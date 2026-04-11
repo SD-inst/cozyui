@@ -1,19 +1,19 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController, useWatch } from 'react-hook-form';
-import { insertGraph } from '../../api/utils';
-import { useResultParam } from '../../hooks/useResult';
-import { useWatchForm } from '../../hooks/useWatchForm';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { VerticalBox } from '../VerticalBox';
-import { keyframeHandler, TKeyframe } from './keyframeHandler';
-import { SamplerSelectInput } from './SamplerSelectInput';
-import { SliderInput } from './SliderInput';
-import { ToggleInput } from './ToggleInput';
+import { insertGraph } from '../../../api/utils';
+import { useResultParam } from '../../../hooks/useResult';
+import { useWatchForm } from '../../../hooks/useWatchForm';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { VerticalBox } from '../../VerticalBox';
+import { keyframeHandler, TKeyframe } from '../keyframeHandler';
+import { SamplerSelectInput } from '../SamplerSelectInput';
+import { SliderInput } from '../SliderInput';
+import { ToggleInput } from '../ToggleInput';
 import {
     TReferenceAudio,
     useReferenceAudioHandler,
-} from './referenceAudioHandler';
+} from '../referenceAudioHandler';
 
 type TValue = {
     spatial: boolean;
@@ -25,15 +25,15 @@ type TValue = {
 };
 
 const defaults: TValue = {
-    audio: false,
-    detail_strength: 0.3,
+    audio: true,
+    detail_strength: 0,
     distill_strength: 0.6,
     sampler: 'euler_ancestral',
     spatial: true,
     temporal: false,
 };
 
-export const LTX2UpsampleControl = ({
+export const LTX23UpsampleControl = ({
     name = 'upsample',
     i2v = false,
     ...props
@@ -47,7 +47,7 @@ export const LTX2UpsampleControl = ({
     const referenceAudio: TReferenceAudio = useWatch({
         name: 'reference_audio',
     });
-    const value = useWatch({ name });
+    const value = useWatch({ name, defaultValue: defaults });
     useController({
         name,
         defaultValue: defaults,
@@ -110,7 +110,7 @@ export const LTX2UpsampleControl = ({
                     ':1': {
                         inputs: {
                             model_name:
-                                'ltx/ltx-2-temporal-upscaler-x2-1.0.safetensors',
+                                'ltx/ltx-2.3-temporal-upscaler-x2-1.0.safetensors',
                         },
                         class_type: 'LatentUpscaleModelLoader',
                         _meta: {
@@ -150,7 +150,7 @@ export const LTX2UpsampleControl = ({
                     ':1': {
                         inputs: {
                             model_name:
-                                'ltx/ltx-2-spatial-upscaler-x2-1.0.safetensors',
+                                'ltx/ltx-2.3-spatial-upscaler-x2-1.0.safetensors',
                         },
                         class_type: 'LatentUpscaleModelLoader',
                         _meta: {
@@ -249,7 +249,7 @@ export const LTX2UpsampleControl = ({
                 ':7': {
                     inputs: {
                         lora_name:
-                            'ltx2/ltx-2-19b-distilled-lora-384.safetensors',
+                            'ltx2/ltx-2.3-22b-distilled-lora-384.safetensors',
                         strength_model: value.distill_strength,
                         model: modelNode,
                     },
@@ -373,39 +373,40 @@ export const LTX2UpsampleControl = ({
                     defaultValue={defaults.audio}
                 />
             </Box>
-            {(value?.temporal || value?.spatial) && (
-                <>
-                    <Box
-                        display='flex'
-                        flexDirection='row'
-                        flexWrap='wrap'
-                        gap={4}
-                        width='100%'
-                    >
-                        <SliderInput
-                            name={`${name}.distill_strength`}
-                            label='upsample_distill_strength'
-                            defaultValue={defaults.distill_strength}
-                            max={1}
-                            step={0.05}
-                            sx={{ flex: 1, minWidth: 200 }}
-                        />
-                        <SliderInput
-                            name={`${name}.detail_strength`}
-                            label='upsample_detail_strength'
-                            defaultValue={defaults.detail_strength}
-                            max={1}
-                            step={0.05}
-                            sx={{ flex: 1, minWidth: 200 }}
-                        />
-                    </Box>
-                    <SamplerSelectInput
-                        name={`${name}.sampler`}
-                        label='upsample_sampler'
-                        defaultValue={defaults.sampler}
+            <Box
+                display={value?.temporal || value?.spatial ? 'block' : 'none'}
+                width='100%'
+            >
+                <Box
+                    display='flex'
+                    flexDirection='row'
+                    flexWrap='wrap'
+                    gap={4}
+                    width='100%'
+                >
+                    <SliderInput
+                        name={`${name}.distill_strength`}
+                        label='upsample_distill_strength'
+                        defaultValue={defaults.distill_strength}
+                        max={1}
+                        step={0.05}
+                        sx={{ flex: 1, minWidth: 200 }}
                     />
-                </>
-            )}
+                    <SliderInput
+                        name={`${name}.detail_strength`}
+                        label='upsample_detail_strength'
+                        defaultValue={defaults.detail_strength}
+                        max={1}
+                        step={0.05}
+                        sx={{ flex: 1, minWidth: 200 }}
+                    />
+                </Box>
+                <SamplerSelectInput
+                    name={`${name}.sampler`}
+                    label='upsample_sampler'
+                    defaultValue={defaults.sampler}
+                />
+            </Box>
         </VerticalBox>
     );
 };

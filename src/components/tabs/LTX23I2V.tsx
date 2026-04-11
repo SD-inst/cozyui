@@ -5,12 +5,12 @@ import { FileUpload } from '../controls/FileUpload';
 import { GenerateButton } from '../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LengthInput } from '../controls/LengthSlider';
-import { LTX2NoAudioToggle } from '../controls/LTX2NoAudioToggle';
+import { LTX2NoAudioToggle } from '../controls/ltx2/LTX2NoAudioToggle';
 import { LoraInput } from '../controls/LoraInput';
-import { LTX23UpsampleControl } from '../controls/LTX23UpsampleControl';
-import { LTX2KeyframesControl } from '../controls/LTX2KeyframesControl';
-import { LTX2ReferenceAudioControl } from '../controls/LTX2ReferenceAudioControl';
-import { useLTXUploadHandler } from '../controls/LTX2Utils';
+import { LTX23UpsampleControl } from '../controls/ltx2/LTX23UpsampleControl';
+import { LTX2KeyframesControl } from '../controls/ltx2/LTX2KeyframesControl';
+import { LTX2ReferenceAudioControl } from '../controls/ltx2/LTX2ReferenceAudioControl';
+import { useLTXUploadHandler } from '../controls/ltx2/LTX2Utils';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../controls/SamplerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
@@ -20,7 +20,7 @@ import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
 import { ChatComponent } from './ChatComponent';
-import { LTXKeepSizeToggle } from '../controls/LTXKeepSizeToggle';
+import { LTXKeepSizeToggle } from '../controls/ltx2/LTXKeepSizeToggle';
 
 const llmPrompt = `You are a Creative Assistant writing concise, action-focused image-to-video prompts. Given an image (first frame) and user Raw Input Prompt, generate a prompt to guide video generation from that image.
 

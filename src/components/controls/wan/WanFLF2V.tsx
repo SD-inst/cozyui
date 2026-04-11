@@ -1,7 +1,7 @@
 import { useEventCallback } from '@mui/material';
 import { useController, useFormContext } from 'react-hook-form';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
 
 export const WanFLF2V = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();

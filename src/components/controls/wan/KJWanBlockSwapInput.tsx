@@ -1,10 +1,10 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
-import { replaceNodeConnection } from '../../api/utils';
-import { useWatchForm } from '../../hooks/useWatchForm';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { SliderInput } from './SliderInput';
-import { ToggleInput } from './ToggleInput';
+import { replaceNodeConnection } from '../../../api/utils';
+import { useWatchForm } from '../../../hooks/useWatchForm';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { SliderInput } from '../SliderInput';
+import { ToggleInput } from '../ToggleInput';
 
 type valueType = {
     enabled: boolean;

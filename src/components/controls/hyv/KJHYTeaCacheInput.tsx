@@ -1,8 +1,8 @@
 import { useEventCallback } from '@mui/material';
-import { replaceNodeConnection } from '../../api/utils';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { SliderInput } from './SliderInput';
+import { replaceNodeConnection } from '../../../api/utils';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { SliderInput } from '../SliderInput';
 
 export const KJHYTeaCacheInput = ({
     defaultThreshold = 0.05,

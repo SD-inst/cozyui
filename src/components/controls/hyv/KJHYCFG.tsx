@@ -5,10 +5,10 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useController } from 'react-hook-form';
-import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useAPI';
-import { useTranslate } from '../../i18n/I18nContext';
-import { useRegisterHandler } from '../contexts/TabContext';
+import { getFreeNodeId } from '../../../api/utils';
+import { useAPI } from '../../../hooks/useAPI';
+import { useTranslate } from '../../../i18n/I18nContext';
+import { useRegisterHandler } from '../../contexts/TabContext';
 
 type negType = { neg_prompt: string; cfg: number };
 

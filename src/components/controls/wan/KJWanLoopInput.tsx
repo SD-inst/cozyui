@@ -1,12 +1,12 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController } from 'react-hook-form';
-import { insertNode, replaceNodeConnection } from '../../api/utils';
-import { useResultParam } from '../../hooks/useResult';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { SelectInputBase } from './SelectInputBase';
-import { SliderInputBase } from './SliderInputBase';
-import { ToggleInputBase } from './ToggleInputBase';
+import { insertNode, replaceNodeConnection } from '../../../api/utils';
+import { useResultParam } from '../../../hooks/useResult';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { SelectInputBase } from '../SelectInputBase';
+import { SliderInputBase } from '../SliderInputBase';
+import { ToggleInputBase } from '../ToggleInputBase';
 
 type valueType = {
     enabled: boolean;

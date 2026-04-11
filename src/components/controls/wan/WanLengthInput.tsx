@@ -1,5 +1,5 @@
 import { useWatch } from 'react-hook-form';
-import { LengthInput } from './LengthSlider';
+import { LengthInput } from '../LengthSlider';
 
 export const WanLengthInput = ({ ...props }) => {
     const longVideo = useWatch({ name: ['riflex', 'loop'] });

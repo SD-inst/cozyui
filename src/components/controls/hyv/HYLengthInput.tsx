@@ -1,6 +1,6 @@
 import { useWatch } from 'react-hook-form';
-import { LengthInput, LengthInputProps } from './LengthSlider';
-import { Optional } from './optional';
+import { LengthInput, LengthInputProps } from '../LengthSlider';
+import { Optional } from '../optional';
 
 export const HYLengthInput = ({
     max = [201, 265],

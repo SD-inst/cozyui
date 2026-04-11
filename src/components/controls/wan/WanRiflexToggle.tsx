@@ -1,7 +1,7 @@
 import { useEventCallback } from '@mui/material';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { ToggleInput, ToggleInputProps } from './ToggleInput';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { ToggleInput, ToggleInputProps } from '../ToggleInput';
 
 export const WanRiflexToggle = ({ ...props }: ToggleInputProps) => {
     const handler = useEventCallback(

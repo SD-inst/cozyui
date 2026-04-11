@@ -1,11 +1,11 @@
 import { Box, useEventCallback } from '@mui/material';
 import { cloneDeep } from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { getFreeNodeId } from '../../api/utils';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { FileUpload } from './FileUpload';
-import { ToggleInput } from './ToggleInput';
+import { getFreeNodeId } from '../../../api/utils';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { FileUpload } from '../FileUpload';
+import { ToggleInput } from '../ToggleInput';
 
 export const WanEndImage = ({
     name,

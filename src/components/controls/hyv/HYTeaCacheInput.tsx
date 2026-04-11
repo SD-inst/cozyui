@@ -1,11 +1,11 @@
 import { useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useAPI';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { SliderInput } from './SliderInput';
-import { SliderInputProps } from './SliderInputBase';
+import { getFreeNodeId } from '../../../api/utils';
+import { useAPI } from '../../../hooks/useAPI';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { SliderInput } from '../SliderInput';
+import { SliderInputProps } from '../SliderInputBase';
 
 export const HYTeaCacheInput = ({ ...props }: SliderInputProps) => {
     const { handler_options } = useAPI();

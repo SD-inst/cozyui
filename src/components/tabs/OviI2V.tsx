@@ -5,7 +5,7 @@ import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { KJCompileModelToggle } from '../controls/KJCompileModelToggle';
-import { KJWanBlockSwapInput } from '../controls/KJWanBlockSwapInput';
+import { KJWanBlockSwapInput } from '../controls/wan/KJWanBlockSwapInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { PromptInput } from '../controls/PromptInput';
@@ -14,12 +14,12 @@ import { SliderInput } from '../controls/SliderInput';
 import { ToggleInput } from '../controls/ToggleInput';
 import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VideoResult } from '../controls/VideoResult';
-import { WanSampler } from '../controls/WanSampler';
+import { WanSampler } from '../controls/wan/WanSampler';
 import { WFTab } from '../WFTab';
 import { KJEasyCacheInput } from '../controls/KJEasyCacheInput';
-import { OviPromptInput } from '../controls/OviPromptInput';
-import { OviLengthInput } from '../controls/OviLengthInput';
-import { OviVersionInput } from '../controls/OviVersionInput';
+import { OviPromptInput } from '../controls/ovi/OviPromptInput';
+import { OviLengthInput } from '../controls/ovi/OviLengthInput';
+import { OviVersionInput } from '../controls/ovi/OviVersionInput';
 
 const Content = () => {
     const mergeLoras = useWatch({ name: 'merge_loras' });

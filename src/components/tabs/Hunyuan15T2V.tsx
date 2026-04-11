@@ -3,7 +3,7 @@ import { CFGInput } from '../controls/CFGInput';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
-import { HYLengthInput } from '../controls/HYLengthInput';
+import { HYLengthInput } from '../controls/hyv/HYLengthInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';

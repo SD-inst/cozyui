@@ -1,8 +1,8 @@
 import { useEventCallback } from '@mui/material';
-import { insertNode } from '../../api/utils';
-import { controlType } from '../../redux/config';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { ToggleInput, ToggleInputProps } from './ToggleInput';
+import { insertNode } from '../../../api/utils';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { ToggleInput, ToggleInputProps } from '../ToggleInput';
 
 export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
     const handler = useEventCallback(

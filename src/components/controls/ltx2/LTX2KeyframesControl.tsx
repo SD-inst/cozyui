@@ -1,12 +1,12 @@
 import { useWatch } from 'react-hook-form';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { ArrayInput } from './ArrayInput';
-import { FileUpload } from './FileUpload';
-import { keyframeHandler } from './keyframeHandler';
-import { LengthInput } from './LengthSlider';
-import { SliderInput } from './SliderInput';
-import { ToggleInput } from './ToggleInput';
-import { UploadType } from './UploadType';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { ArrayInput } from '../ArrayInput';
+import { FileUpload } from '../FileUpload';
+import { keyframeHandler } from '../keyframeHandler';
+import { LengthInput } from '../LengthSlider';
+import { SliderInput } from '../SliderInput';
+import { ToggleInput } from '../ToggleInput';
+import { UploadType } from '../UploadType';
 
 export const LTX2KeyframesControl = ({
     name = 'keyframes',

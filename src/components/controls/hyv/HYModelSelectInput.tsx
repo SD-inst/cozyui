@@ -1,7 +1,7 @@
-import { modelType } from '../../redux/config';
-import { useHyvModelChoices } from '../../hooks/hyv_models';
-import { ModelSelectInput } from './ModelSelectInput';
-import { CustomSelectInputProps } from './SelectInput';
+import { modelType } from '../../../redux/config';
+import { useHyvModelChoices } from '../../../hooks/hyv_models';
+import { ModelSelectInput } from '../ModelSelectInput';
+import { CustomSelectInputProps } from '../SelectInput';
 
 export const HYModelSelectInput = ({
     filter,

@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { useController, useWatch } from 'react-hook-form';
-import { useRestoreValues } from '../../hooks/useRestoreValues';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { FileUpload } from './FileUpload';
-import { SliderInput } from './SliderInput';
-import { ToggleInput } from './ToggleInput';
-import { UploadType } from './UploadType';
+import { useRestoreValues } from '../../../hooks/useRestoreValues';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { FileUpload } from '../FileUpload';
+import { SliderInput } from '../SliderInput';
+import { ToggleInput } from '../ToggleInput';
+import { UploadType } from '../UploadType';
 import {
     TReferenceAudio,
     useReferenceAudioHandler,
-} from './referenceAudioHandler';
+} from '../referenceAudioHandler';
 
 const defaultValue: TReferenceAudio = {
     enabled: false,

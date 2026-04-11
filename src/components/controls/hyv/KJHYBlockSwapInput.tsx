@@ -1,10 +1,10 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
-import { getFreeNodeId } from '../../api/utils';
-import { useAPI } from '../../hooks/useAPI';
-import { useWatchForm } from '../../hooks/useWatchForm';
-import { useRegisterHandler } from '../contexts/TabContext';
-import { SliderInput } from './SliderInput';
-import { ToggleInput } from './ToggleInput';
+import { getFreeNodeId } from '../../../api/utils';
+import { useAPI } from '../../../hooks/useAPI';
+import { useWatchForm } from '../../../hooks/useWatchForm';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { SliderInput } from '../SliderInput';
+import { ToggleInput } from '../ToggleInput';
 
 type valueType = {
     enabled: boolean;

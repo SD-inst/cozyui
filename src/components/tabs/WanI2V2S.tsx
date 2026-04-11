@@ -4,7 +4,7 @@ import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FileUpload } from '../controls/FileUpload';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
-import { HYSize } from '../controls/HYSize';
+import { HYSize } from '../controls/hyv/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
 import { ModelSelectAutocomplete } from '../controls/ModelSelectAutocomplete';
@@ -14,7 +14,7 @@ import { SchedulerSelectInput } from '../controls/SchedulerSelectInput';
 import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { VideoResult } from '../controls/VideoResult';
-import { WanLengthInput } from '../controls/WanLengthInput';
+import { WanLengthInput } from '../controls/wan/WanLengthInput';
 import { WFTab } from '../WFTab';
 
 const Content = () => {

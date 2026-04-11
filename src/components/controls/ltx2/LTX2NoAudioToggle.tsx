@@ -1,8 +1,8 @@
 import { useWatch } from 'react-hook-form';
-import { useTranslate } from '../../i18n/I18nContext';
-import { ToggleInput, ToggleInputProps } from './ToggleInput';
-import { ext } from './fileExts';
-import { UploadType } from './UploadType';
+import { useTranslate } from '../../../i18n/I18nContext';
+import { ToggleInput, ToggleInputProps } from '../ToggleInput';
+import { ext } from '../fileExts';
+import { UploadType } from '../UploadType';
 
 const videoExts = ext[UploadType.VIDEO];
 
