@@ -1,5 +1,6 @@
 import { AutoFixHigh } from '@mui/icons-material';
 import {
+    Box,
     Button,
     Fab,
     FormControl,
@@ -35,6 +36,7 @@ import {
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
 import { controlType } from '../../redux/config';
+import { ConnectionIndicator } from './ConnectionIndicator';
 
 type error = {
     controls: string[];
@@ -273,7 +275,7 @@ export const GenerateButton = ({
     }, [handleCtrlEnter, setValue]);
     return (
         <FormControl>
-            <div ref={ref}>
+            <Box ref={ref} display='flex' alignItems='center' gap={1}>
                 <Button
                     variant='contained'
                     color='warning'
@@ -289,6 +291,13 @@ export const GenerateButton = ({
                 >
                     {tr(`controls.${text}`)}
                 </Button>
+                <ConnectionIndicator
+                    sx={{
+                        position: 'absolute',
+                        right: -30,
+                        visibility: finalVisible ? 'visible' : 'hidden',
+                    }}
+                />
                 <Fab
                     variant='circular'
                     color='warning'
@@ -305,7 +314,15 @@ export const GenerateButton = ({
                 >
                     <AutoFixHigh />
                 </Fab>
-            </div>
+                <ConnectionIndicator
+                    sx={{
+                        position: 'fixed',
+                        bottom: 85,
+                        right: 38,
+                        visibility: finalVisible ? 'hidden' : 'visible',
+                    }}
+                />
+            </Box>
             {!hideErrors && errors.controls.length ? (
                 <FormHelperText error>
                     {tr('errors.missing_controls', {
