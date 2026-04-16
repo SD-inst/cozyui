@@ -1816,6 +1816,11 @@
                     "id": "12",
                     "field": "text"
                 },
+                "model": {
+                    "id": "handle",
+                    "node_id": "44",
+                    "field": "unet_name"
+                },
                 "width": {
                     "id": "28",
                     "field": "width"
