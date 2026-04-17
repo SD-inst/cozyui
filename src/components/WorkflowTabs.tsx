@@ -12,7 +12,9 @@ import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useCurrentTab } from '../hooks/useCurrentTab';
 import { useRestoreValues } from '../hooks/useRestoreValues';
 import { useSetDefaults } from '../hooks/useSetDefaults';
+import { useStringSetting } from '../hooks/useSetting';
 import { useTabVisibility } from '../hooks/useTabVisibility';
+import { settings } from '../hooks/settings';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { useTabName } from './contexts/TabContext';
@@ -222,6 +224,20 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             ),
         [props.children, userFilteredTabs],
     );
+    // Restore last active tab from IndexedDB
+    // undefinedAwait: true — returns undefined until DB resolves
+    const savedTab = useStringSetting(settings.last_active_tab, '', true);
+
+    // Save active tab to IndexedDB when it changes
+    useEffect(() => {
+        if (current_tab) {
+            db.settings.put({
+                name: settings.last_active_tab,
+                value: current_tab,
+            });
+        }
+    }, [current_tab]);
+
     // fill all available tabs
     useEffect(() => {
         const workflowTabs = Children.map(
@@ -244,15 +260,30 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         setWorkflowTabs(workflowTabs);
         setReceivers(receivers);
     }, [props.children, setReceivers, setWorkflowTabs]);
-    // switch to first visible tab if none are selected
+    // switch to saved tab or first visible tab if none are selected
     useEffect(() => {
-        if (!props.children || !(props.children as any).length || current_tab) {
+        // Wait for config and DB to be loaded
+        if (!props.children || !(props.children as any).length) {
             return;
         }
+        // Don't override if a tab is already selected
+        if (current_tab) {
+            return;
+        }
+        // Wait for savedTab to be loaded from DB (undefined = still loading)
+        if (savedTab === undefined) {
+            return;
+        }
+        // Try to restore the last active tab if it's visible
+        if (savedTab && visibleTabs.some((t) => t.props.value === savedTab)) {
+            dispatch(setTab(savedTab));
+            return;
+        }
+        // Fallback to first visible tab (savedTab is '' or tab is hidden)
         if (visibleTabs.length) {
             dispatch(setTab(visibleTabs[0].props.value));
         }
-    }, [dispatch, props.children, current_tab, visibleTabs]);
+    }, [dispatch, props.children, current_tab, visibleTabs, savedTab]);
     // if a hidden tab is selected, unselect tab
     useEffect(() => {
         if (current_tab && !userFilteredTabs.includes(current_tab)) {
