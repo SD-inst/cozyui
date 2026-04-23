@@ -19,6 +19,7 @@ export const VideoPreview = ({
     const enabled = useBooleanSetting(settings.enable_previews);
     const status = useAppSelector((s) => s.progress.status);
     const ref = useRef<HTMLCanvasElement>(null);
+    const idxRef = useRef(0);
     const frameRef = useRef<ImageBitmap[]>([]);
     const { frames, rate } = useAppSelector((s) => s.preview);
     const isActiveTab = useActiveTab();
@@ -27,6 +28,14 @@ export const VideoPreview = ({
     useEffect(() => {
         frameRef.current = frames;
     }, [frames]);
+    useEffect(() => {
+        const canvas = ref.current;
+        const handleClick = () => {
+            idxRef.current = 0;
+        };
+        canvas?.addEventListener('click', handleClick);
+        return () => canvas?.removeEventListener('click', handleClick);
+    }, []);
     useEffect(() => {
         if (!ref.current) {
             return;
@@ -42,11 +51,12 @@ export const VideoPreview = ({
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             return;
         }
-        let idx = 0;
         let frames: ImageBitmap[] = [];
         const effective_rate = rate_override || rate;
+        idxRef.current = 0;
         const interval = setInterval(
             () => {
+                let idx = idxRef.current;
                 const fn = `${idx * effective_rate}/${frames.length * effective_rate}`;
                 // before rendering the first preview frame
                 // update the frames from the ref so that animation never breaks
@@ -55,6 +65,7 @@ export const VideoPreview = ({
                 }
                 const img = frames[idx];
                 idx = (idx + 1) % frames.length;
+                idxRef.current = idx;
                 if (!img) {
                     return;
                 }
