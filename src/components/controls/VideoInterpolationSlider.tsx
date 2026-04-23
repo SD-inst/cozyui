@@ -5,6 +5,7 @@ import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput } from './SliderInput';
 import { SliderInputProps } from './SliderInputBase';
 import { Optional } from './optional';
+import { useFormContext } from 'react-hook-form';
 
 export const VideoInterpolationSlider = ({
     name = 'interpolation_multiplier',
@@ -12,8 +13,9 @@ export const VideoInterpolationSlider = ({
     ...props
 }: Optional<SliderInputProps, 'name'>) => {
     const { id } = useResultParam();
+    const { getValues } = useFormContext();
     const handler = useEventCallback((api: any, value: number) => {
-        if (value === 1) {
+        if (value === 1 || getValues('length') < 2) {
             return;
         }
         const rifeNode = {

@@ -202,6 +202,7 @@ export const GenerateButton = ({
         for (const k in vals) {
             if (!(k in controls)) {
                 setErrors((e) => ({ ...e, api: [...e.api, k] }));
+                delete vals[k];
             }
         }
         console.log(
