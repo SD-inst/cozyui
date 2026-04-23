@@ -19,7 +19,7 @@ import { TextInput } from '../controls/TextInput';
 import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { ChatComponent } from './ChatComponent';
+import { ChatComponent } from '../chat/ChatComponent';
 import { LTXKeepSizeToggle } from '../controls/ltx2/LTXKeepSizeToggle';
 import { LTX2LoopControl } from '../controls/ltx2/LTX2LoopControl';
 

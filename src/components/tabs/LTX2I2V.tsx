@@ -18,7 +18,7 @@ import { TextInput } from '../controls/TextInput';
 import { UploadType } from '../controls/UploadType';
 import { VideoResult } from '../controls/VideoResult';
 import { WFTab } from '../WFTab';
-import { ChatComponent } from './ChatComponent';
+import { ChatComponent } from '../chat/ChatComponent';
 
 const llmPrompt = `You are a Creative Assistant writing concise, action-focused image-to-video prompts. Given an image (first frame) and user Raw Input Prompt, generate a prompt to guide video generation from that image.
 

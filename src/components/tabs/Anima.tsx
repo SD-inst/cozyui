@@ -12,7 +12,7 @@ import { SeedInput } from '../controls/SeedInput';
 import { SliderInput } from '../controls/SliderInput';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
-import { ChatComponent } from './ChatComponent';
+import { ChatComponent } from '../chat/ChatComponent';
 
 const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt describing a scene or concept, expand it into a detailed image generation prompt, consisting of danbooru tags and natural language, with specific visuals to guide a text-to-image model by detailing the following aspects:
 1. The main content and theme of the video.

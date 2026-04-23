@@ -16,7 +16,7 @@ import { TextInput } from '../controls/TextInput';
 import { VideoResult } from '../controls/VideoResult';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
-import { ChatComponent } from './ChatComponent';
+import { ChatComponent } from '../chat/ChatComponent';
 
 const llmPrompt = `You are a Creative Assistant. Given a user's raw input prompt describing a scene or concept, expand it into a detailed video generation prompt with specific visuals and integrated audio to guide a text-to-video model.
 

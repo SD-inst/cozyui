@@ -22,7 +22,7 @@ import { VideoInterpolationSlider } from '../controls/VideoInterpolationSlider';
 import { VirtualVRAMSliderInput } from '../controls/VirtualVRAMSliderInput';
 import { WidthHeight } from '../controls/WidthHeightInput';
 import { WFTab } from '../WFTab';
-import { ChatComponent } from './ChatComponent';
+import { ChatComponent } from '../chat/ChatComponent';
 
 const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt describing a scene or concept, expand it into a detailed video generation prompt with specific visuals to guide a text-to-video model by detailing the following aspects:
 1. The main content and theme of the video.
