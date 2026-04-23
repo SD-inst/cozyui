@@ -275,7 +275,13 @@ export const GenerateButton = ({
     }, [handleCtrlEnter, setValue]);
     return (
         <FormControl>
-            <Box ref={ref} display='flex' alignItems='center' gap={1}>
+            <Box
+                ref={ref}
+                display='flex'
+                alignItems='center'
+                justifyContent='center'
+                gap={1}
+            >
                 <Button
                     variant='contained'
                     color='warning'
