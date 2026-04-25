@@ -204,11 +204,21 @@
             "title": "Get Image Size"
         }
     },
+    "92:45": {
+        "inputs": {
+            "model_name": "ltx/ltx-2.3-spatial-upscaler-x2-1.0.safetensors"
+        },
+        "class_type": "LatentUpscaleModelLoader",
+        "_meta": {
+            "title": "Load Latent Upscale Model"
+        }
+    },
     "92:46": {
         "inputs": {
             "preview_rate": 8,
             "model": ["92:2", 0],
-            "vae": ["92:1", 0]
+            "vae": ["92:1", 0],
+            "latent_upscale_model": ["92:45", 0]
         },
         "class_type": "LTX2SamplingPreviewOverride",
         "_meta": {
