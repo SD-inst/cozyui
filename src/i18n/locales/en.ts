@@ -222,6 +222,7 @@ const translation = {
         'loop.enabled': 'loop enabled',
         'loop.overlap': 'overlap frames',
         keyframe_trim: 'trim',
+        step: 'step',
     },
     settings: {
         select_language: 'Select language',

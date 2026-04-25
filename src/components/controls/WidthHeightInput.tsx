@@ -7,6 +7,7 @@ import {
 import { Box, Button, useEventCallback } from '@mui/material';
 import { useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+import { SelectInputBase } from './SelectInputBase';
 import { SliderInputBase } from './SliderInputBase';
 
 const gcd = (a: number, b: number) => {
@@ -35,7 +36,7 @@ export const WidthHeight = ({
     defaultHeight = 1280,
     maxWidth = 1280,
     maxHeight = 1280,
-    step = 16,
+    step: defaultStep = 16,
 }: {
     widthName?: string;
     heightName?: string;
@@ -47,6 +48,7 @@ export const WidthHeight = ({
 }) => {
     const [{ aspect, str }, setAspect] = useState({ aspect: 0, str: '' });
     const [size, setSize] = useState(0);
+    const [step, setStep] = useState(defaultStep);
     const { getValues, setValue } = useFormContext();
     const handleSwap = useEventCallback(() => {
         const vals = getValues([widthName, heightName]);
@@ -85,7 +87,7 @@ export const WidthHeight = ({
                 v = size / maxHeight - ((size / maxHeight) % step);
             }
         }
-        onWidthChangeCtl(v);
+        onWidthChangeCtl(v - (v % step));
     });
     const onHeightChange = useEventCallback((v: number) => {
         if (aspect) {
@@ -102,16 +104,17 @@ export const WidthHeight = ({
                 v = size / maxWidth - ((size / maxWidth) % step);
             }
         }
-        onHeightChangeCtl(v);
+        onHeightChangeCtl(v - (v % step));
     });
     return (
         <Box
             display='flex'
             flexDirection='row'
+            flexWrap='wrap'
             width='100%'
             alignItems='center'
         >
-            <Box display='flex' flexDirection='column' flex={1}>
+            <Box display='flex' flexDirection='column' flex={1} minWidth={300} justifyContent='center'>
                 <SliderInputBase
                     defaultValue={defaultWidth}
                     max={maxWidth}
@@ -130,15 +133,12 @@ export const WidthHeight = ({
             <Box
                 display='flex'
                 alignItems='center'
+                justifyContent='center'
                 gap={1}
-                sx={{
-                    pt: 3,
-                    pl: 1,
-                    flexDirection: {
-                        xs: 'column',
-                        sm: 'row',
-                    },
-                }}
+                pt={3}
+                pl={1}
+                flexDirection={{ xs: 'row', sm: 'column' }}
+                mb={2}
             >
                 <Button variant='outlined' color='primary' onClick={handleSwap}>
                     <SwapVert />
@@ -151,7 +151,7 @@ export const WidthHeight = ({
                             setAspect({ aspect: 0, str: '' });
                         } else {
                             setAspect(
-                                calcAspect(widthField.value, heightField.value)
+                                calcAspect(widthField.value, heightField.value),
                             );
                             setSize(0);
                         }
@@ -179,22 +179,30 @@ export const WidthHeight = ({
                         }
                     }}
                 >
-                    <Box
-                        display='flex'
-                        gap={1}
-                        sx={{
-                            flexDirection: {
-                                xs: 'column',
-                                sm: 'row',
-                            },
-                        }}
-                    >
+                    <Box display='flex' gap={1} flexDirection='row'>
                         <PhotoSizeSelectLarge />
                         {(
                             (size || widthField.value * heightField.value) / 1e6
                         ).toFixed(2)}
                     </Box>
                 </Button>
+                <SelectInputBase
+                    name='step'
+                    choices={Array.from({ length: 7 }, (_, i) =>
+                        Math.pow(2, i + 1).toFixed(),
+                    )}
+                    onChange={(e) => {
+                        setStep(Number(e.target.value));
+                        setTimeout(() => {
+                            // wait for next render to get the updated stepOverride value
+                            onWidthChange(widthField.value);
+                            onHeightChange(heightField.value);
+                        }, 0);
+                    }}
+                    value={step}
+                    size='small'
+                    sx={{ mb: 0, height: 35, width: 80 }}
+                ></SelectInputBase>
             </Box>
         </Box>
     );

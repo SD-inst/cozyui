@@ -221,6 +221,7 @@ const translation = {
         'loop.enabled': 'зациклить',
         'loop.overlap': 'перекрытие кадров',
         keyframe_trim: 'обрезать видео',
+        step: 'шаг',
     },
     settings: {
         select_language: 'Выбор языка',
