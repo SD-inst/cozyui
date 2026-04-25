@@ -54,7 +54,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             },
             ':3': {
                 inputs: {
-                    method: 'hm-mvgd-hm',
+                    method: 'reinhard_lab_gpu',
                     strength: 1,
                     multithread: true,
                     image_target: [':1', 0],
@@ -97,7 +97,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             enabled: true,
             image,
             position: length - 1,
-            strength: 1,
+            strength: 0.5,
             trim: value.overlap,
         });
     }, [
