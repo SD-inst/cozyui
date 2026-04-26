@@ -1697,7 +1697,7 @@ __metadata:
     node-polyglot: "npm:^2.6.0"
     papaparse: "npm:^5.5.3"
     react: "npm:^18.3.1"
-    react-diff-viewer-continued: "npm:^4.0.5"
+    react-diff-viewer-continued: "npm:^4.2.2"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.5"
     react-hook-form: "npm:^7.54.2"
@@ -1787,10 +1787,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"diff@npm:^5.1.0, diff@npm:^5.2.0":
+"diff@npm:^5.1.0":
   version: 5.2.0
   resolution: "diff@npm:5.2.0"
   checksum: 10c0/aed0941f206fe261ecb258dc8d0ceea8abbde3ace5827518ff8d302f0fc9cc81ce116c4d8f379151171336caf0516b79e01abdc1ed1201b6440d895a66689eb4
+  languageName: node
+  linkType: hard
+
+"diff@npm:^9.0.0":
+  version: 9.0.0
+  resolution: "diff@npm:9.0.0"
+  checksum: 10c0/a971cc88f66071a33bd3942db2f51b57d484e9856265ae45cf44fb28ab2fde91f132d9c26d8be0fb6082d2be94d29e1295c1adb251b7461935d6a2dd304cd161
   languageName: node
   linkType: hard
 
@@ -2596,6 +2603,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-yaml@npm:^4.1.1":
+  version: 4.1.1
+  resolution: "js-yaml@npm:4.1.1"
+  dependencies:
+    argparse: "npm:^2.0.1"
+  bin:
+    js-yaml: bin/js-yaml.js
+  checksum: 10c0/561c7d7088c40a9bb53cc75becbfb1df6ae49b34b5e6e5a81744b14ae8667ec564ad2527709d1a6e7d5e5fa6d483aa0f373a50ad98d42fde368ec4a190d4fae7
+  languageName: node
+  linkType: hard
+
 "jsbn@npm:1.1.0":
   version: 1.1.0
   resolution: "jsbn@npm:1.1.0"
@@ -3144,19 +3162,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-diff-viewer-continued@npm:^4.0.5":
-  version: 4.0.5
-  resolution: "react-diff-viewer-continued@npm:4.0.5"
+"react-diff-viewer-continued@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "react-diff-viewer-continued@npm:4.2.2"
   dependencies:
     "@emotion/css": "npm:^11.13.5"
     "@emotion/react": "npm:^11.14.0"
     classnames: "npm:^2.5.1"
-    diff: "npm:^5.2.0"
+    diff: "npm:^9.0.0"
+    js-yaml: "npm:^4.1.1"
     memoize-one: "npm:^6.0.0"
   peerDependencies:
     react: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/57b3280fb21a730f10c07373353b7854657e37952fac4b70c5cc5c59391465d044a6a2531ded06ecb9237c235b86620957580e2dd7511515965073846ee7c084
+  checksum: 10c0/07238e789eb8732a6b279fcf131d0a77eb0a29178fc766034e69f283bee1a7c073214694dd00d060805d7cc50f26c3e5356b51f4420aa46a7b68110b6448060b
   languageName: node
   linkType: hard
 

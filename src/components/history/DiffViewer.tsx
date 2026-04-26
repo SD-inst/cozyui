@@ -228,8 +228,8 @@ export const DiffViewer = () => {
                                 marker: { visibility: 'hidden' },
                                 summary: { display: 'none' },
                                 diffAdded: { backgroundColor: 'transparent' },
-                            } as any
-                        } // TODO: fix temporary "as any"
+                            }
+                        }
                     />
                 ) : (
                     <>
