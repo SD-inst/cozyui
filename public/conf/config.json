@@ -986,6 +986,67 @@
                 "type": "gifs"
             }
         },
+        "LTX-2.3 V2V": {
+            "api": "api/ltx2.3_v2v.json",
+            "controls": {
+                "video": {
+                    "id": "114:1",
+                    "field": "video"
+                },
+                "prompt": {
+                    "id": "92:3",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "92:4",
+                    "field": "text"
+                },
+                "seed": {
+                    "id": "104",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "92:9",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "92:8",
+                    "field": "sampler_name"
+                },
+                "cfg": {
+                    "id": "92:47",
+                    "field": "cfg"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "text_encoder": {
+                    "id": "handle",
+                    "node_id": "92:60",
+                    "field": "clip_name1"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "92:2",
+                    "field": "unet_name"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["92:46"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "103",
+                "type": "gifs"
+            }
+        },
         "Hunyuan I2V KJ": {
             "api": "api/hunyuan_i2v_kj.json",
             "controls": {

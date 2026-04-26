@@ -55,6 +55,7 @@ import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { AnimaTab } from './components/tabs/Anima';
 import { LTX23T2VTab } from './components/tabs/LTX23T2V';
 import { LTX23I2VTab } from './components/tabs/LTX23I2V';
+import { LTX23V2VTab } from './components/tabs/LTX23V2V';
 
 function App() {
     return (
@@ -84,6 +85,7 @@ function App() {
                                 {WanI2VITTab}
                                 {LTX2I2VTab}
                                 {LTX23I2VTab}
+                                {LTX23V2VTab}
                                 {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
