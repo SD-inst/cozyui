@@ -1,6 +1,5 @@
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
-import { I2IToggle } from '../controls/I2IToggle';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
@@ -18,7 +17,6 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
-                <I2IToggle name='i2i' />
                 <ReferenceLatentInput
                     name='reference_images'
                     receiverFieldName='image'
