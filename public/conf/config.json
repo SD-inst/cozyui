@@ -1858,7 +1858,7 @@
                     "api_input_name": "model",
                     "output_node_ids": ["3"],
                     "output_idx": 0,
-                    "output_clip_ids": ["11", "12"],
+                    "output_clip_ids": ["6", "7"],
                     "class_name": "LoraLoader",
                     "strength_field_name": "strength_model",
                     "clip_strength_field_name": "strength_clip",
