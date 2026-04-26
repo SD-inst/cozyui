@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useController, useWatch } from 'react-hook-form';
+import { useWatch } from 'react-hook-form';
 import { useRestoreValues } from '../../../hooks/useRestoreValues';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { FileUpload } from '../FileUpload';
@@ -25,12 +25,7 @@ export const LTX2ReferenceAudioControl = ({
     name?: string;
 }) => {
     const setValue = useRestoreValues();
-    const {
-        field: { value },
-    } = useController({
-        name,
-        defaultValue,
-    });
+    const value = useWatch({ name });
     useEffect(() => {
         if (typeof value === 'string') {
             // received audio file name from another tab/history
@@ -50,6 +45,7 @@ export const LTX2ReferenceAudioControl = ({
             <ToggleInput
                 name={`${name}.enabled`}
                 label='reference_audio_enabled'
+                defaultValue={defaultValue.enabled}
             />
             {enabled && (
                 <>
@@ -58,7 +54,11 @@ export const LTX2ReferenceAudioControl = ({
                         label='audio'
                         type={UploadType.AUDIO}
                     />
-                    <ToggleInput name={`${name}.source`} label='source' />
+                    <ToggleInput
+                        name={`${name}.source`}
+                        label='source'
+                        defaultValue={defaultValue.source}
+                    />
                     {source && (
                         <SliderInput
                             name={`${name}.trim`}
@@ -66,7 +66,7 @@ export const LTX2ReferenceAudioControl = ({
                             min={0}
                             max={30}
                             step={0.1}
-                            defaultValue={30}
+                            defaultValue={defaultValue.trim}
                         />
                     )}
                     {!source && (
@@ -76,7 +76,7 @@ export const LTX2ReferenceAudioControl = ({
                             min={0}
                             max={10}
                             step={1}
-                            defaultValue={0}
+                            defaultValue={defaultValue.igc}
                         />
                     )}
                 </>
