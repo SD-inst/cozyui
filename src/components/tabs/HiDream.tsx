@@ -1,5 +1,6 @@
 import { useWatch } from 'react-hook-form';
 import { CFGInput } from '../controls/CFGInput';
+import { I2IToggle } from '../controls/I2IToggle';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -20,6 +21,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <I2IToggle name='i2i' />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={28} min={1} max={50} />
                 <FlowShiftInput defaultValue={6} />
@@ -56,5 +58,11 @@ const Content = () => {
 };
 
 export const HiDreamTab = (
-    <WFTab label='HiDream' value='HiDream' group='T2I' content={<Content />} />
+    <WFTab
+        label='HiDream'
+        value='HiDream'
+        group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

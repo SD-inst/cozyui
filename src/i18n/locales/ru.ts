@@ -222,6 +222,7 @@ const translation = {
         'loop.overlap': 'перекрытие кадров',
         keyframe_trim: 'обрезать видео',
         step: 'шаг',
+        i2i: 'image-to-image',
     },
     settings: {
         select_language: 'Выбор языка',

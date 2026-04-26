@@ -1,5 +1,6 @@
 import { CFGInput } from '../controls/CFGInput';
 import { GenerateButton } from '../controls/GenerateButton';
+import { I2IToggle } from '../controls/I2IToggle';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
@@ -57,6 +58,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <I2IToggle name='i2i' />
                 <ChatComponent systemPrompt={llmPrompt} />
                 <PromptInput name='neg_prompt' />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
@@ -102,5 +104,11 @@ const Content = () => {
 };
 
 export const SDTab = (
-    <WFTab label='SD' value='SD' group='T2I' content={<Content />} />
+    <WFTab
+        label='SD'
+        value='SD'
+        group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

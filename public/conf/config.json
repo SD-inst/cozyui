@@ -1571,6 +1571,12 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "198",
+                    "sampler_id": "181",
+                    "vae_loader_id": "105"
                 }
             },
             "result": {
@@ -1635,6 +1641,12 @@
                     "id": "handle",
                     "node_id": "12",
                     "field": "unet_name"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "5",
+                    "sampler_id": "13",
+                    "vae_loader_id": "10"
                 }
             },
             "handler_options": {
@@ -1701,6 +1713,12 @@
                     "guider_node_id": "22",
                     "vae_node_id": "10",
                     "set_field": "image"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "47",
+                    "sampler_id": "13",
+                    "vae_loader_id": "10"
                 }
             },
             "handler_options": {
@@ -1777,6 +1795,12 @@
                 "easy_cache": {
                     "id": "handle",
                     "node_id": ["63", "81"]
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "69",
+                    "sampler_id": "65",
+                    "vae_loader_id": "11"
                 }
             },
             "result": {
@@ -1845,6 +1869,12 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "5",
+                    "sampler_id": "3",
+                    "vae_loader_id": "4"
                 }
             },
             "result": {
@@ -1916,6 +1946,12 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "28",
+                    "sampler_id": "19",
+                    "vae_loader_id": "15"
                 }
             },
             "result": {
@@ -2088,6 +2124,12 @@
                 "easy_cache": {
                     "id": "handle",
                     "node_id": "66"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "58",
+                    "sampler_id": "3",
+                    "vae_loader_id": "39"
                 }
             },
             "result": {
@@ -2235,6 +2277,12 @@
                 "flow_shift": {
                     "id": "30",
                     "field": "shift"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "13",
+                    "sampler_id": "3",
+                    "vae_loader_id": "17"
                 }
             },
             "result": {

@@ -1,5 +1,6 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
+import { I2IToggle } from '../controls/I2IToggle';
 import { GenerateButton } from '../controls/GenerateButton';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
@@ -62,6 +63,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <I2IToggle name='i2i' />
                 <ChatComponent systemPrompt={llmPrompt} />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={30} min={1} max={40} />
@@ -108,5 +110,11 @@ const Content = () => {
 };
 
 export const AnimaTab = (
-    <WFTab label='Anima' value='Anima' group='T2I' content={<Content />} />
+    <WFTab
+        label='Anima'
+        value='Anima'
+        group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

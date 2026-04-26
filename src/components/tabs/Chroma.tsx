@@ -1,5 +1,6 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
+import { I2IToggle } from '../controls/I2IToggle';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { GenerateButton } from '../controls/GenerateButton';
 import { ImageResult } from '../controls/ImageResult';
@@ -20,6 +21,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <I2IToggle name='i2i' />
                 <PromptInput
                     name='neg_prompt'
                     defaultValue='low quality, jpeg, 3d, realistic'
@@ -68,5 +70,11 @@ const Content = () => {
 };
 
 export const ChromaTab = (
-    <WFTab label='Chroma' value='Chroma' group='T2I' content={<Content />} />
+    <WFTab
+        label='Chroma'
+        value='Chroma'
+        group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

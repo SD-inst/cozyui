@@ -1,5 +1,6 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
+import { I2IToggle } from '../controls/I2IToggle';
 import { CompileModelToggle } from '../controls/CompileModelToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
@@ -22,6 +23,7 @@ const Content = () => {
             <GridLeft>
                 <PromptInput name='prompt' />
                 <PromptInput name='neg_prompt' defaultValue='' />
+                <I2IToggle name='i2i' />
                 <WidthHeight
                     maxWidth={2048}
                     maxHeight={2048}
@@ -77,6 +79,7 @@ export const QwenImageTab = (
         label='Qwen Image'
         value='Qwen Image'
         group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
         content={<Content />}
     />
 );

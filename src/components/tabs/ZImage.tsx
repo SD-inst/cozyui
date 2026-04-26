@@ -1,5 +1,6 @@
 import { AdvancedSettings } from '../controls/AdvancedSettings';
 import { CFGInput } from '../controls/CFGInput';
+import { I2IToggle } from '../controls/I2IToggle';
 import { FlowShiftInput } from '../controls/FlowShiftInput';
 import { GenerateButton } from '../controls/GenerateButton';
 import { ImageResult } from '../controls/ImageResult';
@@ -19,6 +20,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <I2IToggle name='i2i' />
                 <WidthHeight maxWidth={4096} maxHeight={4096} />
                 <SliderInput name='steps' defaultValue={10} min={1} max={40} />
                 <AdvancedSettings>
@@ -62,5 +64,11 @@ const Content = () => {
 };
 
 export const ZImageTab = (
-    <WFTab label='Z-Image' value='Z-Image' group='T2I' content={<Content />} />
+    <WFTab
+        label='Z-Image'
+        value='Z-Image'
+        group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

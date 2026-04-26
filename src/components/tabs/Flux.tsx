@@ -1,5 +1,6 @@
 import { GenerateButton } from '../controls/GenerateButton';
 import { GuidanceInput } from '../controls/GuidanceInput';
+import { I2IToggle } from '../controls/I2IToggle';
 import { ImageResult } from '../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../controls/Layout';
 import { LoraInput } from '../controls/LoraInput';
@@ -17,6 +18,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <I2IToggle name='i2i' />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={4} min={1} max={40} />
                 <GuidanceInput defaultValue={3.5} step={0.1} />
@@ -56,5 +58,11 @@ const Content = () => {
 };
 
 export const FluxTab = (
-    <WFTab label='Flux' value='Flux' group='T2I' content={<Content />} />
+    <WFTab
+        label='Flux'
+        value='Flux'
+        group='T2I'
+        receivers={[{ name: 'i2i', acceptedTypes: 'images' }]}
+        content={<Content />}
+    />
 );

@@ -223,6 +223,7 @@ const translation = {
         'loop.overlap': 'overlap frames',
         keyframe_trim: 'trim',
         step: 'step',
+        i2i: 'image-to-image',
     },
     settings: {
         select_language: 'Select language',
