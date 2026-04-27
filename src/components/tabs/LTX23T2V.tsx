@@ -73,7 +73,7 @@ const Content = () => {
                     defaultHeight={736}
                     maxWidth={1920}
                     maxHeight={1920}
-                    step={32}
+                    step={64}
                 />
                 <LengthInput
                     name='length'
