@@ -8,9 +8,9 @@ import {
 } from '@mui/icons-material';
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { forwardRef, type Ref } from 'react';
-import { useTranslate } from '../../i18n/I18nContext';
-import { ToolbarButton } from './ToolbarButton';
-import { ToolbarSlider } from './ToolbarSlider';
+import { useTranslate } from '../../../i18n/I18nContext';
+import { ToolbarButton } from '../ToolbarButton';
+import { ToolbarSlider } from '../ToolbarSlider';
 
 export interface MaskEditorFullscreenToolbarProps {
     brushSize: number;
@@ -177,7 +177,7 @@ export const MaskEditorFullscreenToolbar = forwardRef<
                             min: brushSizeMin,
                             max: brushSizeMax,
                             step: brushSizeStep,
-                            onChange: (_, v) =>
+                            onChange: (_: unknown, v: number | number[]) =>
                                 onBrushSizeChange(
                                     Math.round(Array.isArray(v) ? v[0] : v),
                                 ),
@@ -221,7 +221,7 @@ export const MaskEditorFullscreenToolbar = forwardRef<
                             min: 0,
                             max: 100,
                             step: 1,
-                            onChange: (_, v) =>
+                            onChange: (_: unknown, v: number | number[]) =>
                                 onMaskOpacityChange(
                                     Math.round(Array.isArray(v) ? v[0] : v) /
                                         100,

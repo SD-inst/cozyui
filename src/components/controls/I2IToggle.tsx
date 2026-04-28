@@ -17,7 +17,7 @@ import { ToggleInput, ToggleInputProps } from './ToggleInput';
 import { FileUpload } from './FileUpload';
 import { SliderInput } from './SliderInput';
 import { UploadType } from './UploadType';
-import { MaskEditor } from './MaskEditor';
+import { MaskEditor } from './mask_editor/MaskEditor';
 import { useImageURL } from '../../hooks/useImageURL';
 import { useTranslate } from '../../i18n/I18nContext';
 

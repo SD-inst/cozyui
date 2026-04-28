@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController } from 'react-hook-form';
-import { useTranslate } from '../../i18n/I18nContext';
+import { useTranslate } from '../../../i18n/I18nContext';
 import { MaskEditorControls } from './MaskEditorControls';
 import { MaskEditorFullscreenToolbar } from './MaskEditorFullscreenToolbar';
 import { useMaskBrush } from './useMaskBrush';

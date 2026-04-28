@@ -1,7 +1,7 @@
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import { Delete, Fullscreen, Undo, Redo } from '@mui/icons-material';
-import { SliderInputBase } from './SliderInputBase';
-import { useTranslate } from '../../i18n/I18nContext';
+import { SliderInputBase } from '../SliderInputBase';
+import { useTranslate } from '../../../i18n/I18nContext';
 
 export interface MaskEditorControlsProps {
     brushSize: number;
