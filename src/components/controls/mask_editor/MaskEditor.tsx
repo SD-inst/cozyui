@@ -1214,6 +1214,8 @@ export const MaskEditor = ({
                     bgcolor: '#000',
                     borderRadius: 1,
                     minHeight: 200,
+                    maxWidth: 400,
+                    maxHeight: 400,
                     ...(imageSize.width > 0 && imageSize.height > 0
                         ? {
                               aspectRatio: `${imageSize.width} / ${imageSize.height}`,
