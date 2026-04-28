@@ -714,7 +714,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mui/styled-engine@npm:^6.3.1, @mui/styled-engine@npm:^6.4.11":
+"@mui/styled-engine@npm:^6.4.11":
   version: 6.4.11
   resolution: "@mui/styled-engine@npm:6.4.11"
   dependencies:
@@ -1673,7 +1673,6 @@ __metadata:
     "@fontsource/roboto": "npm:^5.1.1"
     "@mui/icons-material": "npm:^6.3.1"
     "@mui/material": "npm:^6.3.1"
-    "@mui/styled-engine": "npm:^6.3.1"
     "@mui/system": "npm:^6.3.1"
     "@reduxjs/toolkit": "npm:^2.5.0"
     "@rkfg/dexie-export-import": "npm:4.1.4-c"

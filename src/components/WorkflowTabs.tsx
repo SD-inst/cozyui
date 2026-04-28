@@ -2,6 +2,7 @@ import { Tab, Tabs } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import React, {
     Children,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -63,12 +64,40 @@ const ValuesRestore = () => {
         setInitialized(true);
     }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
     const vals = useWatch();
+    
+    // Фильтруем большие поля перед сохранением (исключаем mask)
+    const filterFormValues = useCallback((data: any): any => {
+        if (!data || typeof data !== 'object') return data;
+        const filtered: any = Array.isArray(data) ? [] : {};
+        for (const key in data) {
+            const val = data[key];
+            // Исключаем поля с маской (Uint8Array или большие массивы)
+            if (key === 'mask') continue;
+            // Исключаем очень большие массивы (>1000 элементов)
+            if (Array.isArray(val) && val.length > 1000) continue;
+            // Рекурсивно фильтруем вложенные объекты
+            if (val && typeof val === 'object' && !Array.isArray(val) && val !== null) {
+                filtered[key] = filterFormValues(val);
+            } else if (Array.isArray(val)) {
+                filtered[key] = val.filter(item =>
+                    !(item && typeof item === 'object' && (Array.isArray(item) || item instanceof Uint8Array))
+                ).map(item =>
+                    item && typeof item === 'object' ? filterFormValues(item) : item
+                );
+            } else {
+                filtered[key] = val;
+            }
+        }
+        return filtered;
+    }, []);
+    
     useEffect(() => {
         if (!initialized) {
             return;
         }
-        db.formState.put({ tab: tab_name, state: JSON.stringify(vals) });
-    }, [vals, tab_name, initialized]);
+        const filtered = filterFormValues(vals);
+        db.formState.put({ tab: tab_name, state: JSON.stringify(filtered) });
+    }, [vals, tab_name, initialized, filterFormValues]);
     return <div ref={ref} style={{ height: 0 }} />;
 };
 

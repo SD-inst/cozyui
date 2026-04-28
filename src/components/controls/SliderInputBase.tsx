@@ -31,7 +31,7 @@ export const SliderInputBase = ({
 }) => {
     const [edit, setEdit] = useState(false);
     const tr = useTranslate();
-    const sliderLabel = tr(`controls.${label || name}`);
+    const sliderLabel = label && label.includes('.') ? tr(label) : tr(`controls.${label || name}`);
     const commitValue = useEventCallback(() => {
         onChange(value - (value % (props.step || 1)));
         setEdit(false);
