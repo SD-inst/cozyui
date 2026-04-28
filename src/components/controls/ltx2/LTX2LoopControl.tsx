@@ -21,7 +21,17 @@ const defaultValue: TValue = {
 export const LTX2LoopControl = ({ name }: { name: string }) => {
     const { id } = useResultParam();
     const lengthCtl = useControl('length');
-    const value: TValue = useWatch({ name, defaultValue });
+    const enabled = useWatch({
+        name: name + '.enabled',
+        defaultValue: defaultValue.enabled,
+    });
+    const overlap = useWatch({
+        name: name + '.overlap',
+        defaultValue: defaultValue.overlap,
+    });
+    const image = useWatch({ name: 'image' });
+    const length = useWatch({ name: 'length', defaultValue: 129 });
+    const keyframes = useWatch({ name: 'keyframes', defaultValue: [] });
     const fps = useWatch({ name: 'fps', defaultValue: 24 });
     const { append } = useFieldArray({ name: 'keyframes' });
     const { setValue } = useFormContext();
@@ -71,11 +81,8 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
         api[lengthCtl.id].inputs[lengthCtl.field] = length + value.overlap;
     });
     useRegisterHandler({ name, handler });
-    const image = useWatch({ name: 'image' });
-    const length = useWatch({ name: 'length' });
-    const keyframes = useWatch({ name: 'keyframes', defaultValue: [] });
     useEffect(() => {
-        if (!value.enabled || !image) {
+        if (!enabled || !image) {
             return;
         }
         let found = false;
@@ -83,10 +90,10 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             if (kf.image !== image) {
                 return;
             }
-            if (kf.position !== length - 1 || kf.trim !== value.overlap) {
+            if (kf.position !== length - 1 || kf.trim !== overlap) {
                 setValue(`keyframes.${idx}.position`, length - 1);
                 setValue(`keyframes.${idx}.enabled`, true);
-                setValue(`keyframes.${idx}.trim`, value.overlap);
+                setValue(`keyframes.${idx}.trim`, overlap);
             }
             found = true;
         });
@@ -98,17 +105,9 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             image,
             position: length - 1,
             strength: 0.5,
-            trim: value.overlap,
+            trim: overlap,
         });
-    }, [
-        append,
-        image,
-        keyframes,
-        length,
-        setValue,
-        value.enabled,
-        value.overlap,
-    ]);
+    }, [append, enabled, image, keyframes, length, overlap, setValue]);
     return (
         <Box
             display='flex'
@@ -122,7 +121,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
                 name={`${name}.enabled`}
                 defaultValue={defaultValue.enabled}
             />
-            {value.enabled && (
+            {enabled && (
                 <LengthInput
                     min={8}
                     max={160}
