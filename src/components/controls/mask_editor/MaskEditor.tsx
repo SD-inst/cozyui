@@ -55,9 +55,10 @@ function clampZoom(
         canvasHeight <= 0
     )
         return zoom;
+    // Minimum zoom: image fits entirely within canvas (no black bars on at least one axis)
     const minZoomX = canvasWidth / imageWidth;
     const minZoomY = canvasHeight / imageHeight;
-    const effectiveMinZoom = Math.max(minZoomX, minZoomY);
+    const effectiveMinZoom = Math.min(minZoomX, minZoomY);
     return Math.max(zoom, effectiveMinZoom);
 }
 
@@ -78,28 +79,49 @@ function clampCamera(
 
     const minZoomX = canvasWidth / imageWidth;
     const minZoomY = canvasHeight / imageHeight;
-    const effectiveMinZoom = Math.max(minZoomX, minZoomY);
+    const effectiveMinZoom = Math.min(minZoomX, minZoomY);
 
-    const zoom = Math.max(cam.zoom, effectiveMinZoom);
+    const clampedZoom = Math.max(cam.zoom, effectiveMinZoom);
 
-    const scaledWidth = imageWidth * zoom;
-    const scaledHeight = imageHeight * zoom;
+    const scaledWidth = imageWidth * clampedZoom;
+    const scaledHeight = imageHeight * clampedZoom;
 
-    const originX = cam.x + (canvasWidth / 2) * (1 - zoom);
-    const originY = cam.y + (canvasHeight / 2) * (1 - zoom);
+    const originX = cam.x + (canvasWidth / 2) * (1 - clampedZoom);
+    const originY = cam.y + (canvasHeight / 2) * (1 - clampedZoom);
 
-    const minOriginX = canvasWidth - scaledWidth;
-    const maxOriginX = 0;
-    const clampedOriginX = Math.max(minOriginX, Math.min(maxOriginX, originX));
+    // Determine clamping bounds based on whether image fills the canvas in each axis
+    // If scaled dimension <= canvas dimension, image doesn't fill that axis → clamp origin to prevent overflow
+    // If scaled dimension > canvas dimension, image fills that axis → allow origin to go negative/positive
+    //   so the image edge touches the canvas edge
 
-    const minOriginY = canvasHeight - scaledHeight;
-    const maxOriginY = 0;
-    const clampedOriginY = Math.max(minOriginY, Math.min(maxOriginY, originY));
+    let clampedOriginX = originX;
+    let clampedOriginY = originY;
 
-    const x = clampedOriginX - (canvasWidth / 2) * (1 - zoom);
-    const y = clampedOriginY - (canvasHeight / 2) * (1 - zoom);
+    // X-axis clamping
+    if (scaledWidth <= canvasWidth) {
+        // Image doesn't fill width — keep it entirely within canvas horizontally
+        clampedOriginX = Math.max(0, Math.min(canvasWidth - scaledWidth, originX));
+    } else if (scaledWidth > canvasWidth) {
+        // Image fills width — clamp so it touches at least one edge
+        // originX can range from (canvasWidth - scaledWidth) to 0
+        clampedOriginX = Math.max(canvasWidth - scaledWidth, Math.min(0, originX));
+    }
+    // If zoom is such that scaledWidth == canvasWidth exactly, both bounds are the same
 
-    return { x, y, zoom };
+    // Y-axis clamping
+    if (scaledHeight <= canvasHeight) {
+        // Image doesn't fill height — keep it entirely within canvas vertically
+        clampedOriginY = Math.max(0, Math.min(canvasHeight - scaledHeight, originY));
+    } else if (scaledHeight > canvasHeight) {
+        // Image fills height — clamp so it touches at least one edge
+        // originY can range from (canvasHeight - scaledHeight) to 0
+        clampedOriginY = Math.max(canvasHeight - scaledHeight, Math.min(0, originY));
+    }
+
+    const x = clampedOriginX - (canvasWidth / 2) * (1 - clampedZoom);
+    const y = clampedOriginY - (canvasHeight / 2) * (1 - clampedZoom);
+
+    return { x, y, zoom: clampedZoom };
 }
 
 function clampOriginForZoom(
@@ -127,17 +149,24 @@ function clampOriginForZoom(
     const scaledWidth = imageWidth * zoom;
     const scaledHeight = imageHeight * zoom;
 
-    // Only clamp when image is larger than canvas
-    if (scaledWidth <= canvasWidth && scaledHeight <= canvasHeight)
-        return { x: originX, y: originY };
+    let clampedOriginX = originX;
+    let clampedOriginY = originY;
 
-    const minOriginX = canvasWidth - scaledWidth;
-    const maxOriginX = 0;
-    const clampedOriginX = Math.max(minOriginX, Math.min(maxOriginX, originX));
+    // X-axis clamping: if image doesn't fill width, keep it within canvas
+    if (scaledWidth <= canvasWidth) {
+        clampedOriginX = Math.max(0, Math.min(canvasWidth - scaledWidth, originX));
+    } else {
+        // Image fills width — clamp to canvas edges
+        clampedOriginX = Math.max(canvasWidth - scaledWidth, Math.min(0, originX));
+    }
 
-    const minOriginY = canvasHeight - scaledHeight;
-    const maxOriginY = 0;
-    const clampedOriginY = Math.max(minOriginY, Math.min(maxOriginY, originY));
+    // Y-axis clamping: if image doesn't fill height, keep it within canvas
+    if (scaledHeight <= canvasHeight) {
+        clampedOriginY = Math.max(0, Math.min(canvasHeight - scaledHeight, originY));
+    } else {
+        // Image fills height — clamp to canvas edges
+        clampedOriginY = Math.max(canvasHeight - scaledHeight, Math.min(0, originY));
+    }
 
     return { x: clampedOriginX, y: clampedOriginY };
 }
@@ -1179,6 +1208,52 @@ export const MaskEditor = ({
         observer.observe(toolbarRef.current);
         return () => observer.disconnect();
     }, [isFullscreen]);
+
+    // Fit image to canvas when entering or exiting fullscreen
+    useEffect(() => {
+        if (imageWidth <= 0 || imageHeight <= 0) return;
+
+        // Use setTimeout to run after all useEffect effects (including canvas sync)
+        const timer = setTimeout(() => {
+            const c = ctxRef.current;
+            const canvas = c.canvas;
+            if (!canvas) return;
+
+            // Use internal canvas dimensions (accounting for devicePixelRatio)
+            const canvasW = canvas.width;
+            const canvasH = canvas.height;
+            if (canvasW <= 0 || canvasH <= 0) return;
+
+            // Calculate zoom that fits the entire image in the canvas (no cropping)
+            const fitZoom = Math.min(canvasW / imageWidth, canvasH / imageHeight);
+
+            // Compute scaled dimensions at fitZoom
+            const scaledWidth = imageWidth * fitZoom;
+            const scaledHeight = imageHeight * fitZoom;
+
+            // Compute origin so the image is centered in the canvas
+            let originX: number, originY: number;
+            if (scaledWidth <= canvasW) {
+                originX = (canvasW - scaledWidth) / 2;
+            } else {
+                originX = 0;
+            }
+            if (scaledHeight <= canvasH) {
+                originY = (canvasH - scaledHeight) / 2;
+            } else {
+                originY = 0;
+            }
+
+            // Convert origin to camera coords:
+            //   originX = camera.x + (canvasW / 2) * (1 - zoom)
+            //   => camera.x = originX - (canvasW / 2) * (1 - zoom)
+            c.camera.x = originX - (canvasW / 2) * (1 - fitZoom);
+            c.camera.y = originY - (canvasH / 2) * (1 - fitZoom);
+            c.camera.zoom = fitZoom;
+            requestRedraw(c);
+        }, 0);
+        return () => clearTimeout(timer);
+    }, [isFullscreen, imageWidth, imageHeight, toolbarHeight]);
 
     if (!imageSrc) {
         return (
