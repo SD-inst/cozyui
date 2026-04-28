@@ -101,6 +101,7 @@ const translation = {
         please_wait: 'Пожалуйста, подождите...',
         denoise: 'денойз',
         upscale: 'увеличение',
+        inpainting: 'инпейнтинг',
         mask_editor: {
             title: 'Редактор маски',
             no_image: 'Нет изображения',

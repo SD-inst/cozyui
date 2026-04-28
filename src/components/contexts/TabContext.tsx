@@ -17,7 +17,7 @@ export type handlerType = {
         api: any,
         value: any[],
         control: controlType
-    ) => void;
+    ) => void | Promise<void>;
 };
 
 /**
@@ -68,7 +68,7 @@ export const useRegisterHandler = ({
     handler,
 }: {
     name: string;
-    handler: (api: any, value: any, control: controlType) => void;
+    handler: (api: any, value: any, control: controlType) => void | Promise<void>;
 }) => {
     const { setValue } = useContext(TabContext);
     useEffect(() => {

@@ -378,6 +378,7 @@ export const MaskEditor = ({
     const [imageWidth, setImageWidth] = useState(0);
     const [imageHeight, setImageHeight] = useState(0);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+    const prevImageSrcRef = useRef<string | undefined>(undefined);
 
     const handleStateChange = useCallback(
         (canUndo: boolean, canRedo: boolean) => {
@@ -400,6 +401,7 @@ export const MaskEditor = ({
         if (imageWidth > 0 && imageHeight > 0)
             ctxRef.current.brush?.setDimensions(imageWidth, imageHeight);
     }, [imageWidth, imageHeight]);
+
     useEffect(() => {
         ctxRef.current.brush?.setBrushSize(brushSize);
     }, [brushSize]);
@@ -428,11 +430,11 @@ export const MaskEditor = ({
         (maskData: Uint8Array) => {
             maskDataRef.current = maskData;
             // Create a copy to ensure react-hook-form detects the change
-            onChange({ image: imageSrc, mask: new Uint8Array(maskData) });
+            onChange(new Uint8Array(maskData));
         },
-        [imageSrc, onChange],
+        [onChange]
     );
- 
+
     const undo = useEventCallback(() => {
         const c = ctxRef.current;
         if (!c.brush || !c.brush.undo()) return false;
@@ -456,6 +458,19 @@ export const MaskEditor = ({
         requestRedraw(c);
         onMaskChange(c.brush?.getMaskData() || new Uint8Array());
     });
+
+    // Clear mask when image source changes (also clears undo/redo stacks)
+    useEffect(() => {
+        if (prevImageSrcRef.current !== undefined && prevImageSrcRef.current !== imageSrc && imageWidth > 0 && imageHeight > 0) {
+            const c = ctxRef.current;
+            if (!defaultValue?.mask) {
+                c.brush?.clear();
+                requestRedraw(c);
+                onMaskChange(c.brush?.getMaskData() || new Uint8Array());
+            }
+        }
+        prevImageSrcRef.current = imageSrc;
+    }, [imageSrc, imageWidth, imageHeight, defaultValue, onMaskChange]);
 
     // Native touch handlers for mobile — React's passive listeners block preventDefault
     const nativeTouchRef = useRef<{

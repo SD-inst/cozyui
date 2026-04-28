@@ -122,7 +122,7 @@ export const GenerateButton = ({
     });
     const handlers = useHandlers();
     const enable_previews = useBooleanSetting(settings.enable_previews);
-    const sendPrompt = useEventCallback(() => {
+    const sendPrompt = useEventCallback(async () => {
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
 
@@ -163,7 +163,14 @@ export const GenerateButton = ({
                 handlers[name] !== undefined
             ) {
                 try {
-                    handlers[name](params.prompt, val, controls[name]); // modify api request
+                    const handlerResult = handlers[name](
+                        params.prompt,
+                        val,
+                        controls[name],
+                    ); // modify api request
+                    if (handlerResult instanceof Promise) {
+                        await handlerResult;
+                    }
                 } catch (e) {
                     console.log(e);
                     toast.error(

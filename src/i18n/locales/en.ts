@@ -102,6 +102,7 @@ const translation = {
         please_wait: 'Please wait...',
         denoise: 'denoise',
         upscale: 'upscale',
+        inpainting: 'inpainting',
         mask_editor: {
             title: 'Mask Editor',
             no_image: 'No image',

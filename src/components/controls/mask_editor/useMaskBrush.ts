@@ -66,6 +66,14 @@ export function useMaskBrush(
     notifyStateChange();
   }, [notifyStateChange]);
 
+  const clear = useCallback(() => {
+    // Clear mask and undo/redo stacks (used when image changes)
+    undoStackRef.current = [];
+    redoStackRef.current = [];
+    maskDataRef.current.fill(0);
+    notifyStateChange();
+  }, [notifyStateChange]);
+
   /**
    * Save current state to undo stack before starting to draw.
    * Clears redo stack (as in standard undo/redo systems).
@@ -348,6 +356,7 @@ export function useMaskBrush(
     eraseAt,
     paintLine,
     reset,
+    clear,
     saveState,
     undo,
     redo,
