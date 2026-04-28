@@ -1,4 +1,11 @@
-import { Box, useEventCallback } from '@mui/material';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+    useEventCallback,
+} from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { useRestoreValues } from '../../hooks/useRestoreValues';
@@ -8,10 +15,13 @@ import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { ToggleInput, ToggleInputProps } from './ToggleInput';
 import { FileUpload } from './FileUpload';
+import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
 import { UploadType } from './UploadType';
 import { MaskEditor } from './mask_editor/MaskEditor';
 import { useImageURL } from '../../hooks/useImageURL';
+import { useResultParam } from '../../hooks/useResult';
+import { useTranslate } from '../../i18n/I18nContext';
 
 type TValue = {
     enabled: boolean;
@@ -19,6 +29,13 @@ type TValue = {
     denoise: number;
     mask: Uint8Array;
     inpainting: boolean;
+    inpaint_crop_enabled: boolean;
+    mask_expand_pixels: number;
+    mask_blend_pixels: number;
+    context_expand_factor: number;
+    target_width: number;
+    target_height: number;
+    output_padding: string;
 };
 
 const defaultValue: TValue = {
@@ -27,6 +44,13 @@ const defaultValue: TValue = {
     denoise: 0.3,
     mask: new Uint8Array(0),
     inpainting: false,
+    inpaint_crop_enabled: true,
+    mask_expand_pixels: 2,
+    mask_blend_pixels: 32,
+    context_expand_factor: 1.2,
+    target_width: 1024,
+    target_height: 1024,
+    output_padding: '32',
 };
 
 /**
@@ -50,7 +74,7 @@ const createMaskCanvas = (
     const imageData = ctx.createImageData(width, height);
     for (let i = 0; i < maskData.length; i++) {
         const v = maskData[i] === 1 ? 255 : 0;
-        imageData.data[i * 4] = v;     // R
+        imageData.data[i * 4] = v; // R
         imageData.data[i * 4 + 1] = v; // G
         imageData.data[i * 4 + 2] = v; // B
         imageData.data[i * 4 + 3] = 255; // A
@@ -91,20 +115,23 @@ const uploadMaskImage = async (
 
 export const I2IToggle = ({
     name,
-    defaultValue: defaultEnabled = false,
     ...props
 }: ToggleInputProps & { name: string }) => {
+    const tr = useTranslate();
     const apiUrl = useApiURL();
     const setValue = useRestoreValues();
     const value = useWatch({ name });
     const imageURL = useImageURL(
         typeof value === 'object' && value ? (value as any).image : value,
     );
+    const resultParam = useResultParam();
 
     // Track mask timestamps to avoid re-uploading unchanged masks
     const [lastMaskModifiedAt, setLastMaskModifiedAt] = useState(0);
     const [lastMaskUploadAt, setLastMaskUploadAt] = useState(0);
-    const [lastUploadedMaskName, setLastUploadedMaskName] = useState<string | null>(null);
+    const [lastUploadedMaskName, setLastUploadedMaskName] = useState<
+        string | null
+    >(null);
 
     useEffect(() => {
         if (typeof value === 'string') {
@@ -126,11 +153,15 @@ export const I2IToggle = ({
 
     const enabled = useWatch({
         name: `${name}.enabled`,
-        defaultValue: defaultEnabled,
+        defaultValue: false,
     });
     const inpainting = useWatch({
         name: `${name}.inpainting`,
         defaultValue: false,
+    });
+    const inpaintCropEnabled = useWatch({
+        name: `${name}.inpaint_crop_enabled`,
+        defaultValue: true,
     });
 
     const handler = useEventCallback(
@@ -154,20 +185,12 @@ export const I2IToggle = ({
             const vaeOutputIdx =
                 vaeNode?.class_type === 'CheckpointLoaderSimple' ? 2 : 0;
 
-            // Build base graph for insertGraph (LoadImage + VAEEncode)
+            // Build base graph for insertGraph (LoadImage)
             const graph: Record<string, any> = {
                 ':load_image': {
                     inputs: { image: value.image },
                     class_type: 'LoadImage',
                     _meta: { title: 'Load Image' },
-                },
-                ':vae_encode': {
-                    inputs: {
-                        pixels: [':load_image', 0],
-                        vae: [vae_loader_id, vaeOutputIdx],
-                    },
-                    class_type: 'VAEEncode',
-                    _meta: { title: 'VAE Encode' },
                 },
             };
 
@@ -195,11 +218,18 @@ export const I2IToggle = ({
 
                 // Avoid re-uploading unchanged mask — compare timestamps
                 let maskFilename: string;
-                if (lastUploadedMaskName && lastMaskModifiedAt <= lastMaskUploadAt) {
+                if (
+                    lastUploadedMaskName &&
+                    lastMaskModifiedAt <= lastMaskUploadAt
+                ) {
                     // mask hasn't been modified since last upload
                     maskFilename = lastUploadedMaskName;
                 } else {
-                    maskFilename = await uploadMaskImage(maskCanvas, apiUrl, originalImageFilename);
+                    maskFilename = await uploadMaskImage(
+                        maskCanvas,
+                        apiUrl,
+                        originalImageFilename,
+                    );
                     setLastUploadedMaskName(maskFilename);
                     setLastMaskUploadAt(Date.now());
                 }
@@ -210,39 +240,157 @@ export const I2IToggle = ({
                 const positiveLink = samplerNode.inputs.positive; // e.g., ['6', 0]
                 const negativeLink = samplerNode.inputs.negative; // e.g., ['7', 0]
 
-                // Add InpaintModelConditioning node — use separate mask file
-                graph[':inpaint_conditioning'] = {
-                    inputs: {
-                        noise_mask: true,
-                        positive: positiveLink,
-                        negative: negativeLink,
-                        vae: [vae_loader_id, vaeOutputIdx],
-                        pixels: [':load_image', 0],
-                        mask: [':mask_upload', 0],
-                    },
-                    class_type: 'InpaintModelConditioning',
-                    _meta: { title: 'InpaintModelConditioning' },
-                };
+                // Add mask upload (common to both modes)
                 graph[':mask_upload'] = {
-                    inputs: { image: maskFilename },
-                    class_type: 'LoadImage',
-                    _meta: { title: 'Load Mask' },
+                    inputs: { image: maskFilename, channel: 'red' },
+                    class_type: 'LoadImageMask',
+                    _meta: { title: 'Load Image (as Mask)' },
                 };
-                graph[':mask_to_mask'] = {
-                    inputs: { image: [':mask_upload', 0], channel: 'red' },
-                    class_type: 'ImageToMask',
-                    _meta: { title: 'Image to Mask' },
+
+                if (value.inpaint_crop_enabled) {
+                    // === INPAINT CROP MODE ===
+
+                    // Add InpaintCropImproved
+                    graph[':inpaint_crop'] = {
+                        inputs: {
+                            downscale_algorithm: 'bilinear',
+                            upscale_algorithm: 'lanczos',
+                            preresize: false,
+                            preresize_mode: 'ensure minimum resolution',
+                            preresize_min_width: 1024,
+                            preresize_min_height: 1024,
+                            preresize_max_width: 16384,
+                            preresize_max_height: 16384,
+                            mask_fill_holes: true,
+                            mask_expand_pixels: value.mask_expand_pixels,
+                            mask_invert: false,
+                            mask_blend_pixels: value.mask_blend_pixels,
+                            mask_hipass_filter: 0.1,
+                            extend_for_outpainting: false,
+                            extend_up_factor: 1,
+                            extend_down_factor: 1,
+                            extend_left_factor: 1,
+                            extend_right_factor: 1,
+                            context_from_mask_extend_factor:
+                                value.context_expand_factor,
+                            output_resize_to_target_size: true,
+                            output_target_width: value.target_width,
+                            output_target_height: value.target_height,
+                            output_padding: value.output_padding,
+                            image: [':load_image', 0],
+                            mask: [':mask_upload', 0],
+                        },
+                        class_type: 'InpaintCropImproved',
+                        _meta: { title: '✂️ Inpaint Crop (Improved)' },
+                    };
+
+                    // Add InpaintModelConditioning with cropped inputs
+                    graph[':inpaint_conditioning'] = {
+                        inputs: {
+                            noise_mask: true,
+                            positive: positiveLink,
+                            negative: negativeLink,
+                            vae: [vae_loader_id, vaeOutputIdx],
+                            pixels: [':inpaint_crop', 1], // cropped image
+                            mask: [':inpaint_crop', 2], // cropped mask
+                        },
+                        class_type: 'InpaintModelConditioning',
+                        _meta: { title: 'InpaintModelConditioning' },
+                    };
+
+                    // Find VAEDecode ID from result node (before insertGraph)
+                    const resultNodeId = resultParam.id;
+                    const resultNode = api[resultNodeId];
+                    const imagesInput = resultNode?.inputs?.images;
+                    const vaeDecodeNodeId = Array.isArray(imagesInput)
+                        ? imagesInput[0]
+                        : null;
+
+                    // Add InpaintStitchImproved
+                    graph[':inpaint_stitch'] = {
+                        inputs: {
+                            stitcher: [':inpaint_crop', 0],
+                            inpainted_image: vaeDecodeNodeId
+                                ? [vaeDecodeNodeId, 0]
+                                : null,
+                        },
+                        class_type: 'InpaintStitchImproved',
+                        _meta: { title: '✂️ Inpaint Stitch (Improved)' },
+                    };
+
+                    // Insert graph
+                    const baseNodeId = insertGraph(api, graph);
+
+                    // Modify result node to use InpaintStitchImproved output
+                    if (vaeDecodeNodeId) {
+                        api[resultNodeId].inputs.images = [
+                            `${baseNodeId}:inpaint_stitch`,
+                            0,
+                        ];
+                    }
+
+                    // Update sampler connections
+                    const inpaintConditioningId = `${baseNodeId}:inpaint_conditioning`;
+                    api[sampler_id].inputs.positive = [
+                        inpaintConditioningId,
+                        0,
+                    ];
+                    api[sampler_id].inputs.negative = [
+                        inpaintConditioningId,
+                        1,
+                    ];
+                    api[sampler_id].inputs.latent_image = [
+                        inpaintConditioningId,
+                        2,
+                    ];
+                } else {
+                    // === EXISTING INPAINT MODE (no crop) ===
+                    graph[':inpaint_conditioning'] = {
+                        inputs: {
+                            noise_mask: true,
+                            positive: positiveLink,
+                            negative: negativeLink,
+                            vae: [vae_loader_id, vaeOutputIdx],
+                            pixels: [':load_image', 0],
+                            mask: [':mask_upload', 0],
+                        },
+                        class_type: 'InpaintModelConditioning',
+                        _meta: { title: 'InpaintModelConditioning' },
+                    };
+
+                    const baseNodeId = insertGraph(api, graph);
+
+                    const inpaintConditioningId = `${baseNodeId}:inpaint_conditioning`;
+                    api[sampler_id].inputs.positive = [
+                        inpaintConditioningId,
+                        0,
+                    ];
+                    api[sampler_id].inputs.negative = [
+                        inpaintConditioningId,
+                        1,
+                    ];
+                    api[sampler_id].inputs.latent_image = [
+                        inpaintConditioningId,
+                        2,
+                    ];
+                }
+            } else {
+                // === PLAIN I2I MODE ===
+                graph[':vae_encode'] = {
+                    inputs: {
+                        pixels: [':load_image', 0],
+                        vae: [vae_loader_id, vaeOutputIdx],
+                    },
+                    class_type: 'VAEEncode',
+                    _meta: { title: 'VAE Encode' },
                 };
-                // Update inpaint_conditioning to use the converted mask
-                graph[':inpaint_conditioning'].inputs.mask = [':mask_to_mask', 0];
-                delete(graph[':vae_encode'])
+
+                const baseNodeId = insertGraph(api, graph);
+                api[sampler_id].inputs.latent_image = [
+                    `${baseNodeId}:vae_encode`,
+                    0,
+                ];
             }
-
-            const baseNodeId = insertGraph(api, graph);
-            const vaeEncodeRef = [`${baseNodeId}:vae_encode`, 0];
-
-            // Replace latent_image on sampler
-            api[sampler_id].inputs.latent_image = vaeEncodeRef;
 
             // Set denoise based on sampler type
             if (samplerNode?.class_type === 'KSampler') {
@@ -253,14 +401,6 @@ export const I2IToggle = ({
                     const schedulerNodeId = sigmasLink[0];
                     api[schedulerNodeId].inputs.denoise = value.denoise;
                 }
-            }
-
-            // Redirect positive/negative through InpaintModelConditioning if inpainting
-            if (value.inpainting) {
-                const inpaintNodeId = `${baseNodeId}:inpaint_conditioning`;
-                api[sampler_id].inputs.positive = [inpaintNodeId, 0];
-                api[sampler_id].inputs.negative = [inpaintNodeId, 1];
-                api[sampler_id].inputs.latent_image = [inpaintNodeId, 2];
             }
         },
     );
@@ -297,13 +437,95 @@ export const I2IToggle = ({
                         {...props}
                     />
                     {inpainting && (
-                        <MaskEditor
-                            name={`${name}.mask`}
-                            imageSrc={imageURL}
-                            defaultBrushSize={30}
-                            maskColor='#ff0000'
-                            maskOpacity={0.5}
-                        />
+                        <>
+                            <MaskEditor
+                                name={`${name}.mask`}
+                                imageSrc={imageURL}
+                                defaultBrushSize={30}
+                                maskColor='#ff0000'
+                                maskOpacity={0.5}
+                            />
+                            <Accordion>
+                                <AccordionSummary
+                                    expandIcon={<ExpandMoreIcon />}
+                                >
+                                    {tr('controls.inpaint_crop_settings')}
+                                </AccordionSummary>
+                                <AccordionDetails>
+                                    <ToggleInput
+                                        name={`${name}.inpaint_crop_enabled`}
+                                        label='inpaint_crop'
+                                        defaultValue={true}
+                                    />
+                                    {inpaintCropEnabled && (
+                                        <Box
+                                            display='flex'
+                                            flexDirection='column'
+                                            gap={2}
+                                            mt={1}
+                                        >
+                                            <SliderInput
+                                                name={`${name}.mask_expand_pixels`}
+                                                label='mask_expand_pixels'
+                                                defaultValue={2}
+                                                min={0}
+                                                max={64}
+                                                step={1}
+                                            />
+                                            <SliderInput
+                                                name={`${name}.mask_blend_pixels`}
+                                                label='mask_blend_pixels'
+                                                defaultValue={32}
+                                                min={0}
+                                                max={128}
+                                                step={1}
+                                            />
+                                            <SliderInput
+                                                name={`${name}.context_expand_factor`}
+                                                label='context_expand_factor'
+                                                defaultValue={1.2}
+                                                min={1}
+                                                max={3}
+                                                step={0.05}
+                                            />
+                                            <Box display='flex' gap={1}>
+                                                <SliderInput
+                                                    name={`${name}.target_width`}
+                                                    label='target_width'
+                                                    defaultValue={1024}
+                                                    min={256}
+                                                    max={2048}
+                                                    step={64}
+                                                />
+                                                <SliderInput
+                                                    name={`${name}.target_height`}
+                                                    label='target_height'
+                                                    defaultValue={1024}
+                                                    min={256}
+                                                    max={2048}
+                                                    step={64}
+                                                />
+                                            </Box>
+                                            <SelectInput
+                                                name={`${name}.output_padding`}
+                                                label='output_padding'
+                                                defaultValue={'32'}
+                                                choices={[
+                                                    '0',
+                                                    '8',
+                                                    '16',
+                                                    '32',
+                                                    '64',
+                                                    '128',
+                                                    '256',
+                                                    '512',
+                                                ]}
+                                            />
+                                        </Box>
+                                    )}
+                                </AccordionDetails>
+                            </Accordion>
+                        </>
                     )}
                 </Box>
             )}

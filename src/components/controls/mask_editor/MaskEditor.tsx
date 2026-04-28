@@ -850,6 +850,8 @@ export const MaskEditor = ({
                 cachedCtx.drawImage(img, 0, 0);
                 c.cachedCanvas = cachedCanvas;
             }
+            // Trigger redraw with the new image
+            c.needsRedraw = true;
         };
         img.src = imageSrc;
     }, [imageSrc, defaultValue]);
@@ -1231,6 +1233,8 @@ export const MaskEditor = ({
                               zIndex: 9999,
                               borderRadius: 0,
                               aspectRatio: 'unset',
+                              maxWidth: '100vw',
+                              maxHeight: '100vh',
                           }
                         : {}),
                 }}
