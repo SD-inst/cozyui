@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useEventCallback } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { useTranslate } from '../../../i18n/I18nContext';
@@ -148,12 +148,14 @@ function clampOriginForZoom(
 interface Ctx {
     canvas: HTMLCanvasElement | null;
     cachedCanvas: HTMLCanvasElement | null;
+    maskCanvas: HTMLCanvasElement | null;
+    maskImageData: ImageData | null; // cached ImageData for maskCanvas
+    maskBuf32: Uint32Array | null; // view over maskImageData.data.buffer
     camera: { x: number; y: number; zoom: number };
     isDrawing: boolean;
     mouseMode: MouseMode;
     lastPos: { x: number; y: number } | null;
     brush: ReturnType<typeof useMaskBrush> | null;
-    onMaskChange: ((maskData: Uint8Array) => void) | null;
     maskColor: string;
     maskOpacity: number;
     isErasing: boolean;
@@ -164,6 +166,8 @@ interface Ctx {
     isPinching: boolean;
     lastPinchCenter: { x: number; y: number } | null;
     justLeftPinch: boolean;
+    needsRedraw: boolean; // set true when drawing, consumed by rAF loop
+    blockDrawAfterPinch: boolean; // block drawing until all fingers lifted after pinch/pan
 }
 
 function screenToImageCoords(
@@ -197,13 +201,74 @@ function screenToImageCoords(
     };
 }
 
+function ensureMaskCanvas(c: Ctx) {
+    if (
+        !c.maskCanvas ||
+        c.maskCanvas.width !== c.imageWidth ||
+        c.maskCanvas.height !== c.imageHeight
+    ) {
+        if (c.maskCanvas) c.maskCanvas.remove();
+        const mc = document.createElement('canvas');
+        mc.width = c.imageWidth;
+        mc.height = c.imageHeight;
+        c.maskCanvas = mc;
+        c.maskImageData = null;
+        c.maskBuf32 = null;
+    }
+}
+
+function updateMaskCanvas(c: Ctx) {
+    const maskCanvas = c.maskCanvas;
+    if (!maskCanvas) return;
+    const maskCtx = maskCanvas.getContext('2d');
+    if (!maskCtx) return;
+
+    const w = c.imageWidth;
+    const h = c.imageHeight;
+    const maskData = c.brush?.getMaskData();
+    if (!maskData) {
+        maskCtx.clearRect(0, 0, w, h);
+        c.maskImageData = null;
+        c.maskBuf32 = null;
+        return;
+    }
+
+    const rgb = hexToRgb(c.maskColor);
+    const alpha = Math.floor((c.maskOpacity ?? 0.5) * 255);
+    const paintedPixel = (alpha << 24) | (rgb.b << 16) | (rgb.g << 8) | rgb.r;
+    const clearPixel = 0;
+
+    // Reuse cached ImageData / Uint32Array buffer
+    if (
+        !c.maskImageData ||
+        c.maskImageData.width !== w ||
+        c.maskImageData.height !== h
+    ) {
+        c.maskImageData = maskCtx.createImageData(w, h);
+    }
+    if (!c.maskBuf32) {
+        c.maskBuf32 = new Uint32Array(c.maskImageData.data.buffer);
+    }
+
+    const buf = c.maskBuf32;
+    // Only update pixels that changed
+    for (let i = 0; i < maskData.length; i++) {
+        buf[i] = maskData[i] ? paintedPixel : clearPixel;
+    }
+    maskCtx.putImageData(c.maskImageData, 0, 0);
+}
+
 function performRedraw(c: Ctx) {
     const canvas = c.canvas;
     if (!canvas || !c.imageWidth || !c.imageHeight || !c.brush || !c.maskColor)
         return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    // Black background — prevents empty areas when panning
+
+    ensureMaskCanvas(c);
+    updateMaskCanvas(c);
+
+    // Composite: black bg → image → mask overlay
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -217,34 +282,14 @@ function performRedraw(c: Ctx) {
     );
     if (c.cachedCanvas)
         ctx.drawImage(c.cachedCanvas, 0, 0, c.imageWidth, c.imageHeight);
-    const maskData = c.brush.getMaskData();
-    if (maskData) {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = c.imageWidth;
-        tempCanvas.height = c.imageHeight;
-        const maskCtx = tempCanvas.getContext('2d');
-        if (maskCtx) {
-            const imageData = maskCtx.createImageData(
-                c.imageWidth,
-                c.imageHeight,
-            );
-            const rgb = hexToRgb(c.maskColor);
-            const alpha = Math.floor((c.maskOpacity ?? 0.5) * 255);
-            for (let i = 0; i < maskData.length; i++) {
-                const idx = i * 4;
-                if (maskData[i] === 1) {
-                    imageData.data[idx] = rgb.r;
-                    imageData.data[idx + 1] = rgb.g;
-                    imageData.data[idx + 2] = rgb.b;
-                    imageData.data[idx + 3] = alpha;
-                } else {
-                    imageData.data[idx + 3] = 0;
-                }
-            }
-            maskCtx.putImageData(imageData, 0, 0);
-            ctx.drawImage(tempCanvas, 0, 0);
-        }
+    if (c.maskCanvas) {
+        ctx.drawImage(c.maskCanvas, 0, 0);
     }
+}
+
+// Request redraw via rAF — batches multiple mousemove events into one draw call
+function requestRedraw(c: Ctx) {
+    c.needsRedraw = true;
 }
 
 export const MaskEditor = ({
@@ -286,12 +331,14 @@ export const MaskEditor = ({
     const ctxRef = useRef<Ctx>({
         canvas: null,
         cachedCanvas: null,
+        maskCanvas: null,
+        maskImageData: null,
+        maskBuf32: null,
         camera: { x: 0, y: 0, zoom: DEFAULT_ZOOM },
         isDrawing: false,
         mouseMode: 'draw',
         lastPos: null,
         brush: null,
-        onMaskChange: null,
         maskColor,
         maskOpacity,
         isErasing,
@@ -302,7 +349,29 @@ export const MaskEditor = ({
         isPinching: false,
         lastPinchCenter: null,
         justLeftPinch: false,
+        needsRedraw: false,
+        blockDrawAfterPinch: false,
     });
+
+    // rAF loop — draws only when needsRedraw is true
+    useEffect(() => {
+        let rafId = 0;
+        const loop = () => {
+            const c = ctxRef.current;
+            if (
+                c.needsRedraw &&
+                c.canvas &&
+                c.imageWidth > 0 &&
+                c.imageHeight > 0
+            ) {
+                c.needsRedraw = false;
+                performRedraw(c);
+            }
+            rafId = requestAnimationFrame(loop);
+        };
+        rafId = requestAnimationFrame(loop);
+        return () => cancelAnimationFrame(rafId);
+    }, []);
 
     const [containerWidth, setContainerWidth] = useState(0);
     const [containerHeight, setContainerHeight] = useState(0);
@@ -310,10 +379,13 @@ export const MaskEditor = ({
     const [imageHeight, setImageHeight] = useState(0);
     const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
 
-    const handleStateChange = useCallback((canUndo: boolean, canRedo: boolean) => {
-        setCanUndo(canUndo);
-        setCanRedo(canRedo);
-    }, []);
+    const handleStateChange = useCallback(
+        (canUndo: boolean, canRedo: boolean) => {
+            setCanUndo(canUndo);
+            setCanRedo(canRedo);
+        },
+        [],
+    );
 
     const brush = useMaskBrush(1, 1, brushSize, handleStateChange);
     ctxRef.current.brush = brush;
@@ -340,48 +412,50 @@ export const MaskEditor = ({
 
     useEffect(() => {
         ctxRef.current.maskColor = maskColor;
-        performRedraw(ctxRef.current);
+        requestRedraw(ctxRef.current);
     }, [maskColor]);
 
     useEffect(() => {
         ctxRef.current.maskOpacity = maskOpacity;
-        performRedraw(ctxRef.current);
+        requestRedraw(ctxRef.current);
     }, [maskOpacity]);
 
     useEffect(() => {
         ctxRef.current.isErasing = isErasing;
     }, [isErasing]);
 
-    useEffect(() => {
-        ctxRef.current.onMaskChange = (maskData: Uint8Array) => {
+    const onMaskChange = useCallback(
+        (maskData: Uint8Array) => {
             maskDataRef.current = maskData;
-            onChange({ image: imageSrc, mask: maskData });
-        };
-    }, [imageSrc, onChange]);
-
-    const undo = useCallback(() => {
+            // Create a copy to ensure react-hook-form detects the change
+            onChange({ image: imageSrc, mask: new Uint8Array(maskData) });
+        },
+        [imageSrc, onChange],
+    );
+ 
+    const undo = useEventCallback(() => {
         const c = ctxRef.current;
         if (!c.brush || !c.brush.undo()) return false;
-        performRedraw(c);
-        c.onMaskChange?.(c.brush.getMaskData());
+        requestRedraw(c);
+        onMaskChange(c.brush.getMaskData());
         return true;
-    }, []);
+    });
 
-    const redo = useCallback(() => {
+    const redo = useEventCallback(() => {
         const c = ctxRef.current;
         if (!c.brush || !c.brush.redo()) return false;
-        performRedraw(c);
-        c.onMaskChange?.(c.brush.getMaskData());
+        requestRedraw(c);
+        onMaskChange(c.brush.getMaskData());
         return true;
-    }, []);
+    });
 
-    const resetMask = useCallback(() => {
+    const resetMask = useEventCallback(() => {
         const c = ctxRef.current;
         if (!c.imageWidth || !c.imageHeight) return;
         c.brush?.reset();
-        performRedraw(c);
-        c.onMaskChange?.(c.brush?.getMaskData() || new Uint8Array());
-    }, []);
+        requestRedraw(c);
+        onMaskChange(c.brush?.getMaskData() || new Uint8Array());
+    });
 
     // Native touch handlers for mobile — React's passive listeners block preventDefault
     const nativeTouchRef = useRef<{
@@ -436,6 +510,10 @@ export const MaskEditor = ({
                 c.isDrawing = true;
                 c.touchMoved = false;
                 c.lastPos = null; // Reset so touchMove always draws at least one segment
+                // If we just finished a pinch/pan, block drawing until all fingers lift
+                if (c.blockDrawAfterPinch) {
+                    c.isDrawing = false;
+                }
             }
         };
 
@@ -554,7 +632,7 @@ export const MaskEditor = ({
                 (canvas as HTMLElement).dataset.lastPinchCenterY =
                     String(currentCenterY);
 
-                performRedraw(c);
+                requestRedraw(c);
                 return;
             }
 
@@ -620,6 +698,9 @@ export const MaskEditor = ({
                     c.lastPos = { x: pos.x, y: pos.y };
                     c.touchMoved = true;
                     c.justLeftPinch = false;
+                } else if (c.blockDrawAfterPinch) {
+                    // Still blocking drawing after pinch/pan, just track position
+                    c.lastPos = { x: pos.x, y: pos.y };
                 } else if (!c.touchMoved && !c.lastPos && !c.justLeftPinch) {
                     // First touch after touchStart — just set position
                     c.lastPos = { x: pos.x, y: pos.y };
@@ -630,7 +711,7 @@ export const MaskEditor = ({
                     c.justLeftPinch = false;
                 }
                 if (c.touchMoved) {
-                    performRedraw(c);
+                    requestRedraw(c);
                 }
             }
         };
@@ -640,10 +721,12 @@ export const MaskEditor = ({
             const c = ctxRef.current;
             const touches = e.touches;
             if (touches.length === 0) {
+                // All fingers lifted — unblock drawing after pinch/pan
+                c.blockDrawAfterPinch = false;
                 if (c.isDrawing) {
                     c.isDrawing = false;
                     c.lastPos = null;
-                    c.onMaskChange?.(
+                    onMaskChange(
                         c.brush?.getMaskData() || new Uint8Array(),
                     );
                 }
@@ -653,14 +736,12 @@ export const MaskEditor = ({
                 }
             } else if (touches.length === 1) {
                 if (c.isPinching) {
-                    // Transition from 2-finger pinch to 1-finger dragging
-                    // Do NOT draw here — drawing starts in touchMove when finger actually moves
+                    // User released one finger during pinch — just stop pinching.
+                    // Do NOT start drawing; user must lift this finger and touch
+                    // again to begin a new stroke.
                     c.isPinching = false;
                     c.lastPinchCenter = null;
-                    c.isDrawing = true;
-                    c.touchMoved = false;
-                    c.justLeftPinch = true; // Skip saveState on next touchMove
-                    // Do NOT set lastPos here — leave it null so touchMove knows to wait
+                    c.blockDrawAfterPinch = true; // block until all fingers lift
                 }
                 // Track position for continued drawing (but don't paint)
                 if (!c.justLeftPinch) {
@@ -707,7 +788,7 @@ export const MaskEditor = ({
             });
             nativeTouchRef.current.isSetup = false;
         };
-    }, []);
+    }, [onMaskChange]);
 
     // Prevent page scroll on mouse wheel zoom
     useEffect(() => {
@@ -799,7 +880,7 @@ export const MaskEditor = ({
         c.camera.zoom = fitZoom;
         c.camera.x = 0;
         c.camera.y = 0;
-        performRedraw(c);
+        requestRedraw(c);
     }, [imageWidth, imageHeight, containerWidth, containerHeight]);
 
     // ResizeObserver
@@ -884,7 +965,7 @@ export const MaskEditor = ({
                 ctxRef.current.camera.x = clamped.x;
                 ctxRef.current.camera.y = clamped.y;
                 ctxRef.current.camera.zoom = clamped.zoom;
-                performRedraw(ctxRef.current);
+                requestRedraw(ctxRef.current);
             }
         }
     });
@@ -913,7 +994,7 @@ export const MaskEditor = ({
                 c.brush?.paintAt(pos.x, pos.y);
             }
             c.lastPos = { x: pos.x, y: pos.y };
-            performRedraw(c);
+            requestRedraw(c);
         }
         if (e.button === 2 && c.imageWidth > 0 && c.imageHeight > 0) {
             c.isDrawing = true;
@@ -922,7 +1003,7 @@ export const MaskEditor = ({
             const pos = screenToImageCoords(e.clientX, e.clientY, canvas, c);
             c.brush?.eraseAt(pos.x, pos.y);
             c.lastPos = { x: pos.x, y: pos.y };
-            performRedraw(c);
+            requestRedraw(c);
         }
     }, []);
 
@@ -943,7 +1024,7 @@ export const MaskEditor = ({
             c.camera.x = clamped.x;
             c.camera.y = clamped.y;
             c.camera.zoom = clamped.zoom;
-            performRedraw(c);
+            requestRedraw(c);
             return;
         }
         if (!c.isDrawing || !c.imageWidth || !c.imageHeight) return;
@@ -975,10 +1056,10 @@ export const MaskEditor = ({
             }
         }
         c.lastPos = { x: pos.x, y: pos.y };
-        performRedraw(c);
+        requestRedraw(c);
     }, []);
 
-    const handleMouseUp = useCallback(() => {
+    const handleMouseUp = useEventCallback(() => {
         const c = ctxRef.current;
         if (c.mouseMode === 'pan') {
             c.mouseMode = 'draw';
@@ -988,9 +1069,9 @@ export const MaskEditor = ({
             c.isDrawing = false;
             c.mouseMode = 'draw';
             c.lastPos = null;
-            c.onMaskChange?.(c.brush?.getMaskData() || new Uint8Array());
+            onMaskChange(c.brush?.getMaskData() || new Uint8Array());
         }
-    }, []);
+    });
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault();
@@ -1038,7 +1119,7 @@ export const MaskEditor = ({
         c.camera.x = clampedCam.x;
         c.camera.y = clampedCam.y;
         c.camera.zoom = clampedCam.zoom;
-        performRedraw(c);
+        requestRedraw(c);
     }, []);
 
     const handleContextMenu = useCallback(
@@ -1074,25 +1155,6 @@ export const MaskEditor = ({
     const handleReset = useCallback(() => {
         resetMask();
     }, [resetMask]);
-    const getMaskData = useCallback(() => maskDataRef.current, []);
-    const getMaskData2D = useCallback(() => {
-        const data = maskDataRef.current,
-            result: number[][] = [];
-        for (let y = 0; y < imageHeight; y++) {
-            const row: number[] = [];
-            for (let x = 0; x < imageWidth; x++)
-                row.push(data[y * imageWidth + x]);
-            result.push(row);
-        }
-        return result;
-    }, [imageWidth, imageHeight]);
-
-    useEffect(() => {
-        (window as any).__maskEditor = { getMaskData, getMaskData2D };
-        return () => {
-            delete (window as any).__maskEditor;
-        };
-    }, [getMaskData, getMaskData2D]);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const toolbarRef = useRef<HTMLDivElement>(null);
