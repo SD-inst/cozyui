@@ -17,7 +17,7 @@ type TValue = {
     enabled: boolean;
     image: string;
     denoise: number;
-    mask: Uint8Array | number[][];
+    mask: Uint8Array;
     inpainting: boolean;
 };
 
@@ -35,7 +35,7 @@ const defaultValue: TValue = {
  * Where mask is 0 → black (0, 0, 0) — this is the preserved region.
  */
 const createMaskCanvas = (
-    mask: Uint8Array | number[][],
+    mask: Uint8Array,
     width: number,
     height: number,
 ): HTMLCanvasElement => {
@@ -45,19 +45,7 @@ const createMaskCanvas = (
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('No canvas context');
 
-    // Convert mask to flat array
-    let maskData: number[];
-    if (Array.isArray(mask)) {
-        if (Array.isArray(mask[0])) {
-            const flat: number[] = [];
-            for (const row of mask) flat.push(...row);
-            maskData = flat;
-        } else {
-            maskData = (mask as unknown as number[]) as number[];
-        }
-    } else {
-        maskData = Array.from(mask);
-    }
+    const maskData = Array.from(mask);
 
     const imageData = ctx.createImageData(width, height);
     for (let i = 0; i < maskData.length; i++) {

@@ -299,26 +299,6 @@ export function useMaskBrush(
   }, []);
 
   /**
-   * Get mask data as a 2D array.
-   */
-  const getMaskData2D = useCallback(() => {
-    const data = maskDataRef.current;
-    const w = widthRef.current;
-    const h = heightRef.current;
-    const result: number[][] = [];
-
-    for (let y = 0; y < h; y++) {
-      const row: number[] = [];
-      for (let x = 0; x < w; x++) {
-        row.push(data[y * w + x]);
-      }
-      result.push(row);
-    }
-
-    return result;
-  }, []);
-
-  /**
    * Set mask data from a flat array.
    */
   const setMaskData = useCallback(
@@ -328,24 +308,6 @@ export function useMaskBrush(
       if (data.length === w * h) {
         maskDataRef.current = new Uint8Array(data);
       }
-    },
-    []
-  );
-
-  /**
-   * Set mask data from a 2D array.
-   */
-  const setMaskData2D = useCallback(
-    (data: number[][]) => {
-      const w = widthRef.current;
-      const h = heightRef.current;
-      const flat = new Uint8Array(w * h);
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < w; x++) {
-          flat[y * w + x] = data[y]?.[x] ?? 0;
-        }
-      }
-      maskDataRef.current = flat;
     },
     []
   );
@@ -363,9 +325,7 @@ export function useMaskBrush(
     getCanUndo,
     getCanRedo,
     getMaskData,
-    getMaskData2D,
     setMaskData,
-    setMaskData2D,
     maskDataRef,
     setDimensions,
     setBrushSize,

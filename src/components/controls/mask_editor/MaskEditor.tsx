@@ -12,10 +12,7 @@ export interface MaskEditorProps {
     name: string;
     label?: string;
     imageSrc?: string;
-    defaultValue?: {
-        image: string;
-        mask: Uint8Array | number[][];
-    };
+    defaultValue?: Uint8Array;
     brushSizeMin?: number;
     brushSizeMax?: number;
     brushSizeStep?: number;
@@ -28,7 +25,7 @@ export interface MaskEditorProps {
 
 export type MaskValue = {
     image: string;
-    mask: Uint8Array | number[][];
+    mask: Uint8Array;
 };
 
 function hexToRgb(hex: string): { r: number; g: number; b: number } {
@@ -313,7 +310,7 @@ export const MaskEditor = ({
         imageSrcProp ??
         (value && typeof value === 'object' && 'image' in value
             ? (value as any).image
-            : (defaultValue?.image ?? ''));
+            : '');
 
     const [brushSize, setBrushSize] = useState(defaultBrushSize);
     const [maskColor, setMaskColor] = useState(defaultMaskColor);
@@ -432,7 +429,7 @@ export const MaskEditor = ({
             // Create a copy to ensure react-hook-form detects the change
             onChange(new Uint8Array(maskData));
         },
-        [onChange]
+        [onChange],
     );
 
     const undo = useEventCallback(() => {
@@ -461,16 +458,19 @@ export const MaskEditor = ({
 
     // Clear mask when image source changes (also clears undo/redo stacks)
     useEffect(() => {
-        if (prevImageSrcRef.current !== undefined && prevImageSrcRef.current !== imageSrc && imageWidth > 0 && imageHeight > 0) {
+        if (
+            prevImageSrcRef.current !== undefined &&
+            prevImageSrcRef.current !== imageSrc &&
+            imageWidth > 0 &&
+            imageHeight > 0
+        ) {
             const c = ctxRef.current;
-            if (!defaultValue?.mask) {
-                c.brush?.clear();
-                requestRedraw(c);
-                onMaskChange(c.brush?.getMaskData() || new Uint8Array());
-            }
+            c.brush?.clear();
+            requestRedraw(c);
+            onMaskChange(c.brush?.getMaskData() || new Uint8Array());
         }
         prevImageSrcRef.current = imageSrc;
-    }, [imageSrc, imageWidth, imageHeight, defaultValue, onMaskChange]);
+    }, [imageSrc, imageWidth, imageHeight, onMaskChange]);
 
     // Native touch handlers for mobile — React's passive listeners block preventDefault
     const nativeTouchRef = useRef<{
@@ -741,9 +741,7 @@ export const MaskEditor = ({
                 if (c.isDrawing) {
                     c.isDrawing = false;
                     c.lastPos = null;
-                    onMaskChange(
-                        c.brush?.getMaskData() || new Uint8Array(),
-                    );
+                    onMaskChange(c.brush?.getMaskData() || new Uint8Array());
                 }
                 if (c.isPinching) {
                     c.isPinching = false;
@@ -832,34 +830,17 @@ export const MaskEditor = ({
             setImageWidth(img.naturalWidth);
             setImageHeight(img.naturalHeight);
             const c = ctxRef.current;
-            if (defaultValue?.mask) {
-                const mask = defaultValue.mask;
-                if (Array.isArray(mask) && Array.isArray(mask[0])) {
-                    const flat = new Uint8Array(
-                        img.naturalWidth * img.naturalHeight,
-                    );
-                    for (
-                        let y = 0;
-                        y < Math.min(mask.length, img.naturalHeight);
-                        y++
-                    )
-                        for (
-                            let x = 0;
-                            x <
-                            Math.min(mask[y]?.length ?? 0, img.naturalWidth);
-                            x++
-                        )
-                            flat[y * img.naturalWidth + x] = mask[y][x] ?? 0;
-                    maskDataRef.current = flat;
-                } else if (mask instanceof Uint8Array) {
-                    const newMask = new Uint8Array(
-                        img.naturalWidth * img.naturalHeight,
-                    );
-                    newMask.set(
-                        mask.subarray(0, Math.min(mask.length, newMask.length)),
-                    );
-                    maskDataRef.current = newMask;
-                }
+            if (defaultValue) {
+                const newMask = new Uint8Array(
+                    img.naturalWidth * img.naturalHeight,
+                );
+                newMask.set(
+                    defaultValue.subarray(
+                        0,
+                        Math.min(defaultValue.length, newMask.length),
+                    ),
+                );
+                maskDataRef.current = newMask;
             }
             const cachedCanvas = document.createElement('canvas');
             cachedCanvas.width = img.naturalWidth;
