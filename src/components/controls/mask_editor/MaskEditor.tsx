@@ -156,6 +156,7 @@ interface Ctx {
     onMaskChange: ((maskData: Uint8Array) => void) | null;
     maskColor: string;
     maskOpacity: number;
+    isErasing: boolean;
     imageWidth: number;
     imageHeight: number;
     canvasSize: { width: number; height: number };
@@ -272,6 +273,7 @@ export const MaskEditor = ({
     const [brushSize, setBrushSize] = useState(defaultBrushSize);
     const [maskColor, setMaskColor] = useState(defaultMaskColor);
     const [maskOpacity, setMaskOpacity] = useState(defaultMaskOpacity);
+    const [isErasing, setIsErasing] = useState(false);
     const [isFullscreen, setIsFullscreen] = useState(false);
     const [isToolbarExpanded, setIsToolbarExpanded] = useState(false);
     const [toolbarHeight, setToolbarHeight] = useState(0);
@@ -292,6 +294,7 @@ export const MaskEditor = ({
         onMaskChange: null,
         maskColor,
         maskOpacity,
+        isErasing,
         imageWidth: 0,
         imageHeight: 0,
         canvasSize: { width: 0, height: 0 },
@@ -344,6 +347,10 @@ export const MaskEditor = ({
         ctxRef.current.maskOpacity = maskOpacity;
         performRedraw(ctxRef.current);
     }, [maskOpacity]);
+
+    useEffect(() => {
+        ctxRef.current.isErasing = isErasing;
+    }, [isErasing]);
 
     useEffect(() => {
         ctxRef.current.onMaskChange = (maskData: Uint8Array) => {
@@ -565,7 +572,7 @@ export const MaskEditor = ({
                     c,
                 );
                 if (c.touchMoved && c.lastPos) {
-                    // Normal drawing — paint line from last position
+                    // Normal drawing — paint/erase line from last position
                     // Save state on first stroke of a new stroke (when undo stack is empty)
                     if (!c.brush?.getCanUndo()) {
                         c.brush?.saveState();
@@ -576,14 +583,21 @@ export const MaskEditor = ({
                     const step = Math.max(1, Math.floor(dist / 2));
                     for (let i = 0; i <= step; i++) {
                         const t = i / step;
-                        c.brush?.paintAt(
-                            c.lastPos.x + dx * t,
-                            c.lastPos.y + dy * t,
-                        );
+                        if (c.isErasing) {
+                            c.brush?.eraseAt(
+                                c.lastPos.x + dx * t,
+                                c.lastPos.y + dy * t,
+                            );
+                        } else {
+                            c.brush?.paintAt(
+                                c.lastPos.x + dx * t,
+                                c.lastPos.y + dy * t,
+                            );
+                        }
                     }
                     c.lastPos = { x: pos.x, y: pos.y };
                 } else if (!c.touchMoved && c.lastPos) {
-                    // First move after touchStart — save state and paint
+                    // First move after touchStart — save state and paint/erase
                     c.brush?.saveState();
                     const dx = pos.x - c.lastPos.x,
                         dy = pos.y - c.lastPos.y;
@@ -591,10 +605,17 @@ export const MaskEditor = ({
                     const step = Math.max(1, Math.floor(dist / 2));
                     for (let i = 0; i <= step; i++) {
                         const t = i / step;
-                        c.brush?.paintAt(
-                            c.lastPos.x + dx * t,
-                            c.lastPos.y + dy * t,
-                        );
+                        if (c.isErasing) {
+                            c.brush?.eraseAt(
+                                c.lastPos.x + dx * t,
+                                c.lastPos.y + dy * t,
+                            );
+                        } else {
+                            c.brush?.paintAt(
+                                c.lastPos.x + dx * t,
+                                c.lastPos.y + dy * t,
+                            );
+                        }
                     }
                     c.lastPos = { x: pos.x, y: pos.y };
                     c.touchMoved = true;
@@ -883,10 +904,14 @@ export const MaskEditor = ({
         }
         if (e.button === 0 && c.imageWidth > 0 && c.imageHeight > 0) {
             c.isDrawing = true;
-            c.mouseMode = 'draw';
+            c.mouseMode = c.isErasing ? 'erase' : 'draw';
             c.brush?.saveState();
             const pos = screenToImageCoords(e.clientX, e.clientY, canvas, c);
-            c.brush?.paintAt(pos.x, pos.y);
+            if (c.isErasing) {
+                c.brush?.eraseAt(pos.x, pos.y);
+            } else {
+                c.brush?.paintAt(pos.x, pos.y);
+            }
             c.lastPos = { x: pos.x, y: pos.y };
             performRedraw(c);
         }
@@ -1184,6 +1209,8 @@ export const MaskEditor = ({
                         onMaskColorChange={setMaskColor}
                         maskOpacity={maskOpacity}
                         onMaskOpacityChange={setMaskOpacity}
+                        isErasing={isErasing}
+                        onToggleErasing={() => setIsErasing((v) => !v)}
                         onReset={handleReset}
                         onExitFullscreen={() => {
                             if (document.fullscreenElement) {
@@ -1211,6 +1238,8 @@ export const MaskEditor = ({
                     onMaskColorChange={setMaskColor}
                     maskOpacity={maskOpacity}
                     onMaskOpacityChange={setMaskOpacity}
+                    isErasing={isErasing}
+                    onToggleErasing={() => setIsErasing((v) => !v)}
                     onReset={handleReset}
                     onToggleFullscreen={() => enterFullscreen()}
                     onUndo={undo}

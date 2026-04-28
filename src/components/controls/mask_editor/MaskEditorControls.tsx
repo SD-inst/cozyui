@@ -1,5 +1,6 @@
 import { Box, IconButton, Stack, Tooltip, Typography } from '@mui/material';
 import { Delete, Fullscreen, Undo, Redo } from '@mui/icons-material';
+import { EraserIcon } from './EraserIcon';
 import { SliderInputBase } from '../SliderInputBase';
 import { useTranslate } from '../../../i18n/I18nContext';
 
@@ -10,6 +11,8 @@ export interface MaskEditorControlsProps {
     onMaskColorChange: (color: string) => void;
     maskOpacity: number;
     onMaskOpacityChange: (opacity: number) => void;
+    isErasing: boolean;
+    onToggleErasing: () => void;
     onReset: () => void;
     onToggleFullscreen: () => void;
     onUndo: () => boolean;
@@ -33,6 +36,8 @@ export const MaskEditorControls = ({
     onMaskColorChange,
     maskOpacity,
     onMaskOpacityChange,
+    isErasing,
+    onToggleErasing,
     onReset,
     onToggleFullscreen,
     onUndo,
@@ -111,6 +116,20 @@ export const MaskEditorControls = ({
                 <IconButton color='primary' onClick={onToggleFullscreen}>
                     <Fullscreen />
                 </IconButton>
+                <Tooltip
+                    title={
+                        isErasing
+                            ? tr('controls.mask_editor.draw_mode')
+                            : tr('controls.mask_editor.erase_mode')
+                    }
+                >
+                    <IconButton
+                        color={isErasing ? 'error' : 'primary'}
+                        onClick={onToggleErasing}
+                    >
+                        <EraserIcon />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title={tr('controls.mask_editor.undo')}>
                     <IconButton
                         color='primary'

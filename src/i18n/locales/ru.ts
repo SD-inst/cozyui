@@ -115,6 +115,8 @@ const translation = {
             redo: 'Повторить',
             fullscreen: 'Полноэкранный режим',
             exit_fullscreen: 'Выйти из полноэкранного режима',
+            erase_mode: 'Режим стирания',
+            draw_mode: 'Режим рисования',
         },
         send_to_upscale: 'Отправить на увеличение',
         allow_upscale: 'разрешить увеличение',

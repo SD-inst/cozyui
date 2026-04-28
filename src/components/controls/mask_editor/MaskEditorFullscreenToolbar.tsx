@@ -9,6 +9,7 @@ import {
 import { Box, IconButton, Tooltip, Typography } from '@mui/material';
 import { forwardRef, type Ref } from 'react';
 import { useTranslate } from '../../../i18n/I18nContext';
+import { EraserIcon } from './EraserIcon';
 import { ToolbarButton } from '../ToolbarButton';
 import { ToolbarSlider } from '../ToolbarSlider';
 
@@ -19,6 +20,8 @@ export interface MaskEditorFullscreenToolbarProps {
     onMaskColorChange: (color: string) => void;
     maskOpacity: number;
     onMaskOpacityChange: (opacity: number) => void;
+    isErasing: boolean;
+    onToggleErasing: () => void;
     onReset: () => void;
     onExitFullscreen: () => void;
     onUndo: () => boolean;
@@ -47,6 +50,8 @@ export const MaskEditorFullscreenToolbar = forwardRef<
         onMaskColorChange,
         maskOpacity,
         onMaskOpacityChange,
+        isErasing,
+        onToggleErasing,
         onReset,
         onExitFullscreen,
         onUndo,
@@ -124,6 +129,22 @@ export const MaskEditorFullscreenToolbar = forwardRef<
 
                     <Box sx={{ width: 8 }} />
 
+                    {/* Erase mode toggle */}
+                    <ToolbarButton
+                        title={
+                            isErasing
+                                ? tr('controls.mask_editor.draw_mode')
+                                : tr('controls.mask_editor.erase_mode')
+                        }
+                        onClick={() => {
+                            onToggleErasing();
+                        }}
+                        sx={{
+                            color: isErasing ? '#ff5252' : 'white',
+                            cursor: 'pointer',
+                        }}
+                        icon={<EraserIcon />}
+                    />
                     {/* Undo */}
                     <ToolbarButton
                         title={tr('controls.mask_editor.undo')}

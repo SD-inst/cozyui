@@ -116,6 +116,8 @@ const translation = {
             redo: 'Redo',
             fullscreen: 'Fullscreen',
             exit_fullscreen: 'Exit fullscreen',
+            erase_mode: 'Erase mode',
+            draw_mode: 'Draw mode',
         },
         send_to_upscale: 'Send to upscale',
         allow_upscale: 'allow upscale',
