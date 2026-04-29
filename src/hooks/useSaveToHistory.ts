@@ -11,6 +11,7 @@ import { useBooleanSetting } from './useSetting';
 import { settings } from './settings';
 import { useTabName } from '../components/contexts/TabContext';
 import { useTranslate } from '../i18n/I18nContext';
+import { filterFormValues } from '../utils/filterFormValues';
 
 export const useSaveToHistory = () => {
     const tr = useTranslate();
@@ -69,7 +70,7 @@ export const useSaveToHistory = () => {
                         duration: end_ts - start_ts,
                         type,
                         node_id: id,
-                        params: JSON.stringify({ tab, values }),
+                        params: JSON.stringify({ tab, values: filterFormValues(values) }),
                         url,
                         data,
                         mark: markEnum.NONE,
