@@ -488,7 +488,11 @@ export const I2IToggle = ({
                                                 max={3}
                                                 step={0.05}
                                             />
-                                            <Box display='flex' gap={1}>
+                                            <Box
+                                                display='flex'
+                                                gap={1}
+                                                flexWrap='wrap'
+                                            >
                                                 <SliderInput
                                                     name={`${name}.target_width`}
                                                     label='target_width'
@@ -496,6 +500,10 @@ export const I2IToggle = ({
                                                     min={256}
                                                     max={2048}
                                                     step={64}
+                                                    sx={{
+                                                        minWidth: 300,
+                                                        flex: 1,
+                                                    }}
                                                 />
                                                 <SliderInput
                                                     name={`${name}.target_height`}
@@ -504,6 +512,10 @@ export const I2IToggle = ({
                                                     min={256}
                                                     max={2048}
                                                     step={64}
+                                                    sx={{
+                                                        minWidth: 300,
+                                                        flex: 1,
+                                                    }}
                                                 />
                                             </Box>
                                             <SelectInput
