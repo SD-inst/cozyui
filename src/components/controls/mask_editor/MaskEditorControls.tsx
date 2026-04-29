@@ -64,54 +64,6 @@ export const MaskEditorControls = ({
                 gap: 1.5,
             }}
         >
-            {/* Brush size */}
-            <SliderInputBase
-                name='brush_size'
-                label='controls.mask_editor.brush_size'
-                value={Math.round(brushSize)}
-                onChange={handleBrushSizeChange as any}
-                min={brushSizeMin}
-                max={brushSizeMax}
-                step={brushSizeStep}
-                suffix='px'
-            />
-
-            {/* Mask color */}
-            <Box>
-                <Stack
-                    direction='row'
-                    alignItems='center'
-                    justifyContent='space-between'
-                    mb={0.5}
-                >
-                    <Typography variant='body1'>{tr('controls.mask_editor.mask_color')}</Typography>
-                    <input
-                        type='color'
-                        value={maskColor}
-                        onChange={(e) => onMaskColorChange(e.target.value)}
-                        style={{
-                            width: 40,
-                            height: 30,
-                            border: 'none',
-                            background: 'none',
-                            cursor: 'pointer',
-                        }}
-                    />
-                </Stack>
-            </Box>
-
-            {/* Mask opacity */}
-            <SliderInputBase
-                name='mask_opacity'
-                label='controls.mask_editor.mask_opacity'
-                value={Math.round(maskOpacity * 100)}
-                onChange={handleMaskOpacityChange as any}
-                min={0}
-                max={100}
-                step={1}
-                suffix='%'
-            />
-
             <Stack direction='row' spacing={1} justifyContent='space-between'>
                 <IconButton color='primary' onClick={onToggleFullscreen}>
                     <Fullscreen />
@@ -154,6 +106,55 @@ export const MaskEditorControls = ({
                     <Delete />
                 </IconButton>
             </Stack>
+            {/* Brush size */}
+            <SliderInputBase
+                name='brush_size'
+                label='controls.mask_editor.brush_size'
+                value={Math.round(brushSize)}
+                onChange={handleBrushSizeChange as any}
+                min={brushSizeMin}
+                max={brushSizeMax}
+                step={brushSizeStep}
+                suffix='px'
+            />
+
+            {/* Mask color */}
+            <Box>
+                <Stack
+                    direction='row'
+                    alignItems='center'
+                    justifyContent='space-between'
+                    mb={0.5}
+                >
+                    <Typography variant='body1'>
+                        {tr('controls.mask_editor.mask_color')}
+                    </Typography>
+                    <input
+                        type='color'
+                        value={maskColor}
+                        onChange={(e) => onMaskColorChange(e.target.value)}
+                        style={{
+                            width: 40,
+                            height: 30,
+                            border: 'none',
+                            background: 'none',
+                            cursor: 'pointer',
+                        }}
+                    />
+                </Stack>
+            </Box>
+
+            {/* Mask opacity */}
+            <SliderInputBase
+                name='mask_opacity'
+                label='controls.mask_editor.mask_opacity'
+                value={Math.round(maskOpacity * 100)}
+                onChange={handleMaskOpacityChange as any}
+                min={0}
+                max={100}
+                step={1}
+                suffix='%'
+            />
         </Box>
     );
 };
