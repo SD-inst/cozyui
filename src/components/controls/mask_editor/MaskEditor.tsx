@@ -396,6 +396,10 @@ export const MaskEditor = ({
             ? (value as any).image
             : '');
 
+    // Manual focus tracking for keyboard shortcuts.
+    // Canvas cannot reliably receive DOM focus, so we track interaction state.
+    const isFocusedRef = useRef(false);
+
     const [brushSize, setBrushSize] = useState(defaultBrushSize);
     const [maskColor, setMaskColor] = useState(defaultMaskColor);
     const [maskOpacity, setMaskOpacity] = useState(defaultMaskOpacity);
@@ -574,6 +578,7 @@ export const MaskEditor = ({
         if (!canvas) return;
 
         const touchStartHandler = (e: TouchEvent) => {
+            isFocusedRef.current = true;
             e.preventDefault();
             e.stopPropagation();
             const c = ctxRef.current;
@@ -1005,6 +1010,7 @@ export const MaskEditor = ({
     });
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        isFocusedRef.current = true;
         const c = ctxRef.current,
             canvas = c.canvas;
         if (!canvas) return;
@@ -1132,9 +1138,10 @@ export const MaskEditor = ({
         [],
     );
 
-    // Keyboard shortcuts for Undo/Redo
+    // Keyboard shortcuts for Undo/Redo (only when editor has focus)
     useEffect(() => {
         const handler = (e: KeyboardEvent) => {
+            if (!isFocusedRef.current) return;
             const isUndo =
                 (e.ctrlKey || e.metaKey) &&
                 !e.shiftKey &&
@@ -1154,6 +1161,18 @@ export const MaskEditor = ({
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
     }, [undo, redo]);
+
+    // Lose focus when clicking outside the editor container
+    useEffect(() => {
+        const handler = (e: MouseEvent) => {
+            const container = containerRef.current;
+            if (container && !container.contains(e.target as Node)) {
+                isFocusedRef.current = false;
+            }
+        };
+        document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
+    }, []);
 
     // React touch handlers kept as fallback but native handlers take precedence via capture phase
 
