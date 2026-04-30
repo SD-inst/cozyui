@@ -1102,6 +1102,19 @@ export const MaskEditor = ({
 
     const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault();
+        // Shift+wheel: resize brush
+        if (e.shiftKey) {
+            const step = brushSizeStep ?? 1;
+            const delta = -Math.sign(e.deltaY) * step;
+            const newBrushSize = Math.max(
+                brushSizeMin ?? 1,
+                Math.min(brushSizeMax ?? 200, brushSize + delta)
+            );
+            if (newBrushSize !== brushSize) {
+                setBrushSize(newBrushSize);
+            }
+            return;
+        }
         const c = ctxRef.current,
             canvas = c.canvas;
         if (!canvas) return;
@@ -1147,7 +1160,7 @@ export const MaskEditor = ({
         c.camera.y = clampedCam.y;
         c.camera.zoom = clampedCam.zoom;
         requestRedraw(c);
-    }, []);
+    }, [brushSize, brushSizeMax, brushSizeMin, brushSizeStep]);
 
     const handleContextMenu = useCallback(
         (e: React.MouseEvent) => e.preventDefault(),
@@ -1209,7 +1222,6 @@ export const MaskEditor = ({
         return () => observer.disconnect();
     }, [isFullscreen]);
 
-    // Fit image to canvas when entering or exiting fullscreen
     useEffect(() => {
         if (imageWidth <= 0 || imageHeight <= 0) return;
 
@@ -1253,7 +1265,7 @@ export const MaskEditor = ({
             requestRedraw(c);
         }, 0);
         return () => clearTimeout(timer);
-    }, [isFullscreen, imageWidth, imageHeight, toolbarHeight]);
+    }, [isFullscreen, imageWidth, imageHeight]);
 
     if (!imageSrc) {
         return (
