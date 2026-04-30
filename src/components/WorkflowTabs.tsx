@@ -290,7 +290,6 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     // if a hidden tab is selected, unselect tab
     useEffect(() => {
         if (current_tab && !userFilteredTabs.includes(current_tab)) {
-            console.log(userFilteredTabs, current_tab);
             dispatch(setTab(''));
         }
     }, [current_tab, dispatch, userFilteredTabs]);

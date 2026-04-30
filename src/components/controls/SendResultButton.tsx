@@ -21,6 +21,7 @@ export type SendResultButtonProps = ButtonProps & {
     fileField?: string;
     icon?: boolean;
     label?: string;
+    showMenu?: boolean;
 };
 
 const SendMenuItem = ({
@@ -55,12 +56,13 @@ const SendMenuItem = ({
 
 export const SendResultButton = ({
     targetTab,
-    fields,
+    fields = [],
     index = 0,
     icon = false,
     fileField = 'image',
     onClick,
     label = 'send_to_upscale',
+    showMenu = true,
     ...props
 }: SendResultButtonProps) => {
     const tr = useTranslate();
@@ -122,15 +124,17 @@ export const SendResultButton = ({
                         >
                             <Reply transform='scale(-1, 1)' />
                         </Button>
-                        <Button
-                            variant='outlined'
-                            color='secondary'
-                            size='small'
-                            onClick={() => setAnchor(bgref.current || null)}
-                            aria-label={tr('controls.send_to')}
-                        >
-                            <ExpandMore />
-                        </Button>
+                        {showMenu && (
+                            <Button
+                                variant='outlined'
+                                color='secondary'
+                                size='small'
+                                onClick={() => setAnchor(bgref.current || null)}
+                                aria-label={tr('controls.send_to')}
+                            >
+                                <ExpandMore />
+                            </Button>
+                        )}
                     </ButtonGroup>
                 </Box>
             )}
@@ -158,15 +162,17 @@ export const SendResultButton = ({
                     >
                         {tr('controls.' + label)}
                     </Button>
-                    <Button
-                        variant='contained'
-                        color='secondary'
-                        size='small'
-                        onClick={() => setAnchor(bgref.current || null)}
-                        aria-label={tr('controls.send_to')}
-                    >
-                        <ExpandMore />
-                    </Button>
+                    {showMenu && (
+                        <Button
+                            variant='contained'
+                            color='secondary'
+                            size='small'
+                            onClick={() => setAnchor(bgref.current || null)}
+                            aria-label={tr('controls.send_to')}
+                        >
+                            <ExpandMore />
+                        </Button>
+                    )}
                 </ButtonGroup>
             )}
             {!icon && !handleSend && (

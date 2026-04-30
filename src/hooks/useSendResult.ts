@@ -26,7 +26,7 @@ export const useSendResult = ({
     const apiUrl = useApiURL();
     const handleClick = async () => {
         const values = Object.fromEntries(
-            Object.entries(getValues()).filter((e) => fields!.includes(e[0]))
+            Object.entries(getValues()).filter((e) => fields!.includes(e[0])),
         );
         const formData = new FormData();
         const url = makeOutputUrl(apiUrl, result[index]);
@@ -44,7 +44,7 @@ export const useSendResult = ({
                 action: actionEnum.RESTORE,
                 tab: targetTab,
                 values: { ...values, [fileField]: image },
-            })
+            }),
         );
         dispatch(setTab(targetTab!));
     };
