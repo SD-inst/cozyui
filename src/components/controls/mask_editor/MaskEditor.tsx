@@ -41,6 +41,38 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } {
 const DEFAULT_ZOOM = 1;
 const MAX_ZOOM = 10;
 
+// Clamp a single axis origin value so the image stays within canvas bounds.
+// When scaled <= canvas, keep origin in [0, canvas - scaled].
+// When scaled > canvas, clamp origin to [canvas - scaled, 0].
+function clampAxis(
+    origin: number,
+    scaled: number,
+    canvas: number,
+): number {
+    if (scaled <= canvas) {
+        return Math.max(0, Math.min(canvas - scaled, origin));
+    }
+    return Math.max(canvas - scaled, Math.min(0, origin));
+}
+
+// Clamp both origin axes at a given zoom level.
+function clampOrigin(
+    originX: number,
+    originY: number,
+    zoom: number,
+    imageWidth: number,
+    imageHeight: number,
+    canvasWidth: number,
+    canvasHeight: number,
+): { x: number; y: number } {
+    const scaledWidth = imageWidth * zoom;
+    const scaledHeight = imageHeight * zoom;
+    return {
+        x: clampAxis(originX, scaledWidth, canvasWidth),
+        y: clampAxis(originY, scaledHeight, canvasHeight),
+    };
+}
+
 function clampZoom(
     zoom: number,
     imageWidth: number,
@@ -80,46 +112,22 @@ function clampCamera(
     const minZoomX = canvasWidth / imageWidth;
     const minZoomY = canvasHeight / imageHeight;
     const effectiveMinZoom = Math.min(minZoomX, minZoomY);
-
     const clampedZoom = Math.max(cam.zoom, effectiveMinZoom);
-
-    const scaledWidth = imageWidth * clampedZoom;
-    const scaledHeight = imageHeight * clampedZoom;
 
     const originX = cam.x + (canvasWidth / 2) * (1 - clampedZoom);
     const originY = cam.y + (canvasHeight / 2) * (1 - clampedZoom);
+    const clamped = clampOrigin(
+        originX,
+        originY,
+        clampedZoom,
+        imageWidth,
+        imageHeight,
+        canvasWidth,
+        canvasHeight,
+    );
 
-    // Determine clamping bounds based on whether image fills the canvas in each axis
-    // If scaled dimension <= canvas dimension, image doesn't fill that axis → clamp origin to prevent overflow
-    // If scaled dimension > canvas dimension, image fills that axis → allow origin to go negative/positive
-    //   so the image edge touches the canvas edge
-
-    let clampedOriginX = originX;
-    let clampedOriginY = originY;
-
-    // X-axis clamping
-    if (scaledWidth <= canvasWidth) {
-        // Image doesn't fill width — keep it entirely within canvas horizontally
-        clampedOriginX = Math.max(0, Math.min(canvasWidth - scaledWidth, originX));
-    } else if (scaledWidth > canvasWidth) {
-        // Image fills width — clamp so it touches at least one edge
-        // originX can range from (canvasWidth - scaledWidth) to 0
-        clampedOriginX = Math.max(canvasWidth - scaledWidth, Math.min(0, originX));
-    }
-    // If zoom is such that scaledWidth == canvasWidth exactly, both bounds are the same
-
-    // Y-axis clamping
-    if (scaledHeight <= canvasHeight) {
-        // Image doesn't fill height — keep it entirely within canvas vertically
-        clampedOriginY = Math.max(0, Math.min(canvasHeight - scaledHeight, originY));
-    } else if (scaledHeight > canvasHeight) {
-        // Image fills height — clamp so it touches at least one edge
-        // originY can range from (canvasHeight - scaledHeight) to 0
-        clampedOriginY = Math.max(canvasHeight - scaledHeight, Math.min(0, originY));
-    }
-
-    const x = clampedOriginX - (canvasWidth / 2) * (1 - clampedZoom);
-    const y = clampedOriginY - (canvasHeight / 2) * (1 - clampedZoom);
+    const x = clamped.x - (canvasWidth / 2) * (1 - clampedZoom);
+    const y = clamped.y - (canvasHeight / 2) * (1 - clampedZoom);
 
     return { x, y, zoom: clampedZoom };
 }
@@ -146,29 +154,15 @@ function clampOriginForZoom(
     // At zoom in, the computed newOriginX/Y is guaranteed to be in range if oldOrigin was in range.
     if (zoom >= oldZoom) return { x: originX, y: originY };
 
-    const scaledWidth = imageWidth * zoom;
-    const scaledHeight = imageHeight * zoom;
-
-    let clampedOriginX = originX;
-    let clampedOriginY = originY;
-
-    // X-axis clamping: if image doesn't fill width, keep it within canvas
-    if (scaledWidth <= canvasWidth) {
-        clampedOriginX = Math.max(0, Math.min(canvasWidth - scaledWidth, originX));
-    } else {
-        // Image fills width — clamp to canvas edges
-        clampedOriginX = Math.max(canvasWidth - scaledWidth, Math.min(0, originX));
-    }
-
-    // Y-axis clamping: if image doesn't fill height, keep it within canvas
-    if (scaledHeight <= canvasHeight) {
-        clampedOriginY = Math.max(0, Math.min(canvasHeight - scaledHeight, originY));
-    } else {
-        // Image fills height — clamp to canvas edges
-        clampedOriginY = Math.max(canvasHeight - scaledHeight, Math.min(0, originY));
-    }
-
-    return { x: clampedOriginX, y: clampedOriginY };
+    return clampOrigin(
+        originX,
+        originY,
+        zoom,
+        imageWidth,
+        imageHeight,
+        canvasWidth,
+        canvasHeight,
+    );
 }
 
 interface Ctx {
@@ -316,6 +310,67 @@ function performRedraw(c: Ctx) {
 // Request redraw via rAF — batches multiple mousemove events into one draw call
 function requestRedraw(c: Ctx) {
     c.needsRedraw = true;
+}
+
+// Draw a line between two image-space points using the current brush settings.
+// isErasing: true for touch mode (uses c.isErasing), false for mouse mode (uses c.mouseMode).
+function drawLine(
+    c: Ctx,
+    from: { x: number; y: number },
+    to: { x: number; y: number },
+    useMouseMode: boolean,
+) {
+    const dx = to.x - from.x;
+    const dy = to.y - from.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const step = Math.max(1, Math.floor(dist / 2));
+    for (let i = 0; i <= step; i++) {
+        const t = i / step;
+        const shouldErase = useMouseMode
+            ? c.mouseMode === 'erase'
+            : c.isErasing;
+        c.brush?.strokeAt(from.x + dx * t, from.y + dy * t, shouldErase ? 0 : 1);
+    }
+}
+
+// Start drawing at a screen coordinate, painting or erasing a single point.
+function startDrawing(
+    c: Ctx,
+    canvas: HTMLCanvasElement,
+    clientX: number,
+    clientY: number,
+    mode: MouseMode,
+) {
+    if (c.imageWidth <= 0 || c.imageHeight <= 0) return;
+    c.isDrawing = true;
+    c.mouseMode = mode;
+    c.brush?.saveState();
+    const pos = screenToImageCoords(clientX, clientY, canvas, c);
+    c.brush?.strokeAt(pos.x, pos.y, mode === 'erase' ? 0 : 1);
+    c.lastPos = { x: pos.x, y: pos.y };
+    requestRedraw(c);
+}
+
+// Reset camera to fit image centered in canvas.
+function resetCameraToFit(c: Ctx, canvas: HTMLCanvasElement, imageWidth: number, imageHeight: number) {
+    const canvasW = canvas.width;
+    const canvasH = canvas.height;
+    if (canvasW <= 0 || canvasH <= 0 || imageWidth <= 0 || imageHeight <= 0) return;
+    const fitZoom = clampZoom(
+        Math.min(canvasW / imageWidth, canvasH / imageHeight),
+        imageWidth,
+        imageHeight,
+        canvasW,
+        canvasH,
+    );
+    const scaledWidth = imageWidth * fitZoom;
+    const scaledHeight = imageHeight * fitZoom;
+    const originX = scaledWidth <= canvasW ? (canvasW - scaledWidth) / 2 : 0;
+    const originY = scaledHeight <= canvasH ? (canvasH - scaledHeight) / 2 : 0;
+    c.camera.x = originX - (canvasW / 2) * (1 - fitZoom);
+    c.camera.y = originY - (canvasH / 2) * (1 - fitZoom);
+    c.camera.zoom = fitZoom;
+    requestRedraw(c);
 }
 
 export const MaskEditor = ({
@@ -694,62 +749,22 @@ export const MaskEditor = ({
                     c,
                 );
                 if (c.touchMoved && c.lastPos) {
-                    // Normal drawing — paint/erase line from last position
-                    // Save state on first stroke of a new stroke (when undo stack is empty)
                     if (!c.brush?.getCanUndo()) {
                         c.brush?.saveState();
                     }
-                    const dx = pos.x - c.lastPos.x,
-                        dy = pos.y - c.lastPos.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const step = Math.max(1, Math.floor(dist / 2));
-                    for (let i = 0; i <= step; i++) {
-                        const t = i / step;
-                        if (c.isErasing) {
-                            c.brush?.eraseAt(
-                                c.lastPos.x + dx * t,
-                                c.lastPos.y + dy * t,
-                            );
-                        } else {
-                            c.brush?.paintAt(
-                                c.lastPos.x + dx * t,
-                                c.lastPos.y + dy * t,
-                            );
-                        }
-                    }
+                    drawLine(c, c.lastPos, pos, false);
                     c.lastPos = { x: pos.x, y: pos.y };
                 } else if (!c.touchMoved && c.lastPos) {
-                    // First move after touchStart — save state and paint/erase
                     c.brush?.saveState();
-                    const dx = pos.x - c.lastPos.x,
-                        dy = pos.y - c.lastPos.y;
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    const step = Math.max(1, Math.floor(dist / 2));
-                    for (let i = 0; i <= step; i++) {
-                        const t = i / step;
-                        if (c.isErasing) {
-                            c.brush?.eraseAt(
-                                c.lastPos.x + dx * t,
-                                c.lastPos.y + dy * t,
-                            );
-                        } else {
-                            c.brush?.paintAt(
-                                c.lastPos.x + dx * t,
-                                c.lastPos.y + dy * t,
-                            );
-                        }
-                    }
+                    drawLine(c, c.lastPos, pos, false);
                     c.lastPos = { x: pos.x, y: pos.y };
                     c.touchMoved = true;
                     c.justLeftPinch = false;
                 } else if (c.blockDrawAfterPinch) {
-                    // Still blocking drawing after pinch/pan, just track position
                     c.lastPos = { x: pos.x, y: pos.y };
                 } else if (!c.touchMoved && !c.lastPos && !c.justLeftPinch) {
-                    // First touch after touchStart — just set position
                     c.lastPos = { x: pos.x, y: pos.y };
                 } else if (!c.touchMoved && !c.lastPos && c.justLeftPinch) {
-                    // First touch after pinch-to-drag — just set position, don't paint
                     c.lastPos = { x: pos.x, y: pos.y };
                     c.touchMoved = true;
                     c.justLeftPinch = false;
@@ -899,15 +914,7 @@ export const MaskEditor = ({
         if (!canvas) return;
         // Only set initial camera if it hasn't been adjusted yet (zoom is still DEFAULT_ZOOM)
         if (c.camera.zoom !== DEFAULT_ZOOM) return;
-
-        const minZoomX = containerWidth / imageWidth;
-        const minZoomY = containerHeight / imageHeight;
-        const fitZoom = Math.max(minZoomX, minZoomY);
-
-        c.camera.zoom = fitZoom;
-        c.camera.x = 0;
-        c.camera.y = 0;
-        requestRedraw(c);
+        resetCameraToFit(c, canvas, imageWidth, imageHeight);
     }, [imageWidth, imageHeight, containerWidth, containerHeight]);
 
     // ResizeObserver
@@ -1001,36 +1008,15 @@ export const MaskEditor = ({
         const c = ctxRef.current,
             canvas = c.canvas;
         if (!canvas) return;
-        // Shift+left-click for pan
-        if (e.shiftKey && e.button === 0) {
+        // Shift+left-click or middle-click for pan
+        if ((e.shiftKey && e.button === 0) || e.button === 1) {
             c.mouseMode = 'pan';
             return;
         }
-        if (e.button === 1) {
-            c.mouseMode = 'pan';
-            return;
-        }
-        if (e.button === 0 && c.imageWidth > 0 && c.imageHeight > 0) {
-            c.isDrawing = true;
-            c.mouseMode = c.isErasing ? 'erase' : 'draw';
-            c.brush?.saveState();
-            const pos = screenToImageCoords(e.clientX, e.clientY, canvas, c);
-            if (c.isErasing) {
-                c.brush?.eraseAt(pos.x, pos.y);
-            } else {
-                c.brush?.paintAt(pos.x, pos.y);
-            }
-            c.lastPos = { x: pos.x, y: pos.y };
-            requestRedraw(c);
-        }
-        if (e.button === 2 && c.imageWidth > 0 && c.imageHeight > 0) {
-            c.isDrawing = true;
-            c.mouseMode = 'erase';
-            c.brush?.saveState();
-            const pos = screenToImageCoords(e.clientX, e.clientY, canvas, c);
-            c.brush?.eraseAt(pos.x, pos.y);
-            c.lastPos = { x: pos.x, y: pos.y };
-            requestRedraw(c);
+        if (e.button === 0) {
+            startDrawing(c, canvas, e.clientX, e.clientY, c.isErasing ? 'erase' : 'draw');
+        } else if (e.button === 2) {
+            startDrawing(c, canvas, e.clientX, e.clientY, 'erase');
         }
     }, []);
 
@@ -1057,30 +1043,9 @@ export const MaskEditor = ({
         if (!c.isDrawing || !c.imageWidth || !c.imageHeight) return;
         const pos = screenToImageCoords(e.clientX, e.clientY, canvas, c);
         if (c.lastPos) {
-            const dx = pos.x - c.lastPos.x,
-                dy = pos.y - c.lastPos.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            const step = Math.max(1, Math.floor(dist / 2));
-            for (let i = 0; i <= step; i++) {
-                const t = i / step;
-                if (c.mouseMode === 'erase') {
-                    c.brush?.eraseAt(
-                        c.lastPos.x + dx * t,
-                        c.lastPos.y + dy * t,
-                    );
-                } else {
-                    c.brush?.paintAt(
-                        c.lastPos.x + dx * t,
-                        c.lastPos.y + dy * t,
-                    );
-                }
-            }
+            drawLine(c, c.lastPos, pos, true);
         } else {
-            if (c.mouseMode === 'erase') {
-                c.brush?.eraseAt(pos.x, pos.y);
-            } else {
-                c.brush?.paintAt(pos.x, pos.y);
-            }
+            c.brush?.strokeAt(pos.x, pos.y, c.mouseMode === 'erase' ? 0 : 1);
         }
         c.lastPos = { x: pos.x, y: pos.y };
         requestRedraw(c);
@@ -1224,45 +1189,11 @@ export const MaskEditor = ({
 
     useEffect(() => {
         if (imageWidth <= 0 || imageHeight <= 0) return;
-
-        // Use setTimeout to run after all useEffect effects (including canvas sync)
         const timer = setTimeout(() => {
             const c = ctxRef.current;
             const canvas = c.canvas;
             if (!canvas) return;
-
-            // Use internal canvas dimensions (accounting for devicePixelRatio)
-            const canvasW = canvas.width;
-            const canvasH = canvas.height;
-            if (canvasW <= 0 || canvasH <= 0) return;
-
-            // Calculate zoom that fits the entire image in the canvas (no cropping)
-            const fitZoom = Math.min(canvasW / imageWidth, canvasH / imageHeight);
-
-            // Compute scaled dimensions at fitZoom
-            const scaledWidth = imageWidth * fitZoom;
-            const scaledHeight = imageHeight * fitZoom;
-
-            // Compute origin so the image is centered in the canvas
-            let originX: number, originY: number;
-            if (scaledWidth <= canvasW) {
-                originX = (canvasW - scaledWidth) / 2;
-            } else {
-                originX = 0;
-            }
-            if (scaledHeight <= canvasH) {
-                originY = (canvasH - scaledHeight) / 2;
-            } else {
-                originY = 0;
-            }
-
-            // Convert origin to camera coords:
-            //   originX = camera.x + (canvasW / 2) * (1 - zoom)
-            //   => camera.x = originX - (canvasW / 2) * (1 - zoom)
-            c.camera.x = originX - (canvasW / 2) * (1 - fitZoom);
-            c.camera.y = originY - (canvasH / 2) * (1 - fitZoom);
-            c.camera.zoom = fitZoom;
-            requestRedraw(c);
+            resetCameraToFit(c, canvas, imageWidth, imageHeight);
         }, 0);
         return () => clearTimeout(timer);
     }, [isFullscreen, imageWidth, imageHeight]);

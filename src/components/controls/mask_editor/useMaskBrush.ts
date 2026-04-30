@@ -141,155 +141,38 @@ export function useMaskBrush(
     return redoStackRef.current.length > 0;
   }, []);
 
-  /**
-   * Paint a point on the mask.
-   * Uses a circular brush with the given radius.
-   */
-  const paintAt = useCallback(
-    (x: number, y: number) => {
-      const data = maskDataRef.current;
-      const w = widthRef.current;
-      const h = heightRef.current;
-      const radius = Math.floor(brushSizeRef.current / 2);
-
-      if (radius <= 0) return;
-
-      const xMin = Math.max(0, Math.floor(x - radius));
-      const xMax = Math.min(w - 1, Math.ceil(x + radius));
-      const yMin = Math.max(0, Math.floor(y - radius));
-      const yMax = Math.min(h - 1, Math.ceil(y + radius));
-
-      const radiusSq = radius * radius;
-
-      for (let py = yMin; py <= yMax; py++) {
-        for (let px = xMin; px <= xMax; px++) {
-          const dx = px - x;
-          const dy = py - y;
-          if (dx * dx + dy * dy <= radiusSq) {
-            data[py * w + px] = 1;
-          }
-        }
-      }
-    },
-    []
-  );
-
-  /**
-   * Erase mask at a point (analogous to paintAt, but sets 0 instead of 1).
-   */
-  const eraseAt = useCallback(
-    (x: number, y: number) => {
-      const data = maskDataRef.current;
-      const w = widthRef.current;
-      const h = heightRef.current;
-      const radius = Math.floor(brushSizeRef.current / 2);
-
-      if (radius <= 0) return;
-
-      const xMin = Math.max(0, Math.floor(x - radius));
-      const xMax = Math.min(w - 1, Math.ceil(x + radius));
-      const yMin = Math.max(0, Math.floor(y - radius));
-      const yMax = Math.min(h - 1, Math.ceil(y + radius));
-
-      const radiusSq = radius * radius;
-
-      for (let py = yMin; py <= yMax; py++) {
-        for (let px = xMin; px <= xMax; px++) {
-          const dx = px - x;
-          const dy = py - y;
-          if (dx * dx + dy * dy <= radiusSq) {
-            data[py * w + px] = 0;
-          }
-        }
-      }
-    },
-    []
-  );
-
-  /**
-   * Draw a line from one point to another.
-   * Uses Bresenham's algorithm for smooth lines.
-   */
-  const paintLine = useCallback(
-    (fromX: number, fromY: number, toX: number, toY: number) => {
-      const data = maskDataRef.current;
-      const w = widthRef.current;
-      const h = heightRef.current;
-      const radius = Math.floor(brushSizeRef.current / 2);
-
-      if (radius <= 0) return;
-
-      // Limit max distance between points
-      // to avoid drawing lines across the entire image
-      const maxDist = radius * 4;
-      const dx = toX - fromX;
-      const dy = toY - fromY;
-      const dist = Math.sqrt(dx * dx + dy * dy);
-
-      if (dist < maxDist) {
-        // Draw directly if distance is small
-        _paintLineBresenham(fromX, fromY, toX, toY, data, w, h, radius);
-      } else {
-        // Draw in segments of maxDist
-        const steps = Math.ceil(dist / maxDist);
-        for (let i = 0; i < steps; i++) {
-          const t1 = i / steps;
-          const t2 = (i + 1) / steps;
-          const x1 = fromX + dx * t1;
-          const y1 = fromY + dy * t1;
-          const x2 = fromX + dx * t2;
-          const y2 = fromY + dy * t2;
-          _paintLineBresenham(x1, y1, x2, y2, data, w, h, radius);
-        }
-      }
-    },
-    []
-  );
-
-  // Internal Bresenham function — not exported
-  function _paintLineBresenham(
-    fromX: number, fromY: number, toX: number, toY: number,
-    data: Uint8Array, w: number, h: number, radius: number
+  // Fill a circular brush area on the mask with a given value.
+  function fillCircle(
+      cx: number,
+      cy: number,
+      radius: number,
+      value: number,
   ) {
-    const radiusSq = radius * radius;
-    const dx = Math.abs(toX - fromX);
-    const dy = Math.abs(toY - fromY);
-    const sx = fromX < toX ? 1 : -1;
-    const sy = fromY < toY ? 1 : -1;
-
-    let err = dx - dy;
-    let x = fromX;
-    let y = fromY;
-
-    while (true) {
-      const xMin = Math.max(0, Math.floor(x - radius));
-      const xMax = Math.min(w - 1, Math.ceil(x + radius));
-      const yMin = Math.max(0, Math.floor(y - radius));
-      const yMax = Math.min(h - 1, Math.ceil(y + radius));
-
+      const data = maskDataRef.current;
+      const w = widthRef.current;
+      const h = heightRef.current;
+      const xMin = Math.max(0, Math.floor(cx - radius));
+      const xMax = Math.min(w - 1, Math.ceil(cx + radius));
+      const yMin = Math.max(0, Math.floor(cy - radius));
+      const yMax = Math.min(h - 1, Math.ceil(cy + radius));
+      const radiusSq = radius * radius;
       for (let py = yMin; py <= yMax; py++) {
-        for (let px = xMin; px <= xMax; px++) {
-          const ddx = px - x;
-          const ddy = py - y;
-          if (ddx * ddx + ddy * ddy <= radiusSq) {
-            data[py * w + px] = 1;
+          for (let px = xMin; px <= xMax; px++) {
+              const dx = px - cx;
+              const dy = py - cy;
+              if (dx * dx + dy * dy <= radiusSq) {
+                  data[py * w + px] = value;
+              }
           }
-        }
       }
-
-      if (x === toX && y === toY) break;
-
-      const e2 = 2 * err;
-      if (e2 > -dy) {
-        err -= dy;
-        x += sx;
-      }
-      if (e2 < dx) {
-        err += dx;
-        y += sy;
-      }
-    }
   }
+
+  // Stroke a point on the mask with the given value (0 = erase, 1 = paint).
+  const strokeAt = useCallback((x: number, y: number, value: number) => {
+      const radius = Math.floor(brushSizeRef.current / 2);
+      if (radius <= 0) return;
+      fillCircle(x, y, radius, value);
+  }, []);
 
   /**
    * Get mask data as a flat Uint8Array.
@@ -314,9 +197,7 @@ export function useMaskBrush(
 
   // Stable object — never changes
   return {
-    paintAt,
-    eraseAt,
-    paintLine,
+    strokeAt,
     reset,
     clear,
     saveState,
