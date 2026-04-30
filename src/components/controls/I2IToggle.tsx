@@ -192,7 +192,7 @@ export const I2IToggle = ({
                 },
             };
 
-            if (value.inpainting && imageURL) {
+            if (value.inpainting && imageURL && value.mask) {
                 const originalImageFilename = graph[':load_image'].inputs.image;
 
                 // Load image to get dimensions
