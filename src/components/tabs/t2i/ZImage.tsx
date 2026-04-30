@@ -1,8 +1,8 @@
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { CFGInput } from '../../controls/CFGInput';
-import { I2IToggle } from '../../controls/I2IToggle';
 import { FlowShiftInput } from '../../controls/FlowShiftInput';
 import { GenerateButton } from '../../controls/GenerateButton';
+import { I2IToggle } from '../../controls/I2IToggle';
 import { ImageResult } from '../../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { LoraInput } from '../../controls/LoraInput';
@@ -11,6 +11,7 @@ import { PromptInput } from '../../controls/PromptInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
+import { SendBackToI2IButton } from '../../controls/SendBackToI2I';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
@@ -55,6 +56,7 @@ const Content = () => {
                 alignItems='center'
             >
                 <ImageResult />
+                <SendBackToI2IButton />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

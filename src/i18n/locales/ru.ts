@@ -156,6 +156,7 @@ const translation = {
         nag_alpha: 'NAG альфа',
         nag_sigma_end: 'NAG последння сигма',
         send_back: 'Отправить назад',
+        send_to_i2i: 'Отправить в I2I',
         append_image: 'Добавить изображение',
         second_image: 'Второе изображение',
         third_image: 'Третье изображение',

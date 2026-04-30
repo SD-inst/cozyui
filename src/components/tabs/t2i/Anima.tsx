@@ -1,7 +1,8 @@
+import { ChatComponent } from '../../chat/ChatComponent';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { CFGInput } from '../../controls/CFGInput';
-import { I2IToggle } from '../../controls/I2IToggle';
 import { GenerateButton } from '../../controls/GenerateButton';
+import { I2IToggle } from '../../controls/I2IToggle';
 import { ImageResult } from '../../controls/ImageResult';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { LoraInput } from '../../controls/LoraInput';
@@ -10,10 +11,10 @@ import { PromptInput } from '../../controls/PromptInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
+import { SendBackToI2IButton } from '../../controls/SendBackToI2I';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
-import { ChatComponent } from '../../chat/ChatComponent';
 
 const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt describing a scene or concept, expand it into a detailed image generation prompt, consisting of danbooru tags and natural language, with specific visuals to guide a text-to-image model by detailing the following aspects:
 1. The main content and theme of the video.
@@ -101,6 +102,7 @@ const Content = () => {
                 alignItems='center'
             >
                 <ImageResult />
+                <SendBackToI2IButton />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

@@ -11,7 +11,7 @@ import { PromptInput } from '../../controls/PromptInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
-import { SendBackToI2IxButton } from '../../controls/SendBackToI2I';
+import { SendBackToI2IButton } from '../../controls/SendBackToI2I';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
@@ -53,7 +53,7 @@ const Content = () => {
             </GridRight>
             <GridBottom>
                 <GenerateButton />
-                <SendBackToI2IxButton />
+                <SendBackToI2IButton />
             </GridBottom>
         </Layout>
     );
