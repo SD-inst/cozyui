@@ -1,5 +1,6 @@
+import { cloneDeep } from 'lodash';
 import { useEventCallback } from '@mui/material';
-import { insertGraph } from '../../../api/utils';
+import { insertGraph, insertNode } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
@@ -22,6 +23,58 @@ import { TeaCacheInput } from '../../controls/TeaCacheInput';
 import { ToggleInput } from '../../controls/ToggleInput';
 import { WFTab } from '../../WFTab';
 import { useWatchForm } from '../../../hooks/useWatchForm';
+
+const NUNCHAKU_KEYWORD = 'nunchaku';
+const POSITIVE_FIELD = 'positive';
+const NEGATIVE_FIELD = 'negative';
+
+const useModelHandler = () => {
+    return useEventCallback(
+        (api: any, value: string, control: controlType) => {
+            if (!value) {
+                return;
+            }
+
+            const isNunchaku = value.toLowerCase().includes(NUNCHAKU_KEYWORD);
+
+            if (isNunchaku) {
+                // Nunchaku mode: replace loader + insert FluxKontext nodes
+                const modelLoaderID = control.model_loader_id;
+                const samplerID = control.sampler_id;
+
+                // Replace model loader with NunchakuQwenImageDiTLoader
+                api[modelLoaderID] = {
+                    inputs: {
+                        model_name: value,
+                        cpu_offload: 'auto',
+                        num_blocks_on_gpu: 1,
+                        use_pin_filters: 'enable'
+                    },
+                    class_type: 'NunchakuQwenImageDiTLoader',
+                    _meta: { title: 'Nunchaku Qwen-Image DiT Loader' }
+                };
+
+                // Insert FluxKontextMultiReferenceLatentMethod for positive
+                const positiveRefNode = {
+                    inputs: {
+                        reference_latents_method: 'index_timestep_zero',
+                        conditioning: null
+                    },
+                    class_type: 'FluxKontextMultiReferenceLatentMethod',
+                    _meta: { title: 'Edit Model Reference Method' }
+                };
+                insertNode(api, samplerID, POSITIVE_FIELD, positiveRefNode, 0, 'conditioning');
+
+                // Insert FluxKontextMultiReferenceLatentMethod for negative
+                const negativeRefNode = cloneDeep(positiveRefNode);
+                insertNode(api, samplerID, NEGATIVE_FIELD, negativeRefNode, 0, 'conditioning');
+            } else {
+                // Standard mode: use default handler behavior
+                api[control.node_id].inputs[control.field] = value;
+            }
+        },
+    );
+};
 
 type ReferenceType = {
     image: string;
@@ -106,6 +159,9 @@ const ReferenceImages = ({ name }: { name: string }) => {
 
 const Content = () => {
     const images: ReferenceType = useWatchForm('reference_images');
+    const modelHandler = useModelHandler();
+    const modelName = useWatchForm('model');
+    const isNunchaku = modelName?.toLowerCase().includes(NUNCHAKU_KEYWORD);
     return (
         <Layout>
             <GridLeft>
@@ -130,10 +186,15 @@ const Content = () => {
                         extraFilter={(v) => v.includes('_edit_')}
                         defaultValue='qwen/qwen_image_edit_2511_fp8mixed.safetensors'
                         sx={{ mb: 2, mt: 2 }}
+                        customHandler={modelHandler}
                     />
                     <TeaCacheInput />
                 </AdvancedSettings>
-                <LoraInput name='lora' type='qwen' />
+                <LoraInput
+                    name='lora'
+                    type='qwen'
+                    classNameOverride={isNunchaku ? 'NunchakuQwenImageLoraLoader' : undefined}
+                />
                 <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>

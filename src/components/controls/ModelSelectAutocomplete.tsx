@@ -30,6 +30,7 @@ export const ModelSelectAutocomplete = ({
     previews = true,
     defaultValue = null,
     extraFilter,
+    customHandler,
     ...props
 }: {
     name: string;
@@ -39,6 +40,7 @@ export const ModelSelectAutocomplete = ({
     field?: string;
     previews?: boolean;
     extraFilter?: (v: string) => boolean;
+    customHandler?: (api: any, value: string, control: controlType) => void | Promise<void>;
 } & Omit<
     AutocompleteProps<valueType, false, any, any>,
     'renderInput' | 'options'
@@ -71,10 +73,13 @@ export const ModelSelectAutocomplete = ({
     const optsIdx = Object.fromEntries(opts.map((o) => [o.id, o.label]));
     const handler = useEventCallback(
         (api: any, value: string, control: controlType) => {
-            if (!value || !control.node_id) {
+            if (customHandler) {
+                customHandler(api, value, control);
+            } else if (!value || !control.node_id) {
                 return;
+            } else {
+                api[control.node_id].inputs[control.field] = value;
             }
-            api[control.node_id].inputs[control.field] = value;
         },
     );
     useRegisterHandler({ name: props.name, handler });

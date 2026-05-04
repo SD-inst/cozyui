@@ -148,6 +148,7 @@ export const LoraInput = ({
     sx,
     type,
     overrideInputs,
+    classNameOverride,
     ...props
 }: {
     name: string;
@@ -155,6 +156,7 @@ export const LoraInput = ({
     label?: string;
     append?: valueType[];
     overrideInputs?: any;
+    classNameOverride?: string;
 } & Omit<
     AutocompleteProps<valueType, true, any, any>,
     'renderInput' | 'options'
@@ -183,7 +185,7 @@ export const LoraInput = ({
                 output_idx,
                 output_node_ids,
                 output_clip_ids,
-                class_name,
+                class_name: _class_name,
                 strength_field_name,
                 clip_strength_field_name,
                 name_field_name,
@@ -191,6 +193,7 @@ export const LoraInput = ({
             },
         },
     } = useAPI();
+    const effectiveClassName = classNameOverride ?? _class_name;
     const handler = useEventCallback((api: any, values: valueType[]) => {
         if (append) {
             values = values.concat(append);
@@ -223,12 +226,12 @@ export const LoraInput = ({
                     : {}),
                 ...additional_fields,
             },
-            class_type: class_name,
+            class_type: effectiveClassName,
             _meta: {
-                title: class_name,
+                title: effectiveClassName,
             },
         }));
-        if (class_name === 'HunyuanVideoLoraLoader') {
+        if (effectiveClassName === 'HunyuanVideoLoraLoader') {
             loraNodes.forEach((n, i) => {
                 n.inputs.blocks_type =
                     values[i].merge === mergeType.DOUBLE
@@ -236,6 +239,13 @@ export const LoraInput = ({
                         : values[i].merge === mergeType.SINGLE
                         ? 'single_blocks'
                         : 'all';
+            });
+        }
+        if (effectiveClassName === 'NunchakuQwenImageLoraLoader') {
+            loraNodes.forEach((n) => {
+                n.inputs.lora_strength = n.inputs[strength_field_name];
+                delete n.inputs[strength_field_name];
+                n.inputs.cpu_offload = 'auto';
             });
         }
         output_node_ids.forEach(
@@ -267,7 +277,7 @@ export const LoraInput = ({
         });
 
         const block_edit_idx = getFreeNodeId(api);
-        if (class_name === 'HyVideoLoraSelect') {
+        if (effectiveClassName === 'HyVideoLoraSelect') {
             const createBlockEdit = (
                 block_edit_idx: number,
                 name: string,
@@ -366,8 +376,8 @@ export const LoraInput = ({
                                 ]);
                             }}
                             hideMergeType={
-                                class_name !== 'HunyuanVideoLoraLoader' &&
-                                class_name !== 'HyVideoLoraSelect'
+                                effectiveClassName !== 'HunyuanVideoLoraLoader' &&
+                                effectiveClassName !== 'HyVideoLoraSelect'
                             }
                         />
                     ))
