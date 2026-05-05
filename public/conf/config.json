@@ -2072,7 +2072,9 @@
                 "model": {
                     "id": "handle",
                     "node_id": "37",
-                    "field": "unet_name"
+                    "field": "unet_name",
+                    "model_loader_id": "37",
+                    "sampler_id": "3"
                 },
                 "neg_prompt": {
                     "id": "7",

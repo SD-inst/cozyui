@@ -17,8 +17,10 @@ import { SliderInput } from '../../controls/SliderInput';
 import { TeaCacheInput } from '../../controls/TeaCacheInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
+import { useQwenModelHandler } from '../../../hooks/useQwenModelHandler';
 
 const Content = () => {
+    const { handler: modelHandler, isNunchaku } = useQwenModelHandler();
     return (
         <Layout>
             <GridLeft>
@@ -54,9 +56,10 @@ const Content = () => {
                         name='model'
                         type='qwen'
                         defaultValue='qwen/qwen_image_fp8_e4m3fn.safetensors'
+                        customHandler={modelHandler}
                     />
                 </AdvancedSettings>
-                <LoraInput name='lora' type='qwen' sx={{ mt: 2 }} />
+                <LoraInput name='lora' type='qwen' classNameOverride={isNunchaku ? 'NunchakuQwenImageLoraLoader' : undefined} sx={{ mt: 2 }} />
                 <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
