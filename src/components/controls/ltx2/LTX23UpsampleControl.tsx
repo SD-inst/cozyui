@@ -146,7 +146,7 @@ export const LTX23UpsampleControl = ({
                     ':1': {
                         inputs: {
                             model_name:
-                                'ltx/ltx-2.3-spatial-upscaler-x2-1.0.safetensors',
+                                'ltx/ltx-2.3-spatial-upscaler-x2-1.1.safetensors',
                         },
                         class_type: 'LatentUpscaleModelLoader',
                         _meta: {
@@ -204,7 +204,7 @@ export const LTX23UpsampleControl = ({
                 },
                 ':3': {
                     inputs: {
-                        sigmas: '0.909375, 0.725, 0.421875, 0.0',
+                        sigmas: '0.85, 0.7250, 0.4219, 0.0',
                     },
                     class_type: 'ManualSigmas',
                     _meta: {
@@ -245,7 +245,7 @@ export const LTX23UpsampleControl = ({
                 ':7': {
                     inputs: {
                         lora_name:
-                            'ltx2/ltx-2.3-22b-distilled-lora-384.safetensors',
+                            'ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors',
                         strength_model: value.distill_strength,
                         model: modelNode,
                     },
