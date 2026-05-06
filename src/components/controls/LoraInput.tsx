@@ -173,7 +173,6 @@ export const LoraInput = ({
             : true;
     const final_filter = (l: string) => envFilter(l) && l.includes(filter);
     const tr = useTranslate();
-    const disable_lora_filter = localStorage.getItem('disable_lora_filter');
     const { setValue } = useFormContext();
     const ceHanler = useCtrlEnter();
     const {
@@ -336,7 +335,7 @@ export const LoraInput = ({
         index: 0,
     });
     const opts = loras
-        .filter((l) => (!disable_lora_filter ? final_filter(l) : true))
+        .filter(final_filter)
         .map((l) => {
             const label = l.slice(
                 l.lastIndexOf('/') + 1,

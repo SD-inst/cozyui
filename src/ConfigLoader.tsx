@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { buildObjectInfoUrl } from './api/buildObjectInfoUrl';
 import { useApiURL } from './hooks/useApiURL';
 import { useGet } from './hooks/useGet';
 import { setConfig, mergeConfig, setLoaded } from './redux/config';
@@ -32,7 +33,7 @@ export const ConfigLoader = () => {
         isError: isErrorObj,
         isSuccess: isSuccessObj,
     } = useGet({
-        url: apiUrl + '/api/object_info',
+        url: buildObjectInfoUrl(apiUrl + '/api/object_info'),
         enabled: isSuccessConfig && !!apiUrl,
         cache: true,
     });
