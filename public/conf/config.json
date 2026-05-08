@@ -778,6 +778,9 @@
                     "id": "92:9",
                     "field": "steps"
                 },
+                "distill_strength": {
+                    "id": "skip"
+                },
                 "width": {
                     "id": "92:89",
                     "field": "width"
@@ -894,6 +897,9 @@
                 "steps": {
                     "id": "92:9",
                     "field": "steps"
+                },
+                "distill_strength": {
+                    "id": "skip"
                 },
                 "size": {
                     "id": "106",

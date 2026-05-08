@@ -1,3 +1,4 @@
+import { mergeType } from '../../../api/mergeType';
 import { useWatch } from 'react-hook-form';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { CFGInput } from '../../controls/CFGInput';
@@ -61,6 +62,15 @@ Style: realistic with cinematic lighting. In a medium close-up, a woman in her e
 
 const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });
+    const distillStrength = useWatch({ name: 'distill_strength', defaultValue: 0.5 });
+    const distillAppend = distillStrength > 0
+        ? [{
+            id: 'ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors',
+            label: 'ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16',
+            strength: distillStrength,
+            merge: mergeType.DOUBLE,
+        }]
+        : undefined;
     return (
         <Layout>
             <GridLeft>
@@ -84,6 +94,7 @@ const Content = () => {
                     fps={fps}
                 />
                 <SliderInput name='steps' defaultValue={20} min={5} max={50} />
+                <SliderInput name='distill_strength' defaultValue={0.5} min={0} max={1} step={0.05} />
                 <AdvancedSettings>
                     <TextInput
                         name='neg_prompt'
@@ -115,7 +126,7 @@ const Content = () => {
                     <SamplerSelectInput name='sampler' defaultValue='euler' />
                     <LTX23UpsampleControl />
                 </AdvancedSettings>
-                <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} />
+                <LoraInput name='lora' type='ltx2' sx={{ mt: 1 }} append={distillAppend} />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>

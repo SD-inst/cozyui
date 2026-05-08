@@ -47,7 +47,15 @@ export const LTX23UpsampleControl = ({
     const referenceAudio: TReferenceAudio = useWatch({
         name: 'reference_audio',
     });
-    const value = useWatch({ name, defaultValue });
+    const temporal = useWatch({
+        name: name + '.temporal',
+        defaultValue: defaultValue.temporal,
+    });
+    const spatial = useWatch({
+        name: name + '.spatial',
+        defaultValue: defaultValue.spatial,
+    });
+    const globalDistill = useWatch({ name: 'distill_strength', defaultValue: 0.5 });
     const raHandler = useReferenceAudioHandler();
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
@@ -242,24 +250,26 @@ export const LTX23UpsampleControl = ({
                         title: '2x Upscale',
                     },
                 },
-                ':7': {
-                    inputs: {
-                        lora_name:
-                            'ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors',
-                        strength_model: value.distill_strength,
-                        model: modelNode,
+                ...(!globalDistill ? {
+                    ':7': {
+                        inputs: {
+                            lora_name:
+                                'ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors',
+                            strength_model: value.distill_strength,
+                            model: modelNode,
+                        },
+                        class_type: 'LoraLoaderModelOnly',
+                        _meta: {
+                            title: 'LoraLoaderModelOnly',
+                        },
                     },
-                    class_type: 'LoraLoaderModelOnly',
-                    _meta: {
-                        title: 'LoraLoaderModelOnly',
-                    },
-                },
+                } : {}),
                 ':8': {
                     inputs: {
                         lora_name:
                             'ltx2/ltx-2-19b-ic-lora-detailer.safetensors',
                         strength_model: value.detail_strength,
-                        model: [':7', 0],
+                        model: globalDistill > 0 ? modelNode : [':7', 0],
                     },
                     class_type: 'LoraLoaderModelOnly',
                     _meta: {
@@ -340,6 +350,9 @@ export const LTX23UpsampleControl = ({
             if (!value.audio) {
                 api[audio_node_id].inputs.samples = [separateNodeID, 1];
             }
+            if (globalDistill > 0) {
+                api[guider_node_id].inputs.cfg = 1;
+            }
         },
     );
     useRegisterHandler({ name, handler });
@@ -365,14 +378,11 @@ export const LTX23UpsampleControl = ({
                 <ToggleInput
                     name={`${name}.audio`}
                     label='upsample_audio'
-                    disabled={!value?.temporal && !value?.spatial}
+                    disabled={!temporal && !spatial}
                     defaultValue={defaultValue.audio}
                 />
             </Box>
-            <Box
-                display={value?.temporal || value?.spatial ? 'block' : 'none'}
-                width='100%'
-            >
+            <Box display={temporal || spatial ? 'block' : 'none'} width='100%'>
                 <Box
                     display='flex'
                     flexDirection='row'
