@@ -9,6 +9,8 @@ import { ToggleInput } from '../ToggleInput';
 import { UploadType } from '../UploadType';
 import { Box } from '@mui/material';
 
+const newValue = { pos: 0, enabled: true };
+
 export const LTX2KeyframesControl = ({
     name = 'keyframes',
     receiverFieldName = 'keyframe',
@@ -18,7 +20,7 @@ export const LTX2KeyframesControl = ({
     return (
         <ArrayInput
             name={name}
-            newValue={{ pos: 0, enabled: true }}
+            newValue={newValue}
             receiverFieldName={receiverFieldName}
             targetFieldName='image'
         >

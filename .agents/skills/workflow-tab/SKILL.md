@@ -248,7 +248,7 @@ export const TabNameTab = (
 
 | Control | Purpose | Key props |
 |---------|---------|-----------|
-| [`ArrayInput`](../../src/components/controls/ArrayInput.tsx) | Array/value input | `name` |
+| [`ArrayInput`](../../src/components/controls/ArrayInput.tsx) | Array/value input | `name`, `newValue` (must be a **stable reference** — see below) |
 | [`DeleteArrayInputButton`](../../src/components/controls/DeleteArrayInputButton.tsx) | Delete array item | — |
 | [`SelectInput`](../../src/components/controls/SelectInput.tsx) | Generic select dropdown | `name`, `options` |
 | [`ToggleInput`](../../src/components/controls/ToggleInput.tsx) | Boolean toggle | `name`, `defaultValue` |
@@ -480,3 +480,30 @@ See existing tabs for reference:
 1. Verify `result.id` matches a SaveImage/SaveVideo node in the API JSON
 2. Verify `result.type` matches the output format ("images", "gifs", "audio")
 3. Check that the node produces output on the expected index (default: 0)
+
+### ArrayInput creates duplicate items on reset
+`ArrayInput` has a `useEffect` that depends on its `newValue` prop. If `newValue` is passed as an inline object literal (e.g. `newValue={{ size: 1, enabled: true }}`), a new reference is created on every render. After adding/removing an array item the component re-renders, `newValue` changes reference, and `useEffect` fires again — triggering an extra `append` call. The result is `min + 1` items instead of `min`.
+
+**Fix:** Extract `newValue` to a module-level constant so the reference is stable across renders:
+
+```tsx
+// ❌ BAD — inline object creates a new reference every render
+<ArrayInput
+    name='reference_images'
+    newValue={{ enabled: true }}
+    min={1}
+>
+
+// ✅ GOOD — stable module-level constant
+const newValue = { enabled: true };
+
+// ...
+
+<ArrayInput
+    name='reference_images'
+    newValue={newValue}
+    min={1}
+>
+```
+
+**Affected components:** `HiDreamO1.tsx`, `QwenImageEdit.tsx`, `LTX2KeyframesControl.tsx`, `ReferenceLatentInput.tsx`. Always use module-level constants for any object passed as `newValue` to `ArrayInput`.

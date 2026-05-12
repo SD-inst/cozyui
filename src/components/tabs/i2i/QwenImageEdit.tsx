@@ -30,6 +30,8 @@ type ReferenceType = {
     enabled: boolean;
 }[];
 
+const newValue = { size: 1, enabled: true };
+
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
         (api: any, value: ReferenceType, control: controlType) => {
@@ -85,7 +87,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
     return (
         <ArrayInput
             name={name}
-            newValue={{ size: 1, enabled: true }}
+            newValue={newValue}
             min={1}
             max={3}
             receiverFieldName='image'

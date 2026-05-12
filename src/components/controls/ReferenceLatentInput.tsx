@@ -13,6 +13,8 @@ type ReferenceType = {
     enabled: boolean;
 }[];
 
+const newValue = { size: 1, enabled: true };
+
 export const ReferenceLatentInput = ({
     name,
     receiverFieldName,
@@ -89,7 +91,7 @@ export const ReferenceLatentInput = ({
     return (
         <ArrayInput
             name={name}
-            newValue={{ size: 1, enabled: true }}
+            newValue={newValue}
             max={10}
             receiverFieldName={receiverFieldName}
             targetFieldName='image'
