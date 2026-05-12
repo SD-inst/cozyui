@@ -211,6 +211,7 @@ const translation = {
         multiplier: 'множитель',
         interpolation_multiplier: 'множитель сглаживания',
         size_mp: 'размер в мегапикселах',
+        noise_scale: 'шкала шума',
         audio_neg_prompt: 'негативный аудио-промпт',
         audio_cfg: 'аудио CFG',
         start_step: 'первый шаг',

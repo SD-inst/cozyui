@@ -1,0 +1,142 @@
+{
+    "6": {
+        "inputs": {
+            "ckpt_name": "hidream/hidream_o1_image_dev_mxfp8.safetensors"
+        },
+        "class_type": "CheckpointLoaderSimple",
+        "_meta": {
+            "title": "Load Checkpoint"
+        }
+    },
+    "104": {
+        "inputs": {
+            "positive": ["110", 0],
+            "negative": ["111", 0]
+        },
+        "class_type": "HiDreamO1ReferenceImages",
+        "_meta": {
+            "title": "HiDream-O1 Reference Images"
+        }
+    },
+    "105": {
+        "inputs": {
+            "samples": ["108", 0],
+            "vae": ["6", 2]
+        },
+        "class_type": "VAEDecode",
+        "_meta": {
+            "title": "VAE Decode"
+        }
+    },
+    "106": {
+        "inputs": {
+            "width": 832,
+            "height": 1280,
+            "batch_size": 1
+        },
+        "class_type": "EmptyHiDreamO1LatentImage",
+        "_meta": {
+            "title": "Empty HiDream-O1 Latent Image"
+        }
+    },
+    "108": {
+        "inputs": {
+            "add_noise": true,
+            "noise_seed": ["154", 0],
+            "cfg": 1,
+            "model": ["124", 0],
+            "positive": ["104", 0],
+            "negative": ["104", 1],
+            "sampler": ["125", 0],
+            "sigmas": ["112", 0],
+            "latent_image": ["106", 0]
+        },
+        "class_type": "SamplerCustom",
+        "_meta": {
+            "title": "SamplerCustom"
+        }
+    },
+    "110": {
+        "inputs": {
+            "text": "prompt",
+            "clip": ["6", 1]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Prompt)"
+        }
+    },
+    "111": {
+        "inputs": {
+            "text": "",
+            "clip": ["6", 1]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Prompt)"
+        }
+    },
+    "112": {
+        "inputs": {
+            "scheduler": "normal",
+            "steps": 28,
+            "denoise": 1,
+            "model": ["124", 0]
+        },
+        "class_type": "BasicScheduler",
+        "_meta": {
+            "title": "BasicScheduler"
+        }
+    },
+    "124": {
+        "inputs": {
+            "noise_scale": 7.5,
+            "model": ["6", 0]
+        },
+        "class_type": "ModelNoiseScale",
+        "_meta": {
+            "title": "ModelNoiseScale"
+        }
+    },
+    "125": {
+        "inputs": {
+            "s_noise": 1,
+            "s_noise_end": 1,
+            "noise_clip_std": 2.5
+        },
+        "class_type": "SamplerLCM",
+        "_meta": {
+            "title": "SamplerLCM"
+        }
+    },
+    "154": {
+        "inputs": {
+            "value": 1024
+        },
+        "class_type": "PrimitiveInt",
+        "_meta": {
+            "title": "Int"
+        }
+    },
+    "155": {
+        "inputs": {
+            "prefix": "HiDream_O1_",
+            "suffix": "",
+            "input": ["154", 0]
+        },
+        "class_type": "SomethingToString",
+        "_meta": {
+            "title": "Something To String"
+        }
+    },
+    "156": {
+        "inputs": {
+            "filename_prefix": ["155", 0],
+            "images": ["105", 0]
+        },
+        "class_type": "SaveImage",
+        "_meta": {
+            "title": "Save Image"
+        }
+    }
+}

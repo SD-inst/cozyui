@@ -25,6 +25,7 @@ import { Flux2Tab } from './components/tabs/t2i/Flux2';
 import { FluxKontextTab } from './components/tabs/i2i/FluxKontext';
 import { FramePackI2VTab } from './components/tabs/i2v/FramePackI2V';
 import { HiDreamTab } from './components/tabs/t2i/HiDream';
+import { HiDreamO1Tab } from './components/tabs/i2i/HiDreamO1';
 import { Hunyan15I2VTab } from './components/tabs/i2v/Hunyuan15I2V';
 import { Hunyan15T2VTab } from './components/tabs/t2v/Hunyuan15T2V';
 import { HunyanI2VTab } from './components/tabs/i2v/HunyuanI2V';
@@ -92,6 +93,7 @@ function App() {
                                 {Hunyan15I2VTab}
                                 {FramePackI2VTab}
                                 {HiDreamTab}
+                                {HiDreamO1Tab}
                                 {FluxTab}
                                 {Flux2Tab}
                                 {HunyanT2VKJTab}

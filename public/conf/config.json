@@ -1601,6 +1601,81 @@
                 }
             }
         },
+        "HiDream-O1": {
+            "api": "api/hidream_o1.json",
+            "defaults": {
+                "model": "hidream/hidream_o1_image_dev_mxfp8.safetensors"
+            },
+            "controls": {
+                "reference_images": {
+                    "id": "handle",
+                    "reference_node_id": "104",
+                    "set_field": "image"
+                },
+                "prompt": {
+                    "id": "110",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "111",
+                    "field": "text"
+                },
+                "width": {
+                    "id": "106",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "106",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "112",
+                    "field": "steps"
+                },
+                "scheduler": {
+                    "id": "112",
+                    "field": "scheduler"
+                },
+                "noise_scale": {
+                    "id": "124",
+                    "field": "noise_scale"
+                },
+                "cfg": {
+                    "id": "108",
+                    "field": "cfg"
+                },
+                "seed": {
+                    "id": "154",
+                    "field": "value"
+                },
+                "sampler": {
+                    "id": "skip"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "6",
+                    "field": "ckpt_name"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["108"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "156",
+                "type": "images"
+            }
+        },
         "Flux": {
             "api": "api/flux.json",
             "controls": {
