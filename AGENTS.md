@@ -412,13 +412,189 @@ Located in [`src/components/settings/`](src/components/settings/).
 
 ## Creating a New Tab
 
-Follow the workflow documented in [`.agents/skills/workflow-tab/SKILL.md`](.agents/skills/workflow-tab/SKILL.md):
+### Step 1: Create the ComfyUI API JSON file
 
-1. Create API JSON in `public/api/<name>.json`
-2. Create React component in `src/components/tabs/<Name>.tsx`
-3. Add config entry in `public/conf/config.json` under `tabs`
-4. Import and register in `src/App.tsx`
-5. (Optional) Add defaults to `public/conf/config.local.json.example`
+Create `public/api/<apiFile>` with the ComfyUI workflow in JSON format.
+
+**Structure:**
+
+```json
+{
+  "NODE_ID": {
+    "inputs": {
+      "field_name": "value_or_reference",
+      "another_field": ["PREV_NODE_ID", 0]
+    },
+    "class_type": "NodeClassName",
+    "_meta": {
+      "title": "Human Readable Name"
+    }
+  }
+}
+```
+
+**Key conventions:**
+- Node IDs are string numbers (e.g. `"1"`, `"8"`, `"44"`)
+- References to previous node outputs use `["NODE_ID", 0]` format
+- `class_type` must match a valid ComfyUI custom node class
+- `_meta.title` is for displaying the control name in the UI during inference
+
+### Step 2: Create the React component
+
+Create `src/components/tabs/<TabName>.tsx`.
+
+**Component structure:**
+
+```tsx
+import { WFTab } from '../WFTab';
+import { Layout, GridLeft, GridRight, GridBottom } from '../controls/Layout';
+import { GenerateButton } from '../controls/GenerateButton';
+
+const Content = () => {
+    return (
+        <Layout>
+            <GridLeft>
+                <PromptInput name='prompt' />
+                <WidthHeight defaultWidth={848} defaultHeight={480} />
+                <SliderInput name='steps' defaultValue={30} min={1} max={50} />
+                <ModelSelectAutocomplete name='model' type='hunyuan' sx={{ mb: 2 }} />
+                <SeedInput name='seed' defaultValue={1024} />
+                <LoraInput name='lora' type='hunyuan' />
+                <AdvancedSettings>
+                    <SamplerSelectInput name='sampler' />
+                    <SchedulerSelectInput name='scheduler' />
+                </AdvancedSettings>
+            </GridLeft>
+            <GridRight>
+                <ImageResult />
+            </GridRight>
+            <GridBottom>
+                <GenerateButton />
+            </GridBottom>
+        </Layout>
+    );
+};
+
+export const TabNameTab = (
+    <WFTab
+        label='Display Label'
+        value='configKey'
+        group='GROUP'
+        receivers={[{ name: 'image', acceptedTypes: ['images'] }]}  // optional
+        content={<Content />}
+    />
+);
+```
+
+### Step 3: Add config.json entry
+
+Add a new entry to `public/conf/config.json` under `"tabs"`:
+
+```json
+"ConfigKey": {
+    "api": "api/<apiFile>",
+    "controls": {
+        "prompt": {
+            "id": "8",
+            "field": "text"
+        },
+        "model": {
+            "id": "handle",
+            "node_id": "13",
+            "field": "unet_name"
+        },
+        "sampler": {
+            "id": "handle",
+            "sampler_id": "108"
+        },
+        "width": {
+            "id": "14",
+            "field": "width"
+        },
+        "height": {
+            "id": "14",
+            "field": "height"
+        },
+        "seed": {
+            "id": "19",
+            "field": "value"
+        },
+        "steps": {
+            "id": "12",
+            "field": "steps"
+        }
+    },
+    "handler_options": {
+        "lora_params": {
+            "lora_input_name": "model",
+            "api_input_name": "model",
+            "output_node_ids": ["6"],
+            "output_idx": 0,
+            "class_name": "HunyuanVideoLoraLoader",
+            "strength_field_name": "strength",
+            "name_field_name": "lora_name"
+        }
+    },
+    "result": [
+        { "id": "16", "type": "gifs" },
+        { "id": "20", "type": "images" }
+    ],
+    "defaults": {
+        "model": "path/to/model.safetensors",
+        "width": 848,
+        "height": 480
+    }
+}
+```
+
+**controls field conventions:**
+- `"id": "handle"` — special value for dynamic controls (LoRA, etc.) — handled by custom handlers
+- `"id": "skip"` — control is disabled/skipped
+- `"id": "NODE_ID"` — maps to a specific node in the API JSON
+- `"field"` — the input field name on that node
+- Arbitrary extra fields (e.g. `node_id`, `sampler_id`, `set_field`) — passed to handler via `control` object for node references
+
+**result field:**
+- Array of `{ id: string, type: string }` objects
+- `type` values: `"images"`, `"audio"`, `"gifs"` (usually for videos, not just GIFs)
+- `id` is the node ID in the API JSON that produces the result
+
+**defaults section:**
+- Key-value pairs for default parameter values
+- Stored in `config.local.json.example` for project defaults
+
+### Step 4: Register in App.tsx
+
+Add the import and tab registration in `src/App.tsx`:
+
+```tsx
+import { NewTabTab } from './components/tabs/NewTab';
+
+<WorkflowTabs>
+    {NewTabTab}
+</WorkflowTabs>
+```
+
+**Placement rules:**
+- T2I, I2V, T2V, Audio, Upscale tabs grouped together
+- Alphabetical order within groups
+
+### Step 5: (Optional) Add defaults to config.local.json.example
+
+```json
+{
+    "tabs": {
+        "ConfigKey": {
+            "defaults": {
+                "model": "path/to/default_model.safetensors",
+                "guidance": 7.5,
+                "width": 1024,
+                "height": 1024
+            }
+        }
+    }
+}
+```
 
 ### Standard Tab Layout
 
@@ -436,6 +612,99 @@ Follow the workflow documented in [`.agents/skills/workflow-tab/SKILL.md`](.agen
 │  GridBottom: GenerateButton                   │
 └─────────────────────────┘                    │
 ```
+
+---
+
+## Dynamic Workflow Modification
+
+### insertGraph — Inserting node groups at runtime
+
+`insertGraph` is the primary utility for inserting groups of nodes into the workflow dynamically. Located in [`src/api/utils.ts`](src/api/utils.ts).
+
+**Signature:**
+
+```typescript
+insertGraph(api: any, graph: any): string
+```
+
+**How it works:**
+
+1. Allocates a free node ID using `getFreeNodeId(api)`
+2. Prefixes all node keys in the graph with the allocated ID (graph keys use `:` placeholder, e.g. `':main'` → `'157:main'`)
+3. Rewrites internal references (links starting with `:`) to use the actual prefixed IDs
+4. Returns the base ID for constructing full node IDs
+
+**Example:**
+
+```tsx
+import { getFreeNodeId, insertGraph } from '../../../api/utils';
+
+const handler = useEventCallback((api: any, value: any, control: controlType) => {
+    if (!value || !value.length || !control.sampler_id) {
+        return;
+    }
+
+    // Define a sub-graph with placeholder IDs (must use : prefix)
+    const referenceGraph = {
+        ':reference': {
+            inputs: {},
+            class_type: 'HiDreamO1ReferenceImages',
+            _meta: { title: 'HiDream-O1 Reference Images' },
+        },
+    };
+
+    // Insert the graph — returns base ID, e.g. "157"
+    const refBaseID = insertGraph(api, referenceGraph);
+    const refNodeID = refBaseID + ':reference';
+
+    // Connect reference images from array to LoadImage nodes
+    value.forEach((v, idx) => {
+        if (!v.enabled) return;
+        const imageNodeID = getFreeNodeId(api) + '';
+        api[imageNodeID] = {
+            inputs: { image: v.image },
+            class_type: 'LoadImage',
+            _meta: { title: 'Load Image' },
+        };
+        api[refNodeID].inputs['images.image_' + (idx + 1)] = [imageNodeID, 0];
+    });
+
+    // Connect to the sampler — node ID comes from config.json control field
+    api[control.sampler_id].inputs.positive = [refNodeID, 0];
+    api[control.sampler_id].inputs.negative = [refNodeID, 1];
+});
+```
+
+**Key rules:**
+- Graph node keys must use `:` prefix (e.g. `':node'`, `':loader'`)
+- Internal links between graph nodes use `[':key', 0]` format — `insertGraph` auto-resolves these
+- External references (not starting with `:`) are preserved unchanged
+- Use `getFreeNodeId(api)` for standalone single-node insertion outside `insertGraph`
+- **Never hardcode node IDs** — pass them via config.json control fields or extract from `control` object
+
+### Dynamic handler example
+
+```tsx
+import { useEventCallback } from '@mui/material';
+import { useRegisterHandler } from '../contexts/TabContext';
+import { controlType } from '../../../redux/config';
+import { insertGraph } from '../../../api/utils';
+
+const ReferenceImages = ({ name }: { name: string }) => {
+    const handler = useEventCallback(
+        (api: any, value: any, control: controlType) => {
+            // Node IDs come from config.json — never search by class_type
+            if (!control.reference_node_id) return;
+            
+            api[control.reference_node_id].inputs.my_field = value;
+        },
+    );
+    useRegisterHandler({ name, handler });
+    // ...
+};
+```
+
+The `control` object contains extra fields from config.json (e.g., `reference_node_id`, `sampler_id`).
 
 ---
 
