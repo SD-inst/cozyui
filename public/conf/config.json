@@ -1609,7 +1609,7 @@
             "controls": {
                 "reference_images": {
                     "id": "handle",
-                    "reference_node_id": "104",
+                    "sampler_id": "108",
                     "set_field": "image"
                 },
                 "prompt": {

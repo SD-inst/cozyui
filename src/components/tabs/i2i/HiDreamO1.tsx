@@ -1,5 +1,6 @@
 import { useEventCallback } from '@mui/material';
 import { controlType } from '../../../redux/config';
+import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ArrayInput } from '../../controls/ArrayInput';
 import { CFGInput } from '../../controls/CFGInput';
@@ -25,35 +26,45 @@ type ReferenceType = {
 const newValue = { enabled: true };
 
 const ReferenceImages = ({ name }: { name: string }) => {
-    const handler = useEventCallback(
-        (api: any, value: ReferenceType, control: controlType) => {
-            if (!value || !value.length || !control.reference_node_id) {
+    const handler = useEventCallback((api: any, value: ReferenceType, control: controlType) => {
+        if (!value || !value.length || !control.sampler_id) {
+            return;
+        }
+
+        const referenceGraph = {
+            ':reference': {
+                inputs: {},
+                class_type: 'HiDreamO1ReferenceImages',
+                _meta: { title: 'HiDream-O1 Reference Images' },
+            },
+        };
+        const refBaseID = insertGraph(api, referenceGraph);
+        const refNodeID = refBaseID + ':reference';
+
+        value.forEach((v, idx) => {
+            if (!v.enabled) {
                 return;
             }
-            const referenceNode = control.reference_node_id + '';
-            value.forEach((v, idx) => {
-                if (!v.enabled) {
-                    return;
-                }
-                const nodeID = Object.keys(api).length + 1 + '';
-                api[nodeID] = {
-                    inputs: { image: v.image },
-                    class_type: 'LoadImage',
-                    _meta: { title: 'Load Image' },
-                };
-                api[referenceNode].inputs['images.image_' + (idx + 1)] = [
-                    nodeID,
-                    0,
-                ];
-            });
-        },
-    );
+            const imageNodeID = getFreeNodeId(api) + '';
+            api[imageNodeID] = {
+                inputs: { image: v.image },
+                class_type: 'LoadImage',
+                _meta: { title: 'Load Image' },
+            };
+            api[refNodeID].inputs['images.image_' + (idx + 1)] = [
+                imageNodeID,
+                0,
+            ];
+        });
+
+        api[control.sampler_id].inputs.positive = [refNodeID, 0];
+        api[control.sampler_id].inputs.negative = [refNodeID, 1];
+    });
     useRegisterHandler({ name, handler });
     return (
         <ArrayInput
             name={name}
             newValue={newValue}
-            min={1}
             max={7}
             receiverFieldName='image'
             targetFieldName='image'
@@ -118,8 +129,7 @@ export const HiDreamO1Tab = (
     <WFTab
         label='HiDream-O1'
         value='HiDream-O1'
-        group='I2I'
-        receivers={[{ name: 'reference_images', acceptedTypes: 'images' }]}
+        group='T2I'
         content={<Content />}
     />
 );

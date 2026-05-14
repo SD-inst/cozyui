@@ -8,16 +8,6 @@
             "title": "Load Checkpoint"
         }
     },
-    "104": {
-        "inputs": {
-            "positive": ["110", 0],
-            "negative": ["111", 0]
-        },
-        "class_type": "HiDreamO1ReferenceImages",
-        "_meta": {
-            "title": "HiDream-O1 Reference Images"
-        }
-    },
     "105": {
         "inputs": {
             "samples": ["108", 0],
@@ -45,8 +35,8 @@
             "noise_seed": ["154", 0],
             "cfg": 1,
             "model": ["124", 0],
-            "positive": ["104", 0],
-            "negative": ["104", 1],
+            "positive": ["110", 0],
+            "negative": ["111", 0],
             "sampler": ["125", 0],
             "sigmas": ["112", 0],
             "latent_image": ["106", 0]
