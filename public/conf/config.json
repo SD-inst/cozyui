@@ -1621,20 +1621,16 @@
                     "field": "text"
                 },
                 "width": {
-                    "id": "106",
-                    "field": "width"
+                    "id": "160",
+                    "field": "value"
                 },
                 "height": {
-                    "id": "106",
-                    "field": "height"
+                    "id": "161",
+                    "field": "value"
                 },
                 "steps": {
                     "id": "112",
                     "field": "steps"
-                },
-                "scheduler": {
-                    "id": "112",
-                    "field": "scheduler"
                 },
                 "noise_scale": {
                     "id": "124",
@@ -1649,7 +1645,8 @@
                     "field": "value"
                 },
                 "sampler": {
-                    "id": "skip"
+                    "id": "125",
+                    "field": "sampler_name"
                 },
                 "lora": {
                     "id": "handle"
@@ -1657,7 +1654,9 @@
                 "model": {
                     "id": "handle",
                     "node_id": "6",
-                    "field": "ckpt_name"
+                    "field": "ckpt_name",
+                    "noise_scale_id": "124",
+                    "sampler_id": "108"
                 }
             },
             "handler_options": {

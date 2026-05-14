@@ -706,6 +706,16 @@ const ReferenceImages = ({ name }: { name: string }) => {
 
 The `control` object contains extra fields from config.json (e.g., `reference_node_id`, `sampler_id`).
 
+### Handler lifecycle
+
+**Handlers are called only once — right before generation.** Each generation starts from a clean slate: the workflow is reloaded fresh from the API JSON file. Modified workflows are not cached or persisted between generations.
+
+This means:
+- Handlers must fully set up the workflow each time they are called
+- Inserted nodes (via `insertGraph` or `getFreeNodeId`) are added to the current workflow copy and sent to ComfyUI with the prompt
+- Any conditional logic (e.g. inserting/removing nodes based on parameter values) must handle the full state change in a single call — there is no incremental update
+- If a node should not exist (e.g. switching from base to dev model), the handler must explicitly remove it from the current `api` object
+
 ---
 
 ## Key Patterns

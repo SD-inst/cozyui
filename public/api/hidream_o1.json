@@ -20,8 +20,8 @@
     },
     "106": {
         "inputs": {
-            "width": 832,
-            "height": 1280,
+            "width": ["160", 0],
+            "height": ["161", 0],
             "batch_size": 1
         },
         "class_type": "EmptyHiDreamO1LatentImage",
@@ -68,14 +68,13 @@
     },
     "112": {
         "inputs": {
-            "scheduler": "normal",
             "steps": 28,
-            "denoise": 1,
-            "model": ["124", 0]
+            "width": ["160", 0],
+            "height": ["161", 0]
         },
-        "class_type": "BasicScheduler",
+        "class_type": "Flux2Scheduler",
         "_meta": {
-            "title": "BasicScheduler"
+            "title": "Flux2Scheduler"
         }
     },
     "124": {
@@ -90,13 +89,11 @@
     },
     "125": {
         "inputs": {
-            "s_noise": 1,
-            "s_noise_end": 1,
-            "noise_clip_std": 2.5
+            "sampler_name": "lcm"
         },
-        "class_type": "SamplerLCM",
+        "class_type": "KSamplerSelect",
         "_meta": {
-            "title": "SamplerLCM"
+            "title": "KSamplerSelect"
         }
     },
     "154": {
@@ -127,6 +124,24 @@
         "class_type": "SaveImage",
         "_meta": {
             "title": "Save Image"
+        }
+    },
+    "160": {
+        "inputs": {
+            "value": 2048
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Width"
+        }
+    },
+    "161": {
+        "inputs": {
+            "value": 2048
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Height"
         }
     }
 }
