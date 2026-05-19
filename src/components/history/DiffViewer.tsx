@@ -75,9 +75,19 @@ const VideoCompare = () => {
     if (!tasks || !tasks[0] || !tasks[1]) {
         return null;
     }
-    const urls = tasks.map((t) =>
-        t?.data ? URL.createObjectURL(t.data) : t?.url
-    );
+    const urls = tasks.map((t): string | undefined => {
+        if (!t) return undefined;
+        if (Array.isArray(t.data)) {
+            return t.data.length > 0 ? URL.createObjectURL(t.data[0]) : undefined;
+        }
+        if (t.data) {
+            return URL.createObjectURL(t.data);
+        }
+        if (Array.isArray(t.url)) {
+            return t.url[0];
+        }
+        return t.url;
+    });
     const VideoViewer = ({ i }: { i: number }) => (
         <video
             key={i}
@@ -162,7 +172,7 @@ const VideoCompare = () => {
                 index={index}
                 close={() => setLbOpen(false)}
                 slides={urls
-                    .filter((u) => u !== undefined)
+                    .filter((u): u is string => u !== undefined)
                     .map((u) => ({ src: u }))}
                 carousel={{ finite: true }}
                 animation={{ navigation: 0 }}

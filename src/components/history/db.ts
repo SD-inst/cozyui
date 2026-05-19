@@ -9,8 +9,8 @@ export interface TaskResult {
     id: number;
     timestamp: number;
     duration: number;
-    url: string;
-    data?: Blob;
+    url: string | string[];
+    data?: Blob | Blob[];
     node_id: string;
     type: string;
     params?: string;

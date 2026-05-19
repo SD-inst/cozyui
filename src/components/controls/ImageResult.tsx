@@ -49,7 +49,7 @@ export const ImageResult = ({
         });
     }, [results]);
     useSaveToHistory();
-    const urls = results?.map((r: any) => makeOutputUrl(apiUrl, r));
+    const urls = results?.map((r: any): string => makeOutputUrl(apiUrl, r));
     return (
         <VerticalBox width='100%'>
             <Typography variant='body1'>
@@ -85,7 +85,7 @@ export const ImageResult = ({
             <Lightbox
                 open={open}
                 close={() => setOpen(false)}
-                slides={urls.map((url) => ({ src: url }))}
+                slides={urls.map((url: string) => ({ src: url }))}
                 plugins={[Zoom, Fullscreen, Counter]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                 index={idx}

@@ -7,6 +7,7 @@ import {
     VideoFile,
 } from '@mui/icons-material';
 import {
+    Badge,
     Button,
     Card,
     CardActions,
@@ -42,11 +43,16 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 return <Image />;
         }
     };
-    const url =
-        cache.current ||
-        (output.data ? URL.createObjectURL(output.data) : output.url);
-    cache.current = url;
-    let dlUrl = output.url;
+    const urlList = Array.isArray(output.url) ? output.url : [output.url];
+    const batchCount = output.type === 'images' && urlList.length > 1 ? urlList.length : 0;
+    const firstUrl = urlList[0];
+    const hasData = !!output.data;
+    const displayUrl = hasData
+        ? URL.createObjectURL(Array.isArray(output.data) ? output.data[0] : output.data!)
+        : firstUrl;
+    const cacheUrl = cache.current || displayUrl;
+    cache.current = cacheUrl;
+    let dlUrl = firstUrl;
     if (!dlUrl.startsWith('http')) {
         dlUrl = 'http://127.0.0.1/' + dlUrl; //fake URL, only need it for parsing the filename
     }
@@ -78,7 +84,15 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                     </span>
                 }
                 subheader={tab}
-                avatar={avatar(output.type)}
+                avatar={
+                    batchCount > 0 ? (
+                        <Badge badgeContent={batchCount} color='primary'>
+                            {avatar(output.type)}
+                        </Badge>
+                    ) : (
+                        avatar(output.type)
+                    )
+                }
                 action={<HistoryCardMenu output={output} />}
             />
             <CardContent sx={{ p: 0 }}>
@@ -86,13 +100,14 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                     <HistoryCardContent
                         params={output.params}
                         type={output.type}
-                        url={url}
+                        url={output.url}
                         filename={filename}
+                        data={output.data}
                     />
                 </VerticalBox>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
-                <a download={filename} href={url}>
+                <a download={filename} href={cacheUrl}>
                     <Button variant='outlined' color='success' size='small' aria-label={tr('controls.download')}>
                         <Download />
                     </Button>
@@ -101,7 +116,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                     value={{
                         id: 'history',
                         type: output.type,
-                        url,
+                        url: cacheUrl,
                         filename,
                     }}
                 >

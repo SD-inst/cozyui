@@ -5,6 +5,7 @@ export type resultOptionsType = {
     type?: string;
     url?: string;
     filename?: string;
+    batch?: { url: string; filename: string; type: string }[];
 };
 
 export type overrideType = resultOptionsType & { index?: number };

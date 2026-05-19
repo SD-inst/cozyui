@@ -40,8 +40,8 @@ export const useSaveToHistory = () => {
         }
         // mark all as saved locally to prevent duplicates from other tabs later
         const saved_results = results
-            .filter((r) => !r.saved_locally)
-            .map((r) => ({
+            .filter((r: any) => !r.saved_locally)
+            .map((r: any) => ({
                 ...r,
                 saved_locally: true,
             }));
@@ -57,38 +57,70 @@ export const useSaveToHistory = () => {
             return;
         }
         (async () => {
-            const task_results = await Promise.all(
-                saved_results.map(async (r: any) => {
-                    const url = makeOutputUrl(apiUrl, r);
-                    let data = undefined;
-                    if (save_locally) {
-                        const result = await fetch(url);
-                        data = await result.blob();
+            if (type === 'images') {
+                const urls = saved_results.map((r: any) => makeOutputUrl(apiUrl, r));
+                let data: Blob[] | undefined = undefined;
+                if (save_locally) {
+                    data = await Promise.all(
+                        urls.map(async (u: string) => {
+                            const result = await fetch(u);
+                            return result.blob();
+                        })
+                    );
+                }
+                const task_result = {
+                    timestamp: end_ts,
+                    duration: end_ts - start_ts,
+                    type,
+                    node_id: id,
+                    params: JSON.stringify({ tab, values: filterFormValues(values) }),
+                    url: urls,
+                    data,
+                    mark: markEnum.NONE,
+                } as TaskResult;
+                return db.transaction('rw', db.taskResults, async (tx) => {
+                    const exists = await tx.taskResults
+                        .where({ timestamp: end_ts, node_id: id })
+                        .count();
+                    if (exists > 0) {
+                        return;
                     }
-                    return {
-                        timestamp: end_ts,
-                        duration: end_ts - start_ts,
-                        type,
-                        node_id: id,
-                        params: JSON.stringify({ tab, values: filterFormValues(values) }),
-                        url,
-                        data,
-                        mark: markEnum.NONE,
-                    } as TaskResult;
-                })
-            );
-            if (!task_results.length) {
-                return;
-            }
-            return db.transaction('rw', db.taskResults, async (tx) => {
-                const exists = await tx.taskResults
-                    .where({ timestamp: end_ts, node_id: id })
-                    .count();
-                if (exists > 0) {
+                    return tx.taskResults.add(task_result);
+                });
+            } else {
+                const task_results = await Promise.all(
+                    saved_results.map(async (r: any) => {
+                        const url = makeOutputUrl(apiUrl, r);
+                        let data = undefined;
+                        if (save_locally) {
+                            const result = await fetch(url);
+                            data = await result.blob();
+                        }
+                        return {
+                            timestamp: end_ts,
+                            duration: end_ts - start_ts,
+                            type,
+                            node_id: id,
+                            params: JSON.stringify({ tab, values: filterFormValues(values) }),
+                            url,
+                            data,
+                            mark: markEnum.NONE,
+                        } as TaskResult;
+                    })
+                );
+                if (!task_results.length) {
                     return;
                 }
-                return tx.taskResults.bulkAdd(task_results);
-            });
+                return db.transaction('rw', db.taskResults, async (tx) => {
+                    const exists = await tx.taskResults
+                        .where({ timestamp: end_ts, node_id: id })
+                        .count();
+                    if (exists > 0) {
+                        return;
+                    }
+                    return tx.taskResults.bulkAdd(task_results);
+                });
+            }
         })()
             .then(() => {
                 console.log('History updated');
