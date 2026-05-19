@@ -15,6 +15,7 @@ import { SliderInput } from '../../controls/SliderInput';
 import { TeaCacheInput } from '../../controls/TeaCacheInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
+import { SendBackToI2IButton } from '../../controls/SendBackToI2I';
 
 const Content = () => {
     return (
@@ -61,6 +62,7 @@ const Content = () => {
                     sendTargetTab='Chroma Upscale'
                     sendFields={['prompt', 'neg_prompt', 'model', 'lora']}
                 />
+                <SendBackToI2IButton />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

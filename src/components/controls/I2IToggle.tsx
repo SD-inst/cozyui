@@ -151,14 +151,31 @@ export const I2IToggle = ({
         defaultValue: false,
     });
 
-    // Helper: update sampler connections to point to InpaintModelConditioning output
+    // Helper: find guider node ID from SamplerCustomAdvanced
+    const findGuiderId = (api: any, samplerId: string): string | null => {
+        const samplerNode = api[samplerId];
+        if (!samplerNode) return null;
+        const guiderLink = samplerNode.inputs.guider;
+        if (guiderLink && Array.isArray(guiderLink)) {
+            return String(guiderLink[0]);
+        }
+        return null;
+    };
+
+    // Helper: update sampler/guider connections to point to InpaintModelConditioning output
     const connectInpaintToSampler = (
         api: any,
         samplerId: string,
         inpaintConditioningId: string,
+        guiderId: string | null,
     ) => {
-        api[samplerId].inputs.positive = [inpaintConditioningId, 0];
-        api[samplerId].inputs.negative = [inpaintConditioningId, 1];
+        if (guiderId) {
+            api[guiderId].inputs.positive = [inpaintConditioningId, 0];
+            api[guiderId].inputs.negative = [inpaintConditioningId, 1];
+        } else {
+            api[samplerId].inputs.positive = [inpaintConditioningId, 0];
+            api[samplerId].inputs.negative = [inpaintConditioningId, 1];
+        }
         api[samplerId].inputs.latent_image = [inpaintConditioningId, 2];
     };
 
@@ -177,6 +194,13 @@ export const I2IToggle = ({
             if (!samplerNode) {
                 return;
             }
+
+            // Auto-detect guider node for SamplerCustomAdvanced architecture
+            const isSamplerCustom =
+                samplerNode.class_type === 'SamplerCustomAdvanced';
+            const guiderId = isSamplerCustom
+                ? findGuiderId(api, sampler_id)
+                : null;
 
             // Auto-detect VAE source by checking class_type
             const vaeNode = api[vae_loader_id];
@@ -234,9 +258,12 @@ export const I2IToggle = ({
 
                 graph[':load_image'].inputs.image = originalImageFilename;
 
-                // Get positive/negative sources from sampler
-                const positiveLink = samplerNode.inputs.positive; // e.g., ['6', 0]
-                const negativeLink = samplerNode.inputs.negative; // e.g., ['7', 0]
+                // Get positive/negative sources from sampler or guider
+                const conditioningNode = isSamplerCustom
+                    ? (guiderId ? api[guiderId] : samplerNode)
+                    : samplerNode;
+                const positiveLink = conditioningNode.inputs.positive;
+                const negativeLink = conditioningNode.inputs.negative;
 
                 // Add mask upload (common to both modes)
                 graph[':mask_upload'] = {
@@ -327,11 +354,12 @@ export const I2IToggle = ({
                         ];
                     }
 
-                    // Update sampler connections (deduplicated)
+                    // Update sampler/guider connections (deduplicated)
                     connectInpaintToSampler(
                         api,
                         sampler_id,
                         `${baseNodeId}:inpaint_conditioning`,
+                        guiderId,
                     );
                 } else {
                     // === EXISTING INPAINT MODE (no crop) ===
@@ -350,11 +378,12 @@ export const I2IToggle = ({
 
                     const baseNodeId = insertGraph(api, graph);
 
-                    // Update sampler connections (deduplicated)
+                    // Update sampler/guider connections (deduplicated)
                     connectInpaintToSampler(
                         api,
                         sampler_id,
                         `${baseNodeId}:inpaint_conditioning`,
+                        guiderId,
                     );
                 }
             } else {
