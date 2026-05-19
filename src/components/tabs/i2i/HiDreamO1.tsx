@@ -32,9 +32,13 @@ const ReferenceImages = ({ name }: { name: string }) => {
                 return;
             }
 
+            const sampler = api[control.sampler_id];
             const referenceGraph = {
                 ':reference': {
-                    inputs: {},
+                    inputs: {
+                        positive: sampler.inputs.positive,
+                        negative: sampler.inputs.negative,
+                    },
                     class_type: 'HiDreamO1ReferenceImages',
                     _meta: { title: 'HiDream-O1 Reference Images' },
                 },
