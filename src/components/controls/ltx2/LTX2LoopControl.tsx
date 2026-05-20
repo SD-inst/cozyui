@@ -43,7 +43,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             ':1': {
                 inputs: {
                     batch_index: 0,
-                    length: length - 1,
+                    length: length,
                     image: api[id].inputs.images,
                 },
                 class_type: 'ImageFromBatch',
@@ -90,8 +90,8 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             if (kf.image !== image) {
                 return;
             }
-            if (kf.position !== length - 1 || kf.trim !== overlap) {
-                setValue(`keyframes.${idx}.position`, length - 1);
+            if (kf.position !== length || kf.trim !== overlap) {
+                setValue(`keyframes.${idx}.position`, length);
                 setValue(`keyframes.${idx}.enabled`, true);
                 setValue(`keyframes.${idx}.trim`, overlap);
             }
@@ -103,7 +103,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
         append({
             enabled: true,
             image,
-            position: length - 1,
+            position: length,
             strength: 0.5,
             trim: overlap,
         });
