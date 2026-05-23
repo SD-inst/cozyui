@@ -1,5 +1,5 @@
 import { Add } from '@mui/icons-material';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 import { clone } from 'lodash';
 import React, {
     cloneElement,
@@ -16,6 +16,7 @@ import {
 import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
+import { MoveArrayInputButton } from './MoveArrayInputButton';
 
 const cloneChildren = ({
     children,
@@ -59,16 +60,39 @@ const cloneChildren = ({
                         justifyContent='space-between'
                     >
                         <Box flex={1}>{cloneElement(child, props)}</Box>
-                        <DeleteArrayInputButton
-                            index={index}
-                            min={min}
-                            name={name}
-                        />
+                        <Stack
+                            direction='column'
+                            alignItems='center'
+                            alignSelf='stretch'
+                            spacing={0.5}
+                        >
+                            <Box alignSelf='flex-start'>
+                                <DeleteArrayInputButton
+                                    index={index}
+                                    min={min}
+                                    name={name}
+                                />
+                            </Box>
+                            <Box flex={1} />
+                            <Stack direction='column' spacing={0.5} pb={8}>
+                                <MoveArrayInputButton
+                                    index={index}
+                                    name={name}
+                                    direction='up'
+                                />
+                                <MoveArrayInputButton
+                                    index={index}
+                                    name={name}
+                                    direction='down'
+                                />
+                            </Stack>
+                            <Box flex={1} />
+                        </Stack>
                     </Box>
                 );
             }
             return cloneElement(child, props);
-        }
+        },
     );
 };
 
