@@ -162,8 +162,9 @@
       "upscale_model": [
         "17",
         0
-      ]
-    },
+      ],
+      "batch_size": 1
+  },
     "class_type": "UltimateSDUpscale",
     "_meta": {
       "title": "Ultimate SD Upscale"

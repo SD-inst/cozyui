@@ -241,7 +241,8 @@
       "upscale_model": [
         "84",
         0
-      ]
+      ],
+      "batch_size": 1
     },
     "class_type": "UltimateSDUpscale",
     "_meta": {
