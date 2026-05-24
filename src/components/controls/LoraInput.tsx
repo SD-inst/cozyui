@@ -167,13 +167,14 @@ export const LoraInput = ({
     const defaults = useAppSelector((s) =>
         get(s, ['config', 'loras', type, 'defaults'], emptyDefaults)
     );
+    const preview_root = useAppSelector((s) => s.config.preview_root);
     const envFilter = (l: string) =>
         import.meta.env.VITE_FILTER_LORAS
             ? l.includes(import.meta.env.VITE_FILTER_LORAS)
             : true;
     const final_filter = (l: string) => envFilter(l) && l.includes(filter);
     const tr = useTranslate();
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const ceHanler = useCtrlEnter();
     const {
         handler_options: {
@@ -193,6 +194,59 @@ export const LoraInput = ({
         },
     } = useAPI();
     const effectiveClassName = classNameOverride ?? _class_name;
+
+    const prevValueRef = useRef<valueType[]>([]);
+
+    const fetchActivationText = async (loraId: string) => {
+        if (!preview_root || !loraId.endsWith('.safetensors')) return null;
+        const jsonPath =
+            preview_root + '/' + loraId.replace(/(\.safetensors)$/, '.json');
+        try {
+            const response = await fetch(jsonPath);
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data['activation text'] || null;
+        } catch {
+            return null;
+        }
+    };
+
+    const handleActivationText = async (
+        added: valueType[],
+        removed: valueType[]
+    ) => {
+        let prompt = getValues('prompt') as string;
+        if (!prompt) prompt = '';
+
+        let newPrompt = prompt;
+
+        for (const v of removed) {
+            const activationText = await fetchActivationText(v.id);
+            if (activationText) {
+                const suffix = '; ' + activationText;
+                if (newPrompt.endsWith(suffix)) {
+                    newPrompt = newPrompt.slice(0, -suffix.length);
+                } else if (newPrompt === activationText) {
+                    newPrompt = '';
+                }
+            }
+        }
+
+        for (const v of added) {
+            const activationText = await fetchActivationText(v.id);
+            if (activationText) {
+                if (newPrompt) {
+                    newPrompt = newPrompt + '; ' + activationText;
+                } else {
+                    newPrompt = activationText;
+                }
+            }
+        }
+
+        if (newPrompt !== prompt) {
+            setValue('prompt', newPrompt);
+        }
+    };
     const handler = useEventCallback((api: any, values: valueType[]) => {
         if (append) {
             values = values.concat(append);
@@ -383,7 +437,21 @@ export const LoraInput = ({
                 }
                 fullWidth
                 {...ctl.field}
-                onChange={(_, v) => ctl.field.onChange(v)}
+                onChange={async (_, v) => {
+                    const newValue = v as valueType[];
+                    const prev = prevValueRef.current;
+                    const added = newValue.filter(
+                        (item) => !prev.some((p) => p.id === item.id)
+                    );
+                    const removed = prev.filter(
+                        (p) => !newValue.some((item) => item.id === p.id)
+                    );
+                    if (added.length || removed.length) {
+                        await handleActivationText(added, removed);
+                    }
+                    prevValueRef.current = newValue;
+                    ctl.field.onChange(newValue);
+                }}
                 multiple
                 {...props}
                 options={opts}
