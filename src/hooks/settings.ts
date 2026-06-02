@@ -10,6 +10,7 @@ export enum settings {
     backup_uploads = 'backup_uploads',
     tag_number = 'tag_number',
     tag_enabled_tabs = 'tag_enabled_tabs',
+    activation_tags_enabled_tabs = 'activation_tags_enabled_tabs',
     chat_stream = 'chat_stream',
     last_active_tab = 'last_active_tab',
 }

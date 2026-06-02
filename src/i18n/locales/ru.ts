@@ -266,6 +266,7 @@ const translation = {
         backup_uploads: 'Сохранять/восстанавливать загруженные файлы',
         tag_number: 'Количество предлагаемых тегов',
         tag_enabled_tabs: 'Теги разрешены на вкладках',
+        activation_tags_enabled_tabs: 'Activation tags разрешены на вкладках',
         chat_stream: 'Стриминг чата',
         notification: 'Звук уведомления',
         notification_name: 'Звуковой эффект №%{number}',

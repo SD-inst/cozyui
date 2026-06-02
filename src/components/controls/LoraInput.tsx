@@ -20,10 +20,14 @@ import { mergeType } from '../../api/mergeType';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
 import { useListChoices } from '../../hooks/useListChoices';
+import { settings } from '../../hooks/settings';
+import { useCurrentTab } from '../../hooks/useCurrentTab';
+import { useMultiSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { loraDefaults } from '../../redux/config';
 import { useAppSelector } from '../../redux/hooks';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
+import { useFilteredTabs } from '../contexts/WorkflowTabsContext';
 import { HelpButton } from './HelpButton';
 import { ModelOption } from './ModelOption';
 import { ObjectReloadButton } from './ObjectReloadButton';
@@ -196,6 +200,13 @@ export const LoraInput = ({
     const effectiveClassName = classNameOverride ?? _class_name;
 
     const prevValueRef = useRef<valueType[]>([]);
+    const current_tab = useCurrentTab();
+    const T2Itabs = useFilteredTabs('T2I');
+    const activationTabs = useMultiSetting(
+        settings.activation_tags_enabled_tabs,
+        T2Itabs
+    );
+    const activationEnabled = activationTabs?.includes(current_tab);
 
     const fetchActivationText = async (loraId: string) => {
         if (!preview_root || !loraId.endsWith('.safetensors')) return null;
@@ -447,7 +458,9 @@ export const LoraInput = ({
                         (p) => !newValue.some((item) => item.id === p.id)
                     );
                     if (added.length || removed.length) {
-                        await handleActivationText(added, removed);
+                        if (activationEnabled) {
+                            await handleActivationText(added, removed);
+                        }
                     }
                     prevValueRef.current = newValue;
                     ctl.field.onChange(newValue);

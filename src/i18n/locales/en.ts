@@ -267,6 +267,7 @@ const translation = {
         backup_uploads: 'Backup/restore uploaded files',
         tag_number: 'Number of tag suggestions',
         tag_enabled_tabs: 'Tags enabled on tabs',
+        activation_tags_enabled_tabs: 'Activation tags enabled on tabs',
         chat_stream: 'Chat stream',
         notification: 'Notification sound',
         notification_name: 'Sound effect #%{number}',

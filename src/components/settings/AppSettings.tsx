@@ -77,6 +77,19 @@ export const AppSettings = () => {
                         />
                     </Box>
                 )}
+                <Box
+                    mb={1}
+                    display='flex'
+                    gap={2}
+                    alignItems='center'
+                    flexWrap='wrap'
+                >
+                    <SettingMultichoice
+                        values={workflowTabs}
+                        name={settings.activation_tags_enabled_tabs}
+                        defaultValue={T2Itabs}
+                    />
+                </Box>
                 <NotificationSetting />
                 <LanguageSelect />
                 <ClearHistoryButton sx={{ mt: 5 }} />
