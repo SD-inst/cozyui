@@ -64,14 +64,39 @@ const ValuesRestore = () => {
         setInitialized(true);
     }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
     const vals = useWatch();
+    const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     useEffect(() => {
         if (!initialized) {
             return;
         }
-        const filtered = filterFormValues(vals);
-        db.formState.put({ tab: tab_name, state: JSON.stringify(filtered) });
+        if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+        }
+        saveTimeoutRef.current = setTimeout(() => {
+            const filtered = filterFormValues(vals);
+            db.formState.put({ tab: tab_name, state: JSON.stringify(filtered) });
+            saveTimeoutRef.current = null;
+        }, 1000);
+        return () => {
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+                saveTimeoutRef.current = null;
+            }
+        };
     }, [vals, tab_name, initialized]);
+
+    useEffect(() => {
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            if (saveTimeoutRef.current) {
+                e.preventDefault();
+            }
+        };
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);
     return <div ref={ref} style={{ height: 0 }} />;
 };
 
