@@ -252,6 +252,7 @@ const translation = {
         keep_size: 'keep original size',
         'loop.enabled': 'loop enabled',
         'loop.overlap': 'overlap frames',
+        'loop.strip': 'strip first frames (better loop)',
         keyframe_trim: 'trim',
         step: 'step',
         i2i: 'image-to-image',

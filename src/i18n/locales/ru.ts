@@ -251,6 +251,7 @@ const translation = {
         keep_size: 'оригинальный размер',
         'loop.enabled': 'зациклить',
         'loop.overlap': 'перекрытие кадров',
+        'loop.strip': 'отрезать первые кадры (цикл будет лучше)',
         keyframe_trim: 'обрезать видео',
         step: 'шаг',
         i2i: 'image-to-image',

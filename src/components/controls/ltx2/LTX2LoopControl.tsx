@@ -7,6 +7,7 @@ import { useResultParam } from '../../../hooks/useResult';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { LengthInput } from '../LengthSlider';
 import { ToggleInput } from '../ToggleInput';
+import { SliderInput } from '../SliderInput';
 
 type TValue = {
     enabled: boolean;
@@ -34,7 +35,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
     const keyframes = useWatch({ name: 'keyframes', defaultValue: [] });
     const fps = useWatch({ name: 'fps', defaultValue: 24 });
     const { append } = useFieldArray({ name: 'keyframes' });
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     const handler = useEventCallback((api: any, value: TValue) => {
         if (!value || !value.enabled) {
             return;
@@ -42,7 +43,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
         const graph = {
             ':1': {
                 inputs: {
-                    batch_index: 0,
+                    batch_index: getValues(`${name}.strip`),
                     length: length,
                     image: api[id].inputs.images,
                 },
@@ -122,14 +123,23 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
                 defaultValue={defaultValue.enabled}
             />
             {enabled && (
-                <LengthInput
-                    min={8}
-                    max={160}
-                    step={8}
-                    fps={fps}
-                    name={`${name}.overlap`}
-                    defaultValue={defaultValue.overlap}
-                />
+                <Box display='flex' gap={2}>
+                    <LengthInput
+                        min={8}
+                        max={160}
+                        step={8}
+                        fps={fps}
+                        name={`${name}.overlap`}
+                        defaultValue={defaultValue.overlap}
+                    />
+                    <SliderInput
+                        min={0}
+                        max={24}
+                        step={1}
+                        name={`${name}.strip`}
+                        defaultValue={4}
+                    />
+                </Box>
             )}
         </Box>
     );
