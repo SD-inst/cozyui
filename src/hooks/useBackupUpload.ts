@@ -1,28 +1,29 @@
 import { useCallback } from 'react';
 import { useTabName } from '../components/contexts/TabContext';
-import { settings } from './settings';
-import { useBooleanSetting } from './useSetting';
 import { db } from '../components/history/db';
+import { settings } from './settings';
+
+export const saveUploadBackup = async (
+    file: File,
+    fieldName: string,
+    tabName: string,
+): Promise<void> => {
+    const record = await db.settings.where({ name: settings.backup_uploads }).first();
+    if (record?.value !== 'true') return;
+    const uploadKey = tabName + '/' + fieldName;
+    await db.uploads.put({ id: uploadKey, file });
+};
 
 export const useBackupUpload = (
     fieldName: string,
-    uploadKeyOverride?: string
-): [(file: File) => void, boolean] => {
-    const backupUploads = useBooleanSetting(settings.backup_uploads);
+): [(file: File) => void] => {
     const tabName = useTabName();
-    const uploadKey = uploadKeyOverride ?? tabName + '/' + fieldName;
     return [
         useCallback(
             (file: File) => {
-                if (backupUploads) {
-                    db.uploads.put({
-                        id: uploadKey,
-                        file,
-                    });
-                }
+                saveUploadBackup(file, fieldName, tabName);
             },
-            [backupUploads, uploadKey]
+            [fieldName, tabName]
         ),
-        backupUploads || false,
     ];
 };

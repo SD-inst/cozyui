@@ -6,6 +6,7 @@ import { useAppDispatch } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { useApiURL } from './useApiURL';
 import { useResult } from './useResult';
+import { saveUploadBackup } from './useBackupUpload';
 
 export const useSendResult = ({
     targetTab,
@@ -30,8 +31,9 @@ export const useSendResult = ({
         );
         const formData = new FormData();
         const url = makeOutputUrl(apiUrl, result[index]);
-        const file = await fetch(url).then((b) => b.blob());
-        formData.append('image', new File([file], result[index].filename));
+        const blob = await fetch(url).then((b) => b.blob());
+        const file = new File([blob], result[index].filename, { type: blob.type });
+        formData.append('image', file);
         const image = await fetch(apiUrl + '/api/upload/image', {
             method: 'POST',
             body: formData,
@@ -46,6 +48,9 @@ export const useSendResult = ({
                 values: { ...values, [fileField]: image },
             }),
         );
+        if (image && targetTab) {
+            await saveUploadBackup(file, fileField, targetTab);
+        }
         dispatch(setTab(targetTab!));
     };
     if (index >= result.length || !targetTab || !fields) {

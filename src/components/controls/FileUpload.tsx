@@ -69,7 +69,7 @@ export const FileUpload = ({
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
     const reuploadAttempts = useRef(0);
-    const [maybeBackupUpload, backupUploads] = useBackupUpload(props.name);
+    const [maybeBackupUpload] = useBackupUpload(props.name);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
@@ -189,7 +189,7 @@ export const FileUpload = ({
     }, [isCurrentTab, handlePaste]);
     const handleUploadLost = useEventCallback(async () => {
         const file = await db.uploads.get(uploadKey);
-        if (!backupUploads || !file) {
+        if (!file) {
             field.onChange(null);
             return;
         }
