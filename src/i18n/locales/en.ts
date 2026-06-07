@@ -254,6 +254,7 @@ const translation = {
         'loop.overlap': 'overlap frames',
         'loop.strip': 'strip first frames (better loop)',
         keyframe_trim: 'trim',
+        keyframe_last: 'last',
         step: 'step',
         i2i: 'image-to-image',
     },

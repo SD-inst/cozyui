@@ -38,7 +38,7 @@ export const LTX2KeyframesControl = ({
                 step={8}
                 defaultValue={0}
             />
-            <Box display='flex' flexWrap='wrap' gap={2}>
+            <Box display='flex' flexWrap='wrap' alignItems='center' gap={4}>
                 <SliderInput
                     name='strength'
                     label='keyframe_strength'
@@ -58,6 +58,7 @@ export const LTX2KeyframesControl = ({
                     step={8}
                     sx={{ minWidth: 200, flex: 1 }}
                 />
+                <ToggleInput name='last' label='keyframe_last' sx={{ mt: 1 }} />
             </Box>
             <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>

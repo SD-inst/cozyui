@@ -253,6 +253,7 @@ const translation = {
         'loop.overlap': 'перекрытие кадров',
         'loop.strip': 'отрезать первые кадры (цикл будет лучше)',
         keyframe_trim: 'обрезать видео',
+        keyframe_last: 'с конца',
         step: 'шаг',
         i2i: 'image-to-image',
     },

@@ -7,6 +7,7 @@ export type TKeyframe = {
     strength: number;
     trim: number;
     enabled: boolean;
+    last: boolean;
 };
 
 export const keyframeHandler = (
@@ -64,7 +65,7 @@ export const keyframeHandler = (
         if (v.trim > 0) {
             graph[':3'] = {
                 inputs: {
-                    batch_index: 0,
+                    batch_index: v.last ? -v.trim : 0,
                     length: v.trim,
                     image: [':1', 0],
                 },
