@@ -1025,10 +1025,6 @@
                     "id": "92:8",
                     "field": "sampler_name"
                 },
-                "cfg": {
-                    "id": "92:47",
-                    "field": "cfg"
-                },
                 "lora": {
                     "id": "handle"
                 },
