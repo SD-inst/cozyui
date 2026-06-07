@@ -605,6 +605,7 @@
                 },
                 "upsample": {
                     "id": "handle",
+                    "order": 100,
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
                     "guider_node_id": "92:47",
@@ -618,6 +619,7 @@
                 },
                 "keyframes": {
                     "id": "handle",
+                    "order": 200,
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
@@ -714,6 +716,7 @@
                 },
                 "upsample": {
                     "id": "handle",
+                    "order": 100,
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
                     "guider_node_id": "92:47",
@@ -730,6 +733,7 @@
                 },
                 "keyframes": {
                     "id": "handle",
+                    "order": 200,
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
@@ -820,19 +824,20 @@
                 },
                 "upsample": {
                     "id": "handle",
+                    "order": 100,
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
                     "guider_node_id": "92:47",
                     "vae_node_id": "92:1",
                     "seed_node_id": "104",
                     "output_node_id": "92:94",
-                    "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
                     "audio_vae_node_id": "92:48",
                     "audio_node_id": "92:96"
                 },
                 "keyframes": {
                     "id": "handle",
+                    "order": 200,
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
@@ -936,6 +941,7 @@
                 },
                 "upsample": {
                     "id": "handle",
+                    "order": 100,
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
                     "guider_node_id": "92:47",
@@ -944,7 +950,6 @@
                     "output_node_id": "92:94",
                     "image_node_id": "92:99",
                     "load_image_node_id": "98",
-                    "crop_node_id": "92:95",
                     "scale_node_id": "92:90",
                     "concat_node_id": "92:56",
                     "audio_vae_node_id": "92:48",
@@ -952,6 +957,7 @@
                 },
                 "keyframes": {
                     "id": "handle",
+                    "order": 200,
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
@@ -973,7 +979,7 @@
                 },
                 "loop": {
                     "id": "handle",
-                    "order": 200
+                    "order": 300
                 }
             },
             "handler_options": {

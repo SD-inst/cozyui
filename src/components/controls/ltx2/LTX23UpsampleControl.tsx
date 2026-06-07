@@ -55,7 +55,10 @@ export const LTX23UpsampleControl = ({
         name: name + '.spatial',
         defaultValue: defaultValue.spatial,
     });
-    const globalDistill = useWatch({ name: 'distill_strength', defaultValue: 0.5 });
+    const globalDistill = useWatch({
+        name: 'distill_strength',
+        defaultValue: 0.5,
+    });
     const raHandler = useReferenceAudioHandler();
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
@@ -72,7 +75,6 @@ export const LTX23UpsampleControl = ({
                 output_node_id,
                 image_node_id,
                 load_image_node_id,
-                crop_node_id,
                 scale_node_id,
                 audio_vae_node_id,
                 audio_node_id,
@@ -250,20 +252,22 @@ export const LTX23UpsampleControl = ({
                         title: '2x Upscale',
                     },
                 },
-                ...(!globalDistill ? {
-                    ':7': {
-                        inputs: {
-                            lora_name:
-                                'ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors',
-                            strength_model: value.distill_strength,
-                            model: modelNode,
-                        },
-                        class_type: 'LoraLoaderModelOnly',
-                        _meta: {
-                            title: 'LoraLoaderModelOnly',
-                        },
-                    },
-                } : {}),
+                ...(!globalDistill
+                    ? {
+                          ':7': {
+                              inputs: {
+                                  lora_name:
+                                      'ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors',
+                                  strength_model: value.distill_strength,
+                                  model: modelNode,
+                              },
+                              class_type: 'LoraLoaderModelOnly',
+                              _meta: {
+                                  title: 'LoraLoaderModelOnly',
+                              },
+                          },
+                      }
+                    : {}),
                 ':8': {
                     inputs: {
                         lora_name:
@@ -330,7 +334,7 @@ export const LTX23UpsampleControl = ({
                         cond_node_id: wfNodeID + ':1',
                         vae_node_id,
                         concat_node_id: wfNodeID + ':2',
-                        crop_node_id,
+                        crop_node_id: null,
                     },
                 );
             }

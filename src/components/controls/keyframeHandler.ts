@@ -83,6 +83,8 @@ export const keyframeHandler = (
     api[cond_node_id].inputs.positive = prevNodeCond.positive;
     api[cond_node_id].inputs.negative = prevNodeCond.negative;
     api[concat_node_id].inputs.video_latent = prevNodeLatent.latent;
-    api[crop_node_id].inputs.positive = prevNodeCond.positive;
-    api[crop_node_id].inputs.negative = prevNodeCond.negative;
+    if (crop_node_id) {
+        api[crop_node_id].inputs.positive = prevNodeCond.positive;
+        api[crop_node_id].inputs.negative = prevNodeCond.negative;
+    }
 };
