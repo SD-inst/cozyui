@@ -1,6 +1,7 @@
 import { useWatch } from 'react-hook-form';
 import { ChatComponent } from '../../chat/ChatComponent';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
+import { CFGInput } from '../../controls/CFGInput';
 import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
@@ -58,7 +59,7 @@ const Content = () => {
                 <FileUpload name='video' type={UploadType.VIDEO} />
                 <TextInput name='prompt' multiline />
                 <ChatComponent systemPrompt={llmPrompt} />
-                <SliderInput name='steps' defaultValue={8} min={1} max={50} />
+                <SliderInput name='steps' defaultValue={20} min={1} max={50} />
                 <AdvancedSettings>
                     <TextInput
                         name='neg_prompt'
@@ -81,6 +82,7 @@ const Content = () => {
                         sx={{ mb: 2 }}
                     />
                     <SamplerSelectInput name='sampler' defaultValue='res_2s' />
+                    <CFGInput defaultValue={4} />
                 </AdvancedSettings>
                 <LoraInput
                     name='lora'

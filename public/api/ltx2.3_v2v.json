@@ -223,21 +223,10 @@
             "title": "RandomNoise"
         }
     },
-    "92:45": {
-        "inputs": {
-            "lora_name": "ltx2/ltx-2.3-22b-distilled-1.1_lora-dynamic_fro09_avg_rank_111_bf16.safetensors",
-            "strength_model": 0.5,
-            "model": ["92:2", 0]
-        },
-        "class_type": "LoraLoaderModelOnly",
-        "_meta": {
-            "title": "LoraLoaderModelOnly"
-        }
-    },
     "92:46": {
         "inputs": {
             "preview_rate": 8,
-            "model": ["92:45", 0],
+            "model": ["92:2", 0],
             "vae": ["92:1", 0],
             "latent_upscale_model": ["112:1", 0]
         },
@@ -307,7 +296,7 @@
     },
     "92:47": {
         "inputs": {
-            "cfg": 1,
+            "cfg": 4,
             "model": ["92:46", 0],
             "positive": ["92:22", 0],
             "negative": ["92:22", 1]
@@ -393,7 +382,7 @@
     "113:1": {
         "inputs": {
             "cfg": 1,
-            "model": ["92:46", 0],
+            "model": ["113:7", 0],
             "positive": ["114:2", 0],
             "negative": ["114:2", 1]
         },
@@ -410,6 +399,17 @@
         "class_type": "LTXVConcatAVLatent",
         "_meta": {
             "title": "LTXVConcatAVLatent"
+        }
+    },
+    "113:7": {
+        "inputs": {
+            "lora_name": "ltx2/ltx-2.3-22b-distilled-lora-384.safetensors",
+            "strength_model": 0.6,
+            "model": ["92:46", 0]
+        },
+        "class_type": "LoraLoaderModelOnly",
+        "_meta": {
+            "title": "LoraLoaderModelOnly"
         }
     },
     "113:6": {
