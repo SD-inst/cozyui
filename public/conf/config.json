@@ -824,7 +824,7 @@
                 },
                 "upsample": {
                     "id": "handle",
-                    "order": 100,
+                    "order": 200,
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
                     "guider_node_id": "92:47",
@@ -833,15 +833,15 @@
                     "output_node_id": "92:94",
                     "scale_node_id": "92:90",
                     "audio_vae_node_id": "92:48",
-                    "audio_node_id": "92:96"
+                    "audio_node_id": "92:96",
+                    "crop_node_id": "92:95"
                 },
                 "keyframes": {
                     "id": "handle",
-                    "order": 200,
+                    "order": 100,
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
-                    "crop_node_id": "92:95",
                     "set_field": "keyframe"
                 },
                 "reference_audio": {
@@ -941,7 +941,7 @@
                 },
                 "upsample": {
                     "id": "handle",
-                    "order": 100,
+                    "order": 200,
                     "cond_node_id": "92:22",
                     "input_node_id": "92:41",
                     "guider_node_id": "92:47",
@@ -953,15 +953,15 @@
                     "scale_node_id": "92:90",
                     "concat_node_id": "92:56",
                     "audio_vae_node_id": "92:48",
-                    "audio_node_id": "92:96"
+                    "audio_node_id": "92:96",
+                    "crop_node_id": "92:95"
                 },
                 "keyframes": {
                     "id": "handle",
-                    "order": 200,
+                    "order": 100,
                     "cond_node_id": "92:22",
                     "vae_node_id": "92:1",
                     "concat_node_id": "92:56",
-                    "crop_node_id": "92:95",
                     "set_field": "keyframe"
                 },
                 "reference_audio": {

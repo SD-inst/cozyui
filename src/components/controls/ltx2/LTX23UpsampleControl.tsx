@@ -78,6 +78,7 @@ export const LTX23UpsampleControl = ({
                 scale_node_id,
                 audio_vae_node_id,
                 audio_node_id,
+                crop_node_id,
             } = control;
             if (!value.spatial) {
                 api[scale_node_id].inputs.scale_by = 1;
@@ -299,7 +300,7 @@ export const LTX23UpsampleControl = ({
                 if (api[load_image_node_id].class_type == 'VHS_LoadVideo') {
                     // video loaded, need to find and copy the mask node
                     const [maskNodeID] =
-                        api[concat_node_id].inputs.video_latent;
+                       api[api[concat_node_id].inputs.video_latent[0]].inputs.latent;
                     wf[':10'] = {
                         ...api[maskNodeID],
                         inputs: {
@@ -334,7 +335,7 @@ export const LTX23UpsampleControl = ({
                         cond_node_id: wfNodeID + ':1',
                         vae_node_id,
                         concat_node_id: wfNodeID + ':2',
-                        crop_node_id: null,
+                        crop_node_id,
                     },
                 );
             }
