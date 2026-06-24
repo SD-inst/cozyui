@@ -2391,6 +2391,83 @@
                 }
             }
         },
+        "Krea2": {
+            "api": "api/krea2.json",
+            "defaults": {
+                "model": "krea2/krea2_turbo_mxfp8.safetensors"
+            },
+            "controls": {
+                "prompt": {
+                    "id": "30:6",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "30:17",
+                    "field": "text"
+                },
+                "i2i": {
+                    "id": "handle",
+                    "empty_latent_id": "30:5",
+                    "sampler_id": "30:3",
+                    "vae_loader_id": "30:12"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "30:10",
+                    "field": "unet_name"
+                },
+                "width": {
+                    "id": "30:5",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "30:5",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "30:3",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "30:3",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "30:3",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "30:3",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "60",
+                    "field": "value"
+                },
+                "batch_size": {
+                    "id": "30:5",
+                    "field": "batch_size"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": {
+                "id": "29",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["30:3"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {
@@ -3473,6 +3550,9 @@
         },
         "anima": {
             "filter": "anima/"
+        },
+        "krea2": {
+            "filter": "krea2/"
         }
     },
     "api": "/cui",
