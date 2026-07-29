@@ -299,8 +299,7 @@ export const LTX23UpsampleControl = ({
                 wf[':2'].inputs.video_latent = [':9', 0];
                 if (api[load_image_node_id].class_type == 'VHS_LoadVideo') {
                     // video loaded, need to find and copy the mask node
-                    const [maskNodeID] =
-                       api[api[concat_node_id].inputs.video_latent[0]].inputs.latent;
+                const [maskNodeID] = api[concat_node_id].inputs.video_latent;
                     wf[':10'] = {
                         ...api[maskNodeID],
                         inputs: {
