@@ -2450,6 +2450,9 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "llm": {
+                    "id": "skip"
                 }
             },
             "result": {
