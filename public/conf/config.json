@@ -3552,7 +3552,7 @@
                 "megapixels": 0.4,
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
-                "prompt": "integrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music:\n\ncamera: ",
+                "prompt": "integrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A",
                 "seed": 1024
             }
         },
@@ -3625,8 +3625,81 @@
                 "megapixels": 0.4,
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
-                "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music:\n\ncamera: ",
+                "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A",
                 "seed": 1024
+            }
+        },
+        "MiniMax H3 R2V": {
+            "api": "api/minimax_h3_r2v.json",
+            "controls": {
+                "ref_images": {
+                    "id": "handle",
+                    "node_id": "105:104"
+                },
+                "ref_videos": {
+                    "id": "handle",
+                    "node_id": "105:104"
+                },
+                "ref_audio": {
+                    "id": "handle",
+                    "node_id": "105:104"
+                },
+                "aspect_ratio": {
+                    "id": "115",
+                    "field": "aspect_ratio"
+                },
+                "megapixels": {
+                    "id": "115",
+                    "field": "megapixels"
+                },
+                "length": {
+                    "id": "105:111",
+                    "field": "value"
+                },
+                "prompt": {
+                    "id": "105:104",
+                    "field": "prompt"
+                },
+                "seed": {
+                    "id": "123",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "105:9",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "105:17",
+                    "field": "sampler_name"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "105:6",
+                    "field": "unet_name"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["105:6"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "105:121",
+                "type": "gifs"
+            },
+            "defaults": {
+                "aspect_ratio": "16:9 (Widescreen)",
+                "megapixels": 0.4,
+                "length": 5,
+                "model": "h3/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+                "seed": 1024,
+                "prompt": "subject_definitions:\n<Subject 1> is the visual content (character, background, motion etc.) in <Picture 1>, <Picture 2>, etc. — the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. — the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved — describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved — describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A"
             }
         }
     },

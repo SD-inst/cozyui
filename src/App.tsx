@@ -60,6 +60,7 @@ import { MiniMaxH3T2VTab } from './components/tabs/t2v/MiniMaxH3T2V';
 import { LTX23I2VTab } from './components/tabs/i2v/LTX23I2V';
 import { LTX23V2VTab } from './components/tabs/v2v/LTX23V2V';
 import { MiniMaxH3I2VTab } from './components/tabs/i2v/MiniMaxH3I2V';
+import { MiniMaxH3R2VTab } from './components/tabs/i2v/MiniMaxH3R2V';
 
 function App() {
     return (
@@ -93,6 +94,7 @@ function App() {
                                 {LTX23I2VTab}
                                 {LTX23V2VTab}
                                 {MiniMaxH3I2VTab}
+                                {MiniMaxH3R2VTab}
                                 {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}

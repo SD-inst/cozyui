@@ -795,6 +795,17 @@ The `control` object contains extra fields from config.json (e.g., `model_loader
 | Tab layout | `src/components/WorkflowTabs.tsx` |
 | i18n locales | `src/i18n/locales/*.ts` |
 
+### i18n Reminder
+
+**Every new component, control, or tab MUST have i18n keys.** When creating a new UI component:
+
+1. Add keys to `src/i18n/locales/en.ts` (base English translations).
+2. Add the same keys to `src/i18n/locales/ru.ts` (Russian overrides — can use English text as placeholder).
+3. Use `useTranslate()` hook (`tr('key.path')`) for all user-facing strings: labels, placeholders, button text, error messages, tooltips.
+4. Never hardcode UI strings in components — always use `tr()`.
+
+Keys should follow a hierarchical pattern: `controls.<component_name>.<field>`, `tabs.<tab_name>.<field>`, `toasts.<message>`, etc.
+
 ---
 
 ## Development Commands
