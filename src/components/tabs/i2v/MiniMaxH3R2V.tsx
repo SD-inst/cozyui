@@ -10,6 +10,7 @@ import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
+import { ToggleInput } from '../../controls/ToggleInput';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
@@ -19,7 +20,7 @@ import { getFreeNodeId } from '../../../api/utils';
 
 const imageValue = { image: '' };
 const audioValue = { audio: '' };
-const videoValue = { video: '' };
+const videoValue = { video: '', no_audio: false };
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
@@ -99,7 +100,7 @@ const ReferenceAudio = ({ name }: { name: string }) => {
 
 const ReferenceVideos = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: Array<{ video: string }>, control: controlType) => {
+        (api: any, value: Array<{ video: string; no_audio: boolean }>, control: controlType) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
@@ -126,9 +127,11 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     videoNodeID,
                     0,
                 ];
-                api[control.node_id].inputs[
-                    'ref_video_audios.ref_video_audio_' + idx
-                ] = [videoNodeID, 2];
+                if (!v.no_audio) {
+                    api[control.node_id].inputs[
+                        'ref_video_audios.ref_video_audio_' + idx
+                    ] = [videoNodeID, 2];
+                }
             });
         },
     );
@@ -142,6 +145,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
             targetFieldName='video'
         >
             <FileUpload name='video' label='video' type={UploadType.VIDEO} />
+            <ToggleInput name='no_audio' label='no_audio' />
         </ArrayInput>
     );
 };
