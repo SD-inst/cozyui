@@ -110,7 +110,15 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 }
                 const videoNodeID = getFreeNodeId(api) + '';
                 api[videoNodeID] = {
-                    inputs: { video: v.video },
+                    inputs: {
+                        video: v.video,
+                        force_rate: 0,
+                        custom_width: 0,
+                        custom_height: 0,
+                        frame_load_cap: 0,
+                        skip_first_frames: 0,
+                        select_every_nth: 1,
+                    },
                     class_type: 'VHS_LoadVideo',
                     _meta: { title: 'Load Video' },
                 };
@@ -118,10 +126,9 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     videoNodeID,
                     0,
                 ];
-                api[control.node_id].inputs['ref_video_audios.ref_video_audio_' + idx] = [
-                    videoNodeID,
-                    2,
-                ];
+                api[control.node_id].inputs[
+                    'ref_video_audios.ref_video_audio_' + idx
+                ] = [videoNodeID, 2];
             });
         },
     );
