@@ -40,6 +40,8 @@ const translation = {
         advanced_parameters: 'Расширенные параметры',
         video: 'Видео',
         audio: 'Аудио',
+        first_frame: 'Первый кадр',
+        last_frame: 'Последний кадр',
         no_audio: 'без аудио',
         download: 'Скачать',
         download_png: 'Скачать PNG',

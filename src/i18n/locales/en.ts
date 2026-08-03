@@ -40,6 +40,8 @@ const translation = {
         advanced_parameters: 'Advanced parameters',
         video: 'Video',
         audio: 'Audio',
+        first_frame: 'First frame',
+        last_frame: 'Last frame',
         no_audio: 'no audio',
         download: 'Download',
         download_png: 'Download PNG',

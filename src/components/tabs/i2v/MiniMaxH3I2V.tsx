@@ -1,4 +1,6 @@
+import { useEventCallback } from '@mui/material';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
+import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
@@ -7,8 +9,11 @@ import { SeedInput } from '../../controls/SeedInput';
 import { SelectInput } from '../../controls/SelectInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
+import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
+import { controlType } from '../../../redux/config';
+import { useRegisterHandler } from '../../contexts/TabContext';
 
 const aspectRatioChoices = [
     '1:1 (Square)',
@@ -21,10 +26,36 @@ const aspectRatioChoices = [
     '21:9 (Ultrawide)',
 ];
 
+const ImageFrameInput = ({ name }: { name: string }) => {
+    const handler = useEventCallback(
+        (api: any, value: string, control: controlType) => {
+            if (!value) {
+                return;
+            }
+            const imageNodeId = control.image_node_id;
+            api[imageNodeId] = {
+                inputs: { image: value },
+                class_type: 'LoadImage',
+                _meta: { title: 'Load Image' },
+            };
+            api[control.node_id].inputs[control.field] = [imageNodeId, 0];
+        },
+    );
+    useRegisterHandler({ name, handler });
+    return (
+        <FileUpload
+            name={name}
+            type={UploadType.IMAGE}
+        />
+    );
+};
+
 const Content = () => {
     return (
         <Layout>
             <GridLeft>
+                <ImageFrameInput name='first_frame' />
+                <ImageFrameInput name='last_frame' />
                 <TextInput name='prompt' sx={{ mb: 2 }} multiline />
                 <SelectInput
                     name='aspect_ratio'
@@ -73,11 +104,15 @@ const Content = () => {
     );
 };
 
-export const MiniMaxH3T2VTab = (
+export const MiniMaxH3I2VTab = (
     <WFTab
         label='MiniMax H3'
-        value='MiniMax H3 T2V'
-        group='T2V'
+        value='MiniMax H3 I2V'
+        group='I2V'
+        receivers={[
+            { name: 'first_frame', acceptedTypes: ['images', 'gifs'] },
+            { name: 'last_frame', acceptedTypes: ['images', 'gifs'] },
+        ]}
         content={<Content />}
     />
 );
