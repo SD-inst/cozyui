@@ -1,35 +1,23 @@
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
+import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
-import { SelectInput } from '../../controls/SelectInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
-
-const aspectRatioChoices = [
-    '1:1 (Square)',
-    '2:3 (Portrait Photo)',
-    '3:2 (Photo)',
-    '3:4 (Portrait Standard)',
-    '4:3 (Standard)',
-    '9:16 (Portrait Widescreen)',
-    '16:9 (Widescreen)',
-    '21:9 (Ultrawide)',
-];
 
 const Content = () => {
     return (
         <Layout>
             <GridLeft>
                 <TextInput name='prompt' sx={{ mb: 2 }} multiline />
-                <SelectInput
+                <MiniMaxH3ResolutionSelector
                     name='aspect_ratio'
                     defaultValue='16:9 (Widescreen)'
-                    choices={aspectRatioChoices}
                 />
                 <SliderInput
                     name='megapixels'
