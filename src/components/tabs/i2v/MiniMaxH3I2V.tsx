@@ -31,12 +31,7 @@ const ImageFrameInput = ({ name }: { name: string }) => {
         },
     );
     useRegisterHandler({ name, handler });
-    return (
-        <FileUpload
-            name={name}
-            type={UploadType.IMAGE}
-        />
-    );
+    return <FileUpload name={name} type={UploadType.IMAGE} />;
 };
 
 const Content = () => {

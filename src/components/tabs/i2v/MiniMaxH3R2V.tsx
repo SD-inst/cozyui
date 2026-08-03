@@ -100,7 +100,11 @@ const ReferenceAudio = ({ name }: { name: string }) => {
 
 const ReferenceVideos = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: Array<{ video: string; no_audio: boolean }>, control: controlType) => {
+        (
+            api: any,
+            value: Array<{ video: string; no_audio: boolean }>,
+            control: controlType,
+        ) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
