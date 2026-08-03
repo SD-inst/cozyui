@@ -4,6 +4,7 @@ const translation = {
     controls: {
         width: 'width',
         height: 'height',
+        aspect_ratio: 'aspect ratio',
         max_width: 'max width',
         max_height: 'max height',
         length: 'length',

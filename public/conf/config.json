@@ -3491,6 +3491,67 @@
                 "id": "5",
                 "type": "gifs"
             }
+        },
+        "MiniMax H3 T2V": {
+            "api": "api/minimax_h3_t2v.json",
+            "controls": {
+                "aspect_ratio": {
+                    "id": "115",
+                    "field": "aspect_ratio"
+                },
+                "megapixels": {
+                    "id": "115",
+                    "field": "megapixels"
+                },
+                "length": {
+                    "id": "105:111",
+                    "field": "value"
+                },
+                "prompt": {
+                    "id": "105:104",
+                    "field": "prompt"
+                },
+                "seed": {
+                    "id": "123",
+                    "field": "value"
+                },
+                "steps": {
+                    "id": "105:9",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "105:17",
+                    "field": "sampler_name"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "105:6",
+                    "field": "unet_name"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["105:6"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "105:121",
+                "type": "gifs"
+            },
+            "defaults": {
+                "aspect_ratio": "16:9 (Widescreen)",
+                "megapixels": 0.4,
+                "length": 5,
+                "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                "prompt": "integrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music:\n\ncamera: ",
+                "seed": 1024
+            }
         }
     },
     "models": {
@@ -3553,6 +3614,9 @@
         },
         "krea2": {
             "filter": "krea2/"
+        },
+        "minimax_h3": {
+            "filter": "h3/"
         }
     },
     "api": "/cui",

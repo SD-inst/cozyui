@@ -56,6 +56,7 @@ import { ZImageTab } from './components/tabs/t2i/ZImage';
 import { I18nContextProvider } from './i18n/I18nContextProvider';
 import { AnimaTab } from './components/tabs/t2i/Anima';
 import { LTX23T2VTab } from './components/tabs/t2v/LTX23T2V';
+import { MiniMaxH3T2VTab } from './components/tabs/t2v/MiniMaxH3T2V';
 import { LTX23I2VTab } from './components/tabs/i2v/LTX23I2V';
 import { LTX23V2VTab } from './components/tabs/v2v/LTX23V2V';
 
@@ -73,6 +74,7 @@ function App() {
                                 {HunyanT2VTab}
                                 {LTX2T2VTab}
                                 {LTX23T2VTab}
+                                {MiniMaxH3T2VTab}
                                 {Hunyan15T2VTab}
                                 {WanI2VTab}
                                 {WanT2VTab}
