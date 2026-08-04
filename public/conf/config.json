@@ -3550,6 +3550,9 @@
                 "spectrum_flex_window": {
                     "id": "137",
                     "field": "flex_window"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -3648,6 +3651,9 @@
                 "spectrum_flex_window": {
                     "id": "137",
                     "field": "flex_window"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -3746,6 +3752,9 @@
                 "spectrum_flex_window": {
                     "id": "137",
                     "field": "flex_window"
+                },
+                "interpolation_multiplier": {
+                    "id": "handle"
                 }
             },
             "handler_options": {

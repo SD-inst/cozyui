@@ -2,6 +2,7 @@ import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
+import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
@@ -52,6 +53,7 @@ const Content = () => {
                     />
                     <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
+                    <VideoInterpolationSlider />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
