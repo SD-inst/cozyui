@@ -4,6 +4,8 @@ import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
+import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
+import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
@@ -74,6 +76,8 @@ const Content = () => {
                         name='sampler'
                         defaultValue='res_multistep'
                     />
+                    <MiniMaxH3SigmaShiftControls />
+                    <MiniMaxH3SpectrumControls />
                 </AdvancedSettings>
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>

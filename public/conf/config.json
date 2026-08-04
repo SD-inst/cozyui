@@ -3530,6 +3530,26 @@
                     "id": "handle",
                     "node_id": "105:6",
                     "field": "unet_name"
+                },
+                "sigma_shift_video": {
+                    "id": "136",
+                    "field": "shift_video"
+                },
+                "sigma_shift_audio": {
+                    "id": "136",
+                    "field": "shift_audio"
+                },
+                "spectrum_enabled": {
+                    "id": "137",
+                    "field": "enabled"
+                },
+                "spectrum_blend_weight": {
+                    "id": "137",
+                    "field": "blend_weight"
+                },
+                "spectrum_flex_window": {
+                    "id": "137",
+                    "field": "flex_window"
                 }
             },
             "handler_options": {
@@ -3553,7 +3573,12 @@
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
                 "prompt": "integrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A",
-                "seed": 1024
+                "seed": 1024,
+                "sigma_shift_video": 12,
+                "sigma_shift_audio": 3,
+                "spectrum_enabled": true,
+                "spectrum_blend_weight": 0.75,
+                "spectrum_flex_window": 3
             }
         },
         "MiniMax H3 I2V": {
@@ -3603,6 +3628,26 @@
                     "id": "handle",
                     "node_id": "105:6",
                     "field": "unet_name"
+                },
+                "sigma_shift_video": {
+                    "id": "136",
+                    "field": "shift_video"
+                },
+                "sigma_shift_audio": {
+                    "id": "136",
+                    "field": "shift_audio"
+                },
+                "spectrum_enabled": {
+                    "id": "137",
+                    "field": "enabled"
+                },
+                "spectrum_blend_weight": {
+                    "id": "137",
+                    "field": "blend_weight"
+                },
+                "spectrum_flex_window": {
+                    "id": "137",
+                    "field": "flex_window"
                 }
             },
             "handler_options": {
@@ -3626,7 +3671,12 @@
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
                 "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A",
-                "seed": 1024
+                "seed": 1024,
+                "sigma_shift_video": 12,
+                "sigma_shift_audio": 3,
+                "spectrum_enabled": true,
+                "spectrum_blend_weight": 0.75,
+                "spectrum_flex_window": 3
             }
         },
         "MiniMax H3 R2V": {
@@ -3676,6 +3726,26 @@
                     "id": "handle",
                     "node_id": "105:6",
                     "field": "unet_name"
+                },
+                "sigma_shift_video": {
+                    "id": "136",
+                    "field": "shift_video"
+                },
+                "sigma_shift_audio": {
+                    "id": "136",
+                    "field": "shift_audio"
+                },
+                "spectrum_enabled": {
+                    "id": "137",
+                    "field": "enabled"
+                },
+                "spectrum_blend_weight": {
+                    "id": "137",
+                    "field": "blend_weight"
+                },
+                "spectrum_flex_window": {
+                    "id": "137",
+                    "field": "flex_window"
                 }
             },
             "handler_options": {
@@ -3699,7 +3769,12 @@
                 "length": 5,
                 "model": "h3/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
                 "seed": 1024,
-                "prompt": "subject_definitions:\n<Subject 1> is the visual content (character, background, motion etc.) in <Picture 1>, <Picture 2>, etc. — the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. — the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved — describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved — describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A"
+                "prompt": "subject_definitions:\n<Subject 1> is the visual content (character, background, motion etc.) in <Picture 1>, <Picture 2>, etc. — the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. — the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved — describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved — describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A",
+                "sigma_shift_video": 12,
+                "sigma_shift_audio": 3,
+                "spectrum_enabled": true,
+                "spectrum_blend_weight": 0.75,
+                "spectrum_flex_window": 3
             }
         }
     },
