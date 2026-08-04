@@ -810,17 +810,13 @@ Keys should follow a hierarchical pattern: `controls.<component_name>.<field>`, 
 
 ## Development Commands
 
-### Linting
+### Linting + Typecheck
 
-**Always use `yarn eslint` to run the linter.** Do not use `npx eslint` — it may invoke a mismatched version and produce incorrect results or false errors.
-
-```bash
-yarn eslint . --ext .ts,.tsx
-yarn eslint . --ext .ts,.tsx --fix
-```
-
-### TypeScript Check
+**Always use `yarn lint` to run both ESLint and TypeScript checks.** Do not use `npx eslint` or `yarn tsc --noEmit` directly — they may invoke mismatched versions or skip project reference checking.
 
 ```bash
-yarn tsc --noEmit
+yarn lint            # runs eslint . && tsc -b --noEmit
+yarn lint --fix      # runs eslint . --fix
 ```
+
+`yarn lint` combines linting and typecheck in one command. TypeScript uses `tsc -b` (project references mode) to correctly resolve all files and catch module errors.
