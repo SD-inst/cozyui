@@ -715,6 +715,7 @@ This means:
 - Inserted nodes (via `insertGraph` or `getFreeNodeId`) are added to the current workflow copy and sent to ComfyUI with the prompt
 - Any conditional logic (e.g. inserting/removing nodes based on parameter values) must handle the full state change in a single call — there is no incremental update
 - If a node should not exist (e.g. switching from base to dev model), the handler must explicitly remove it from the current `api` object
+- **Do NOT delete nodes for disabled toggles** — if a toggle-controlled node is only inserted when `value === true`, just return early when `value === false`. The graph is reloaded fresh from the API JSON on each generation, so no leftover nodes exist
 
 ---
 
