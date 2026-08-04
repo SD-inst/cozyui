@@ -10,6 +10,7 @@ import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumContr
 import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
+import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
@@ -197,6 +198,10 @@ const Content = () => {
                     <SamplerSelectInput
                         name='sampler'
                         defaultValue='res_multistep'
+                    />
+                    <SchedulerSelectInput
+                        name='scheduler'
+                        defaultValue='simple'
                     />
                     <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
