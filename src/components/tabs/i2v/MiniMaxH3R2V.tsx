@@ -9,6 +9,7 @@ import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlide
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
+import { LoraInput } from '../../controls/LoraInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
@@ -207,6 +208,7 @@ const Content = () => {
                     <MiniMaxH3SpectrumControls />
                     <VideoInterpolationSlider />
                 </AdvancedSettings>
+                <LoraInput name='lora' type='minimax_h3' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />
             </GridLeft>
             <GridRight>
