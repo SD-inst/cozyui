@@ -21,7 +21,7 @@ export const MiniMaxH3SpectrumControls = () => {
                     <SliderInput
                         name='spectrum_blend_weight'
                         label='spectrum_blend_weight'
-                        defaultValue={0.75}
+                        defaultValue={0.5}
                         min={0}
                         max={1}
                         step={0.05}
@@ -29,10 +29,10 @@ export const MiniMaxH3SpectrumControls = () => {
                     <SliderInput
                         name='spectrum_flex_window'
                         label='spectrum_flex_window'
-                        defaultValue={3}
-                        min={1}
-                        max={10}
-                        step={1}
+                        defaultValue={0.75}
+                        min={0}
+                        max={5}
+                        step={0.05}
                     />
                 </Box>
             )}
