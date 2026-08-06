@@ -3577,6 +3577,9 @@
                     "id": "handle",
                     "sampler_node_id": "105:14",
                     "unet_loader_node_id": "105:6"
+                },
+                "turbo_lora": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -3686,6 +3689,9 @@
                     "id": "handle",
                     "sampler_node_id": "105:14",
                     "unet_loader_node_id": "105:6"
+                },
+                "turbo_lora": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -3793,6 +3799,9 @@
                     "id": "handle",
                     "sampler_node_id": "105:14",
                     "unet_loader_node_id": "105:6"
+                },
+                "turbo_lora": {
+                    "id": "skip"
                 }
             },
             "handler_options": {

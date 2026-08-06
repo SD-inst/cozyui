@@ -164,6 +164,10 @@ const translation = {
         spectrum_blend_weight: 'Spectrum Blend Weight',
         spectrum_flex_window: 'Spectrum Flex Window',
         turbo: 'Турбо',
+        turbo_lora: {
+            lora_name: 'Turbo LoRA',
+            strength: 'Сила',
+        },
         send_back: 'Отправить назад',
         send_to_i2i: 'Отправить в I2I',
         append_image: 'Добавить изображение',

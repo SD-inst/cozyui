@@ -1,8 +1,7 @@
 import { useEventCallback } from '@mui/material';
 import { getFreeNodeId, insertNode } from '../api/utils';
 import { useAPI } from './useAPI';
-
-const TURBO_LORA_NAME = 'h3/minimax_h3_turbo_4step_ckpt500.safetensors';
+import { useWatchForm } from './useWatchForm';
 
 /**
  * Hook that returns a handler for the MiniMax H3 Turbo toggle.
@@ -17,19 +16,23 @@ export const useMiniMaxH3TurboHandler = () => {
     const unetLoaderId = turbo_control?.unet_loader_node_id;
     const samplerNodeId = turbo_control?.sampler_node_id;
     const spectrum_control = controls?.spectrum_enabled ?? {};
+    const turboLoraName = useWatchForm('turbo_lora.lora_name') as string;
+    const turboLoraStrength = useWatchForm('turbo_lora.strength') as number;
 
     const handler = useEventCallback((api: any, value: boolean) => {
         if (!value) {
             return;
         }
 
-        const {
-            output_node_ids,
-            api_input_name,
-            lora_input_name,
-        } = lora_params;
+        const { output_node_ids, api_input_name, lora_input_name } =
+            lora_params;
 
-        if (!output_node_ids?.length || !unetLoaderId || !samplerNodeId) {
+        if (
+            !turboLoraName ||
+            !output_node_ids?.length ||
+            !unetLoaderId ||
+            !samplerNodeId
+        ) {
             return;
         }
 
@@ -39,8 +42,8 @@ export const useMiniMaxH3TurboHandler = () => {
             api_input_name,
             {
                 inputs: {
-                    lora_name: TURBO_LORA_NAME,
-                    strength: 1,
+                    lora_name: turboLoraName,
+                    strength: turboLoraStrength,
                     [lora_input_name]: [unetLoaderId, 0],
                 },
                 class_type: 'MiniMaxH3TurboLoRA',

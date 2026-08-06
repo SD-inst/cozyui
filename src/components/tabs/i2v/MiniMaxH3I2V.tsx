@@ -15,6 +15,7 @@ import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { ToggleInput } from '../../controls/ToggleInput';
+import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
@@ -96,6 +97,7 @@ const Content = () => {
                     <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
                     <VideoInterpolationSlider />
+                    <TurboLoraSelect />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='minimax_h3' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />
