@@ -20,6 +20,7 @@ import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { controlType } from '../../../redux/config';
+import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { getFreeNodeId } from '../../../api/utils';
 
@@ -160,6 +161,8 @@ const ReferenceVideos = ({ name }: { name: string }) => {
 };
 
 const Content = () => {
+    const turboHandler = useMiniMaxH3TurboHandler();
+    useRegisterHandler({ name: 'turbo', handler: turboHandler });
     return (
         <Layout>
             <GridLeft>
@@ -188,6 +191,7 @@ const Content = () => {
                     step={0.1}
                 />
                 <SliderInput name='steps' defaultValue={20} min={1} max={50} />
+                <ToggleInput name='turbo' label='turbo' />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'

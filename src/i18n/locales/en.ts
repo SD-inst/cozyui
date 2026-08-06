@@ -164,6 +164,7 @@ const translation = {
         spectrum_enabled: 'Spectrum Enabled',
         spectrum_blend_weight: 'Spectrum Blend Weight',
         spectrum_flex_window: 'Spectrum Flex Window',
+        turbo: 'Turbo',
         send_back: 'Send back',
         send_to_i2i: 'Send to I2I',
         append_image: 'Append image',

@@ -163,6 +163,7 @@ const translation = {
         spectrum_enabled: 'Включить Spectrum',
         spectrum_blend_weight: 'Spectrum Blend Weight',
         spectrum_flex_window: 'Spectrum Flex Window',
+        turbo: 'Турбо',
         send_back: 'Отправить назад',
         send_to_i2i: 'Отправить в I2I',
         append_image: 'Добавить изображение',

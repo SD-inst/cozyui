@@ -12,10 +12,15 @@ import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
+import { ToggleInput } from '../../controls/ToggleInput';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
+import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useRegisterHandler } from '../../contexts/TabContext';
 
 const Content = () => {
+    const turboHandler = useMiniMaxH3TurboHandler();
+    useRegisterHandler({ name: 'turbo', handler: turboHandler });
     return (
         <Layout>
             <GridLeft>
@@ -41,6 +46,7 @@ const Content = () => {
                     step={0.1}
                 />
                 <SliderInput name='steps' defaultValue={20} min={1} max={50} />
+                <ToggleInput name='turbo' label='turbo' />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'

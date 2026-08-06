@@ -3572,6 +3572,11 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "turbo": {
+                    "id": "handle",
+                    "sampler_node_id": "105:14",
+                    "unet_loader_node_id": "105:6"
                 }
             },
             "handler_options": {
@@ -3676,6 +3681,11 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "turbo": {
+                    "id": "handle",
+                    "sampler_node_id": "105:14",
+                    "unet_loader_node_id": "105:6"
                 }
             },
             "handler_options": {
@@ -3778,6 +3788,11 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "turbo": {
+                    "id": "handle",
+                    "sampler_node_id": "105:14",
+                    "unet_loader_node_id": "105:6"
                 }
             },
             "handler_options": {
