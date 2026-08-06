@@ -32,7 +32,12 @@ const ImageFrameInput = ({ name }: { name: string }) => {
                 class_type: 'LoadImage',
                 _meta: { title: 'Load Image' },
             };
-            api[control.node_id].inputs[control.field] = [imageNodeId, 0];
+            if (control.scale_node_id) {
+                api[control.scale_node_id].inputs.image = [imageNodeId, 0];
+                api[control.node_id].inputs[control.field] = [control.scale_node_id, 0];
+            } else {
+                api[control.node_id].inputs[control.field] = [imageNodeId, 0];
+            }
         },
     );
     useRegisterHandler({ name, handler });

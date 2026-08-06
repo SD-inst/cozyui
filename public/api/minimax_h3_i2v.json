@@ -225,5 +225,31 @@
             "_meta": {
                 "title": "Spectrum Apply MiniMax H3"
             }
+        },
+        "138": {
+            "inputs": {
+                "upscale_method": "lanczos",
+                "width": ["115", 0],
+                "height": ["115", 1],
+                "crop": "center",
+                "image": ["98", 0]
+            },
+            "class_type": "ImageScale",
+            "_meta": {
+                "title": "Upscale Image"
+            }
+        },
+        "139": {
+            "inputs": {
+                "upscale_method": "lanczos",
+                "width": ["115", 0],
+                "height": ["115", 1],
+                "crop": "center",
+                "image": ["99", 0]
+            },
+            "class_type": "ImageScale",
+            "_meta": {
+                "title": "Upscale Image"
+            }
         }
     }

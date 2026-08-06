@@ -3604,13 +3604,15 @@
                     "id": "handle",
                     "node_id": "105:104",
                     "field": "first_frame",
-                    "image_node_id": "98"
+                    "image_node_id": "98",
+                    "scale_node_id": "138"
                 },
                 "last_frame": {
                     "id": "handle",
                     "node_id": "105:104",
                     "field": "last_frame",
-                    "image_node_id": "99"
+                    "image_node_id": "99",
+                    "scale_node_id": "139"
                 },
                 "aspect_ratio": {
                     "id": "115",
