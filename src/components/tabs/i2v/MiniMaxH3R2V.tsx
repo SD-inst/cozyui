@@ -23,7 +23,7 @@ import { WFTab } from '../../WFTab';
 import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
-import { getFreeNodeId } from '../../../api/utils';
+import { getFreeNodeId, insertGraph } from '../../../api/utils';
 
 const imageValue = { image: '' };
 const audioValue = { audio: '' };
@@ -120,22 +120,80 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 if (!v.video) {
                     return;
                 }
-                const videoNodeID = getFreeNodeId(api) + '';
-                api[videoNodeID] = {
-                    inputs: {
-                        video: v.video,
-                        force_rate: 0,
-                        custom_width: 0,
-                        custom_height: 0,
-                        frame_load_cap: 0,
-                        skip_first_frames: 0,
-                        select_every_nth: 1,
+
+                const resampleGraph = {
+                    ':video': {
+                        inputs: {
+                            video: '',
+                            force_rate: 0,
+                            custom_width: 0,
+                            custom_height: 0,
+                            frame_load_cap: 0,
+                            skip_first_frames: 0,
+                            select_every_nth: 1,
+                        },
+                        class_type: 'VHS_LoadVideo',
+                        _meta: { title: 'Load Video (Upload)' },
                     },
-                    class_type: 'VHS_LoadVideo',
-                    _meta: { title: 'Load Video' },
+                    ':info': {
+                        inputs: {
+                            video_info: [':video', 3],
+                        },
+                        class_type: 'VHS_VideoInfoLoaded',
+                        _meta: { title: 'Video Info (Loaded)' },
+                    },
+                    ':math': {
+                        inputs: {
+                            expression: 'a != 24',
+                            'values.a': [':info', 0],
+                        },
+                        class_type: 'ComfyMathExpression',
+                        _meta: { title: 'Math Expression' },
+                    },
+                    ':resample': {
+                        inputs: {
+                            ckpt_name: 'rife_v4.26.safetensors',
+                            fps_in: [':info', 0],
+                            fps_out: 24,
+                            scale_factor: 1,
+                            ensemble: true,
+                            linearize: false,
+                            lf_guardrail: false,
+                            lf_sigma: 13,
+                            source_pair_match: false,
+                            match_a_cap: 0.02,
+                            match_b_cap: 0.00784313725490196,
+                            edge_band_lock: false,
+                            tau_low: 0.0058823529411764705,
+                            tau_high: 0.023529411764705882,
+                            band_radius: 4,
+                            band_soft_sigma: 2,
+                            clear_cache_after_n_frames: 0,
+                            frames: [':video', 0],
+                        },
+                        class_type: 'RIFE_FPS_Resample',
+                        _meta: { title: 'RIFE VFI FPS Resample' },
+                    },
+                    ':switch': {
+                        inputs: {
+                            switch: [':math', 2],
+                            on_false: [':video', 0],
+                            on_true: [':resample', 0],
+                        },
+                        class_type: 'ComfySwitchNode',
+                        _meta: { title: 'If/Else Switch' },
+                    },
                 };
+
+                const baseID = insertGraph(api, resampleGraph);
+
+                const videoNodeID = baseID + ':video';
+                const switchNodeID = baseID + ':switch';
+
+                api[videoNodeID].inputs.video = v.video;
+
                 api[control.node_id].inputs['ref_videos.ref_video_' + idx] = [
-                    videoNodeID,
+                    switchNodeID,
                     0,
                 ];
                 if (!v.no_audio) {
