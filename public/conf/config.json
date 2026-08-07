@@ -3567,6 +3567,18 @@
                     "id": "137",
                     "field": "flex_window"
                 },
+                "spectrum_degree": {
+                    "id": "137",
+                    "field": "degree"
+                },
+                "spectrum_warmup_steps": {
+                    "id": "137",
+                    "field": "warmup_steps"
+                },
+                "spectrum_bootstrap_first_forecast": {
+                    "id": "137",
+                    "field": "bootstrap_first_forecast"
+                },
                 "interpolation_multiplier": {
                     "id": "handle"
                 },
@@ -3679,6 +3691,18 @@
                     "id": "137",
                     "field": "flex_window"
                 },
+                "spectrum_degree": {
+                    "id": "137",
+                    "field": "degree"
+                },
+                "spectrum_warmup_steps": {
+                    "id": "137",
+                    "field": "warmup_steps"
+                },
+                "spectrum_bootstrap_first_forecast": {
+                    "id": "137",
+                    "field": "bootstrap_first_forecast"
+                },
                 "interpolation_multiplier": {
                     "id": "handle"
                 },
@@ -3788,6 +3812,18 @@
                 "spectrum_flex_window": {
                     "id": "137",
                     "field": "flex_window"
+                },
+                "spectrum_degree": {
+                    "id": "137",
+                    "field": "degree"
+                },
+                "spectrum_warmup_steps": {
+                    "id": "137",
+                    "field": "warmup_steps"
+                },
+                "spectrum_bootstrap_first_forecast": {
+                    "id": "137",
+                    "field": "bootstrap_first_forecast"
                 },
                 "interpolation_multiplier": {
                     "id": "handle"

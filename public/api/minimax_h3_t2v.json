@@ -285,7 +285,7 @@
         "degree": 4,
         "ridge_lambda": 0.1,
         "window_size": 2,
-        "flex_window": 3,
+        "flex_window": 0.75,
         "warmup_steps": 5,
         "tail_actual_steps": 1,
         "max_history": 8,
@@ -294,7 +294,8 @@
         "model": [
           "136",
           0
-        ]
+        ],
+        "bootstrap_first_forecast": false
       },
       "class_type": "SpectrumApplyMiniMaxH3",
       "_meta": {

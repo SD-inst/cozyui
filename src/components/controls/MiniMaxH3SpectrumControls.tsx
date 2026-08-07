@@ -34,6 +34,27 @@ export const MiniMaxH3SpectrumControls = () => {
                         max={5}
                         step={0.05}
                     />
+                    <SliderInput
+                        name='spectrum_degree'
+                        label='spectrum_degree'
+                        defaultValue={4}
+                        min={1}
+                        max={10}
+                        step={1}
+                    />
+                    <SliderInput
+                        name='spectrum_warmup_steps'
+                        label='spectrum_warmup_steps'
+                        defaultValue={5}
+                        min={1}
+                        max={20}
+                        step={1}
+                    />
+                    <ToggleInput
+                        name='spectrum_bootstrap_first_forecast'
+                        label='spectrum_bootstrap_first_forecast'
+                        defaultValue={false}
+                    />
                 </Box>
             )}
         </>

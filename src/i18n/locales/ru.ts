@@ -163,6 +163,9 @@ const translation = {
         spectrum_enabled: 'Включить Spectrum',
         spectrum_blend_weight: 'Spectrum Blend Weight',
         spectrum_flex_window: 'Spectrum Flex Window',
+        spectrum_degree: 'Spectrum Degree',
+        spectrum_warmup_steps: 'Spectrum Warmup Steps',
+        spectrum_bootstrap_first_forecast: 'Spectrum Bootstrap First Forecast',
         turbo: 'Турбо',
         turbo_lora: {
             lora_name: 'Turbo LoRA',
