@@ -10,7 +10,7 @@ export const MiniMaxH3SpectrumControls = () => {
     });
 
     return (
-        <>
+        <Box mb={2}>
             <ToggleInput
                 name='spectrum_enabled'
                 label='spectrum_enabled'
@@ -57,6 +57,6 @@ export const MiniMaxH3SpectrumControls = () => {
                     />
                 </Box>
             )}
-        </>
+        </Box>
     );
 };

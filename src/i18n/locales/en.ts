@@ -239,6 +239,7 @@ const translation = {
         ref_images: 'reference images',
         ref_videos: 'reference videos',
         ref_audio: 'reference audio',
+        ref_image_size: 'reference image size',
         enabled: 'enabled',
         upsample_spatial: '2-pass sampling',
         upsample_temporal: 'double FPS',

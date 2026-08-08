@@ -238,6 +238,7 @@ const translation = {
         ref_images: 'изображения-референсы',
         ref_videos: 'видео-референсы',
         ref_audio: 'аудио-референсы',
+        ref_image_size: 'размер референса',
         enabled: 'разрешено',
         upsample_spatial: 'два прохода',
         upsample_temporal: 'удвоить FPS',

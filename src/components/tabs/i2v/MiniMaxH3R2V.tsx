@@ -13,6 +13,7 @@ import { LoraInput } from '../../controls/LoraInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
+import { SelectInput } from '../../controls/SelectInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { ToggleInput } from '../../controls/ToggleInput';
@@ -269,6 +270,15 @@ const Content = () => {
                     />
                     <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
+                    <SelectInput
+                        name='ref_image_size'
+                        label='ref_image_size'
+                        choices={[
+                            { text: 'match', value: 'match' },
+                            { text: 'max', value: 'max' },
+                        ]}
+                        defaultValue='match'
+                    />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />
                 </AdvancedSettings>

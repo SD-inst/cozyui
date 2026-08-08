@@ -3838,6 +3838,10 @@
                 },
                 "turbo_lora": {
                     "id": "skip"
+                },
+                "ref_image_size": {
+                    "id": "105:104",
+                    "field": "ref_image_size"
                 }
             },
             "handler_options": {
@@ -3856,6 +3860,7 @@
                 "type": "gifs"
             },
             "defaults": {
+                "ref_image_size": "match",
                 "aspect_ratio": "16:9 (Widescreen)",
                 "megapixels": 0.4,
                 "length": 5,
