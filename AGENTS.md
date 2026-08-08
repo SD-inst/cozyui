@@ -676,11 +676,14 @@ const handler = useEventCallback((api: any, value: any, control: controlType) =>
 ```
 
 **Key rules:**
+- Prefer using `insertGraph` if you need to insert more than one node
 - Graph node keys must use `:` prefix (e.g. `':node'`, `':loader'`)
 - Internal links between graph nodes use `[':key', 0]` format — `insertGraph` auto-resolves these
 - External references (not starting with `:`) are preserved unchanged
 - Use `getFreeNodeId(api)` for standalone single-node insertion outside `insertGraph`
-- **Never hardcode node IDs** — pass them via config.json control fields or extract from `control` object
+- CRITICAL: **Never hardcode node IDs** — pass them via config.json control fields or extract from `control` object. There should NOT BE A SINGLE HARDCODED ID in ts/tsx code. The only exception is `insertGraph` where you provide free-form colon-prefixed suffixes.
+- NEVER look up nodes by their names, classes, etc. IT'S FRAGILE. If you need a specific node, pass its ID from config.json.
+- NEVER do `git checkout`, the changes are often too massive and you will revert a lot of useful code in the process. You can see diffs and revert parts of the code manually.
 
 ### Dynamic handler example
 

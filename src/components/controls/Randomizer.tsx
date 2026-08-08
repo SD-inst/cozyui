@@ -1,12 +1,12 @@
 import { useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
 import { bigRandom } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 
 export const Randomizer = () => {
-    const { setValue } = useFormContext();
+    const { control, setValue } = useFormContext();
     const handler = useEventCallback(
         (api: any, _value: any, control: controlType) => {
             if (!control.node_id || !control.prefix) {
@@ -21,5 +21,12 @@ export const Randomizer = () => {
     useEffect(() => {
         setValue('randomizer', '1');
     }, [setValue]);
-    return null;
+    return (
+        <Controller
+            name='randomizer'
+            control={control}
+            defaultValue='1'
+            render={() => <></>}
+        />
+    );
 };

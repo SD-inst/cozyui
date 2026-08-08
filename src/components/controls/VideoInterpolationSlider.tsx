@@ -20,16 +20,15 @@ export const VideoInterpolationSlider = ({
         }
         const rifeNode = {
             inputs: {
-                ckpt_name: 'rife49.pth',
+                ckpt_name: 'rife_v4.26.safetensors',
                 clear_cache_after_n_frames: 10,
                 multiplier: value,
-                fast_mode: true,
                 ensemble: true,
                 scale_factor: 1,
             },
-            class_type: 'RIFE VFI',
+            class_type: 'RIFE_VFI_Opt',
             _meta: {
-                title: 'RIFE VFI (recommend rife47 and rife49)',
+                title: '🐇 RIFE VFI Interpolate by Multiple',
             },
         };
         insertNode(api, id, 'images', rifeNode, 0, 'frames');

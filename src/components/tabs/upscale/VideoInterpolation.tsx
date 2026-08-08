@@ -2,8 +2,8 @@ import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { Randomizer } from '../../controls/Randomizer';
-import { SliderInput } from '../../controls/SliderInput';
 import { UploadType } from '../../controls/UploadType';
+import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 
@@ -12,12 +12,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <FileUpload name='video' type={UploadType.VIDEO} />
-                <SliderInput
-                    name='multiplier'
-                    defaultValue={2}
-                    min={1}
-                    max={5}
-                />
+                <VideoInterpolationSlider name='multiplier' />
                 <Randomizer />
             </GridLeft>
             <GridRight
