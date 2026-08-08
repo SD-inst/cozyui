@@ -821,3 +821,7 @@ yarn lint --fix      # runs eslint . --fix
 ```
 
 `yarn lint` combines linting and typecheck in one command. TypeScript uses `tsc -b` (project references mode) to correctly resolve all files and catch module errors.
+
+## Kilo code notes
+
+If the user gives you a path to an image or a document (docx/xlsx etc.), use the read tool to look at it. Despite the tool description you DO have vision support and CAN see images and read documents.
