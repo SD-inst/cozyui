@@ -13,8 +13,12 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - Supported models and modes:
     - T2V
         - Hunyuan 1/1.5 (Native/Kijai)
-        - Wan (Kijai)
-        - LTX-2 T2V
+        - Wan 2.1 (Kijai)
+        - LTX-2 T2V / LTX-2.3 T2V
+        - MiniMax H3 T2V
+        - Ovi T2V
+    - V2V
+        - LTX-2.3 V2V (video-to-video)
     - I2V
         - Hunyuan 1.5
         - Hunyuan 1 (leapfusion lora)
@@ -22,15 +26,20 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Wan 2.1 two-step
         - Wan 2.1 InfiniteTalk (Kijai)
         - Framepack
-        - LTX-2 I2V
+        - LTX-2 I2V / LTX-2.3 I2V
         - LTX I2V
+        - MiniMax H3 I2V
+        - MiniMax H3 R2V (reference-to-video)
+        - Ovi I2V
     - T2I
         - StableDiffusion 1.5/SDXL
         - Flux.1/2
         - Chroma
-        - HiDream
+        - HiDream / HiDream-O1
         - Qwen Image
         - Z-Image
+        - Anima
+        - Krea2
     - I2I
         - Flux Kontext
         - Qwen Image Edit
@@ -38,11 +47,11 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Chroma upscale
         - SD Upscale
         - Hunyuan latent upscale
-        - Video interpolation
-    - T2A
+        - Video interpolation (with loop/keyframe support)
+    - T2A (Text-to-Audio)
         - StableAudio
         - MMAudio
-    - TTS
+    - TTS (Text-to-Speech)
         - Chatterbox (single/dialog)
         - VibeVoice (single/dialog, up to 4 speakers)
     - Music
