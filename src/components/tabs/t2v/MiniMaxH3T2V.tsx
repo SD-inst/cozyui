@@ -46,8 +46,8 @@ const Content = () => {
                     max={30}
                     step={0.1}
                 />
-                <SliderInput name='steps' defaultValue={20} min={1} max={50} />
-                <ToggleInput name='turbo' label='turbo' />
+                <SliderInput name='steps' defaultValue={8} min={1} max={50} />
+                <ToggleInput name='turbo' label='turbo' defaultValue={true} />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'

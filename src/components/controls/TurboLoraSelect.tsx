@@ -1,12 +1,9 @@
-import { useEffect } from 'react';
 import { Box } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import { useListChoices } from '../../hooks/useListChoices';
 import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
-import { useListChoices } from '../../hooks/useListChoices';
-import { useWatchForm } from '../../hooks/useWatchForm';
 
-const DEFAULT_LORA = 'h3/minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy_resized_avg_rank_21_bf16.safetensors';
+const DEFAULT_LORA = 'h3/minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy.safetensors';
 
 export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
     const loras = useListChoices({
@@ -20,17 +17,6 @@ export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
             text: l.slice(l.lastIndexOf('/') + 1, l.lastIndexOf('.safetensors')),
             value: l,
         }));
-    const loraName = useWatchForm('turbo_lora.lora_name') as string;
-    const { setValue } = useFormContext();
-
-    useEffect(() => {
-        if (!loraName) return;
-        const isLightX2V = loraName.includes('lightx2v');
-        setValue('turbo_lora.strength', isLightX2V ? 0.75 : 1, {
-            shouldValidate: false,
-            shouldDirty: false,
-        });
-    }, [loraName, setValue]);
 
     return (
         <Box sx={{ mt: 2, ...sx, display: 'flex', flexWrap: { xs: 'wrap', md: 'nowrap' }, gap: 3, alignItems: 'center' }}>
