@@ -3,7 +3,7 @@ import { useListChoices } from '../../hooks/useListChoices';
 import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
 
-const DEFAULT_LORA = 'h3/minimax_h3_fl2v_lightx2v_turbo_4step_v0.1_comfy.safetensors';
+const DEFAULT_LORA = 'h3/minimax_h3_turbo_v4_step600_ema.safetensors';
 
 export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
     const loras = useListChoices({

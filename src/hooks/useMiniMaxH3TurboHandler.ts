@@ -76,6 +76,7 @@ export const useMiniMaxH3TurboHandler = () => {
                         lora_name: turboLoraName,
                         strength: turboLoraStrength,
                         [lora_input_name]: [unetLoaderId, 0],
+                        low_vram: true,
                     },
                     class_type: 'MiniMaxH3TurboLoRA',
                     _meta: { title: 'MiniMax-H3 Turbo LoRA' },
