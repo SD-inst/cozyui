@@ -120,49 +120,186 @@ The custom node list is in `docker/custom_nodes.txt`, it's probably outdated but
 
 Models are expected to be placed in certain directories relative to ComfyUI root. Since new models and workflows are being added all the time it's best to simply run a workflow and check ComfyUI logs for errors about missing files, then put them where they are expected. Apologies for that! Maintaining this list doesn't make much sense unless CozyUI is installed by more than two people.
 
+### Flux (1/2)
+
+- **Model:** `models/diffusion_models/flux/` — `flux1_diffusion_fp8e4.safetensors` (Flux 1), `flux2_fp8.safetensors` (Flux 2)
+- **Text Encoders:** `models/text_encoders/` — `t5xxl_fp16.safetensors` (T5)
+- **CLIP:** `models/clip/` — `clip_l.safetensors`; Flux 2 uses `mistral_3_small_flux2_fp8.safetensors`
+- **VAE:** `models/vae/ae.safetensors` (Flux 1), `models/vae/flux2-vae.safetensors` (Flux 2)
+
+#### Flux loras
+
+- Path: `models/loras/`
+- Filtered by path component `flux/` (overridable in `config.local.json` as `loras.flux.filter`)
+
+### Chroma
+
+- **Model:** `models/diffusion_models/chroma/` — `chroma_fp8.safetensors`
+- **Text Encoder:** `models/text_encoders/t5xxl_fp8_e4m3fn_scaled.safetensors`
+- **VAE:** `models/vae/ae.safetensors`
+
+#### Chroma loras
+
+- Path: `models/loras/`
+- Filtered by path component `chroma/` (overridable in `config.local.json` as `loras.chroma.filter`)
+
+### HiDream / HiDream-O1
+
+- **Model:** `models/diffusion_models/hidream/` — `hidream_hunyuan_diT_bf16.safetensors` (HiDream), `hidream_o1_image_dev_mxfp8.safetensors` (HiDream-O1)
+- **Text Encoders:** `models/text_encoders/` — `t5xxl_fp8_e4m3fn_scaled.safetensors`, `llama_3.1_8b_instruct_fp8_scaled.safetensors`
+- **CLIP:** `models/clip/` — `clip_g_hidream.safetensors`, `clip_l_hidream.safetensors`
+- **VAE:** `models/vae/hidream.safetensors`
+- HiDream-O1: text encoder and VAE are embedded in the checkpoint
+
+#### HiDream loras
+
+- Path: `models/loras/`
+- Filtered by path component `hidream/` (overridable in `config.local.json` as `loras.hidream.filter`)
+
+### Qwen Image
+
+- **Model:** `models/diffusion_models/qwen/` — `qwenimage_fp8.safetensors`
+- **Text Encoder:** `models/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors`
+- **VAE:** `models/vae/qwen_image_vae.safetensors`
+
+#### Qwen Image loras
+
+- Path: `models/loras/`
+- Filtered by path component `qwen/` (overridable in `config.local.json` as `loras.qwen.filter`)
+
+### Z-Image
+
+- **Model:** `models/diffusion_models/zimage/` — `zimage_fp8.safetensors`
+- **Text Encoder:** `models/text_encoders/qwen_3_4b.safetensors`
+- **VAE:** `models/vae/ae.safetensors`
+
+### Anima
+
+- **Model:** `models/diffusion_models/anima/` — `anima_fp8.safetensors`
+- **Text Encoder:** `models/text_encoders/qwen_3_06b_base.safetensors`
+- **VAE:** `models/vae/qwen_image_vae.safetensors`
+
+### Krea2
+
+- **Model:** `models/diffusion_models/krea2/` — `krea2_turbo_mxfp8.safetensors`
+- **Text Encoder:** `models/text_encoders/qwen3vl_4b_fp8_scaled.safetensors`
+- **VAE:** `models/vae/qwen_image_vae.safetensors`
+
+### SD (Stable Diffusion 1.5/SDXL)
+
+- **Model:** `models/diffusion_models/` — SD 1.5 in `sd15/`, SDXL in `sdxl/` (any compatible checkpoint)
+- Text encoder and VAE are embedded in the checkpoint file
+
+#### SD loras
+
+- Path: `models/loras/`
+- Filtered by path component `sdxl/` or `sd15/` (overridable in `config.local.json` as `loras.sd.filter`)
+
 ### Hunyuan
 
-- Path: `models/diffusion_models/hyvid/`
-
-- Filenames:
-    - regular FP8-quantized model: `hunyuan_video_720_fp8_e4m3fn.safetensors`
-    - FastVideo: `hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors`
-    - VAE: `models/vae/hyvid/hunyuan_video_vae_bf16.safetensors`
-    - GGUF-quantized models: `models/unet` (add them to `config.local.json` to use)
+- **Model:** `models/diffusion_models/hyvid/` — `hunyuan_video_720_fp8_e4m3fn.safetensors`, `hunyuan_video_FastVideo_720_fp8_e4m3fn.safetensors`
+- **Text Encoders:** `models/text_encoders/` — `llava_llama3_fp8_scaled.safetensors`; **CLIP:** `models/clip/` — `clip_l.safetensors`
+- **VAE:** `models/vae/hyvid/hunyuan_video_vae_bf16.safetensors`
+- GGUF-quantized models: `models/unet` (add to `config.local.json` to use)
 
 GGUF models can be dynamically offloaded to RAM allowing generating higher resolution, longer videos. See `Virtual VRAM` slider in advanced parameters.
+
+#### Hunyuan (KJ)
+
+- **Text Encoders:** `Kijai/llava-llama-3-8b-text-encoder-tokenizer` and `openai/clip-vit-large-patch14` (downloaded from HuggingFace automatically)
+
+#### Hunyuan 1.5
+
+- **Model:** same as Hunyuan above
+- **Text Encoders:** `models/text_encoders/` — `qwen_2.5_vl_7b_fp8_scaled.safetensors`, `byt5_small_glyphxl_fp16.safetensors`
+- **VAE:** `models/vae/hyvid/hunyuanvideo15_vae_fp16.safetensors`
+- **CLIP Vision (I2V):** `models/clip_vision/sigclip_vision_patch14_384.safetensors`
 
 #### Hunyuan loras
 
 - Path: `models/loras/`
+- Filtered by path component `hyvid/` (overridable in `config.local.json` as `loras.hunyuan.filter`)
 
-They're additionally filtered by path component `hyvid/` which can be overridden in `conf/config.local.json` as `loras.hunyuan.filter` (see `conf/config.json`). It's a simple string filter, only files that have this string in the full path will be shown.
+### Wan 2.1
 
-### Wan
+- **Model:** `models/diffusion_models/wan/` — T2V: `Wan2_1-T2V-14B_fp8_e4m3fn.safetensors`, `Wan2_1-T2V-1_3B_fp8_e4m3fn.safetensors`; I2V: `Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors`, `Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors`
+- **Text Encoder (KJ):** `models/text_encoders/umt5-xxl-enc-bf16.safetensors`; (Native 2-stage): `models/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors`
+- **VAE:** `models/vae/wan_2.1_vae.safetensors`
+- **CLIP Vision (I2V):** `models/clip_vision/clip_vision_h.safetensors`
 
-- Path: `models/diffusion_models/wan/`
-- Filenames:
-    - T2V: `Wan2_1-T2V-14B_fp8_e4m3fn.safetensors`, `Wan2_1-T2V-1_3B_fp8_e4m3fn.safetensors`
-    - I2V: `Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors`, `Wan2_1-I2V-14B-720P_fp8_e4m3fn.safetensors`
-    - VAE: `models/vae/wan_2.1_vae.safetensors`
+### Ovi
+
+- **Model:** `models/diffusion_models/ovi/` — `ovi_video_fp8.safetensors` (video), `ovi_audio_fp8.safetensors` (audio)
+- **Text Encoder:** `models/text_encoders/umt5-xxl-enc-bf16.safetensors`
+- **VAE (Video):** `models/vae/Wan2_2_VAE_bf16.safetensors`
+- **VAE (Audio):** `models/vae/ovi/mmaudio_vae_16k_fp32.safetensors`
+- **Vocoder:** `models/vae/ovi/mmaudio_vocoder_bigvgan_best_netG_fp32.safetensors`
+
+### MiniMax H3
+
+- **Model:** `models/diffusion_models/minimax/` — `MiniMax_H3_Turbo_bf16.safetensors` (T2V), `MiniMax_H3_I2V_bf16.safetensors` (I2V), `MiniMax_H3_R2V_bf16.safetensors` (R2V)
+- **Text Encoder:** `models/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors`
+- **VAE (Video):** `models/vae/minimax_h3_video_vae_fp16.safetensors`
+- **VAE (Audio):** `models/vae/minimax_h3_audio_vae_fp32.safetensors`
 
 ### LTX Video
 
-- Filename: `models/checkpoints/video/ltx-video-2b-v0.9.1.safetensors`
+- **Original:** `models/checkpoints/video/ltx-video-2b-v0.9.1.safetensors` (combined model+VAE checkpoint)
+- **Text Encoder:** `models/text_encoders/t5xxl_fp16.safetensors`
+
+#### LTX-2
+
+- **Text Encoder:** `models/text_encoders/gemma_3_12B_it_fp8_e4m3fn.safetensors`
+- **VAE (Video):** `models/vae/ltx2_vae.safetensors`
+- **VAE (Audio):** `models/vae/ltx2/ltx2_audiovae.safetensors`
+
+#### LTX-2.3
+
+- **Model:** `models/checkpoints/video/` — `ltx2.3_bf16.safetensors`
+- **Text Encoders:** `models/text_encoders/` — `gemma_3_12B_it_fp8_e4m3fn.safetensors`, `ltx-2.3_text_projection_bf16.safetensors`
+- **VAE (Video):** `models/vae/LTX23_video_vae_bf16.safetensors`
+- **VAE (Audio):** `models/vae/LTX23_audio_vae_bf16.safetensors`
+
+#### LTX-2.3 loras
+
+- Path: `models/loras/`
+- Filtered by path component `ltx23/` (overridable in `config.local.json` as `loras.ltx23.filter`)
 
 ### Stable Audio
 
-- Filename: `models/checkpoints/audio/stable_audio.safetensors`
+- **Model:** `models/checkpoints/audio/stable_audio.safetensors`
+- **Text Encoder:** `models/text_encoders/t5_base.safetensors`
 
 ### MMAudio
 
-- Path: `models/mmaudio`
+- **Model:** `models/mmaudio` — `mmaudio_large_44k_v2_fp16.safetensors`
+- **CLIP:** `models/mmaudio/apple_DFN5B-CLIP-ViT-H-14-384_fp16.safetensors`
+- **VAE:** `models/vae/mmaudio_vae_44k_fp16.safetensors`
+- **Synchformer:** `models/mmaudio/mmaudio_synchformer_fp16.safetensors`
 
 Some files can be downloaded with `docker/download_models.sh`, some are automatically downloaded on first generation.
 
+### SongBloom
+
+- **Model:** `models/checkpoints/audio/songbloom_full_150s_dpo.safetensors` (includes text encoding)
+
+### ACE Step
+
+- **Model:** `models/checkpoints/audio/ace_step_v1_3.5b.safetensors` (includes text encoding and VAE)
+
+### VibeVoice / Chatterbox
+
+- Built-in models, downloaded automatically on first use
+
+### Upscale / Interpolation Models
+
+- **SD Upscale:** `models/upscale_models/4x_NMKD-Siax_200k.pth`
+- **Chroma Upscale:** `models/upscale_models/4x_NMKD-Siax_200k.pth`
+- **Video Interpolation:** `models/frame_interpolation/rife_v4.26.safetensors` (RIFE VFI)
+
 ### LLM
 
-For Hunyuan and descriptions, they will download automatically on first use. Path: `models/LLM`
+For Hunyuan, descriptions, and LLM-powered features, models download automatically on first use. Path: `models/LLM`
 
 ## Developing
 
