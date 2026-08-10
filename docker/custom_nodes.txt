@@ -11,7 +11,6 @@ https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git
 https://github.com/filliptm/ComfyUI_Fill-ChatterBox
 https://github.com/fredconex/ComfyUI-SongBloom
 https://github.com/kijai/ComfyUI-Florence2
-https://github.com/kijai/ComfyUI-FramePackWrapper
 https://github.com/kijai/ComfyUI-HunyuanVideoWrapper
 https://github.com/kijai/ComfyUI-KJNodes
 https://github.com/kijai/ComfyUI-MMAudio.git

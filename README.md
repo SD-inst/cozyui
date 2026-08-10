@@ -16,7 +16,6 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Wan 2.1 (Kijai)
         - LTX-2 T2V / LTX-2.3 T2V
         - MiniMax H3 T2V
-        - Ovi T2V
     - V2V
         - LTX-2.3 V2V (video-to-video)
     - I2V
@@ -25,12 +24,10 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Wan 2.1 (Kijai)
         - Wan 2.1 two-step
         - Wan 2.1 InfiniteTalk (Kijai)
-        - Framepack
         - LTX-2 I2V / LTX-2.3 I2V
         - LTX I2V
         - MiniMax H3 I2V
         - MiniMax H3 R2V (reference-to-video)
-        - Ovi I2V
     - T2I
         - StableDiffusion 1.5/SDXL
         - Flux.1/2
@@ -228,14 +225,6 @@ GGUF models can be dynamically offloaded to RAM allowing generating higher resol
 - **Text Encoder (KJ):** `models/text_encoders/umt5-xxl-enc-bf16.safetensors`; (Native 2-stage): `models/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors`
 - **VAE:** `models/vae/wan_2.1_vae.safetensors`
 - **CLIP Vision (I2V):** `models/clip_vision/clip_vision_h.safetensors`
-
-### Ovi
-
-- **Model:** `models/diffusion_models/ovi/` — `ovi_video_fp8.safetensors` (video), `ovi_audio_fp8.safetensors` (audio)
-- **Text Encoder:** `models/text_encoders/umt5-xxl-enc-bf16.safetensors`
-- **VAE (Video):** `models/vae/Wan2_2_VAE_bf16.safetensors`
-- **VAE (Audio):** `models/vae/ovi/mmaudio_vae_16k_fp32.safetensors`
-- **Vocoder:** `models/vae/ovi/mmaudio_vocoder_bigvgan_best_netG_fp32.safetensors`
 
 ### MiniMax H3
 

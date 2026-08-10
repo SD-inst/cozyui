@@ -23,7 +23,6 @@ import { ChromaUpscaleTab } from './components/tabs/upscale/ChromaUpscale';
 import { FluxTab } from './components/tabs/t2i/Flux';
 import { Flux2Tab } from './components/tabs/t2i/Flux2';
 import { FluxKontextTab } from './components/tabs/i2i/FluxKontext';
-import { FramePackI2VTab } from './components/tabs/i2v/FramePackI2V';
 import { HiDreamTab } from './components/tabs/t2i/HiDream';
 import { Krea2Tab } from './components/tabs/t2i/Krea2';
 import { HiDreamO1Tab } from './components/tabs/i2i/HiDreamO1';
@@ -37,8 +36,6 @@ import { HunyanUpscale } from './components/tabs/upscale/HunyuanUpscale';
 import { LTX2I2VTab } from './components/tabs/i2v/LTX2I2V';
 import { LTX2T2VTab } from './components/tabs/t2v/LTX2T2V';
 import { MMAudioTab } from './components/tabs/audio/MMAudio';
-import { OviI2VTab } from './components/tabs/i2v/OviI2V';
-import { OviT2VTab } from './components/tabs/t2v/OviT2V';
 import { QwenImageTab } from './components/tabs/t2i/QwenImage';
 import { QwenImageEditTab } from './components/tabs/i2i/QwenImageEdit';
 import { SDTab } from './components/tabs/t2i/SD';
@@ -80,7 +77,6 @@ function App() {
                                 {Hunyan15T2VTab}
                                 {WanI2VTab}
                                 {WanT2VTab}
-                                {OviT2VTab}
                                 {Krea2Tab}
                                 {SDTab}
                                 {ChromaTab}
@@ -95,11 +91,9 @@ function App() {
                                 {LTX23V2VTab}
                                 {MiniMaxH3I2VTab}
                                 {MiniMaxH3R2VTab}
-                                {OviI2VTab}
                                 {WanI2V2STab}
                                 {HunyanI2VTab}
                                 {Hunyan15I2VTab}
-                                {FramePackI2VTab}
                                 {HiDreamTab}
                                 {HiDreamO1Tab}
                                 {FluxTab}
