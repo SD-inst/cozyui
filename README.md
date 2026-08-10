@@ -114,7 +114,9 @@ A basic Docker setup (NVIDIA-only, I don't have AMD) is provided to get you star
 
 After you have the models downloaded, run `docker compose up -d` and wait. You'll have two containers up and running. Open `http://127.0.0.1:3000` and try generating something in Hunyuan. If it doesn't work, check out the container logs with `docker compose logs comfyui` and see what the problem is. If some model is absent you'll see the expected path and can put it there in the `models/` directory in the program root. Note, that `docker/config.local.json` is mounted in CozyUI container by default. You can change it in `compose.yml` or modify the config itself. ComfyUI should be available at `http://127.0.0.1:8188`.
 
-The custom node list is in `docker/custom_nodes.txt`, it's probably outdated but it's a good starting point.
+## Nodes
+
+The custom node list is in `docker/custom_nodes.txt`, it's may be incomplete but it's a good starting point. I try to use the most popular and simple nodes, any UI-oriented packs (like lora stacks) or stuff like "multi-line string" are discouraged. Simply because the CozyUI user should never see ComfyUI otherwise what's the point? Stock nodes are preferred, though there is admittedly some tech debt accumulated because ComfyUI didn't have math/number conversion nodes at the time and I had to use custom nodes for that. I hope to clean this up one day and remove redundant dependencies. Some models need custom nodes for optimizations or to be used in the first place, but that's all. The node list is long and you don't have to install all of those if you don't plan to use certain models.
 
 ## Model location
 
