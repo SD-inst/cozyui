@@ -171,12 +171,28 @@ export const FileUpload = ({
         if (!items || field.value) {
             return;
         }
+        const acceptsImage =
+            type === UploadType.IMAGE || type === UploadType.IMAGEORVIDEO;
+        const acceptsVideo = type === UploadType.VIDEO || type === UploadType.IMAGEORVIDEO;
+        const acceptsAudio = type === UploadType.AUDIO;
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
-            if (item.kind === 'file' && item.type.startsWith('image/')) {
-                const file = item.getAsFile();
-                onDrop([file]);
-                return;
+            if (item.kind === 'file') {
+                if (item.type.startsWith('image/') && acceptsImage) {
+                    const file = item.getAsFile();
+                    onDrop([file]);
+                    return;
+                }
+                if (item.type.startsWith('video/') && acceptsVideo) {
+                    const file = item.getAsFile();
+                    onDrop([file]);
+                    return;
+                }
+                if (item.type.startsWith('audio/') && acceptsAudio) {
+                    const file = item.getAsFile();
+                    onDrop([file]);
+                    return;
+                }
             }
         }
     });
