@@ -1,8 +1,7 @@
 import { useEventCallback } from '@mui/material';
-import { useWatch } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { getFreeNodeId, insertNode } from '../api/utils';
 import { useAPI } from './useAPI';
-import { DEFAULT_TURBO_LORA } from '../components/controls/TurboLoraSelect';
 
 /**
  * Hook that returns a handler for the MiniMax H3 Turbo toggle.
@@ -11,22 +10,11 @@ import { DEFAULT_TURBO_LORA } from '../components/controls/TurboLoraSelect';
  * connecting it to SamplerCustomAdvanced's `sampler` input.
  */
 export const useMiniMaxH3TurboHandler = () => {
-    const { handler_options, controls } = useAPI() as any;
+    const { handler_options } = useAPI() as any;
     const lora_params = handler_options?.lora_params ?? {};
-    const turbo_control = controls?.turbo ?? {};
-    const unetLoaderId = turbo_control?.unet_loader_node_id;
-    const samplerNodeId = turbo_control?.sampler_node_id;
-    const spectrum_control = controls?.spectrum_enabled ?? {};
-    const turboLoraName = useWatch({
-        name: 'turbo_lora.lora_name',
-        defaultValue: DEFAULT_TURBO_LORA,
-    }) as string;
-    const turboLoraStrength = useWatch({
-        name: 'turbo_lora.strength',
-        defaultValue: 1.0,
-    }) as number;
+    const { getValues } = useFormContext();
 
-    const handler = useEventCallback((api: any, value: boolean) => {
+    const handler = useEventCallback((api: any, value: boolean, control: any) => {
         if (!value) {
             return;
         }
@@ -40,6 +28,12 @@ export const useMiniMaxH3TurboHandler = () => {
             name_field_name,
             class_name,
         } = lora_params;
+
+        const turboLoraName = getValues('turbo_lora.lora_name') as string;
+        const turboLoraStrength = getValues('turbo_lora.strength') as number;
+        const unetLoaderId = control?.unet_loader_node_id;
+        const samplerNodeId = control?.sampler_node_id;
+        const spectrumNodeId = control?.spectrum_node_id;
 
         if (
             !turboLoraName ||
@@ -100,8 +94,8 @@ export const useMiniMaxH3TurboHandler = () => {
             api[samplerNodeId].inputs.sampler = [turboSamplerId, 0];
         }
 
-        if (spectrum_control?.id) {
-            api[spectrum_control.id].inputs[spectrum_control.field] = false;
+        if (spectrumNodeId) {
+            api[spectrumNodeId].inputs.enabled = false;
         }
     });
 

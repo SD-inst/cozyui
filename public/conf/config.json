@@ -3306,7 +3306,8 @@
                 "turbo": {
                     "id": "handle",
                     "sampler_node_id": "105:14",
-                    "unet_loader_node_id": "105:6"
+                    "unet_loader_node_id": "105:6",
+                    "spectrum_node_id": "137"
                 },
                 "turbo_lora": {
                     "id": "skip"
@@ -3430,7 +3431,8 @@
                 "turbo": {
                     "id": "handle",
                     "sampler_node_id": "105:14",
-                    "unet_loader_node_id": "105:6"
+                    "unet_loader_node_id": "105:6",
+                    "spectrum_node_id": "137"
                 },
                 "turbo_lora": {
                     "id": "skip"
@@ -3552,7 +3554,8 @@
                 "turbo": {
                     "id": "handle",
                     "sampler_node_id": "105:14",
-                    "unet_loader_node_id": "105:6"
+                    "unet_loader_node_id": "105:6",
+                    "spectrum_node_id": "137"
                 },
                 "turbo_lora": {
                     "id": "skip"
