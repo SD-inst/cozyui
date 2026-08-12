@@ -1,7 +1,8 @@
 import { useEventCallback } from '@mui/material';
+import { useWatch } from 'react-hook-form';
 import { getFreeNodeId, insertNode } from '../api/utils';
 import { useAPI } from './useAPI';
-import { useWatchForm } from './useWatchForm';
+import { DEFAULT_TURBO_LORA } from '../components/controls/TurboLoraSelect';
 
 /**
  * Hook that returns a handler for the MiniMax H3 Turbo toggle.
@@ -16,8 +17,14 @@ export const useMiniMaxH3TurboHandler = () => {
     const unetLoaderId = turbo_control?.unet_loader_node_id;
     const samplerNodeId = turbo_control?.sampler_node_id;
     const spectrum_control = controls?.spectrum_enabled ?? {};
-    const turboLoraName = useWatchForm('turbo_lora.lora_name') as string;
-    const turboLoraStrength = useWatchForm('turbo_lora.strength') as number;
+    const turboLoraName = useWatch({
+        name: 'turbo_lora.lora_name',
+        defaultValue: DEFAULT_TURBO_LORA,
+    }) as string;
+    const turboLoraStrength = useWatch({
+        name: 'turbo_lora.strength',
+        defaultValue: 1.0,
+    }) as number;
 
     const handler = useEventCallback((api: any, value: boolean) => {
         if (!value) {
