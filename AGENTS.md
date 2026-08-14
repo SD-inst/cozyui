@@ -810,6 +810,26 @@ The `control` object contains extra fields from config.json (e.g., `model_loader
 
 Keys should follow a hierarchical pattern: `controls.<component_name>.<field>`, `tabs.<tab_name>.<field>`, `toasts.<message>`, etc.
 
+### Before using any control component — read its source
+
+**Always read the component source file before using it.** Controls like `SelectInput`, `SliderInput`, `SelectControl`, etc. have their own label handling pipeline:
+
+- `SelectInputBase` prepends `controls.` to the `label` prop: `` label={`controls.${label || props.name}`} ``
+- `SelectControl` then calls `tr(label)` on the result
+- Same pattern: `SliderInput` → `SliderControl` → `tr()`
+
+This means:
+- Pass **raw key names** (e.g. `label='ref_image_size'`), NOT pre-translated values (`label={tr('controls.ref_image_size')}`)
+- The full key resolves to `controls.ref_image_size` → translated via `tr()`
+- For `choices` in `SelectInput`, pass translated values via `tr()`: `{ text: tr('controls.scale_match'), value: 'match' }`
+- For direct `tr()` usage (not through a control component), use the full path: `tr('controls.ref_image_size')`, `tr('controls.scale_match')`, etc.
+
+**Rule:** When adding a new UI element, read the relevant control component source first to understand its i18n pipeline. Never guess how a component handles labels or translations.
+
+### After iterative fixes — ask about updating AGENTS.md
+
+If fixing an issue took multiple attempts, once the user confirms the result is satisfactory, ask: "Can/should I update AGENTS.md with what we learned?" This captures lessons learned and prevents repeating the same mistakes.
+
 ---
 
 ## Development Commands

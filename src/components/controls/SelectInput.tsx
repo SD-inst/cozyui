@@ -29,7 +29,7 @@ export const SelectInput = ({
 }: SelectInputProps) => {
     const ctl = useController({
         name: props.name!,
-        defaultValue: defaultValue,
+        defaultValue,
     });
     const { ref, ...field } = ctl.field;
     return (

@@ -3561,8 +3561,12 @@
                     "id": "skip"
                 },
                 "ref_image_size": {
-                    "id": "105:104",
+                    "id": "handle",
+                    "node_id": "105:104",
                     "field": "ref_image_size"
+                },
+                "ref_megapixels": {
+                    "id": "skip"
                 }
             },
             "handler_options": {
@@ -3581,7 +3585,6 @@
                 "type": "gifs"
             },
             "defaults": {
-                "ref_image_size": "match",
                 "aspect_ratio": "16:9 (Widescreen)",
                 "megapixels": 0.4,
                 "length": 5,

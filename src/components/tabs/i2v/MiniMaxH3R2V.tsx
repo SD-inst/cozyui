@@ -1,3 +1,5 @@
+import { Box } from '@mui/material';
+import { useWatch } from 'react-hook-form';
 import { useEventCallback } from '@mui/material';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { ArrayInput } from '../../controls/ArrayInput';
@@ -25,17 +27,23 @@ import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
+import { useTranslate } from '../../../i18n/I18nContext';
+import { useFormContext } from 'react-hook-form';
 
 const imageValue = { image: '' };
 const audioValue = { audio: '' };
 const videoValue = { video: '', no_audio: false };
 
 const ReferenceImages = ({ name }: { name: string }) => {
+    const { getValues } = useFormContext();
+
     const handler = useEventCallback(
         (api: any, value: Array<{ image: string }>, control: controlType) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
+
+            const scaleMode = getValues('ref_image_size') === 'scale';
 
             value.forEach((v, idx) => {
                 if (!v.image) {
@@ -47,9 +55,63 @@ const ReferenceImages = ({ name }: { name: string }) => {
                     class_type: 'LoadImage',
                     _meta: { title: 'Load Image' },
                 };
+
+                let outputId = imageNodeID;
+                let outputIdx = 0;
+
+                if (scaleMode) {
+                    const scaleGraph = {
+                        ':scale_mpx': {
+                            inputs: { value: getValues('ref_megapixels') || 1 },
+                            class_type: 'PrimitiveFloat',
+                            _meta: { title: 'Reference scaling mpx' },
+                        },
+                        ':scale': {
+                            inputs: {
+                                upscale_method: 'lanczos',
+                                megapixels: [':scale_mpx', 0],
+                                resolution_steps: 32,
+                                image: [imageNodeID, 0],
+                            },
+                            class_type: 'ImageScaleToTotalPixels',
+                            _meta: { title: 'Scale Image to Total Pixels' },
+                        },
+                        ':size': {
+                            inputs: {
+                                image: [imageNodeID, 0],
+                            },
+                            class_type: 'GetImageSize',
+                            _meta: { title: 'Get Image Size' },
+                        },
+                        ':math': {
+                            inputs: {
+                                expression: 'a * b / 1024 / 1024 > c',
+                                'values.a': [':size', 0],
+                                'values.b': [':size', 1],
+                                'values.c': [':scale_mpx', 0],
+                            },
+                            class_type: 'ComfyMathExpression',
+                            _meta: { title: 'Math Expression' },
+                        },
+                        ':switch': {
+                            inputs: {
+                                switch: [':math', 2],
+                                on_false: [imageNodeID, 0],
+                                on_true: [':scale', 0],
+                            },
+                            class_type: 'ComfySwitchNode',
+                            _meta: { title: 'If/Else Switch' },
+                        },
+                    };
+
+                    const baseId = insertGraph(api, scaleGraph);
+                    outputId = baseId + ':switch';
+                    outputIdx = 0;
+                }
+
                 api[control.node_id].inputs['ref_images.ref_image_' + idx] = [
-                    imageNodeID,
-                    0,
+                    outputId,
+                    outputIdx,
                 ];
             });
         },
@@ -107,6 +169,8 @@ const ReferenceAudio = ({ name }: { name: string }) => {
 };
 
 const ReferenceVideos = ({ name }: { name: string }) => {
+    const { getValues } = useFormContext();
+
     const handler = useEventCallback(
         (
             api: any,
@@ -116,6 +180,8 @@ const ReferenceVideos = ({ name }: { name: string }) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
+
+            const scaleMode = getValues('ref_image_size') === 'scale';
 
             value.forEach((v, idx) => {
                 if (!v.video) {
@@ -189,13 +255,64 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 const baseID = insertGraph(api, resampleGraph);
 
                 const videoNodeID = baseID + ':video';
-                const switchNodeID = baseID + ':switch';
+                const resampleSwitchNodeID = baseID + ':switch';
 
                 api[videoNodeID].inputs.video = v.video;
 
+                let outputId = resampleSwitchNodeID;
+                let outputIdx = 0;
+
+                if (scaleMode) {
+                    const scaleGraph = {
+                        ':scale_mpx': {
+                            inputs: { value: getValues('ref_megapixels') || 1 },
+                            class_type: 'PrimitiveFloat',
+                            _meta: { title: 'Reference scaling mpx' },
+                        },
+                        ':video_info': {
+                            inputs: { video_info: [videoNodeID, 3] },
+                            class_type: 'VHS_VideoInfoLoaded',
+                            _meta: { title: 'Video Info (Loaded)' },
+                        },
+                        ':scale': {
+                            inputs: {
+                                upscale_method: 'lanczos',
+                                megapixels: [':scale_mpx', 0],
+                                resolution_steps: 32,
+                                image: [resampleSwitchNodeID, 0],
+                            },
+                            class_type: 'ImageScaleToTotalPixels',
+                            _meta: { title: 'Scale Image to Total Pixels' },
+                        },
+                        ':math': {
+                            inputs: {
+                                expression: 'a * b / 1024 / 1024 > c',
+                                'values.a': [':video_info', 3],
+                                'values.b': [':video_info', 4],
+                                'values.c': [':scale_mpx', 0],
+                            },
+                            class_type: 'ComfyMathExpression',
+                            _meta: { title: 'Math Expression' },
+                        },
+                        ':switch': {
+                            inputs: {
+                                switch: [':math', 2],
+                                on_false: [resampleSwitchNodeID, 0],
+                                on_true: [':scale', 0],
+                            },
+                            class_type: 'ComfySwitchNode',
+                            _meta: { title: 'If/Else Switch' },
+                        },
+                    };
+
+                    const scaleBaseId = insertGraph(api, scaleGraph);
+                    outputId = scaleBaseId + ':switch';
+                    outputIdx = 0;
+                }
+
                 api[control.node_id].inputs['ref_videos.ref_video_' + idx] = [
-                    switchNodeID,
-                    0,
+                    outputId,
+                    outputIdx,
                 ];
                 if (!v.no_audio) {
                     api[control.node_id].inputs[
@@ -217,6 +334,60 @@ const ReferenceVideos = ({ name }: { name: string }) => {
             <FileUpload name='video' label='video' type={UploadType.VIDEO} />
             <ToggleInput name='no_audio' label='no_audio' />
         </ArrayInput>
+    );
+};
+
+const ReferenceScaling = ({ name }: { name: string }) => {
+    const tr = useTranslate();
+    const mode = useWatch({ name, defaultValue: 'scale' });
+
+    const handler = useEventCallback(
+        (api: any, value: string, control: controlType) => {
+            if (!control.node_id) {
+                return;
+            }
+            const normalizedValue = value === 'scale' ? 'max' : value;
+            api[control.node_id].inputs[control.field] = normalizedValue;
+        },
+    );
+    useRegisterHandler({ name, handler });
+
+    const isScale = mode === 'scale';
+
+    return (
+        <Box
+            sx={{
+                mt: 2,
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                gap: 3,
+                alignItems: 'stretch',
+            }}
+        >
+            <Box sx={{ flex: 1 }}>
+                <SelectInput
+                    name={name}
+                    label='ref_image_size'
+                    choices={[
+                        { text: tr('controls.scale_match'), value: 'match' },
+                        { text: tr('controls.scale_scale'), value: 'scale' },
+                        { text: tr('controls.scale_max'), value: 'max' },
+                    ]}
+                    defaultValue='scale'
+                    sx={{ width: '100% !important' }}
+                />
+            </Box>
+            <Box sx={{ flex: 1, display: isScale ? 'block' : 'none' }}>
+                <SliderInput
+                    name='ref_megapixels'
+                    label='ref_megapixels'
+                    defaultValue={0.8}
+                    min={0.1}
+                    max={2}
+                    step={0.1}
+                />
+            </Box>
+        </Box>
     );
 };
 
@@ -270,15 +441,7 @@ const Content = () => {
                     />
                     <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
-                    <SelectInput
-                        name='ref_image_size'
-                        label='ref_image_size'
-                        choices={[
-                            { text: 'match', value: 'match' },
-                            { text: 'max', value: 'max' },
-                        ]}
-                        defaultValue='match'
-                    />
+                    <ReferenceScaling name='ref_image_size' />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />
                 </AdvancedSettings>
