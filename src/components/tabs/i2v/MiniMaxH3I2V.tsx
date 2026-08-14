@@ -6,7 +6,6 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
-import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { LoraInput } from '../../controls/LoraInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
@@ -94,7 +93,6 @@ const Content = () => {
                         name='scheduler'
                         defaultValue='simple'
                     />
-                    <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />

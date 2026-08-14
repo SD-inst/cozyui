@@ -9,12 +9,13 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
-import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
+
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { LoraInput } from '../../controls/LoraInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
+import { useTranslate } from '../../../i18n/I18nContext';
 import { SelectInput } from '../../controls/SelectInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
@@ -27,7 +28,7 @@ import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
-import { useTranslate } from '../../../i18n/I18nContext';
+
 import { useFormContext } from 'react-hook-form';
 
 const imageValue = { image: '' };
@@ -439,7 +440,6 @@ const Content = () => {
                         name='scheduler'
                         defaultValue='simple'
                     />
-                    <MiniMaxH3SigmaShiftControls />
                     <MiniMaxH3SpectrumControls />
                     <ReferenceScaling name='ref_image_size' />
                     <VideoInterpolationSlider />

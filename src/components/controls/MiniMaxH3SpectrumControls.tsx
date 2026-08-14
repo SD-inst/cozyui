@@ -1,62 +1,80 @@
-import { Box } from '@mui/material';
+import { ExpandMore } from '@mui/icons-material';
+import {
+    Accordion,
+    AccordionDetails,
+    AccordionSummary,
+    Box,
+} from '@mui/material';
+import { useRef } from 'react';
 import { useWatch } from 'react-hook-form';
+import { useTranslate } from '../../i18n/I18nContext';
+import { autoscrollSlotProps } from './utils';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
 
 export const MiniMaxH3SpectrumControls = () => {
+    const tr = useTranslate();
     const spectrumEnabled = useWatch({
         name: 'spectrum_enabled',
         defaultValue: true,
     });
+    const ref = useRef<HTMLElement>(null);
 
     return (
-        <Box mb={2}>
-            <ToggleInput
-                name='spectrum_enabled'
-                label='spectrum_enabled'
-                defaultValue={true}
-            />
-            {spectrumEnabled && (
-                <Box display='flex' flexDirection='column' gap={2}>
-                    <SliderInput
-                        name='spectrum_blend_weight'
-                        label='spectrum_blend_weight'
-                        defaultValue={0.5}
-                        min={0}
-                        max={1}
-                        step={0.05}
-                    />
-                    <SliderInput
-                        name='spectrum_flex_window'
-                        label='spectrum_flex_window'
-                        defaultValue={0.75}
-                        min={0}
-                        max={5}
-                        step={0.05}
-                    />
-                    <SliderInput
-                        name='spectrum_degree'
-                        label='spectrum_degree'
-                        defaultValue={1}
-                        min={1}
-                        max={10}
-                        step={1}
-                    />
-                    <SliderInput
-                        name='spectrum_warmup_steps'
-                        label='spectrum_warmup_steps'
-                        defaultValue={1}
-                        min={1}
-                        max={20}
-                        step={1}
-                    />
+        <Accordion slotProps={autoscrollSlotProps(ref)}>
+            <AccordionSummary expandIcon={<ExpandMore />}>
+                {tr('controls.spectrum')}
+            </AccordionSummary>
+            <AccordionDetails ref={ref}>
+                <Box mb={2}>
                     <ToggleInput
-                        name='spectrum_bootstrap_first_forecast'
-                        label='spectrum_bootstrap_first_forecast'
+                        name='spectrum_enabled'
+                        label='spectrum_enabled'
                         defaultValue={true}
                     />
+                    {spectrumEnabled && (
+                        <Box display='flex' flexDirection='column' gap={2}>
+                            <SliderInput
+                                name='spectrum_blend_weight'
+                                label='spectrum_blend_weight'
+                                defaultValue={0.5}
+                                min={0}
+                                max={1}
+                                step={0.05}
+                            />
+                            <SliderInput
+                                name='spectrum_flex_window'
+                                label='spectrum_flex_window'
+                                defaultValue={0.75}
+                                min={0}
+                                max={5}
+                                step={0.05}
+                            />
+                            <SliderInput
+                                name='spectrum_degree'
+                                label='spectrum_degree'
+                                defaultValue={1}
+                                min={1}
+                                max={10}
+                                step={1}
+                            />
+                            <SliderInput
+                                name='spectrum_warmup_steps'
+                                label='spectrum_warmup_steps'
+                                defaultValue={1}
+                                min={1}
+                                max={20}
+                                step={1}
+                            />
+                            <ToggleInput
+                                name='spectrum_bootstrap_first_forecast'
+                                label='spectrum_bootstrap_first_forecast'
+                                defaultValue={true}
+                            />
+                        </Box>
+                    )}
                 </Box>
-            )}
-        </Box>
+            </AccordionDetails>
+        </Accordion>
     );
 };
