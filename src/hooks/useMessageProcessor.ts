@@ -15,8 +15,8 @@ export const useMessageProcessor = () => {
     const { processImage } = useImageProcessor();
 
     const processUserMessage = useCallback(
-        async (text: string, imageUrl?: string): Promise<OpenAIMessage> => {
-            if (!imageUrl) {
+        async (text: string, imageUrls?: string[]): Promise<OpenAIMessage> => {
+            if (!imageUrls || !imageUrls.length) {
                 return {
                     role: 'user',
                     content: text,
@@ -24,15 +24,19 @@ export const useMessageProcessor = () => {
             }
 
             try {
-                const imagePart = await processImage(imageUrl);
-                if (imagePart) {
+                const parts = (
+                    await Promise.all(
+                        imageUrls.map((url) => processImage(url)),
+                    )
+                ).filter((part): part is ImagePart => part !== null);
+                if (parts.length) {
                     return {
                         role: 'user',
-                        content: [{ type: 'text', text }, imagePart],
+                        content: [{ type: 'text', text }, ...parts],
                     };
                 }
             } catch (error) {
-                console.error('Failed to process image:', error);
+                console.error('Failed to process images:', error);
             }
 
             // Return text-only message if image processing fails

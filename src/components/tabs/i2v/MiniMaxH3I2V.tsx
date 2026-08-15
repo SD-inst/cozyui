@@ -20,7 +20,10 @@ import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useMiniMaxH3I2VFirstMessageTransform } from '../../../hooks/useMiniMaxH3I2VFirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
+import { ChatComponent } from '../../chat/ChatComponent';
+import { miniMaxH3I2VSystemPrompt } from '../../chat/prompts/minimaxH3I2V';
 
 const ImageFrameInput = ({ name }: { name: string }) => {
     const handler = useEventCallback(
@@ -48,13 +51,19 @@ const ImageFrameInput = ({ name }: { name: string }) => {
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
+    const transformFirstMessage = useMiniMaxH3I2VFirstMessageTransform();
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     return (
         <Layout>
             <GridLeft>
                 <ImageFrameInput name='first_frame' />
                 <ImageFrameInput name='last_frame' />
-                <TextInput name='prompt' sx={{ mb: 2 }} multiline />
+                <TextInput name='prompt' multiline />
+                <ChatComponent
+                    systemPrompt={miniMaxH3I2VSystemPrompt}
+                    imageFieldNames={['first_frame', 'last_frame']}
+                    transformFirstMessage={transformFirstMessage}
+                />
                 <MiniMaxH3ResolutionSelector
                     name='aspect_ratio'
                     defaultValue='16:9 (Widescreen)'
@@ -116,8 +125,8 @@ export const MiniMaxH3I2VTab = (
         value='MiniMax H3 I2V'
         group='I2V'
         receivers={[
-            { name: 'first_frame', acceptedTypes: ['images', 'gifs'] },
-            { name: 'last_frame', acceptedTypes: ['images', 'gifs'] },
+            { name: 'first_frame', acceptedTypes: ['images'] },
+            { name: 'last_frame', acceptedTypes: ['images'] },
         ]}
         content={<Content />}
     />

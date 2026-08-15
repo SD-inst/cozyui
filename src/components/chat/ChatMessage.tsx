@@ -114,16 +114,22 @@ export const ChatMessage = ({
                         {content}
                     </Typography>
                 ) : (
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            gap: 1,
-                        }}
-                    >
-                        {content.map((part, index) => {
-                            if (part.type === 'text') {
-                                return (
+                    (() => {
+                        const images = content.filter(
+                            (part) => part.type === 'image_url',
+                        );
+                        const texts = content.filter(
+                            (part) => part.type !== 'image_url',
+                        );
+                        return (
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: 1,
+                                }}
+                            >
+                                {texts.map((part, index) => (
                                     <Typography
                                         key={index}
                                         variant='body1'
@@ -135,34 +141,34 @@ export const ChatMessage = ({
                                     >
                                         {part.text}
                                     </Typography>
-                                );
-                            }
-                            if (part.type === 'image_url') {
-                                return (
+                                ))}
+                                {images.length > 0 && (
                                     <Box
-                                        key={index}
                                         sx={{
-                                            maxWidth: '400px',
-                                            maxHeight: '400px',
-                                            overflow: 'hidden',
+                                            display: 'flex',
+                                            flexWrap: 'wrap',
+                                            gap: 1,
+                                            justifyContent: 'flex-end',
                                         }}
                                     >
-                                        <img
-                                            src={part.image_url?.url || ''}
-                                            alt='User image'
-                                            style={{
-                                                maxWidth: 100,
-                                                maxHeight: 100,
-                                                objectFit: 'contain',
-                                                borderRadius: '4px',
-                                            }}
-                                        />
+                                        {images.map((part, index) => (
+                                            <img
+                                                key={index}
+                                                src={part.image_url?.url || ''}
+                                                alt='User image'
+                                                style={{
+                                                    maxWidth: 100,
+                                                    maxHeight: 100,
+                                                    objectFit: 'contain',
+                                                    borderRadius: '4px',
+                                                }}
+                                            />
+                                        ))}
                                     </Box>
-                                );
-                            }
-                            return null;
-                        })}
-                    </Box>
+                                )}
+                            </Box>
+                        );
+                    })()
                 )}
             </CardContent>
             {role === 'assistant' && onSendToPrompt && (

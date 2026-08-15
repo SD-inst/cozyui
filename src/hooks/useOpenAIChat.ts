@@ -37,7 +37,7 @@ export interface UseOpenAIChatReturn {
     sendMessage: (
         content: string | OpenAIMessage,
         context?: OpenAIMessage[],
-        image?: string,
+        images?: string[],
     ) => Promise<void>;
     abort: () => void;
     reset: () => void;
@@ -108,7 +108,7 @@ export function useOpenAIChat({
         async (
             content: string | OpenAIMessage,
             context?: OpenAIMessage[],
-            image?: string,
+            images?: string[],
         ) => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
@@ -121,7 +121,7 @@ export function useOpenAIChat({
 
             const userMessage =
                 typeof content === 'string'
-                    ? await processUserMessage(content, image)
+                    ? await processUserMessage(content, images)
                     : content;
             let assistantContent = '';
             const finalContext = context ?? messagesState;
@@ -147,7 +147,7 @@ export function useOpenAIChat({
                     },
                     body: JSON.stringify({
                         model:
-                            image || typeof content !== 'string'
+                            images?.length || typeof content !== 'string'
                                 ? llmConfig.modelVision
                                 : llmConfig.model,
                         messages: [...finalContext, userMessage],

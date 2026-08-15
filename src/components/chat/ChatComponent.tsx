@@ -16,8 +16,8 @@ import {
 } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { useImageURL } from '../../hooks/useImageURL';
-import { useOpenAIChat } from '../../hooks/useOpenAIChat';
+import { useImageURLs } from '../../hooks/useImageURL';
+import { ImagePart, useOpenAIChat } from '../../hooks/useOpenAIChat';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useAppSelector } from '../../redux/hooks';
 import { ext } from '../controls/fileExts';
@@ -40,12 +40,12 @@ const buttonSx = {
 
 export const ChatComponent = ({
     promptFieldName = 'prompt',
-    imageFieldName,
+    imageFieldNames,
     systemPrompt = 'You are a helpful assistant.',
     transformFirstMessage,
 }: {
     promptFieldName?: string;
-    imageFieldName?: string;
+    imageFieldNames?: string[];
     systemPrompt?: string;
     transformFirstMessage?: (text: string) => string;
 }) => {
@@ -62,10 +62,12 @@ export const ChatComponent = ({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const lastMsgCount = useRef(0);
     const inputRef = useRef<HTMLInputElement>(null);
-    const firstMessageRawRef = useRef('');
     const [isExpanded, setIsExpanded] = useState(false);
-    const image = watch(imageFieldName || '');
-    const imageURL = useImageURL(image);
+    const imageFields = imageFieldNames ?? [];
+    const imageValues = (imageFields.length
+        ? watch(imageFields)
+        : []) as Array<string | undefined>;
+    const imageURLs = useImageURLs(imageValues);
 
     const {
         messages,
@@ -97,7 +99,10 @@ export const ChatComponent = ({
         }
     }, [isComplete, isExpanded, messages.length]);
 
-    if (!llmConfig?.model || (!!imageFieldName && !llmConfig?.modelVision)) {
+    if (
+        !llmConfig?.model ||
+        (imageFields.length > 0 && !llmConfig?.modelVision)
+    ) {
         return null;
     }
 
@@ -108,38 +113,42 @@ export const ChatComponent = ({
         form.setValue('input', '');
         const firstMessage = !messages.some((m) => m.role === 'user');
         const rawInput = input.trim();
-        if (firstMessage) {
-            firstMessageRawRef.current = rawInput;
-        }
+        const images =
+            imageFields.length > 0 && firstMessage
+                ? imageValues
+                      .map((value, idx) => ({ value, url: imageURLs[idx] }))
+                      .filter((v) => v.value && !isVideo(v.value))
+                      .map((v) => v.url)
+                : undefined;
         await sendMessage(
             firstMessage && transformFirstMessage
                 ? transformFirstMessage(rawInput)
                 : rawInput,
             undefined,
-            imageFieldName && !isVideo(image) && firstMessage
-                ? imageURL
-                : undefined,
+            images && images.length > 0 ? images : undefined,
         );
     };
 
-    const handleResetChat = (full?: boolean) => {
-        const firstMsg =
-            firstMessageRawRef.current ||
-            messages.find((m) => m.role === 'user')?.content;
-        if (full) {
-            firstMessageRawRef.current = '';
+    const extractFirstMessageText = (
+        content: string | ImagePart[],
+    ): string => {
+        const text = Array.isArray(content)
+            ? content.find((m) => m.type === 'text')?.text || ''
+            : content;
+        if (!transformFirstMessage) {
+            return text;
         }
+        const marker = 'description=';
+        const idx = text.indexOf(marker);
+        return idx === -1 ? text : text.slice(idx + marker.length);
+    };
+
+    const handleResetChat = (full?: boolean) => {
+        const firstMsg = messages.find((m) => m.role === 'user')?.content;
         reset();
         setTimeout(() => {
-            if (!full) {
-                if (Array.isArray(firstMsg)) {
-                    form.setValue(
-                        'input',
-                        firstMsg.find((m) => m.type === 'text')?.text || '',
-                    );
-                } else if (firstMsg) {
-                    form.setValue('input', firstMsg);
-                }
+            if (!full && firstMsg) {
+                form.setValue('input', extractFirstMessageText(firstMsg));
             }
             inputRef.current?.focus();
         }, 100);
