@@ -16,15 +16,23 @@ import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
+import { ChatComponent } from '../../chat/ChatComponent';
+import { miniMaxH3T2VSystemPrompt } from '../../chat/prompts/minimaxH3T2V';
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
+    const transformFirstMessage = useMiniMaxH3FirstMessageTransform();
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     return (
         <Layout>
             <GridLeft>
-                <TextInput name='prompt' sx={{ mb: 2 }} multiline />
+                <TextInput name='prompt' multiline />
+                <ChatComponent
+                    systemPrompt={miniMaxH3T2VSystemPrompt}
+                    transformFirstMessage={transformFirstMessage}
+                />
                 <MiniMaxH3ResolutionSelector
                     name='aspect_ratio'
                     defaultValue='16:9 (Widescreen)'

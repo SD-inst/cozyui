@@ -42,10 +42,12 @@ export const ChatComponent = ({
     promptFieldName = 'prompt',
     imageFieldName,
     systemPrompt = 'You are a helpful assistant.',
+    transformFirstMessage,
 }: {
     promptFieldName?: string;
     imageFieldName?: string;
     systemPrompt?: string;
+    transformFirstMessage?: (text: string) => string;
 }) => {
     const tr = useTranslate();
     const llmConfig = useAppSelector((state) => state.config.llm);
@@ -60,6 +62,7 @@ export const ChatComponent = ({
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const lastMsgCount = useRef(0);
     const inputRef = useRef<HTMLInputElement>(null);
+    const firstMessageRawRef = useRef('');
     const [isExpanded, setIsExpanded] = useState(false);
     const image = watch(imageFieldName || '');
     const imageURL = useImageURL(image);
@@ -104,8 +107,14 @@ export const ChatComponent = ({
 
         form.setValue('input', '');
         const firstMessage = !messages.some((m) => m.role === 'user');
+        const rawInput = input.trim();
+        if (firstMessage) {
+            firstMessageRawRef.current = rawInput;
+        }
         await sendMessage(
-            input.trim(),
+            firstMessage && transformFirstMessage
+                ? transformFirstMessage(rawInput)
+                : rawInput,
             undefined,
             imageFieldName && !isVideo(image) && firstMessage
                 ? imageURL
@@ -114,7 +123,12 @@ export const ChatComponent = ({
     };
 
     const handleResetChat = (full?: boolean) => {
-        const firstMsg = messages.find((m) => m.role === 'user')?.content;
+        const firstMsg =
+            firstMessageRawRef.current ||
+            messages.find((m) => m.role === 'user')?.content;
+        if (full) {
+            firstMessageRawRef.current = '';
+        }
         reset();
         setTimeout(() => {
             if (!full) {

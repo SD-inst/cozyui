@@ -108,6 +108,7 @@ export const ChatMessage = ({
                         sx={{
                             lineHeight: 1.6,
                             fontSize: '0.9rem',
+                            whiteSpace: 'pre-wrap',
                         }}
                     >
                         {content}
@@ -129,6 +130,7 @@ export const ChatMessage = ({
                                         sx={{
                                             lineHeight: 1.6,
                                             fontSize: '0.9rem',
+                                            whiteSpace: 'pre-wrap',
                                         }}
                                     >
                                         {part.text}
