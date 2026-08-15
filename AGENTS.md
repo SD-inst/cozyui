@@ -16,6 +16,7 @@ public/conf/         — Configuration files (config.json, config.local.json)
 src/
   api/               — API utilities (mergeType, utils)
   components/
+    chat/            — Prompt-generation chat (ChatComponent, ChatMessage, prompts/)
     contexts/        — React contexts (WorkflowTabs, Tab, Filter, ResultOverride)
     controls/        — Reusable UI controls (inputs, buttons, layout)
     controls/mask_editor/ — Mask editor components
@@ -410,6 +411,87 @@ Located in [`src/components/settings/`](src/components/settings/).
 
 ---
 
+## Prompt-Generation Chat (LLM)
+
+Located in [`src/components/chat/`](src/components/chat/). Optional assistant chat that generates and refines prompts for generation tabs, wired to an OpenAI-compatible API.
+
+### LLM Configuration
+
+Top-level `llm` section of `public/conf/config.json` (type `llmConfigType` in `src/redux/config.ts`):
+
+```json
+"llm": {
+    "apiKey": "your-api-key",
+    "baseURL": "https://.../v1",
+    "model": "",
+    "modelVision": "",
+    "supportsVideo": false,
+    "temperature": 1.0
+}
+```
+
+- `model` — text model. The chat renders null unless it is set.
+- `modelVision` — used whenever a message carries media parts (or non-string content). Required whenever `mediaFields` is used.
+- `supportsVideo` — when `true`, videos from `mediaFields` of kind `video` are attached to the first message. Default is `false`; enable in `config.local.json`.
+
+### Components and Hooks
+
+| File | Purpose |
+|------|---------|
+| [`ChatComponent.tsx`](src/components/chat/ChatComponent.tsx) | Accordion chat: message list, input, send / new-chat / clear / abort buttons |
+| [`ChatMessage.tsx`](src/components/chat/ChatMessage.tsx) | Single message: text (`pre-wrap`) + wrapping media row (image thumbs and compact videos — 100px, no controls, click to play/pause) |
+| [`prompts/*.ts`](src/components/chat/prompts/) | System prompts per mode: `minimaxH3T2V.ts`, `minimaxH3I2V.ts`, `minimaxH3R2V.ts` |
+| [`useOpenAIChat.ts`](src/hooks/useOpenAIChat.ts) | Chat state, streaming, `sendMessage(content, context?, media?)`, per-tab IndexedDB persistence (`db.chatLogs`) |
+| [`useMessageProcessor.ts`](src/hooks/useMessageProcessor.ts) | `processUserMessage(text, media?)` → message with processed media parts |
+| [`useImageProcessor.ts`](src/hooks/useImageProcessor.ts) | `processImage` (fetch → JPEG → `image_url` base64), `processVideo` (fetch → `input_video` base64) |
+| [`useImageURL.ts`](src/hooks/useImageURL.ts) | `useImageURLs` — filenames → `/api/view` URLs (random `noCache` param) |
+
+### `ChatComponent` Props
+
+```tsx
+export type mediaFieldType = {
+    name: string;        // Form field name
+    kind: 'image' | 'video';
+    itemField?: string;  // For array fields: the entry property holding the filename
+};
+
+<ChatComponent
+    promptFieldName='prompt'   // Form field that receives the generated prompt
+    mediaFields={[...]}        // Optional — files attached to the first message
+    systemPrompt={...}         // System message
+    transformFirstMessage={fn} // Optional — rewrite of the first user message
+/>
+```
+
+- `mediaFields` extraction: a string field yields a single item; an array field (e.g. `ArrayInput`) yields `entry[itemField]` per entry. Image-kind entries with video extensions are filtered out. Video-kind entries are included only when `llm.supportsVideo` is true. Media is attached **only to the first user message** of the chat.
+- "New chat" restores only the text after the first `description=` marker of the stored first message (`extractFirstMessageText`), so the length/aspect prefix is not duplicated.
+- Chat logs persist per tab in IndexedDB and survive page reloads.
+
+### Media Part Format — IMPORTANT
+
+The provider does **NOT** accept OpenAI's `video_url` content type (returns `400 unsupported content[].type: 'video_url'`). Videos must be sent as:
+
+```json
+{ "type": "input_video", "input_video": { "data": "data:video/mp4;base64,..." } }
+```
+
+Images use the standard format: `{ "type": "image_url", "image_url": { "url": "data:image/jpeg;base64,..." } }`.
+
+### First Message Transform
+
+- [`useMiniMaxH3FirstMessageTransform`](src/hooks/useMiniMaxH3FirstMessageTransform.ts) (T2V; also used for R2V): prepends `length=N`, `aspect=A:B` (from the `length` / `aspect_ratio` form fields), then `description=...`.
+- [`useMiniMaxH3I2VFirstMessageTransform`](src/hooks/useMiniMaxH3I2VFirstMessageTransform.ts) (I2V): same, plus `first_image=Picture 1` / `last_image=Picture 2` lines depending on which frame fields are filled (last-only → `last_image=Picture 1`).
+
+### System Prompts (minimaxH3*)
+
+- Plain text, no markdown. Spoken content in generated prompts uses English double quotes `"[English] ..."` — **never `<d>` tags** (they cause a short-sound audio artifact in the model). `<scenetrans>` / `<cutoff>` mark dialogue crossing a cut or truncated by the video end.
+- T2V: three inline blocks — `integrated_multimodal_description: ...`, `overall_soundscape: ...`, `non_diegetic_music: ...`.
+- I2V: a picture-instruction line, then the same three blocks.
+- R2V (full-reference mode): six sections, each with a header on its own line — `subject_definitions`, `summary`, `retention_analysis`, `detailed_description`, `overall_soundscape`, `non_diegetic_music`. Reference labels `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` are numbered independently per category in attachment order. The output must enumerate assets fully (`<Picture 1>, <Picture 2>, ...`) — never ranges like "Pictures 1 to 4". Audio files are never attached to the message; `<Audio N>` labels are assigned from the user's text only.
+- Reference guides: `docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md` (shared shot/camera/speaker rules) and `docs/VIDEO_PROMPT_WRITING_GUIDE_ref_en.md` (full-reference mode).
+
+---
+
 ## Creating a New Tab
 
 ### Step 1: Create the ComfyUI API JSON file
@@ -798,6 +880,9 @@ The `control` object contains extra fields from config.json (e.g., `model_loader
 | Controls | `src/components/controls/*.tsx` |
 | Tab layout | `src/components/WorkflowTabs.tsx` |
 | i18n locales | `src/i18n/locales/*.ts` |
+| Chat component | `src/components/chat/*.tsx` |
+| LLM system prompts | `src/components/chat/prompts/*.ts` |
+| LLM config | `public/conf/config.json` → `llm` |
 
 ### i18n Reminder
 
