@@ -13,11 +13,14 @@ import { RefObject } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export interface ImagePart {
-    type: 'text' | 'image_url';
+    type: 'text' | 'image_url' | 'input_video';
     text?: string;
     image_url?: {
         url: string;
         detail?: 'auto' | 'low' | 'high';
+    };
+    input_video?: {
+        data: string;
     };
 }
 
@@ -115,11 +118,13 @@ export const ChatMessage = ({
                     </Typography>
                 ) : (
                     (() => {
-                        const images = content.filter(
-                            (part) => part.type === 'image_url',
+                        const media = content.filter(
+                            (part) =>
+                                part.type === 'image_url' ||
+                                part.type === 'input_video',
                         );
                         const texts = content.filter(
-                            (part) => part.type !== 'image_url',
+                            (part) => part.type === 'text',
                         );
                         return (
                             <Box
@@ -142,7 +147,7 @@ export const ChatMessage = ({
                                         {part.text}
                                     </Typography>
                                 ))}
-                                {images.length > 0 && (
+                                {media.length > 0 && (
                                     <Box
                                         sx={{
                                             display: 'flex',
@@ -151,19 +156,44 @@ export const ChatMessage = ({
                                             justifyContent: 'flex-end',
                                         }}
                                     >
-                                        {images.map((part, index) => (
-                                            <img
-                                                key={index}
-                                                src={part.image_url?.url || ''}
-                                                alt='User image'
-                                                style={{
-                                                    maxWidth: 100,
-                                                    maxHeight: 100,
-                                                    objectFit: 'contain',
-                                                    borderRadius: '4px',
-                                                }}
-                                            />
-                                        ))}
+                                        {media.map((part, index) =>
+                                            part.type === 'input_video' ? (
+                                                <video
+                                                    key={index}
+                                                    src={part.input_video?.data || ''}
+                                                    playsInline
+                                                    onClick={(e) => {
+                                                        const v =
+                                                            e.currentTarget;
+                                                        if (v.paused) {
+                                                            v.play();
+                                                        } else {
+                                                            v.pause();
+                                                        }
+                                                    }}
+                                                    style={{
+                                                        maxWidth: 100,
+                                                        maxHeight: 100,
+                                                        objectFit: 'contain',
+                                                        borderRadius: '4px',
+                                                        cursor: 'pointer',
+                                                        background: 'black',
+                                                    }}
+                                                />
+                                            ) : (
+                                                <img
+                                                    key={index}
+                                                    src={part.image_url?.url || ''}
+                                                    alt='User image'
+                                                    style={{
+                                                        maxWidth: 100,
+                                                        maxHeight: 100,
+                                                        objectFit: 'contain',
+                                                        borderRadius: '4px',
+                                                    }}
+                                                />
+                                            ),
+                                        )}
                                     </Box>
                                 )}
                             </Box>

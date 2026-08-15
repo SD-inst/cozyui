@@ -26,8 +26,11 @@ import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
+import { ChatComponent } from '../../chat/ChatComponent';
+import { miniMaxH3R2VSystemPrompt } from '../../chat/prompts/minimaxH3R2V';
 
 import { useFormContext } from 'react-hook-form';
 
@@ -394,14 +397,37 @@ const ReferenceScaling = ({ name }: { name: string }) => {
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
+    const transformFirstMessage = useMiniMaxH3FirstMessageTransform();
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     return (
         <Layout>
             <GridLeft>
-                <ReferenceImages name='ref_images' />
-                <ReferenceVideos name='ref_videos' />
-                <ReferenceAudio name='ref_audio' />
-                <TextInput name='prompt' sx={{ mb: 2 }} multiline />
+                <Box sx={{ mb: 3 }}>
+                    <ReferenceImages name='ref_images' />
+                </Box>
+                <Box sx={{ mb: 3 }}>
+                    <ReferenceVideos name='ref_videos' />
+                </Box>
+                <Box sx={{ mb: 3 }}>
+                    <ReferenceAudio name='ref_audio' />
+                </Box>
+                <TextInput name='prompt' multiline />
+                <ChatComponent
+                    systemPrompt={miniMaxH3R2VSystemPrompt}
+                    mediaFields={[
+                        {
+                            name: 'ref_images',
+                            kind: 'image',
+                            itemField: 'image',
+                        },
+                        {
+                            name: 'ref_videos',
+                            kind: 'video',
+                            itemField: 'video',
+                        },
+                    ]}
+                    transformFirstMessage={transformFirstMessage}
+                />
                 <MiniMaxH3ResolutionSelector
                     name='aspect_ratio'
                     defaultValue='16:9 (Widescreen)'

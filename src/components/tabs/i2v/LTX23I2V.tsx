@@ -88,7 +88,7 @@ const Content = () => {
                 <TextInput name='prompt' multiline />
                 <ChatComponent
                     systemPrompt={llmPrompt}
-                    imageFieldNames={['image']}
+                    mediaFields={[{ name: 'image', kind: 'image' }]}
                 />
                 <SliderInput
                     name='size'

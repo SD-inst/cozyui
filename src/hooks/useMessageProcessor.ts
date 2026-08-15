@@ -1,22 +1,13 @@
 import { useCallback } from 'react';
 import { useImageProcessor } from './useImageProcessor';
-import { OpenAIMessage } from './useOpenAIChat';
-
-export interface ImagePart {
-    type: 'text' | 'image_url';
-    text?: string;
-    image_url?: {
-        url: string;
-        detail?: 'auto' | 'low' | 'high';
-    };
-}
+import { ImagePart, MediaRef, OpenAIMessage } from './useOpenAIChat';
 
 export const useMessageProcessor = () => {
-    const { processImage } = useImageProcessor();
+    const { processImage, processVideo } = useImageProcessor();
 
     const processUserMessage = useCallback(
-        async (text: string, imageUrls?: string[]): Promise<OpenAIMessage> => {
-            if (!imageUrls || !imageUrls.length) {
+        async (text: string, media?: MediaRef[]): Promise<OpenAIMessage> => {
+            if (!media || !media.length) {
                 return {
                     role: 'user',
                     content: text,
@@ -26,7 +17,11 @@ export const useMessageProcessor = () => {
             try {
                 const parts = (
                     await Promise.all(
-                        imageUrls.map((url) => processImage(url)),
+                        media.map((m) =>
+                            m.kind === 'video'
+                                ? processVideo(m.url)
+                                : processImage(m.url),
+                        ),
                     )
                 ).filter((part): part is ImagePart => part !== null);
                 if (parts.length) {
@@ -36,16 +31,16 @@ export const useMessageProcessor = () => {
                     };
                 }
             } catch (error) {
-                console.error('Failed to process images:', error);
+                console.error('Failed to process media:', error);
             }
 
-            // Return text-only message if image processing fails
+            // Return text-only message if media processing fails
             return {
                 role: 'user',
                 content: text,
             };
         },
-        [processImage],
+        [processImage, processVideo],
     );
 
     return {

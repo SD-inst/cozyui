@@ -1,11 +1,14 @@
 import { useState } from 'react';
 
 export interface ImagePart {
-    type: 'text' | 'image_url';
+    type: 'text' | 'image_url' | 'input_video';
     text?: string;
     image_url?: {
         url: string;
         detail?: 'auto' | 'low' | 'high';
+    };
+    input_video?: {
+        data: string;
     };
 }
 
@@ -55,6 +58,38 @@ export const useImageProcessor = () => {
             };
         } catch (error) {
             console.error('Error processing image:', error);
+            return null;
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    const processVideo = async (
+        videoUrl: string,
+    ): Promise<ImagePart | null> => {
+        try {
+            setIsProcessing(true);
+
+            const response = await fetch(videoUrl);
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to fetch video: ${response.statusText}`,
+                );
+            }
+
+            const blob = await response.blob();
+            const mimeType = blob.type || 'video/mp4';
+
+            return {
+                type: 'input_video',
+                input_video: {
+                    data: `data:${mimeType};base64,${await blobToBase64(
+                        blob,
+                    )}`,
+                },
+            };
+        } catch (error) {
+            console.error('Error processing video:', error);
             return null;
         } finally {
             setIsProcessing(false);
@@ -111,6 +146,7 @@ export const useImageProcessor = () => {
 
     return {
         processImage,
+        processVideo,
         isProcessing,
     };
 };

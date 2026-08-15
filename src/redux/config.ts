@@ -58,6 +58,7 @@ export type llmConfigType = {
     baseURL: string;
     model: string;
     modelVision?: string;
+    supportsVideo?: boolean;
     temperature?: number;
 };
 

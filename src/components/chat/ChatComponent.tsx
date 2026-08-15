@@ -17,7 +17,11 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useImageURLs } from '../../hooks/useImageURL';
-import { ImagePart, useOpenAIChat } from '../../hooks/useOpenAIChat';
+import {
+    ImagePart,
+    MediaRef,
+    useOpenAIChat,
+} from '../../hooks/useOpenAIChat';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useAppSelector } from '../../redux/hooks';
 import { ext } from '../controls/fileExts';
@@ -38,14 +42,20 @@ const buttonSx = {
     gap: 0.5,
 };
 
+export type mediaFieldType = {
+    name: string;
+    kind: 'image' | 'video';
+    itemField?: string;
+};
+
 export const ChatComponent = ({
     promptFieldName = 'prompt',
-    imageFieldNames,
+    mediaFields,
     systemPrompt = 'You are a helpful assistant.',
     transformFirstMessage,
 }: {
     promptFieldName?: string;
-    imageFieldNames?: string[];
+    mediaFields?: mediaFieldType[];
     systemPrompt?: string;
     transformFirstMessage?: (text: string) => string;
 }) => {
@@ -63,11 +73,35 @@ export const ChatComponent = ({
     const lastMsgCount = useRef(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isExpanded, setIsExpanded] = useState(false);
-    const imageFields = imageFieldNames ?? [];
-    const imageValues = (imageFields.length
-        ? watch(imageFields)
-        : []) as Array<string | undefined>;
-    const imageURLs = useImageURLs(imageValues);
+    const allMediaFields = mediaFields ?? [];
+    const mediaNames = allMediaFields.map((f) => f.name);
+    const mediaValues = (mediaNames.length ? watch(mediaNames) : []) as any[];
+    const mediaItems = mediaValues.flatMap((value: any, idx: number) => {
+        const field = allMediaFields[idx];
+        if (!field) {
+            return [];
+        }
+        if (field.kind === 'video' && !llmConfig?.supportsVideo) {
+            return [];
+        }
+        const entries = Array.isArray(value) ? value : [value];
+        const filenames = entries.map((entry: any) =>
+            field.itemField ? entry?.[field.itemField] : entry,
+        );
+        return filenames
+            .filter(
+                (filename: any) =>
+                    typeof filename === 'string' &&
+                    filename.length > 0 &&
+                    !(field.kind === 'image' && isVideo(filename)),
+            )
+            .map((filename: string) => ({ filename, kind: field.kind }));
+    });
+    const mediaURLs = useImageURLs(mediaItems.map((m) => m.filename));
+    const mediaRefs: MediaRef[] = mediaItems.map((m, i) => ({
+        url: mediaURLs[i],
+        kind: m.kind,
+    }));
 
     const {
         messages,
@@ -101,7 +135,7 @@ export const ChatComponent = ({
 
     if (
         !llmConfig?.model ||
-        (imageFields.length > 0 && !llmConfig?.modelVision)
+        (allMediaFields.length > 0 && !llmConfig?.modelVision)
     ) {
         return null;
     }
@@ -113,19 +147,14 @@ export const ChatComponent = ({
         form.setValue('input', '');
         const firstMessage = !messages.some((m) => m.role === 'user');
         const rawInput = input.trim();
-        const images =
-            imageFields.length > 0 && firstMessage
-                ? imageValues
-                      .map((value, idx) => ({ value, url: imageURLs[idx] }))
-                      .filter((v) => v.value && !isVideo(v.value))
-                      .map((v) => v.url)
-                : undefined;
+        const media =
+            firstMessage && mediaRefs.length > 0 ? mediaRefs : undefined;
         await sendMessage(
             firstMessage && transformFirstMessage
                 ? transformFirstMessage(rawInput)
                 : rawInput,
             undefined,
-            images && images.length > 0 ? images : undefined,
+            media,
         );
     };
 

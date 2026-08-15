@@ -3638,6 +3638,7 @@
         "baseURL": "https://any-openai-compatible-url.com/v1",
         "model": "",
         "modelVision": "",
+        "supportsVideo": false,
         "temperature": 1.0
     }
 }

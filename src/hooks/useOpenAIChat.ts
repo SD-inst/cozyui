@@ -9,12 +9,20 @@ import { db } from '../components/history/db';
 import { useTabName } from '../components/contexts/TabContext';
 
 export interface ImagePart {
-    type: 'text' | 'image_url';
+    type: 'text' | 'image_url' | 'input_video';
     text?: string;
     image_url?: {
         url: string;
         detail?: 'auto' | 'low' | 'high';
     };
+    input_video?: {
+        data: string;
+    };
+}
+
+export interface MediaRef {
+    url: string;
+    kind: 'image' | 'video';
 }
 
 export interface OpenAIMessage {
@@ -37,7 +45,7 @@ export interface UseOpenAIChatReturn {
     sendMessage: (
         content: string | OpenAIMessage,
         context?: OpenAIMessage[],
-        images?: string[],
+        media?: MediaRef[],
     ) => Promise<void>;
     abort: () => void;
     reset: () => void;
@@ -108,7 +116,7 @@ export function useOpenAIChat({
         async (
             content: string | OpenAIMessage,
             context?: OpenAIMessage[],
-            images?: string[],
+            media?: MediaRef[],
         ) => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort();
@@ -121,7 +129,7 @@ export function useOpenAIChat({
 
             const userMessage =
                 typeof content === 'string'
-                    ? await processUserMessage(content, images)
+                    ? await processUserMessage(content, media)
                     : content;
             let assistantContent = '';
             const finalContext = context ?? messagesState;
@@ -147,7 +155,7 @@ export function useOpenAIChat({
                     },
                     body: JSON.stringify({
                         model:
-                            images?.length || typeof content !== 'string'
+                            media?.length || typeof content !== 'string'
                                 ? llmConfig.modelVision
                                 : llmConfig.model,
                         messages: [...finalContext, userMessage],

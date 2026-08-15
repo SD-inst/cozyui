@@ -61,7 +61,10 @@ const Content = () => {
                 <TextInput name='prompt' multiline />
                 <ChatComponent
                     systemPrompt={miniMaxH3I2VSystemPrompt}
-                    imageFieldNames={['first_frame', 'last_frame']}
+                    mediaFields={[
+                        { name: 'first_frame', kind: 'image' },
+                        { name: 'last_frame', kind: 'image' },
+                    ]}
                     transformFirstMessage={transformFirstMessage}
                 />
                 <MiniMaxH3ResolutionSelector
