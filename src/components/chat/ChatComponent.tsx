@@ -26,8 +26,8 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { useAppSelector } from '../../redux/hooks';
 import { ext } from '../controls/fileExts';
 import { UploadType } from '../controls/UploadType';
+import { BouncingTextIndicator } from './BouncingTextIndicator';
 import { ChatMessage } from './ChatMessage';
-import { ThinkingIndicator } from './ThinkingIndicator';
 
 const isVideo = (filename?: string): boolean => {
     if (!filename) return false;
@@ -112,6 +112,7 @@ export const ChatComponent = ({
         isComplete,
         isGenerating,
         isThinking,
+        isConnecting,
     } = useOpenAIChat({
         initialMessages: [
             {
@@ -267,8 +268,11 @@ export const ChatComponent = ({
                                         />
                                     ),
                             )}
+                            {isConnecting && isGenerating && (
+                                <BouncingTextIndicator text='CONNECTING' />
+                            )}
                             {isThinking && isGenerating && (
-                                <ThinkingIndicator />
+                                <BouncingTextIndicator text='THINKING' />
                             )}
                             {error && (
                                 <Box

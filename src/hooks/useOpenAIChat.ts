@@ -41,6 +41,7 @@ export interface UseOpenAIChatReturn {
     isComplete: boolean;
     isGenerating: boolean;
     isThinking: boolean;
+    isConnecting: boolean;
     error: Error | null;
     sendMessage: (
         content: string | OpenAIMessage,
@@ -65,6 +66,7 @@ export function useOpenAIChat({
     const [isComplete, setIsComplete] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [isThinking, setIsThinking] = useState(false);
+    const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
     const messagesLoaded = useRef<boolean>(false);
@@ -145,6 +147,7 @@ export function useOpenAIChat({
             setIsComplete(false);
             setIsGenerating(true);
             setIsThinking(!stream);
+            setIsConnecting(true);
             setError(null);
 
             try {
@@ -205,8 +208,10 @@ export function useOpenAIChat({
 
                                     if (reasoningContent) {
                                         setIsThinking(true);
+                                        setIsConnecting(false);
                                     }
                                     if (chunkContent) {
+                                        setIsConnecting(false);
                                         assistantContent += chunkContent;
                                         setMessagesState((prev) => [
                                             ...prev.slice(0, -1),
@@ -234,6 +239,7 @@ export function useOpenAIChat({
                         },
                     ]);
                     setIsThinking(false);
+                    setIsConnecting(false);
                 }
                 setIsComplete(true);
             } catch (err) {
@@ -255,6 +261,7 @@ export function useOpenAIChat({
                 ]);
             } finally {
                 setIsGenerating(false);
+                setIsConnecting(false);
                 abortControllerRef.current = null;
             }
         },
@@ -272,6 +279,7 @@ export function useOpenAIChat({
         isComplete,
         isGenerating,
         isThinking,
+        isConnecting,
         error,
         sendMessage,
         abort,

@@ -1,7 +1,7 @@
 import { Box } from '@mui/material';
 
-export const ThinkingIndicator = () => {
-    const letters = ['T', 'H', 'I', 'N', 'K', 'I', 'N', 'G'];
+export const BouncingTextIndicator = ({ text }: { text: string }) => {
+    const letters = text.toUpperCase().split('');
     return (
         <Box
             sx={{
