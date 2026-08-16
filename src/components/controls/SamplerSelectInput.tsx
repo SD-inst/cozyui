@@ -8,7 +8,11 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'Euler A', value: 'euler_ancestral' },
                 { text: 'DPM++ 2M', value: 'dpmpp_2m' },
                 { text: 'DPM++ 2M SDE', value: 'dpmpp_2m_sde' },
+                { text: 'DPM++ 2M SDE GPU', value: 'dpmpp_2m_sde_gpu' },
                 { text: 'DPM++ 3M SDE', value: 'dpmpp_3m_sde' },
+                { text: 'DPM++ 3M SDE GPU', value: 'dpmpp_3m_sde_gpu' },
+                { text: 'DPM++ SDE', value: 'dpmpp_sde' },
+                { text: 'DPM++ SDE GPU', value: 'dpmpp_sde_gpu' },
                 { text: 'Res multistep', value: 'res_multistep' },
                 { text: 'Gradient estimation', value: 'gradient_estimation' },
                 { text: 'IPNDM', value: 'ipndm' },
@@ -23,6 +27,8 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
                 { text: 'Res 3S', value: 'res_3s' },
                 { text: 'Res 2M', value: 'res_2m' },
                 { text: 'Res 3M', value: 'res_3m' },
+                { text: 'Seeds 2', value: 'seeds_2' },
+                { text: 'Seeds 3', value: 'seeds_3' },
             ]}
             defaultValue='res_multistep'
             tooltip='sampler'
