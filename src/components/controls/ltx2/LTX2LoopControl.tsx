@@ -43,24 +43,24 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
         const graph = {
             ':1': {
                 inputs: {
-                    start_index: getValues(`${name}.strip`),
-                    num_frames: length,
-                    images: api[id].inputs.images,
+                    batch_index: getValues(`${name}.strip`),
+                    length: length,
+                    image: api[id].inputs.images,
                 },
-                class_type: 'GetImageRangeFromBatch',
+                class_type: 'ImageFromBatch',
                 _meta: {
-                    title: 'GetImageRangeFromBatch Target',
+                    title: 'ImageFromBatch Target',
                 },
             },
             ':2': {
                 inputs: {
-                    start_index: 0,
-                    num_frames: 1,
-                    images: api[id].inputs.images,
+                    batch_index: 0,
+                    length: 1,
+                    image: api[id].inputs.images,
                 },
-                class_type: 'GetImageRangeFromBatch',
+                class_type: 'ImageFromBatch',
                 _meta: {
-                    title: 'GetImageRangeFromBatch Reference',
+                    title: 'ImageFromBatch Reference',
                 },
             },
             ':3': {

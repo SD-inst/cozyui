@@ -65,13 +65,13 @@ export const keyframeHandler = (
         if (v.trim > 0) {
             graph[':3'] = {
                 inputs: {
-                    start_index: v.last ? -v.trim : 0,
-                    num_frames: v.trim,
-                    images: [':1', 0],
+                    batch_index: v.last ? -v.trim : 0,
+                    length: v.trim,
+                    image: [':1', 0],
                 },
-                class_type: 'GetImageRangeFromBatch',
+                class_type: 'ImageFromBatch',
                 _meta: {
-                    title: 'GetImageRangeFromBatch',
+                    title: 'ImageFromBatch',
                 },
             };
             graph[':2'].inputs.image = [':3', 0];
