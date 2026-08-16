@@ -6,6 +6,7 @@ import { ArrayInput } from '../../controls/ArrayInput';
 import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
+import { LengthInput } from '../../controls/LengthSlider';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
@@ -27,6 +28,7 @@ import { WFTab } from '../../WFTab';
 import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
+import { keyframeHandler } from '../../controls/MiniMaxH3KeyframeHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { ChatComponent } from '../../chat/ChatComponent';
@@ -34,9 +36,36 @@ import { miniMaxH3R2VSystemPrompt } from '../../chat/prompts/minimaxH3R2V';
 
 import { useFormContext } from 'react-hook-form';
 
-const imageValue = { image: '' };
+const imageValue = { image: '', keyframe: false, keyframe_position: 0 };
 const audioValue = { audio: '' };
-const videoValue = { video: '', no_audio: false };
+const videoValue = {
+    video: '',
+    no_audio: false,
+    trim: 0,
+    last: false,
+    keyframe: false,
+    keyframe_position: 0,
+};
+
+const KeyframeControl = ({ name }: { name: string }) => {
+    const positionName = name.replace(/\.keyframe$/, '.keyframe_position');
+    const enabled = useWatch({ name, defaultValue: false });
+    return (
+        <Box>
+            <ToggleInput name={name} label='keyframe' defaultValue={false} />
+            {enabled && (
+                <SliderInput
+                    name={positionName}
+                    label='keyframe_position'
+                    min={0}
+                    max={30}
+                    step={0.1}
+                    defaultValue={0}
+                />
+            )}
+        </Box>
+    );
+};
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
@@ -130,6 +159,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
             targetFieldName='image'
         >
             <FileUpload name='image' label='image' type={UploadType.IMAGE} />
+            <KeyframeControl name='keyframe' />
         </ArrayInput>
     );
 };
@@ -179,16 +209,21 @@ const ReferenceVideos = ({ name }: { name: string }) => {
     const handler = useEventCallback(
         (
             api: any,
-            value: Array<{ video: string; no_audio: boolean }>,
+            value: Array<{
+                video: string;
+                no_audio: boolean;
+                trim: number;
+                last: boolean;
+            }>,
             control: controlType,
         ) => {
-            if (!value || !value.length || !control.node_id) {
+            if (!control.node_id) {
                 return;
             }
 
             const scaleMode = getValues('ref_image_size') === 'scale';
 
-            value.forEach((v, idx) => {
+            (value || []).forEach((v, idx) => {
                 if (!v.video) {
                     return;
                 }
@@ -264,7 +299,23 @@ const ReferenceVideos = ({ name }: { name: string }) => {
 
                 api[videoNodeID].inputs.video = v.video;
 
-                let outputId = resampleSwitchNodeID;
+                let frameSourceId = resampleSwitchNodeID;
+                if (v.trim > 0) {
+                    const trimBaseId = insertGraph(api, {
+                        ':trim': {
+                            inputs: {
+                                batch_index: v.last ? -v.trim : 0,
+                                length: v.trim,
+                                image: [resampleSwitchNodeID, 0],
+                            },
+                            class_type: 'ImageFromBatch',
+                            _meta: { title: 'Trim Video' },
+                        },
+                    });
+                    frameSourceId = trimBaseId + ':trim';
+                }
+
+                let outputId = frameSourceId;
                 let outputIdx = 0;
 
                 if (scaleMode) {
@@ -284,7 +335,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                                 upscale_method: 'lanczos',
                                 megapixels: [':scale_mpx', 0],
                                 resolution_steps: 32,
-                                image: [resampleSwitchNodeID, 0],
+                                image: [frameSourceId, 0],
                             },
                             class_type: 'ImageScaleToTotalPixels',
                             _meta: { title: 'Scale Image to Total Pixels' },
@@ -302,7 +353,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                         ':switch': {
                             inputs: {
                                 switch: [':math', 2],
-                                on_false: [resampleSwitchNodeID, 0],
+                                on_false: [frameSourceId, 0],
                                 on_true: [':scale', 0],
                             },
                             class_type: 'ComfySwitchNode',
@@ -325,6 +376,13 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     ] = [videoNodeID, 2];
                 }
             });
+
+            keyframeHandler(
+                api,
+                getValues('ref_images') || [],
+                getValues('ref_videos') || [],
+                control,
+            );
         },
     );
     useRegisterHandler({ name, handler });
@@ -339,6 +397,20 @@ const ReferenceVideos = ({ name }: { name: string }) => {
         >
             <FileUpload name='video' label='video' type={UploadType.VIDEO} />
             <ToggleInput name='no_audio' label='no_audio' />
+            <Box display='flex' flexWrap='wrap' alignItems='center' gap={4}>
+                <LengthInput
+                    name='trim'
+                    label='ref_video_trim'
+                    min={0}
+                    max={720}
+                    fps={24}
+                    defaultValue={0}
+                    step={8}
+                    sx={{ minWidth: 200, flex: 1 }}
+                />
+                <ToggleInput name='last' label='ref_video_last' sx={{ mt: 1 }} />
+            </Box>
+            <KeyframeControl name='keyframe' />
         </ArrayInput>
     );
 };
@@ -492,8 +564,8 @@ export const MiniMaxH3R2VTab = (
         value='MiniMax H3 R2V'
         group='I2V'
         receivers={[
-            { name: 'ref_images', acceptedTypes: ['images', 'gifs'] },
-            { name: 'ref_videos', acceptedTypes: ['videos'] },
+            { name: 'ref_images', acceptedTypes: ['images'] },
+            { name: 'ref_videos', acceptedTypes: ['gifs'] },
             { name: 'ref_audio', acceptedTypes: ['audio'] },
         ]}
         content={<Content />}

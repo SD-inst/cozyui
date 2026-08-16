@@ -3454,7 +3454,10 @@
                 },
                 "ref_videos": {
                     "id": "handle",
-                    "node_id": "105:104"
+                    "node_id": "105:104",
+                    "guider_node_id": "105:16",
+                    "vae_node_id": "105:11",
+                    "audio_vae_node_id": "105:24"
                 },
                 "ref_audio": {
                     "id": "handle",
