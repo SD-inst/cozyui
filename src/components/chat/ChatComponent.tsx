@@ -19,7 +19,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useImageURLs } from '../../hooks/useImageURL';
 import {
@@ -75,6 +75,7 @@ export const ChatComponent = ({
     const { setValue, watch } = useFormContext();
     const input = form.watch('input');
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesBoxRef = useRef<HTMLDivElement>(null);
     const lastMsgCount = useRef(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -128,17 +129,26 @@ export const ChatComponent = ({
         ],
     });
 
+    const scrollChatToBottom = useCallback(() => {
+        const el = messagesBoxRef.current;
+        el?.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    }, []);
+
     useEffect(() => {
         if (
             isExpanded &&
             (messages.length !== lastMsgCount.current || isComplete)
         ) {
             lastMsgCount.current = messages.length;
-            messagesEndRef.current?.scrollIntoView({
-                behavior: 'smooth',
-            });
+            scrollChatToBottom();
         }
-    }, [isComplete, isExpanded, messages.length]);
+    }, [isComplete, isExpanded, messages.length, scrollChatToBottom]);
+
+    useEffect(() => {
+        if (isExpanded && (isConnecting || isThinking)) {
+            scrollChatToBottom();
+        }
+    }, [isConnecting, isThinking, isExpanded, scrollChatToBottom]);
 
     if (
         !llmConfig?.model ||
@@ -251,7 +261,10 @@ export const ChatComponent = ({
                         p: { xs: 0, md: 2 },
                     }}
                 >
-                    <Box sx={{ maxHeight: 500, overflowY: 'auto' }}>
+                    <Box
+                        ref={messagesBoxRef}
+                        sx={{ maxHeight: 500, overflowY: 'auto' }}
+                    >
                         <Box
                             sx={{
                                 flex: 1,
