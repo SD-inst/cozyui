@@ -163,6 +163,7 @@ const ReferenceAudio = ({ name }: { name: string }) => {
         <ArrayInput
             name={name}
             newValue={audioValue}
+            keyField='audio'
             max={3}
             receiverFieldName='audio'
             targetFieldName='audio'
@@ -331,6 +332,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
         <ArrayInput
             name={name}
             newValue={videoValue}
+            keyField='video'
             max={3}
             receiverFieldName='video'
             targetFieldName='video'
