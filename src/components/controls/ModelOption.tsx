@@ -38,6 +38,7 @@ export const ModelOption = ({
                             autoPlay
                             loop
                             muted
+                            playsInline
                             src={preview_vid}
                         />
                     );

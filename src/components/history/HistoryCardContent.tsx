@@ -41,6 +41,7 @@ export const HistoryCardContent = ({
                     src={displayGifUrl}
                     controls
                     loop
+                    playsInline
                 />
             );
         }

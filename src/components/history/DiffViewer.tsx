@@ -95,6 +95,7 @@ const VideoCompare = () => {
             ref={refs[i]}
             controls
             loop
+            playsInline
             onCanPlay={() => {
                 setLoaded((l) => {
                     if (l[i]) {

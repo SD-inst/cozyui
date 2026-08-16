@@ -265,6 +265,7 @@ export const FileUpload = ({
                                         style={{ ...style, width: 200 }}
                                         src={imageURL}
                                         controls
+                                        playsInline
                                         onError={handleUploadLost}
                                     />
                                 ) : (

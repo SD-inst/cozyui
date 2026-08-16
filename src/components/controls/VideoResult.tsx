@@ -69,6 +69,7 @@ export const VideoResult = ({
                                 autoPlay={!paused}
                                 loop
                                 muted={!sound}
+                                playsInline
                                 aria-label={`${tr('controls.video')} ${r.filename}`}
                                 role="application"
                                 onPause={() => setPaused(true)}
