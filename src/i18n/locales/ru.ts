@@ -264,7 +264,11 @@ const translation = {
         chat_avatar_assistant: 'Ассистент',
         chat_interrupt: 'Прервать',
         chat_new_chat: 'Новый чат',
+        chat_refine: 'Уточнить',
         chat_clear: 'Очистить',
+        chat_refine_confirm: 'Уточнить промпт',
+        chat_refine_confirm_content:
+            'Текущий чат будет очищен, а текущий промпт подставлен в поле ввода чата для уточнения.',
         chat_placeholder_right: 'Чат с AI для подсказок',
         send_to_prompt: 'Отправить в промпт',
         regenerate: 'Перегенерировать',

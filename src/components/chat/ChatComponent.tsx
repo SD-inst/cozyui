@@ -1,6 +1,7 @@
 import {
     Cancel,
     ClearAll,
+    EditNote,
     ExpandMore,
     Person,
     Send,
@@ -11,6 +12,10 @@ import {
     AccordionSummary,
     Box,
     Button,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
     TextField,
     Typography,
 } from '@mui/material';
@@ -73,6 +78,7 @@ export const ChatComponent = ({
     const lastMsgCount = useRef(0);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [refineDialogOpen, setRefineDialogOpen] = useState(false);
     const allMediaFields = mediaFields ?? [];
     const mediaNames = allMediaFields.map((f) => f.name);
     const mediaValues = (mediaNames.length ? watch(mediaNames) : []) as any[];
@@ -186,6 +192,19 @@ export const ChatComponent = ({
 
     const handleSendToPrompt = (text: string) => {
         setValue(promptFieldName, text);
+    };
+
+    const handleRefine = () => {
+        const rawPrompt = watch(promptFieldName);
+        const promptText = typeof rawPrompt === 'string' ? rawPrompt : '';
+        setRefineDialogOpen(false);
+        reset();
+        setTimeout(() => {
+            form.setValue('input', `Refine prompt, \n\n${promptText}`);
+            const el = inputRef.current;
+            el?.focus();
+            el?.setSelectionRange(15, 15);
+        }, 100);
     };
 
     const handleRegenerate = (assistantIndex: number) => {
@@ -353,6 +372,17 @@ export const ChatComponent = ({
                                 >
                                     {tr('controls.chat_send')}
                                 </Button>
+                                <Button
+                                    onClick={() => setRefineDialogOpen(true)}
+                                    variant='outlined'
+                                    size='medium'
+                                    color='info'
+                                    startIcon={<EditNote />}
+                                    sx={buttonSx}
+                                    disabled={isGenerating}
+                                >
+                                    {tr('controls.chat_refine')}
+                                </Button>
                                 {messages.some(
                                     (m) => m.role === 'assistant',
                                 ) && (
@@ -402,6 +432,35 @@ export const ChatComponent = ({
                     </FormProvider>
                 </AccordionDetails>
             </Accordion>
+            <Dialog
+                open={refineDialogOpen}
+                onClose={() => setRefineDialogOpen(false)}
+                onKeyUp={(e) => e.key === 'Enter' && handleRefine()}
+                aria-label={tr('controls.chat_refine_confirm')}
+                role='dialog'
+                aria-modal='true'
+            >
+                <DialogTitle>
+                    {tr('controls.chat_refine_confirm')}
+                </DialogTitle>
+                <DialogContent>
+                    {tr('controls.chat_refine_confirm_content')}
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={handleRefine}
+                        aria-label={tr('controls.ok')}
+                    >
+                        {tr('controls.ok')}
+                    </Button>
+                    <Button
+                        onClick={() => setRefineDialogOpen(false)}
+                        aria-label={tr('controls.cancel')}
+                    >
+                        {tr('controls.cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
