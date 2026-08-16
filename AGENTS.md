@@ -438,7 +438,8 @@ Top-level `llm` section of `public/conf/config.json` (type `llmConfigType` in `s
 
 | File | Purpose |
 |------|---------|
-| [`ChatComponent.tsx`](src/components/chat/ChatComponent.tsx) | Accordion chat: message list, input, send / new-chat / clear / abort buttons |
+| [`ChatComponent.tsx`](src/components/chat/ChatComponent.tsx) | Accordion chat: message list, CONNECTING/THINKING indicators, input, send / new-chat / clear / abort / refine buttons |
+| [`BouncingTextIndicator.tsx`](src/components/chat/BouncingTextIndicator.tsx) | Bouncing-letters status indicator (single component, `text` prop): CONNECTING — between request and first stream chunk; THINKING — while reasoning streams. One-shot auto-scroll to itself, see "Auto-Scroll" below |
 | [`ChatMessage.tsx`](src/components/chat/ChatMessage.tsx) | Single message: text (`pre-wrap`) + wrapping media row (image thumbs and compact videos — 100px, no controls, click to play/pause) |
 | [`prompts/*.ts`](src/components/chat/prompts/) | System prompts per mode: `minimaxH3T2V.ts`, `minimaxH3I2V.ts`, `minimaxH3R2V.ts` |
 | [`useOpenAIChat.ts`](src/hooks/useOpenAIChat.ts) | Chat state, streaming, `sendMessage(content, context?, media?)`, per-tab IndexedDB persistence (`db.chatLogs`) |
@@ -466,6 +467,14 @@ export type mediaFieldType = {
 - `mediaFields` extraction: a string field yields a single item; an array field (e.g. `ArrayInput`) yields `entry[itemField]` per entry. Image-kind entries with video extensions are filtered out. Video-kind entries are included only when `llm.supportsVideo` is true. Media is attached **only to the first user message** of the chat.
 - "New chat" restores only the text after the first `description=` marker of the stored first message (`extractFirstMessageText`), so the length/aspect prefix is not duplicated.
 - Chat logs persist per tab in IndexedDB and survive page reloads.
+
+### Chat Auto-Scroll — IMPORTANT
+
+Auto-scroll must scroll **only the chat's message list container** (the `Box` with `maxHeight: 500, overflowY: 'auto'` in `ChatComponent`), never the whole page:
+
+- Use `container.scrollTo({ top: container.scrollHeight, behavior: 'smooth' })` — **never `scrollIntoView()`**, which can drag the entire page along with the chat (the indicator initially used it and had to be redone).
+- Scroll triggers: new messages, generation completion, and the appearance of the CONNECTING/THINKING indicators (covers e.g. "Regenerate", where the message count does not change and the messages effect alone would not fire).
+- Each trigger scrolls **once** (smooth, non-blocking) — it must not re-fire on every render or fight the user's manual scrolling.
 
 ### Media Part Format — IMPORTANT
 
