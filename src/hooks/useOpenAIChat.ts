@@ -102,6 +102,7 @@ export function useOpenAIChat({
                     .then((messages) => {
                         if (messages && messages.length > 0) {
                             setMessagesState(messages);
+                            setIsComplete(true);
                         }
                     })
                     .catch((e) => {
