@@ -234,6 +234,7 @@ const translation = {
         end_step: 'end step',
         speech: 'Speech',
         version: 'version',
+        references: 'References',
         reference_images: 'reference images',
         ref_images: 'reference images',
         ref_videos: 'reference videos',

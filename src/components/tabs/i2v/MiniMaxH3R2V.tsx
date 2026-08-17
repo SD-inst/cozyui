@@ -10,6 +10,7 @@ import { LengthInput } from '../../controls/LengthSlider';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
+import { SectionAccordion } from '../../controls/SectionAccordion';
 
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { LoraInput } from '../../controls/LoraInput';
@@ -476,15 +477,17 @@ const Content = () => {
     return (
         <Layout>
             <GridLeft>
-                <Box sx={{ mb: 3 }}>
-                    <ReferenceImages name='ref_images' />
-                </Box>
-                <Box sx={{ mb: 3 }}>
-                    <ReferenceVideos name='ref_videos' />
-                </Box>
-                <Box sx={{ mb: 3 }}>
-                    <ReferenceAudio name='ref_audio' />
-                </Box>
+                <SectionAccordion
+                    label='controls.references'
+                    defaultExpanded
+                    sx={{ mb: 3 }}
+                >
+                    <Box display='flex' flexDirection='column' gap={3}>
+                        <ReferenceImages name='ref_images' />
+                        <ReferenceVideos name='ref_videos' />
+                        <ReferenceAudio name='ref_audio' />
+                    </Box>
+                </SectionAccordion>
                 <TextInput name='prompt' multiline />
                 <ChatComponent
                     systemPrompt={miniMaxH3R2VSystemPrompt}

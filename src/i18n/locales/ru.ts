@@ -233,6 +233,7 @@ const translation = {
         end_step: 'последний шаг',
         speech: 'речь',
         version: 'версия',
+        references: 'Референсы',
         reference_images: 'изображения-образцы',
         ref_images: 'изображения-референсы',
         ref_videos: 'видео-референсы',
