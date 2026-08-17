@@ -1,6 +1,5 @@
-import { Box } from '@mui/material';
+import { Box, useEventCallback } from '@mui/material';
 import { useWatch } from 'react-hook-form';
-import { useEventCallback } from '@mui/material';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { ArrayInput } from '../../controls/ArrayInput';
 import { FileUpload } from '../../controls/FileUpload';
@@ -8,16 +7,24 @@ import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { LengthInput } from '../../controls/LengthSlider';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
-import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { SectionAccordion } from '../../controls/SectionAccordion';
+import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 
-import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
+import { getFreeNodeId, insertGraph } from '../../../api/utils';
+import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
+import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useTranslate } from '../../../i18n/I18nContext';
+import { controlType } from '../../../redux/config';
+import { ChatComponent } from '../../chat/ChatComponent';
+import { miniMaxH3R2VSystemPrompt } from '../../chat/prompts/minimaxH3R2V';
+import { useRegisterHandler } from '../../contexts/TabContext';
 import { LoraInput } from '../../controls/LoraInput';
+import { keyframeHandler } from '../../controls/MiniMaxH3KeyframeHandler';
+import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
-import { useTranslate } from '../../../i18n/I18nContext';
 import { SelectInput } from '../../controls/SelectInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
@@ -26,14 +33,6 @@ import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
-import { controlType } from '../../../redux/config';
-import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
-import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
-import { keyframeHandler } from '../../controls/MiniMaxH3KeyframeHandler';
-import { useRegisterHandler } from '../../contexts/TabContext';
-import { getFreeNodeId, insertGraph } from '../../../api/utils';
-import { ChatComponent } from '../../chat/ChatComponent';
-import { miniMaxH3R2VSystemPrompt } from '../../chat/prompts/minimaxH3R2V';
 
 import { useFormContext } from 'react-hook-form';
 
@@ -409,7 +408,11 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     step={8}
                     sx={{ minWidth: 200, flex: 1 }}
                 />
-                <ToggleInput name='last' label='ref_video_last' sx={{ mt: 1 }} />
+                <ToggleInput
+                    name='last'
+                    label='ref_video_last'
+                    sx={{ mt: 1 }}
+                />
             </Box>
             <KeyframeControl name='keyframe' />
         </ArrayInput>

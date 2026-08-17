@@ -1,8 +1,5 @@
-import { Bookmarks, Close, ExpandMore } from '@mui/icons-material';
+import { Bookmarks, Close } from '@mui/icons-material';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Box,
     Button,
     List,
@@ -11,9 +8,11 @@ import {
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { get } from 'lodash';
 import { SelectInputBase } from '../controls/SelectInputBase';
+import { autoscrollSlotProps } from '../controls/utils';
+import { SectionAccordion } from '../controls/SectionAccordion';
 import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { useTranslate } from '../../i18n/I18nContext';
 import { db } from '../history/db';
@@ -40,21 +39,20 @@ export const PresetPanel = ({ ...props }: ListProps) => {
         );
     }, [tabFilter, search]) ?? [];
     const tabs = useAppSelector((s) => get(s, ['config', 'tabs'], {})) ?? {};
+    const ref = useRef<HTMLElement>(null);
     return (
-        <Accordion
+        <SectionAccordion
+            label='presets.title'
             sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
+            slotProps={autoscrollSlotProps(ref)}
+            detailsRef={ref}
+            icon={<Bookmarks sx={{ mr: 1 }} />}
+            summarySx={{
+                '& .MuiAccordionSummary-content': { alignItems: 'center' },
+            }}
+            detailsSx={{ p: { xs: 0, md: 2 } }}
         >
-            <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{
-                    '& .MuiAccordionSummary-content': { alignItems: 'center' },
-                }}
-            >
-                <Bookmarks sx={{ mr: 1 }} />
-                {tr('presets.title')}
-            </AccordionSummary>
-            <AccordionDetails sx={{ p: { xs: 0, md: 2 } }}>
-                <Box width='100%' display='flex' flexWrap='wrap'>
+            <Box width='100%' display='flex' flexWrap='wrap'>
                     <OutlinedInput
                         placeholder={tr('presets.search')}
                         size='small'
@@ -110,7 +108,6 @@ export const PresetPanel = ({ ...props }: ListProps) => {
                         <PresetCard preset={p} key={p.id} />
                     ))}
                 </List>
-            </AccordionDetails>
-        </Accordion>
+            </SectionAccordion>
     );
 };

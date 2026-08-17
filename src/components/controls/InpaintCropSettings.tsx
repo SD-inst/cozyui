@@ -1,12 +1,6 @@
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Box,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { useWatch } from 'react-hook-form';
-import { useTranslate } from '../../i18n/I18nContext';
+import { SectionAccordion } from './SectionAccordion';
 import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
@@ -16,19 +10,14 @@ type InpaintCropSettingsProps = {
 };
 
 export const InpaintCropSettings = ({ name }: InpaintCropSettingsProps) => {
-    const tr = useTranslate();
     const inpaintCropEnabled = useWatch({
         name: `${name}.inpaint_crop_enabled`,
         defaultValue: true,
     });
 
     return (
-        <Accordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                {tr('controls.inpaint_crop_settings')}
-            </AccordionSummary>
-            <AccordionDetails>
-                <ToggleInput
+        <SectionAccordion label='controls.inpaint_crop_settings'>
+            <ToggleInput
                     name={`${name}.inpaint_crop_enabled`}
                     label='inpaint_crop'
                     defaultValue={true}
@@ -102,7 +91,6 @@ export const InpaintCropSettings = ({ name }: InpaintCropSettingsProps) => {
                         />
                     </Box>
                 )}
-            </AccordionDetails>
-        </Accordion>
+            </SectionAccordion>
     );
 };

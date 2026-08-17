@@ -1,8 +1,5 @@
-import { Close, ExpandMore, History } from '@mui/icons-material';
+import { Close, History } from '@mui/icons-material';
 import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
     Box,
     Button,
     Checkbox,
@@ -27,6 +24,7 @@ import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { FilterContext } from '../contexts/FilterContext';
 import { SelectInputBase } from '../controls/SelectInputBase';
 import { autoscrollSlotProps } from '../controls/utils';
+import { SectionAccordion } from '../controls/SectionAccordion';
 import { VerticalBox } from '../VerticalBox';
 import { db } from './db';
 import { DiffViewer } from './DiffViewer';
@@ -97,21 +95,18 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
     }, [isEmpty, prompt, pinned, type, page]);
     const ref = useRef<HTMLElement>(null);
     return (
-        <Accordion
-            slotProps={autoscrollSlotProps(ref)}
+        <SectionAccordion
+            label='controls.history'
             sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
+            slotProps={autoscrollSlotProps(ref)}
+            detailsRef={ref}
+            icon={<History sx={{ mr: 1 }} />}
+            summarySx={{
+                '& .MuiAccordionSummary-content': { alignItems: 'center' },
+            }}
+            detailsSx={{ p: { xs: 0, md: 2 } }}
         >
-            <AccordionSummary
-                expandIcon={<ExpandMore />}
-                sx={{
-                    '& .MuiAccordionSummary-content': { alignItems: 'center' },
-                }}
-            >
-                <History sx={{ mr: 1 }} />
-                {tr('controls.history')}
-            </AccordionSummary>
-            <AccordionDetails ref={ref} sx={{ p: { xs: 0, md: 2 } }}>
-                <CompareContextProvider>
+            <CompareContextProvider>
                     <VerticalBox>
                         <Box width='100%' display='flex' flexWrap='wrap'>
                             <OutlinedInput
@@ -197,7 +192,6 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                         <DiffViewer />
                     </VerticalBox>
                 </CompareContextProvider>
-            </AccordionDetails>
-        </Accordion>
+            </SectionAccordion>
     );
 };

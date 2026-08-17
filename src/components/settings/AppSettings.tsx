@@ -1,15 +1,10 @@
-import { ExpandMore, Settings } from '@mui/icons-material';
-import {
-    Accordion,
-    AccordionDetails,
-    AccordionSummary,
-    Box,
-} from '@mui/material';
+import { Settings } from '@mui/icons-material';
+import { Box } from '@mui/material';
 import { useContext, useRef } from 'react';
 import { settings } from '../../hooks/settings';
 import { useBooleanSetting } from '../../hooks/useSetting';
-import { useTranslate } from '../../i18n/I18nContext';
 import { autoscrollSlotProps } from '../controls/utils';
+import { SectionAccordion } from '../controls/SectionAccordion';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { LanguageSelect } from './LanguageSelect';
 import { NotificationSetting } from './NotificationSetting';
@@ -25,28 +20,23 @@ import {
 } from '../contexts/WorkflowTabsContext';
 
 export const AppSettings = () => {
-    const tr = useTranslate();
     const save_history = useBooleanSetting(settings.save_history);
     const tag_enabled = useBooleanSetting(settings.tag_completion);
     const { workflowTabs } = useContext(WorkflowTabsContext);
     const T2Itabs = useFilteredTabs('T2I');
     const ref = useRef<HTMLElement>(null);
     return (
-        <Accordion slotProps={autoscrollSlotProps(ref)}>
-            <AccordionSummary
-                sx={{
-                    '& .MuiAccordionSummary-content': { alignItems: 'center' },
-                }}
-                expandIcon={<ExpandMore />}
-            >
-                <Settings sx={{ mr: 1 }} />
-                {tr('controls.settings')}
-            </AccordionSummary>
-            <AccordionDetails
-                sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
-                ref={ref}
-            >
-                <Box display='flex' flexWrap='wrap' gap={1}>
+        <SectionAccordion
+            label='controls.settings'
+            slotProps={autoscrollSlotProps(ref)}
+            detailsRef={ref}
+            icon={<Settings sx={{ mr: 1 }} />}
+            summarySx={{
+                '& .MuiAccordionSummary-content': { alignItems: 'center' },
+            }}
+            detailsSx={{ display: 'flex', flexDirection: 'column', gap: 1 }}
+        >
+            <Box display='flex' flexWrap='wrap' gap={1}>
                     <SettingCheckbox name={settings.save_history} />
                     <SettingCheckbox
                         name={settings.save_outputs_locally}
@@ -96,7 +86,6 @@ export const AppSettings = () => {
                 <ImportExport />
                 <HiddenTabs />
                 <Version />
-            </AccordionDetails>
-        </Accordion>
+            </SectionAccordion>
     );
 };

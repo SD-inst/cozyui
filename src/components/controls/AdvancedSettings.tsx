@@ -1,15 +1,10 @@
-import { ExpandMore } from '@mui/icons-material';
-import { Accordion, AccordionSummary, AccordionDetails } from '@mui/material';
-import { useTranslate } from '../../i18n/I18nContext';
+import { ReactNode } from 'react';
+import { SectionAccordion } from './SectionAccordion';
 
-export const AdvancedSettings = ({ ...props }) => {
-    const tr = useTranslate();
+export const AdvancedSettings = ({ children }: { children?: ReactNode }) => {
     return (
-        <Accordion sx={{ mb: 2 }} {...props}>
-            <AccordionSummary expandIcon={<ExpandMore />}>
-                {tr('controls.advanced_parameters')}
-            </AccordionSummary>
-            <AccordionDetails>{props.children}</AccordionDetails>
-        </Accordion>
+        <SectionAccordion label='controls.advanced_parameters' sx={{ mb: 2 }}>
+            {children ?? null}
+        </SectionAccordion>
     );
 };
