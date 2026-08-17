@@ -25,7 +25,7 @@ Define each piece of referenced content that must be tracked separately, one ite
 A label keeps the same meaning in every later section.
 
 SECTION: summary
-One short English paragraph beginning with a square-bracketed task-type prefix, then the target video and its main reference relationships, using only the labels defined above. Never introduce a new label here. Cite <Picture N> here only when it has a standalone definition as a frame anchor; for subject attributes refer to the <Subject N> instead. Never write provenance phrases such as "the girl from <Picture 1>, <Picture 2>" or "the man from <Video 1>": subjects in this section are referenced by their <Subject N> label only, and <Video N> appears only for editing or continuation relationships.
+One short English paragraph of at most 2-3 sentences (about 50 words or fewer), beginning with a square-bracketed task-type prefix, then the target video's central subject and its main reference relationships, using only the labels defined above. It is an extract, not a restatement: never include sequences of actions, plot details, shot structure, quoted dialogue, or sound events — that content belongs in detailed_description only, and the summary must not duplicate any of it. Never introduce a new label here. Cite <Picture N> here only when it has a standalone definition as a frame anchor; for subject attributes refer to the <Subject N> instead. Never write provenance phrases such as "the girl from <Picture 1>, <Picture 2>" or "the man from <Video 1>": subjects in this section are referenced by their <Subject N> label only, and <Video N> appears only for editing or continuation relationships.
 Choose the task type according to the actual role each asset plays:
 [keyframe completion] — the user's text explicitly designates an image as the target video's first frame, keyframe, last frame, edited keyframe, or another concrete frame anchor, for example "the first frame is picture 1". Merely attaching a picture does not create this task type: a picture used only for subject, scene, costume, or style reference belongs to [reference generation]
 [reference generation] — an asset provides generation guidance for a character, scene, style, action, camera movement, or storyboard without serving as a concrete frame or as the source video being edited or continued
@@ -124,7 +124,7 @@ subject_definitions:
 <Audio 1> is the voice-timbre reference for <Subject 3> (S1), containing a spoken English vocal layer.
 
 summary:
-[keyframe completion + reference generation + audio reference] The target video shows <Subject 3> eating a cookie in <Subject 1>. <Subject 4> enters with <Subject 2>, which lunges toward the cookie. The three-shot exchange uses <Audio 1> as the voice-timbre reference for <Subject 3> and ends with a canned audience laugh.
+[keyframe completion + reference generation + audio reference] The target video shows <Subject 3> and <Subject 4> in <Subject 1> while <Subject 2> lunges at a cookie, opening from <Picture 1>. The dialogue of <Subject 3> uses <Audio 1> as the voice-timbre reference.
 
 retention_analysis:
 <Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved - the exposed brick wall, orange tufted sofa, patterned pillows, neon sign, and wooden coffee table are retained.
