@@ -23,8 +23,14 @@ import { TabContextProvider } from './contexts/TabContextProvider';
 import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { db } from './history/db';
 import { VerticalBox } from './VerticalBox';
+import { PresetApplier } from './presets/PresetApplier';
+import { registerForm, unregisterForm } from './presets/formRegistry';
 
-const ValuesRestore = () => {
+const ValuesRestore = ({
+    onInitialized,
+}: {
+    onInitialized?: () => void;
+}) => {
     const ref = useRef<HTMLDivElement>(null);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const dispatch = useAppDispatch();
@@ -55,6 +61,7 @@ const ValuesRestore = () => {
         if (idb === null) {
             // no state in database
             setInitialized(true);
+            onInitialized?.();
             return;
         }
         const vals = JSON.parse(idb.state);
@@ -62,7 +69,8 @@ const ValuesRestore = () => {
             setValue('', vals);
         }
         setInitialized(true);
-    }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized]);
+        onInitialized?.();
+    }, [setValue, idb, isLoaded, setDefaults, tab_name, initialized, onInitialized]);
     const vals = useWatch();
     const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -104,6 +112,16 @@ const TabContent = ({ ...props }) => {
     const current_tab = useCurrentTab();
     const form = useForm();
     const { value, content } = (props.children.props as any) ?? {};
+    // true once ValuesRestore has finished initializing this tab's form;
+    // PresetApplier must only run after that
+    const [formInitialized, setFormInitialized] = useState(false);
+    // Expose this tab's form values to the global presets panel
+    useEffect(() => {
+        registerForm(value, form.getValues);
+        return () => {
+            unregisterForm(value);
+        };
+    }, [value, form.getValues]);
     // workaround to fix form reset after switching to another tab and back
     // we use IDB for form persistence and controls are removed from DOM
     // on tab switch. Need to reset the form as well or else default values
@@ -111,6 +129,7 @@ const TabContent = ({ ...props }) => {
     useEffect(() => {
         if (current_tab !== value) {
             form.reset();
+            setFormInitialized(false);
         }
     }, [current_tab, form, value]);
     if (!React.isValidElement(props.children)) {
@@ -124,7 +143,14 @@ const TabContent = ({ ...props }) => {
                 display={current_tab === value ? 'flex' : 'none'}
             >
                 <FormProvider {...form}>
-                    {current_tab === value && <ValuesRestore />}
+                    {current_tab === value && (
+                        <ValuesRestore
+                            onInitialized={() => setFormInitialized(true)}
+                        />
+                    )}
+                    {current_tab === value && (
+                        <PresetApplier formInitialized={formInitialized} />
+                    )}
                     {content}
                 </FormProvider>
             </VerticalBox>

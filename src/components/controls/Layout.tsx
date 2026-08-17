@@ -38,7 +38,9 @@ export const GridBottom = ({ ...props }: Grid2Props) => {
             spacing={2}
             {...props}
         >
-            <Grid>{props.children}</Grid>
+            <Grid sx={{ display: 'flex', justifyContent: 'center', gap: 2 }}>
+                {props.children}
+            </Grid>
         </Grid>
     );
 };

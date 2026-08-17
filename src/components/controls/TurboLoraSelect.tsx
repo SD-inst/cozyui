@@ -23,6 +23,7 @@ export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
             <Box sx={{ flex: 1, maxWidth: '100%' }}>
                 <SelectInput
                     name='turbo_lora.lora_name'
+                    label='turbo_lora'
                     choices={choices}
                     defaultValue={DEFAULT_TURBO_LORA}
                     sx={{ width: '100% !important' }}
@@ -31,7 +32,7 @@ export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
             <Box sx={{ flex: 1 }}>
                 <SliderInput
                     name='turbo_lora.strength'
-                    label='controls.turbo_lora.strength'
+                    label='turbo_lora_strength'
                     defaultValue={1}
                     min={0}
                     max={3}

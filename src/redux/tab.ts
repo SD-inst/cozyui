@@ -4,12 +4,14 @@ import { setWith, unset } from 'lodash';
 export enum actionEnum {
     STORE,
     RESTORE,
+    APPLY_PRESET,
 }
 
 type paramsType = {
     tab?: string;
     values?: any;
     action?: actionEnum;
+    presetId?: string;
 };
 
 type resultType = {

@@ -1625,7 +1625,8 @@
                 "reference_images": {
                     "id": "handle",
                     "sampler_id": "108",
-                    "set_field": "image"
+                    "set_field": "image",
+                    "max": 7
                 },
                 "prompt": {
                     "id": "110",
@@ -1807,7 +1808,8 @@
                     "id": "handle",
                     "guider_node_id": "22",
                     "vae_node_id": "10",
-                    "set_field": "image"
+                    "set_field": "image",
+                    "max": 10
                 },
                 "i2i": {
                     "id": "handle",
@@ -2253,7 +2255,8 @@
                     "positive_node_id": "6",
                     "negative_node_id": "7",
                     "vae_encode_node_id": "58",
-                    "set_field": "image"
+                    "set_field": "image",
+                    "max": 3
                 },
                 "prompt": {
                     "id": "6",
@@ -3450,18 +3453,21 @@
             "controls": {
                 "ref_images": {
                     "id": "handle",
-                    "node_id": "105:104"
+                    "node_id": "105:104",
+                    "max": 9
                 },
                 "ref_videos": {
                     "id": "handle",
                     "node_id": "105:104",
                     "guider_node_id": "105:16",
                     "vae_node_id": "105:11",
-                    "audio_vae_node_id": "105:24"
+                    "audio_vae_node_id": "105:24",
+                    "max": 3
                 },
                 "ref_audio": {
                     "id": "handle",
-                    "node_id": "105:104"
+                    "node_id": "105:104",
+                    "max": 3
                 },
                 "aspect_ratio": {
                     "id": "115",
