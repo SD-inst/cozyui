@@ -210,10 +210,10 @@ export const ChatComponent = ({
         setRefineDialogOpen(false);
         reset();
         setTimeout(() => {
-            form.setValue('input', `Update the prompt:\n\n${promptText}`);
+            form.setValue('input', `Update the prompt: \n\n${promptText}`);
             const el = inputRef.current;
             el?.focus();
-            el?.setSelectionRange(18, 18);
+            el?.setSelectionRange(19, 19);
         }, 100);
     };
 
