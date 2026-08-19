@@ -64,6 +64,14 @@ const Content = () => {
                         field='unet_name'
                         sx={{ mb: 2 }}
                     />
+                    <ModelSelectAutocomplete
+                        name='video_vae'
+                        type='minimax_h3_vae'
+                        component='VAELoader'
+                        field='vae_name'
+                        previews={false}
+                        sx={{ mb: 2 }}
+                    />
                     <SamplerSelectInput name='sampler' defaultValue='lcm' />
                     <SchedulerSelectInput
                         name='scheduler'

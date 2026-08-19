@@ -3268,6 +3268,11 @@
                     "node_id": "105:6",
                     "field": "unet_name"
                 },
+                "video_vae": {
+                    "id": "handle",
+                    "node_id": "105:11",
+                    "field": "vae_name"
+                },
                 "spectrum_enabled": {
                     "id": "137",
                     "field": "enabled"
@@ -3336,6 +3341,7 @@
                 "megapixels": 0.4,
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                "video_vae": "minimax_h3_video_vae_int8_convrot.safetensors",
                 "prompt": "integrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A"
             }
         },
@@ -3393,6 +3399,11 @@
                     "node_id": "105:6",
                     "field": "unet_name"
                 },
+                "video_vae": {
+                    "id": "handle",
+                    "node_id": "105:11",
+                    "field": "vae_name"
+                },
                 "spectrum_enabled": {
                     "id": "137",
                     "field": "enabled"
@@ -3461,6 +3472,7 @@
                 "megapixels": 0.4,
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                "video_vae": "minimax_h3_video_vae_int8_convrot.safetensors",
                 "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A"
             }
         },
@@ -3521,6 +3533,11 @@
                     "id": "handle",
                     "node_id": "105:6",
                     "field": "unet_name"
+                },
+                "video_vae": {
+                    "id": "handle",
+                    "node_id": "105:11",
+                    "field": "vae_name"
                 },
                 "spectrum_enabled": {
                     "id": "137",
@@ -3598,6 +3615,7 @@
                 "megapixels": 0.4,
                 "length": 5,
                 "model": "h3/minimax_h3_ref2va_pruned_int8_convrot.safetensors",
+                "video_vae": "minimax_h3_video_vae_int8_convrot.safetensors",
                 "turbo_lora.lora_name": "h3/minimax_h3_ref2v_turbo_4step_v0.1_comfyui_lightx2v_bf16.safetensors",
                 "seed": 1024,
                 "prompt": "subject_definitions:\n<Subject 1> is the visual content (character, background, motion etc.) in <Picture 1>, <Picture 2>, etc. — the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. — the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved — describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved — describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A"
@@ -3664,6 +3682,9 @@
         },
         "minimax_h3": {
             "filter": "h3/"
+        },
+        "minimax_h3_vae": {
+            "filter": "minimax_h3_video_vae"
         }
     },
     "api": "/cui",

@@ -31,6 +31,7 @@ const translation = {
         seed: 'seed',
         prompt: 'prompt',
         model: 'model',
+        video_vae: 'video VAE',
         suffix: 'description suffix',
         llm: 'LLM for description',
         attention: 'attention',

@@ -30,7 +30,42 @@ const stripNulls = (obj: any): any => {
 };
 
 // Applies a preset to the current tab form once the form is initialized.
-// Media arrays are appended (deduped by filename), other fields overwrite.
+// Media arrays are appended (deduped by filename), dropping empty slots;
+// LoRA arrays are merged by id; other fields overwrite.
+
+// LoRA fields (LoraInput) hold arrays of { id, label, strength, merge };
+// the id is the full model path and the merge key.
+const isLoraEntry = (e: any): boolean =>
+    !!e &&
+    typeof e === 'object' &&
+    !Array.isArray(e) &&
+    typeof e.id === 'string' &&
+    e.id.endsWith('.safetensors');
+
+const isLoraArray = (v: any): boolean =>
+    Array.isArray(v) && v.length > 0 && v.every(isLoraEntry);
+
+// Keeps the existing order: a preset entry with a matching id replaces
+// the existing entry in place, the remaining preset entries are appended.
+const mergeLoras = (existing: any[], preset: any[]): any[] => {
+    const presetById = new Map(preset.map((l) => [l.id, l]));
+    const used = new Set<string>();
+    const merged = existing.map((l) => {
+        const p = presetById.get(l?.id);
+        if (p) {
+            used.add(l.id);
+            return p;
+        }
+        return l;
+    });
+    preset.forEach((p) => {
+        if (!used.has(p.id)) {
+            merged.push(p);
+        }
+    });
+    return merged;
+};
+
 const PresetApplier = ({ formInitialized }: { formInitialized: boolean }) => {
     const { action, tab, presetId } = useAppSelector((s) => s.tab.params);
     const tab_name = useTabName();
@@ -108,11 +143,19 @@ const PresetApplier = ({ formInitialized }: { formInitialized: boolean }) => {
             ]);
             for (const field of Object.keys(values)) {
                 if (!mediaFields.has(field)) {
+                    const v = values[field];
                     // an empty array would wipe the field; skip it
-                    if (Array.isArray(values[field]) && !values[field].length) {
+                    if (Array.isArray(v) && !v.length) {
                         continue;
                     }
-                    merged[field] = values[field];
+                    if (isLoraArray(v)) {
+                        merged[field] = mergeLoras(
+                            getValues(field) || [],
+                            v,
+                        );
+                        continue;
+                    }
+                    merged[field] = v;
                     continue;
                 }
                 if (typeof values[field] === 'string') {
@@ -124,9 +167,9 @@ const PresetApplier = ({ formInitialized }: { formInitialized: boolean }) => {
                 }
                 // array field: append, deduped by filename, capped
                 const key = refs.find((r) => r.field === field)?.key ?? 'image';
-                const existing: any[] = getValues(field) || [];
+                const allExisting: any[] = getValues(field) || [];
                 const existingNames = new Set(
-                    existing
+                    allExisting
                         .map((e) => (e ? e[key] : ''))
                         .filter(Boolean),
                 );
@@ -140,6 +183,12 @@ const PresetApplier = ({ formInitialized }: { formInitialized: boolean }) => {
                     seen.add(nw);
                     incoming.push({ ...e, [key]: nw });
                 }
+                // when the preset brings media into the field, empty slots
+                // (entries without a file) are dropped so they don't eat the
+                // slot cap and block the preset's files
+                const existing = incoming.length
+                    ? allExisting.filter((e) => e && e[key])
+                    : allExisting;
                 const max = api?.controls?.[field]?.max;
                 const room =
                     typeof max === 'number'
