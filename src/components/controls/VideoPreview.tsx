@@ -6,6 +6,9 @@ import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
 import { useTabName } from '../contexts/TabContext';
 
+// pointer travel (px) below this is treated as a click, above it as a drag
+const SCRUB_THRESHOLD = 5;
+
 export const VideoPreview = ({
     size,
     rate_override,
@@ -21,6 +24,14 @@ export const VideoPreview = ({
     const ref = useRef<HTMLCanvasElement>(null);
     const idxRef = useRef(0);
     const frameRef = useRef<ImageBitmap[]>([]);
+    const scrubRef = useRef({
+        scrubbing: false,
+        pointerId: -1,
+        startX: 0,
+        startIdx: 0,
+        width: 0,
+        committed: false,
+    });
     const { frames, rate } = useAppSelector((s) => s.preview);
     const isActiveTab = useActiveTab();
     // don't use state directly to avoid preview restarts
@@ -28,14 +39,57 @@ export const VideoPreview = ({
     useEffect(() => {
         frameRef.current = frames;
     }, [frames]);
-    useEffect(() => {
-        const canvas = ref.current;
-        const handleClick = () => {
-            idxRef.current = 0;
+    const onPointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const canvas = e.currentTarget;
+        if (e.pointerType === 'mouse' && e.button !== 0) {
+            return;
+        }
+        const rect = canvas.getBoundingClientRect();
+        scrubRef.current = {
+            scrubbing: true,
+            pointerId: e.pointerId,
+            startX: e.clientX,
+            startIdx: idxRef.current,
+            width: rect.width || size,
+            committed: false,
         };
-        canvas?.addEventListener('click', handleClick);
-        return () => canvas?.removeEventListener('click', handleClick);
-    }, []);
+        canvas.setPointerCapture(e.pointerId);
+    };
+    const onPointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const s = scrubRef.current;
+        if (!s.scrubbing || s.pointerId !== e.pointerId) {
+            return;
+        }
+        const frames = frameRef.current;
+        if (!frames.length) {
+            return;
+        }
+        const dx = e.clientX - s.startX;
+        if (!s.committed && Math.abs(dx) < SCRUB_THRESHOLD) {
+            return;
+        }
+        s.committed = true;
+        const dIdx = (dx / s.width) * frames.length;
+        const newIdx = Math.floor(s.startIdx + dIdx);
+        idxRef.current = ((newIdx % frames.length) + frames.length) % frames.length;
+    };
+    const onPointerEnd = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const s = scrubRef.current;
+        if (!s.scrubbing || s.pointerId !== e.pointerId) {
+            return;
+        }
+        const canvas = e.currentTarget;
+        // plain click (no drag) resets the preview to the beginning
+        if (!s.committed) {
+            idxRef.current = 0;
+        }
+        s.scrubbing = false;
+        try {
+            canvas.releasePointerCapture(e.pointerId);
+        } catch {
+            // ignore
+        }
+    };
     useEffect(() => {
         if (!ref.current) {
             return;
@@ -51,21 +105,22 @@ export const VideoPreview = ({
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
             return;
         }
-        let frames: ImageBitmap[] = [];
         const effective_rate = rate_override || rate;
         idxRef.current = 0;
         const interval = setInterval(
             () => {
-                let idx = idxRef.current;
+                // read the latest frames from the ref so the animation never breaks
+                const frames = frameRef.current;
+                if (!frames.length) {
+                    return;
+                }
+                const idx = idxRef.current % frames.length;
                 const fn = `${idx * effective_rate}/${frames.length * effective_rate}`;
-                // before rendering the first preview frame
-                // update the frames from the ref so that animation never breaks
-                if (!idx) {
-                    frames = frameRef.current;
+                // while scrubbing the pointer owns the index — don't auto-advance
+                if (!scrubRef.current.scrubbing) {
+                    idxRef.current = (idx + 1) % frames.length;
                 }
                 const img = frames[idx];
-                idx = (idx + 1) % frames.length;
-                idxRef.current = idx;
                 if (!img) {
                     return;
                 }
@@ -100,7 +155,6 @@ export const VideoPreview = ({
         );
         return () => {
             clearInterval(interval);
-            frames = [];
         };
     }, [fps, rate, rate_override, size]);
     return (
@@ -113,7 +167,12 @@ export const VideoPreview = ({
                     isActiveTab && enabled && status === statusEnum.RUNNING
                         ? 'block'
                         : 'none',
+                touchAction: 'none',
             }}
+            onPointerDown={onPointerDown}
+            onPointerMove={onPointerMove}
+            onPointerUp={onPointerEnd}
+            onPointerCancel={onPointerEnd}
         />
     );
 };
