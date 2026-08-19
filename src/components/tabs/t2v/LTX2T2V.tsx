@@ -38,7 +38,7 @@ const llmPrompt = `You are a Creative Assistant. Given a user's raw input prompt
 - Facial features: Use delicate modifiers for subtle features (i.e., "subtle freckles").
 
 #### Important notes:
-- Analyze the user's raw input carefully. In cases of FPV or POV, exclude the description of the subject whose POV is requested.
+- Analyze the user's raw input carefully. For FPV or POV shots, exclude the description of the subject whose POV is shown.
 - Camera motion: DO NOT invent camera motion unless requested by the user.
 - Speech: DO NOT modify user-provided character dialogue unless it's a typo.
 - No timestamps or cuts: DO NOT use timestamps or describe scene cuts unless explicitly requested.

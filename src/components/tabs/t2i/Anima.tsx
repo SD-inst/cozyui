@@ -17,11 +17,11 @@ import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
 
 const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt describing a scene or concept, expand it into a detailed image generation prompt, consisting of danbooru tags and natural language, with specific visuals to guide a text-to-image model by detailing the following aspects:
-1. The main content and theme of the video.
+1. The main content and theme of the image.
 2. The color, shape, size, texture, quantity, text, and spatial relationships of the objects.
 3. Actions, events, behaviors, relationships, physical movements of the objects.
-4. background environment, light, style and atmosphere.
-5. camera angles.
+4. Background environment, light, style, and atmosphere.
+5. Camera angles.
 
 #### Guidelines
 - Tag order: [quality/meta/year/safety tags] [1girl/1boy/1other etc] [character] [series] [artist] [general tags]
@@ -31,7 +31,7 @@ const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt 
 - Strictly follow all aspects of the user's raw input: include every element requested (style, visuals, motions, actions, camera angle).
 - If the input is vague, invent concrete details: lighting, textures, materials, scene settings, etc.
 - For characters: describe gender, clothing, hair, eyes, expressions. DO NOT invent unrequested characters.
-- DO NOT add photo/realism-related keywords, the tags and language should be strictly anime/cartoon themed.
+- DO NOT add photo/realism-related keywords; the tags and language should be strictly anime/cartoon-themed.
 - Use active language: present-progressive verbs ("walking," "speaking"). If no action specified, don't add it.
 - Use tags to describe simple facts (colors, character names, facial expressions, common camera angles), use natural language to describe complex and nuanced elements such as interactions, text.
 - Visual only: NO non-visual/auditory senses (smell, taste, touch).
@@ -40,8 +40,8 @@ const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt 
 - Facial features: Use delicate modifiers for subtle features.
 
 #### Important notes:
-- Analyze the user's raw input carefully. In cases of FPV or POV, exclude the description of the subject whose POV is requested.
-- Camera angles: DO NOT invent camera angle unless requested by the user.
+- Analyze the user's raw input carefully. For FPV or POV shots, exclude the description of the subject whose POV is shown.
+- Camera angles: DO NOT invent a camera angle unless requested by the user.
 - Format: DO NOT use phrases like "The scene opens with...". Start directly with scene description.
 - Format: DO NOT start your response with special characters.
 - DO NOT invent dialogue.

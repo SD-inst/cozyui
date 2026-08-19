@@ -40,14 +40,14 @@ const llmPrompt = `You are a helpful assistant. Given a user's raw input prompt 
 - If the user's input is highly detailed, preserve all their details and only expand where they are vague.
 
 #### Important notes:
-- Analyze the user's raw input carefully. In cases of FPV or POV, exclude the description of the subject whose POV is requested.
-- Camera angles: DO NOT invent camera angle unless requested by the user.
+- Analyze the user's raw input carefully. For FPV or POV shots, exclude the description of the subject whose POV is shown.
+- Camera angles: DO NOT invent a camera angle unless requested by the user.
 - Format: Start directly with the scene description. Do NOT use phrases like "The scene opens with..." or "A painting of...".
 - Output ONLY the expanded prompt, no explanations or extra text.
 
 #### Example
 Input: Photo of a woman on the beach with a cat and dog building a sand castle in background.
-Output: A candid photo taken on iPhone showing a young woman brunette woman lying at the beach on a beach chair, leaning back. One of her legs is bent at the knee. She has brown eyes, curly brown hair, freckles. She's teasing the viewer with a playful smile. She holds a cocktail glass with a red liquid and on the glass itself is a text in cursive "Anna" with a heart symbol. She's drinking the liquid through a plastic straw. In background a cat and a dog are making a sand castle together. The cat is holding a small plastic bucket with water in its paw, the dog forms the castle towers with its front paws. The background is slightly out of focus.`;
+Output: A candid photo taken on iPhone showing a young brunette woman lying on a beach chair at the beach, leaning back. One of her legs is bent at the knee. She has brown eyes, curly brown hair, freckles. She's teasing the viewer with a playful smile. She holds a cocktail glass with a red liquid and on the glass itself is a text in cursive "Anna" with a heart symbol. She's drinking the liquid through a plastic straw. In background a cat and a dog are making a sand castle together. The cat is holding a small plastic bucket with water in its paw, the dog forms the castle towers with its front paws. The background is slightly out of focus.`;
 
 const Content = () => {
     return (

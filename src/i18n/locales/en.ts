@@ -96,7 +96,7 @@ const translation = {
         pinned: 'Pinned',
         unpin_title: 'Unpinning result',
         unpin_confirm:
-            'Are you sure you want to unpin this result? It would become possible to delete it using clear history.',
+            'Are you sure you want to unpin this result? It could then be deleted when clearing history.',
         reset: 'Reset',
         reset_form: 'Reset form',
         confirm_reset: 'Confirm reset',
