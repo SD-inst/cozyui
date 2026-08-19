@@ -3306,6 +3306,14 @@
                 },
                 "turbo_lora": {
                     "id": "skip"
+                },
+                "latent_upscale": {
+                    "id": "handle",
+                    "sampler_node_id": "105:14",
+                    "video_vae_decode_node_id": "105:10",
+                    "audio_vae_decode_node_id": "105:23",
+                    "guider_node_id": "105:16",
+                    "scheduler_node_id": "105:9"
                 }
             },
             "handler_options": {
@@ -3423,6 +3431,14 @@
                 },
                 "turbo_lora": {
                     "id": "skip"
+                },
+                "latent_upscale": {
+                    "id": "handle",
+                    "sampler_node_id": "105:14",
+                    "video_vae_decode_node_id": "105:10",
+                    "audio_vae_decode_node_id": "105:23",
+                    "guider_node_id": "105:16",
+                    "scheduler_node_id": "105:9"
                 }
             },
             "handler_options": {
@@ -3552,6 +3568,14 @@
                 },
                 "ref_megapixels": {
                     "id": "skip"
+                },
+                "latent_upscale": {
+                    "id": "handle",
+                    "sampler_node_id": "105:14",
+                    "video_vae_decode_node_id": "105:10",
+                    "audio_vae_decode_node_id": "105:23",
+                    "guider_node_id": "105:16",
+                    "scheduler_node_id": "105:9"
                 }
             },
             "handler_options": {

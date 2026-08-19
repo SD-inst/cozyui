@@ -3,6 +3,7 @@ import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
+import { MiniMaxH3LatentUpscale } from '../../controls/MiniMaxH3LatentUpscale';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
@@ -39,7 +40,10 @@ const ImageFrameInput = ({ name }: { name: string }) => {
             };
             if (control.scale_node_id) {
                 api[control.scale_node_id].inputs.image = [imageNodeId, 0];
-                api[control.node_id].inputs[control.field] = [control.scale_node_id, 0];
+                api[control.node_id].inputs[control.field] = [
+                    control.scale_node_id,
+                    0,
+                ];
             } else {
                 api[control.node_id].inputs[control.field] = [imageNodeId, 0];
             }
@@ -97,14 +101,12 @@ const Content = () => {
                         field='unet_name'
                         sx={{ mb: 2 }}
                     />
-                    <SamplerSelectInput
-                        name='sampler'
-                        defaultValue='res_multistep'
-                    />
+                    <SamplerSelectInput name='sampler' defaultValue='lcm' />
                     <SchedulerSelectInput
                         name='scheduler'
-                        defaultValue='simple'
+                        defaultValue='beta57'
                     />
+                    <MiniMaxH3LatentUpscale />
                     <MiniMaxH3SpectrumControls />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />

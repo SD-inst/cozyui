@@ -6,6 +6,7 @@ import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { LengthInput } from '../../controls/LengthSlider';
+import { MiniMaxH3LatentUpscale } from '../../controls/MiniMaxH3LatentUpscale';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { SectionAccordion } from '../../controls/SectionAccordion';
@@ -538,14 +539,12 @@ const Content = () => {
                         field='unet_name'
                         sx={{ mb: 2 }}
                     />
-                    <SamplerSelectInput
-                        name='sampler'
-                        defaultValue='res_multistep'
-                    />
+                    <SamplerSelectInput name='sampler' defaultValue='lcm' />
                     <SchedulerSelectInput
                         name='scheduler'
-                        defaultValue='simple'
+                        defaultValue='beta57'
                     />
+                    <MiniMaxH3LatentUpscale />
                     <MiniMaxH3SpectrumControls />
                     <ReferenceScaling name='ref_image_size' />
                     <VideoInterpolationSlider />
