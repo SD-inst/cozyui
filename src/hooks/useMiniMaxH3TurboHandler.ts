@@ -45,6 +45,7 @@ export const useMiniMaxH3TurboHandler = () => {
         }
 
         const isLightX2V = turboLoraName.includes('lightx2v');
+        const is4Step = isLightX2V && turboLoraName.includes('4step');
 
         if (isLightX2V) {
             const inputNodeId =
@@ -67,6 +68,10 @@ export const useMiniMaxH3TurboHandler = () => {
                 (id: string) =>
                     (api[id].inputs[api_input_name] = [loraNodeId, output_idx]),
             );
+
+            if (is4Step) {
+                api[output_node_ids[0]].inputs.shift_video = 6;
+            }
         } else {
             insertNode(
                 api,
