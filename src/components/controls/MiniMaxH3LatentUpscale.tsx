@@ -4,27 +4,30 @@ import { insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SamplerSelectInput } from './SamplerSelectInput';
-import { SchedulerSelectInput } from './SchedulerSelectInput';
 import { SeedInput } from './SeedInput';
 import { SliderInput } from './SliderInput';
 import { ToggleInput } from './ToggleInput';
 
 type TValue = {
     enabled: boolean;
-    scale: number;
+    main_steps: number;
+    megapixels: number;
     steps: number;
-    denoise: number;
     sampler: string;
-    scheduler: string;
     seed: number;
 };
 
+const STEPS_SIGMAS: Record<number, string> = {
+    3: '0.9035, 0.6316, 0.3158, 0.0000',
+    4: '0.9035, 0.8000, 0.6316, 0.3158, 0.0000',
+    5: '0.9231, 0.8780, 0.8000, 0.6316, 0.3158, 0.0000',
+};
+
 const defaultValue: TValue = {
-    denoise: 0.5,
     enabled: false,
+    main_steps: 4,
+    megapixels: 1,
     sampler: 'lcm',
-    scale: 1.5,
-    scheduler: 'beta57',
     seed: 1024,
     steps: 3,
 };
@@ -34,6 +37,7 @@ export const MiniMaxH3LatentUpscale = ({
     ...props
 }: { name?: string } & BoxProps) => {
     const value = useWatch({ name, defaultValue });
+    const mainSteps = useWatch({ name: 'steps', defaultValue: 8 }) as number;
     const handler = useEventCallback(
         (api: any, value: TValue, control: controlType) => {
             if (!value?.enabled) {
@@ -41,47 +45,67 @@ export const MiniMaxH3LatentUpscale = ({
             }
             const {
                 sampler_node_id,
+                scheduler_node_id,
                 video_vae_decode_node_id,
                 audio_vae_decode_node_id,
                 guider_node_id,
-                scheduler_node_id,
             } = control;
             if (
                 !sampler_node_id ||
+                !scheduler_node_id ||
                 !video_vae_decode_node_id ||
                 !audio_vae_decode_node_id ||
-                !guider_node_id ||
-                !scheduler_node_id
+                !guider_node_id
             ) {
                 return;
             }
+            const sigmas = STEPS_SIGMAS[value.steps] ?? STEPS_SIGMAS[3];
             const graph = {
                 ':seed': {
                     inputs: { value: value.seed },
                     class_type: 'PrimitiveInt',
                     _meta: { title: 'Seed (Latent Upscale)' },
                 },
+                ':split_sigmas': {
+                    inputs: {
+                        step: value.main_steps,
+                        sigmas: [scheduler_node_id, 0],
+                    },
+                    class_type: 'SplitSigmas',
+                    _meta: { title: 'SplitSigmas' },
+                },
+                ':separate': {
+                    inputs: { av_latent: [sampler_node_id, 1] },
+                    class_type: 'LTXVSeparateAVLatent',
+                    _meta: { title: 'LTXVSeparateAVLatent' },
+                },
                 ':upscale': {
                     inputs: {
                         model_name:
-                            'minimax_h3_latent_upscaler_3d_bf16.safetensors',
-                        scale: value.scale,
+                            'minimax_h3_latent_upscaler_3d_fp16.safetensors',
+                        mode: 'megapixels',
+                        'mode.megapixels': value.megapixels,
+                        align: 32,
+                        keep_proportion: false,
                         device: 'cuda',
                         precision: 'fp32',
-                        latent: [sampler_node_id, 0],
+                        latent: [':separate', 0],
                     },
-                    class_type: 'MinimaxH3LatentUpscalerNode3D',
+                    class_type: 'MinimaxH3LatentUpscaler3D',
                     _meta: { title: 'Minimax H3 Latent Upscaler (3D)' },
                 },
-                ':scheduler': {
+                ':concat': {
                     inputs: {
-                        scheduler: value.scheduler,
-                        steps: value.steps,
-                        denoise: value.denoise,
-                        model: api[scheduler_node_id].inputs.model,
+                        video_latent: [':upscale', 0],
+                        audio_latent: [':separate', 1],
                     },
-                    class_type: 'BasicScheduler',
-                    _meta: { title: 'BasicScheduler' },
+                    class_type: 'LTXVConcatAVLatent',
+                    _meta: { title: 'LTXVConcatAVLatent' },
+                },
+                ':sigmas': {
+                    inputs: { sigmas },
+                    class_type: 'ManualSigmas',
+                    _meta: { title: `${value.steps} step Sigmas` },
                 },
                 ':sampler_select': {
                     inputs: { sampler_name: value.sampler },
@@ -98,14 +122,15 @@ export const MiniMaxH3LatentUpscale = ({
                         noise: [':noise', 0],
                         guider: [guider_node_id, 0],
                         sampler: [':sampler_select', 0],
-                        sigmas: [':scheduler', 0],
-                        latent_image: [':upscale', 0],
+                        sigmas: [':sigmas', 0],
+                        latent_image: [':concat', 0],
                     },
                     class_type: 'SamplerCustomAdvanced',
                     _meta: { title: 'SamplerCustomAdvanced (Latent Upscale)' },
                 },
             };
             const baseNodeID = insertGraph(api, graph);
+            api[sampler_node_id].inputs.sigmas = [baseNodeID + ':split_sigmas', 0];
             const output: [string, number] = [baseNodeID + ':sampler', 0];
             api[video_vae_decode_node_id].inputs.samples = output;
             api[audio_vae_decode_node_id].inputs.samples = output;
@@ -122,10 +147,18 @@ export const MiniMaxH3LatentUpscale = ({
             {value?.enabled && (
                 <Box display='flex' flexDirection='column' gap={2}>
                     <SliderInput
-                        name={`${name}.scale`}
-                        label='latent_upscale_scale'
-                        defaultValue={defaultValue.scale}
+                        name={`${name}.main_steps`}
+                        label='latent_upscale_main_steps'
+                        defaultValue={defaultValue.main_steps}
                         min={1}
+                        max={Math.max(1, mainSteps)}
+                        step={1}
+                    />
+                    <SliderInput
+                        name={`${name}.megapixels`}
+                        label='latent_upscale_megapixels'
+                        defaultValue={defaultValue.megapixels}
+                        min={0.1}
                         max={2}
                         step={0.1}
                     />
@@ -133,27 +166,14 @@ export const MiniMaxH3LatentUpscale = ({
                         name={`${name}.steps`}
                         label='latent_upscale_steps'
                         defaultValue={defaultValue.steps}
-                        min={1}
-                        max={20}
+                        min={3}
+                        max={5}
                         step={1}
-                    />
-                    <SliderInput
-                        name={`${name}.denoise`}
-                        label='latent_upscale_denoise'
-                        defaultValue={defaultValue.denoise}
-                        min={0}
-                        max={1}
-                        step={0.01}
                     />
                     <SamplerSelectInput
                         name={`${name}.sampler`}
                         label='latent_upscale_sampler'
                         defaultValue={defaultValue.sampler}
-                    />
-                    <SchedulerSelectInput
-                        name={`${name}.scheduler`}
-                        label='latent_upscale_scheduler'
-                        defaultValue={defaultValue.scheduler}
                     />
                     <SeedInput
                         name={`${name}.seed`}
