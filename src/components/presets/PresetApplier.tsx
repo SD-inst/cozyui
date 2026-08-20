@@ -9,6 +9,7 @@ import { useTabName } from '../contexts/TabContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
 import { db, Preset } from '../history/db';
 import { useRestoreValues } from '../../hooks/useRestoreValues';
+import { saveUploadBackup } from '../../hooks/useBackupUpload';
 import { fileOnServer, uploadFile } from '../../api/files';
 import {
     getReceiverFields,
@@ -207,6 +208,47 @@ const PresetApplier = ({ formInitialized }: { formInitialized: boolean }) => {
                     );
                 }
                 merged[field] = [...existing, ...toAppend];
+            }
+            // Refresh the per-field upload backups so auto-recovery
+            // (FileUpload onError) restores the preset's files at their final
+            // positions, not whatever the field held before the apply. Keys
+            // match FileUpload's scheme: `field` for a single-file field and
+            // `field.<index>.<key>` for an array entry.
+            const newNameToFile = new Map<string, File>();
+            for (const ref of refs) {
+                const nw = resolved[ref.filename];
+                const local = filesMap.get(ref.filename);
+                if (nw && local) {
+                    newNameToFile.set(nw, local);
+                }
+            }
+            for (const field of Object.keys(merged)) {
+                const v = merged[field];
+                if (typeof v === 'string') {
+                    const f = newNameToFile.get(v);
+                    if (f) {
+                        await saveUploadBackup(f, field, tab_name);
+                    }
+                    continue;
+                }
+                if (Array.isArray(v) && mediaFields.has(field)) {
+                    const key =
+                        refs.find((r) => r.field === field)?.key ?? 'image';
+                    for (let i = 0; i < v.length; i++) {
+                        const e = v[i];
+                        if (!e) {
+                            continue;
+                        }
+                        const f = newNameToFile.get(e[key]);
+                        if (f) {
+                            await saveUploadBackup(
+                                f,
+                                `${field}.${i}.${key}`,
+                                tab_name,
+                            );
+                        }
+                    }
+                }
             }
             restoreValues('', stripNulls(merged));
             // rename the preset to the re-uploaded filenames so repeated
