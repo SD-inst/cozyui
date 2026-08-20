@@ -40,8 +40,10 @@ export const useTaskDuration = () => {
 };
 
 export const useTaskEta = () => {
-    const [currentNodeStartTs, setCurrentNodeStartTs] = useState(0);
-    const [eta, setEta] = useState(0);
+    const [nodeStartTs, setNodeStartTs] = useState(0);
+    const [lastValue, setLastValue] = useState(-1);
+    const [lastValueTs, setLastValueTs] = useState(0);
+    const [, setTick] = useState(0);
     const { status, value, min, max, current_node } = useAppSelector(
         (s) => s.progress
     );
@@ -49,21 +51,42 @@ export const useTaskEta = () => {
     useEffect(() => {
         if (status !== statusEnum.RUNNING) {
             lastNode.current = '';
-            setEta(0);
+            setNodeStartTs(0);
+            setLastValue(-1);
+            setLastValueTs(0);
             return;
         }
         if (lastNode.current !== current_node) {
             lastNode.current = current_node;
-            setCurrentNodeStartTs(new Date().getTime());
+            setNodeStartTs(new Date().getTime());
+            setLastValue(-1);
+            setLastValueTs(0);
         }
-        if (lastNode.current === current_node && value - min > 0) {
-            const passed = new Date().getTime() - currentNodeStartTs;
-            setEta((passed * (max - value)) / (value - min));
+        if (value !== lastValue && value - min > 0) {
+            setLastValue(value);
+            setLastValueTs(new Date().getTime());
         }
-    }, [currentNodeStartTs, current_node, max, min, status, value]);
-    if (eta > 0) {
-        return formatDuration(eta / 1000);
-    } else {
+    }, [current_node, status, value, min, lastValue]);
+    useEffect(() => {
+        if (status !== statusEnum.RUNNING) {
+            return;
+        }
+        const i = setInterval(() => setTick((t) => (t + 1) % 1000000), 1000);
+        return () => clearInterval(i);
+    }, [status]);
+    if (status !== statusEnum.RUNNING) {
         return '';
     }
+    if (!nodeStartTs || !lastValueTs || lastValue - min <= 0) {
+        return '';
+    }
+    const now = new Date().getTime();
+    const timePerUnit = (lastValueTs - nodeStartTs) / (lastValue - min);
+    const remaining = (max - lastValue) * timePerUnit;
+    const age = Math.max(0, now - lastValueTs);
+    const eta = Math.max(0, remaining - age);
+    if (eta <= 0) {
+        return '';
+    }
+    return formatDuration(eta / 1000);
 };
