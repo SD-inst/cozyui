@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
     buildNodeTimings,
     filterNodeTimings,
+    matchTimings,
     MAX_TIMINGS,
     MIN_TIMING_MS,
     NodeEvent,
@@ -178,6 +179,59 @@ describe('buildNodeTimings', () => {
         ]);
     });
 
+});
+
+describe('matchTimings', () => {
+    it('matches static phases by node id', () => {
+        const a = [timing('105:14', 32000), timing('105:10', 13000)];
+        const b = [timing('105:14', 29000), timing('105:10', 13500)];
+        const rows = matchTimings(a, b);
+        expect(rows.map((r) => ({ a: r.a?.ms, b: r.b?.ms }))).toEqual([
+            { a: 32000, b: 29000 },
+            { a: 13000, b: 13500 },
+        ]);
+    });
+
+    it('matches dynamically inserted phases (random ids) by label', () => {
+        // The latent upscaler graph is inserted with a new random base id on
+        // every run, so the node ids differ between runs; the labels match.
+        const a = [
+            timing('150:sampler', 63000),
+            timing('149:upscale', 1000),
+        ];
+        const b = [
+            timing('151:upscale', 1100),
+            timing('151:sampler', 49000),
+        ];
+        // give them the real phase labels so they match by label
+        const la = a.map((t) => ({ ...t, label: t.node.includes('sampler') ? 'SamplerCustomAdvanced (Latent Upscale)' : 'Minimax H3 Latent Upscaler (3D)' }));
+        const lb = b.map((t) => ({ ...t, label: t.node.includes('sampler') ? 'SamplerCustomAdvanced (Latent Upscale)' : 'Minimax H3 Latent Upscaler (3D)' }));
+        const rows = matchTimings(la, lb);
+        // both rows should be paired (no B-only leftovers)
+        expect(rows.every((r) => r.a && r.b)).toBe(true);
+        expect(rows.length).toBe(2);
+    });
+
+    it('appends B-only phases at the end', () => {
+        const a = [timing('105:14', 32000)];
+        const b = [timing('105:14', 29000), timing('900:i2v', 3000)];
+        const rows = matchTimings(a, b);
+        expect(rows.map((r) => ({ a: !!r.a, b: !!r.b }))).toEqual([
+            { a: true, b: true },
+            { a: false, b: true },
+        ]);
+    });
+
+    it('pairs repeated labels in order of appearance', () => {
+        const a = [timing('n1', 1000), timing('n2', 2000)].map((t) => ({ ...t, label: 'same-label' }));
+        const b = [timing('m1', 1500), timing('m2', 2500)].map((t) => ({ ...t, label: 'same-label' }));
+        const rows = matchTimings(a, b);
+        // first A pairs with first B, second A with second B
+        expect(rows.map((r) => ({ a: r.a?.ms, b: r.b?.ms }))).toEqual([
+            { a: 1000, b: 1500 },
+            { a: 2000, b: 2500 },
+        ]);
+    });
 });
 
 describe('filterNodeTimings', () => {

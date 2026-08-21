@@ -26,7 +26,7 @@ import {
 } from 'react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
 import { formatDuration } from '../../hooks/useTaskDuration';
-import { NodeTiming } from '../../utils/nodeTimings';
+import { matchTimings, NodeTiming } from '../../utils/nodeTimings';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContext } from '../contexts/CompareContext';
@@ -215,10 +215,11 @@ const parseTimings = (task?: TaskResult): NodeTiming[] => {
     }
 };
 
-// Side-by-side per-node timings of two runs. Phases are matched by node id
-// (static nodes keep the same id across runs of the same tab). Sampler
-// phases are additionally shown normalized per step, since their duration
-// depends on the steps parameter.
+// Side-by-side per-node timings of two runs. Phases are matched by node
+// id (static nodes keep the same id across runs), falling back to the phase
+// label for dynamically inserted nodes that get a new id every run (see
+// matchTimings). Sampler phases are additionally shown normalized per step,
+// since their duration depends on the steps parameter.
 const TimingsCompare = () => {
     const tr = useTranslate();
     const { A_id, B_id } = useContext(CompareContext);
@@ -234,25 +235,7 @@ const TimingsCompare = () => {
     const taskB = tasks?.[1];
     const tA = useMemo(() => parseTimings(taskA), [taskA]);
     const tB = useMemo(() => parseTimings(taskB), [taskB]);
-    const rows = useMemo(() => {
-        const bByNode = new Map(tB.map((t) => [t.node, t]));
-        const list: {
-            label: string;
-            a?: NodeTiming;
-            b?: NodeTiming;
-        }[] = tA.map((t) => ({
-            label: t.label,
-            a: t,
-            b: bByNode.get(t.node),
-        }));
-        const aNodes = new Set(tA.map((t) => t.node));
-        for (const t of tB) {
-            if (!aNodes.has(t.node)) {
-                list.push({ label: t.label, a: undefined, b: t });
-            }
-        }
-        return list;
-    }, [tA, tB]);
+    const rows = useMemo(() => matchTimings(tA, tB), [tA, tB]);
     if (!tasks || !tasks[0] || !tasks[1]) {
         return null;
     }

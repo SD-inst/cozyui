@@ -105,6 +105,53 @@ export const buildNodeTimings = (
     return timings;
 };
 
+export type CompareRow = {
+    label: string;
+    a?: NodeTiming;
+    b?: NodeTiming;
+};
+
+// Pairs phases of two runs for side-by-side comparison. Static nodes are
+// matched by id (they keep the same id across runs of the same tab).
+// Dynamically inserted nodes (e.g. the latent upscaler graph) get a new
+// random base id on every run, so their ids never match — the remaining
+// phases are paired by label, in order of appearance. Leftover B-only
+// phases are appended at the end.
+export const matchTimings = (
+    a: NodeTiming[],
+    b: NodeTiming[],
+): CompareRow[] => {
+    const bByNode = new Map(b.map((t) => [t.node, t]));
+    const bMatched = new Set<string>();
+    const rows: CompareRow[] = a.map((t) => {
+        const b = bByNode.get(t.node);
+        if (b) {
+            bMatched.add(b.node);
+        }
+        return { label: t.label, a: t, b };
+    });
+    const bPool = b.filter((t) => !bMatched.has(t.node));
+    const used = new Set<string>();
+    for (const row of rows) {
+        if (row.b || !row.a) {
+            continue;
+        }
+        const idx = bPool.findIndex(
+            (t) => !used.has(t.node) && t.label === row.a?.label
+        );
+        if (idx >= 0) {
+            used.add(bPool[idx].node);
+            row.b = bPool[idx];
+        }
+    }
+    for (const t of bPool) {
+        if (!used.has(t.node)) {
+            rows.push({ label: t.label, a: undefined, b: t });
+        }
+    }
+    return rows;
+};
+
 // Keeps only nodes longer than MIN_TIMING_MS (capped at MAX_TIMINGS, in
 // chronological order). Short nodes are dropped because they don't help
 // comparing generation phases.
