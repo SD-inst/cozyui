@@ -2,6 +2,7 @@ import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { MiniMaxH3LatentUpscale } from '../../controls/MiniMaxH3LatentUpscale';
+import { H3SparseAttention } from '../../controls/H3SparseAttention';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
@@ -78,6 +79,7 @@ const Content = () => {
                         defaultValue='beta57'
                     />
                     <MiniMaxH3LatentUpscale />
+                    <H3SparseAttention />
                     <MiniMaxH3SpectrumControls />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />

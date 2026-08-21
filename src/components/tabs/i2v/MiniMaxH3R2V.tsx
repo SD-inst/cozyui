@@ -7,6 +7,7 @@ import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { LengthInput } from '../../controls/LengthSlider';
 import { MiniMaxH3LatentUpscale } from '../../controls/MiniMaxH3LatentUpscale';
+import { H3SparseAttention } from '../../controls/H3SparseAttention';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { SectionAccordion } from '../../controls/SectionAccordion';
@@ -553,6 +554,7 @@ const Content = () => {
                         defaultValue='beta57'
                     />
                     <MiniMaxH3LatentUpscale />
+                    <H3SparseAttention />
                     <MiniMaxH3SpectrumControls />
                     <ReferenceScaling name='ref_image_size' />
                     <VideoInterpolationSlider />
