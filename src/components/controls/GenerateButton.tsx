@@ -37,6 +37,7 @@ import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
 import { controlType } from '../../redux/config';
 import { ConnectionIndicator } from './ConnectionIndicator';
+import { hasRegisteredField } from '../../utils/registeredFields';
 
 type error = {
     controls: string[];
@@ -110,7 +111,7 @@ export const GenerateButton = ({
         disabled ||
         missingValues;
     const [errors, setErrors] = useState<error>(noErrors);
-    const { getValues } = useFormContext();
+    const { getValues, control } = useFormContext();
     const tab_name = useTabName();
     const { setValue } = useContext(TabContext);
     const { api, controls } = useAPI();
@@ -208,7 +209,13 @@ export const GenerateButton = ({
         const vals = getValues();
         for (const k in vals) {
             if (!(k in controls)) {
-                setErrors((e) => ({ ...e, api: [...e.api, k] }));
+                if (hasRegisteredField(control, k)) {
+                    // A control is mounted for this field but it has no
+                    // config entry — a developer error, surface it as before.
+                    setErrors((e) => ({ ...e, api: [...e.api, k] }));
+                }
+                // Otherwise it's a leftover value with no control bound to it:
+                // drop it silently so it stops triggering the error.
                 delete vals[k];
             }
         }
