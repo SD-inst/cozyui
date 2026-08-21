@@ -12,6 +12,10 @@ import { settings } from './settings';
 import { useTabName } from '../components/contexts/TabContext';
 import { useTranslate } from '../i18n/I18nContext';
 import { filterFormValues } from '../utils/filterFormValues';
+import {
+    buildNodeTimings,
+    filterNodeTimings,
+} from '../utils/nodeTimings';
 
 export const useSaveToHistory = () => {
     const tr = useTranslate();
@@ -20,6 +24,8 @@ export const useSaveToHistory = () => {
     const { id, type } = useResultParam();
     const tab_name = useTabName();
     const { start_ts, end_ts, status } = useAppSelector((s) => s.progress);
+    const node_events = useAppSelector((s) => s.progress.node_events);
+    const api = useAppSelector((s) => s.tab.api);
     const { action, tab, values } = useAppSelector((s) => s.tab.params);
     const save_locally = useBooleanSetting(settings.save_outputs_locally);
     const save_history = useBooleanSetting(settings.save_history);
@@ -38,6 +44,13 @@ export const useSaveToHistory = () => {
         ) {
             return;
         }
+        // Per-node timings of this run (for comparing generation phases);
+        // labels are resolved from the workflow sent to the server
+        const timings = filterNodeTimings(
+            buildNodeTimings(node_events, start_ts, api, end_ts)
+        );
+        console.info('[node_timings]', timings.length ? timings : 'none collected');
+        const timingsJson = timings.length ? JSON.stringify(timings) : undefined;
         // mark all as saved locally to prevent duplicates from other tabs later
         const saved_results = results
             .filter((r: any) => !r.saved_locally)
@@ -74,6 +87,7 @@ export const useSaveToHistory = () => {
                     type,
                     node_id: id,
                     params: JSON.stringify({ tab, values: filterFormValues(values) }),
+                    timings: timingsJson,
                     url: urls,
                     data,
                     mark: markEnum.NONE,
@@ -102,6 +116,7 @@ export const useSaveToHistory = () => {
                             type,
                             node_id: id,
                             params: JSON.stringify({ tab, values: filterFormValues(values) }),
+                            timings: timingsJson,
                             url,
                             data,
                             mark: markEnum.NONE,
@@ -131,10 +146,12 @@ export const useSaveToHistory = () => {
             });
     }, [
         action,
+        api,
         apiUrl,
         dispatch,
         end_ts,
         id,
+        node_events,
         results,
         save_history,
         save_locally,

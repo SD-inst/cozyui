@@ -5,6 +5,8 @@ import { useTranslate, useTranslateReady } from '../i18n/I18nContext';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { initPreview, setFrame } from '../redux/preview';
 import {
+    addNodeEvent,
+    clearNodeEvents,
     setConnected,
     setCurrentNode,
     setGenerationEnd,
@@ -29,6 +31,7 @@ export type WSHandlers = {
 export const WSReceiver = () => {
     const lastProgressUpdate = useRef<any>({});
     const lastProgressUpdateTO = useRef(0);
+    const lastProgressNode = useRef('');
     const tr = useTranslate();
     const tr_ready = useTranslateReady();
     const dispatch = useAppDispatch();
@@ -44,6 +47,7 @@ export const WSReceiver = () => {
     const client_id = useAppSelector((s) => s.config.client_id);
     const apiUrl = useAppSelector((s) => s.config.api);
     const status = useAppSelector((s) => s.progress.status);
+    const node_events = useAppSelector((s) => s.progress.node_events);
     lastProgressUpdate.current.status = status;
     const handleMessage = useEventCallback((ev: MessageEvent) => {
         if (ev.data instanceof ArrayBuffer) {
@@ -72,11 +76,28 @@ export const WSReceiver = () => {
                 reset();
                 break;
             case 'execution_start':
+                // The proxy may re-send execution_start mid-run (e.g. after a
+                // WS reconnect); keep the events collected so far in that case.
+                if (status === statusEnum.RUNNING && node_events.length > 0) {
+                    console.warn(
+                        '[node_events] execution_start mid-run, keeping collected events'
+                    );
+                } else {
+                    dispatch(clearNodeEvents());
+                }
+                lastProgressNode.current = '';
                 dispatch(setStatus(statusEnum.RUNNING));
                 dispatch(setGenerationStart());
                 break;
             case 'executed':
                 updateNoCache();
+                dispatch(
+                    addNodeEvent({
+                        node: j.data.node || '',
+                        ts: new Date().getTime(),
+                        type: 'executed',
+                    })
+                );
                 dispatch(
                     addResult({
                         prompt_id: j.data.prompt_id,
@@ -87,11 +108,29 @@ export const WSReceiver = () => {
                 break;
             case 'executing':
                 dispatch(setCurrentNode(j.data.node || ''));
+                dispatch(
+                    addNodeEvent({
+                        node: j.data.node || '',
+                        ts: new Date().getTime(),
+                        type: 'executing',
+                    })
+                );
                 break;
             case 'status':
                 dispatch(setQueue(j.data.status?.exec_info?.queue_remaining));
                 break;
             case 'progress':
+                // node boundary marker (backup for executing/executed)
+                if (j.data.node && j.data.node !== lastProgressNode.current) {
+                    lastProgressNode.current = j.data.node;
+                    dispatch(
+                        addNodeEvent({
+                            node: j.data.node,
+                            ts: new Date().getTime(),
+                            type: 'progress',
+                        })
+                    );
+                }
                 // rate limit progress updates to not trigger React
                 // store the latest progress in ref, update once in 100 ms
                 lastProgressUpdate.current = {

@@ -14,11 +14,13 @@ import {
     CardContent,
     CardHeader,
 } from '@mui/material';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
 import { markEnum, TaskResult } from './db';
 import { HistoryCardContent } from './HistoryCardContent';
+import { NodeTimingsBar } from './NodeTimingsBar';
+import { NodeTiming } from '../../utils/nodeTimings';
 import { HistoryCardMenu } from './HistoryCardMenu';
 import { LoadParamsButton } from './LoadParamsButton';
 import { DeleteButton } from './DeleteButton';
@@ -58,6 +60,16 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     }
     const filename = new URL(dlUrl).searchParams.get('filename') || '';
     const duration = formatDuration(output.duration / 1000);
+    const timings = useMemo(() => {
+        if (!output.timings) {
+            return null;
+        }
+        try {
+            return JSON.parse(output.timings) as NodeTiming[];
+        } catch {
+            return null;
+        }
+    }, [output.timings]);
     const params = JSON.parse(output.params || '');
     const tab = params.tab;
     return (
@@ -97,6 +109,9 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
             />
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
+                    {timings?.length ? (
+                        <NodeTimingsBar timings={timings} totalMs={output.duration} />
+                    ) : null}
                     <HistoryCardContent
                         params={output.params}
                         type={output.type}

@@ -5,8 +5,14 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
     Tab,
     Tabs,
+    Typography,
     useTheme,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -19,9 +25,12 @@ import {
     useState,
 } from 'react';
 import ReactDiffViewer from 'react-diff-viewer-continued';
+import { formatDuration } from '../../hooks/useTaskDuration';
+import { NodeTiming } from '../../utils/nodeTimings';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContext } from '../contexts/CompareContext';
+import { TaskResult } from './db';
 import { db } from './db';
 import Lightbox from 'yet-another-react-lightbox';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -184,6 +193,164 @@ const VideoCompare = () => {
     );
 };
 
+const getParamValues = (task?: TaskResult): any => {
+    if (!task?.params) {
+        return {};
+    }
+    try {
+        return JSON.parse(task.params).values || {};
+    } catch {
+        return {};
+    }
+};
+
+const parseTimings = (task?: TaskResult): NodeTiming[] => {
+    if (!task?.timings) {
+        return [];
+    }
+    try {
+        return JSON.parse(task.timings) as NodeTiming[];
+    } catch {
+        return [];
+    }
+};
+
+// Side-by-side per-node timings of two runs. Phases are matched by node id
+// (static nodes keep the same id across runs of the same tab). Sampler
+// phases are additionally shown normalized per step, since their duration
+// depends on the steps parameter.
+const TimingsCompare = () => {
+    const tr = useTranslate();
+    const { A_id, B_id } = useContext(CompareContext);
+    const tasks = useLiveQuery(
+        () =>
+            Promise.all([
+                db.taskResults.get(A_id || 0),
+                db.taskResults.get(B_id || 0),
+            ]),
+        [A_id, B_id]
+    );
+    const taskA = tasks?.[0];
+    const taskB = tasks?.[1];
+    const tA = useMemo(() => parseTimings(taskA), [taskA]);
+    const tB = useMemo(() => parseTimings(taskB), [taskB]);
+    const rows = useMemo(() => {
+        const bByNode = new Map(tB.map((t) => [t.node, t]));
+        const list: {
+            label: string;
+            a?: NodeTiming;
+            b?: NodeTiming;
+        }[] = tA.map((t) => ({
+            label: t.label,
+            a: t,
+            b: bByNode.get(t.node),
+        }));
+        const aNodes = new Set(tA.map((t) => t.node));
+        for (const t of tB) {
+            if (!aNodes.has(t.node)) {
+                list.push({ label: t.label, a: undefined, b: t });
+            }
+        }
+        return list;
+    }, [tA, tB]);
+    if (!tasks || !tasks[0] || !tasks[1]) {
+        return null;
+    }
+    const valuesA = getParamValues(tasks[0]);
+    const valuesB = getParamValues(tasks[1]);
+    const stepsA = Number(valuesA.steps) || 0;
+    const stepsB = Number(valuesB.steps) || 0;
+    const rate = (t?: NodeTiming, steps = 0) => {
+        if (!t || !steps || !/Sampler/i.test(t.cls || t.label)) {
+            return '—';
+        }
+        return `${(t.ms / steps / 1000).toFixed(2)} ${tr('controls.per_step')}`;
+    };
+    if (!tA.length && !tB.length) {
+        return (
+            <Typography variant='body1' align='center' sx={{ my: 2 }}>
+                {tr('controls.no_timings')}
+            </Typography>
+        );
+    }
+    return (
+        <Box>
+            <Typography
+                variant='body2'
+                color='text.secondary'
+                sx={{ mb: 1, lineHeight: 1.6 }}
+            >
+                A: {new Date(tasks[0].timestamp).toLocaleString()} ·{' '}
+                {tr('controls.steps')}: {stepsA || '—'} ·{' '}
+                {tr('controls.length')}: {valuesA.length ?? '—'}
+                <br />
+                B: {new Date(tasks[1].timestamp).toLocaleString()} ·{' '}
+                {tr('controls.steps')}: {stepsB || '—'} ·{' '}
+                {tr('controls.length')}: {valuesB.length ?? '—'}
+            </Typography>
+            <Table size='small'>
+                <TableHead>
+                    <TableRow>
+                        <TableCell>{tr('controls.phase')}</TableCell>
+                        <TableCell align='right'>A</TableCell>
+                        <TableCell align='right'>B</TableCell>
+                        <TableCell align='right'>Δ</TableCell>
+                        <TableCell align='right'>
+                            A ({tr('controls.per_step')})
+                        </TableCell>
+                        <TableCell align='right'>
+                            B ({tr('controls.per_step')})
+                        </TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {rows.map((r, i) => {
+                        const delta = r.a && r.b ? r.b.ms - r.a.ms : null;
+                        return (
+                            <TableRow key={i + ':' + (r.a?.node || r.b?.node)}>
+                                <TableCell>{r.label}</TableCell>
+                                <TableCell align='right'>
+                                    {r.a
+                                        ? formatDuration(r.a.ms / 1000)
+                                        : '—'}
+                                </TableCell>
+                                <TableCell align='right'>
+                                    {r.b
+                                        ? formatDuration(r.b.ms / 1000)
+                                        : '—'}
+                                </TableCell>
+                                <TableCell
+                                    align='right'
+                                    sx={{
+                                        color:
+                                            delta === null
+                                                ? 'inherit'
+                                                : delta > 0
+                                                  ? 'error.main'
+                                                  : 'success.main',
+                                    }}
+                                >
+                                    {delta === null
+                                        ? '—'
+                                        : `${delta > 0 ? '+' : '-'}${Math.abs(
+                                              delta / 1000,
+                                          ).toFixed(1)} s`}
+                                </TableCell>
+                                <TableCell align='right'>
+                                    {rate(r.a, stepsA)}
+                                </TableCell>
+                                <TableCell align='right'>
+                                    {rate(r.b, stepsB)}
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
+                </TableBody>
+            </Table>
+        </Box>
+    );
+};
+
 export const DiffViewer = () => {
     const [diffJsonWords, setDiffJsonWords] = useState();
     const [tab, setTab] = useState('json');
@@ -253,6 +420,10 @@ export const DiffViewer = () => {
                                 label={tr('controls.tab_media_diff')}
                                 value='video'
                             />
+                            <Tab
+                                label={tr('controls.tab_timings_diff')}
+                                value='timings'
+                            />
                         </Tabs>
                         {tab === 'json' ? (
                             <ReactDiffViewer
@@ -264,6 +435,8 @@ export const DiffViewer = () => {
                                 hideLineNumbers
                                 styles={{ diffContainer: { minWidth: 200 } }}
                             />
+                        ) : tab === 'timings' ? (
+                            <TimingsCompare />
                         ) : (
                             <VideoCompare />
                         )}

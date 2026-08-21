@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { NodeEvent } from '../utils/nodeTimings';
 
 export enum statusEnum {
     WAITING = 'Waiting...',
@@ -22,6 +23,7 @@ const progressSlice = createSlice({
         start_ts: 0,
         end_ts: 0,
         connected: false,
+        node_events: [] as NodeEvent[],
     },
     reducers: {
         setMin: (s, action: PayloadAction<number>) => ({
@@ -78,6 +80,12 @@ const progressSlice = createSlice({
             ...s,
             end_ts: new Date().getTime(),
         }),
+        addNodeEvent: (s, action: PayloadAction<NodeEvent>) => {
+            s.node_events.push(action.payload);
+        },
+        clearNodeEvents: (s) => {
+            s.node_events = [];
+        },
         setConnected: (s, action: PayloadAction<boolean>) => ({
             ...s,
             connected: action.payload,
@@ -97,6 +105,8 @@ export const {
         clearGenerationTS,
         setGenerationStart,
         setGenerationEnd,
+        addNodeEvent,
+        clearNodeEvents,
         setConnected,
     },
 } = progressSlice;

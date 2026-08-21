@@ -939,6 +939,18 @@ yarn lint --fix      # runs eslint . --fix
 
 `yarn lint` combines linting and typecheck in one command. TypeScript uses `tsc -b` (project references mode) to correctly resolve all files and catch module errors.
 
+### Testing (mandatory before deploy)
+
+Tests run with **Vitest** (config in [`vitest.config.ts`](vitest.config.ts), jsdom environment, `@testing-library/react` for components). **`yarn build` runs the full test suite and fails if any test fails** — a deployable build cannot be produced with a red suite:
+
+```bash
+yarn test            # runs the full suite once (vitest run)
+yarn test:watch      # dev mode (vitest)
+yarn build           # tsc -b && vitest run && vite build
+```
+
+Test files are colocated with the code as `*.test.ts(x)` under `src/` and are type-checked by `tsc -b` (part of the app project, included by `tsconfig.app.json`). Pure logic lives in `src/utils/*` and `src/api/utils.ts`; keep it free of React so it stays testable without jsdom. Component tests use the `@testing-library/jest-dom` matchers — a test file using them must `import '@testing-library/jest-dom/vitest'` for the types (the runtime setup already loads it via `vitest.setup.ts`).
+
 ## Kilo code notes
 
 If the user gives you a path to an image or a document (docx/xlsx etc.), use the read tool to look at it. Despite the tool description you DO have vision support and CAN see images and read documents.

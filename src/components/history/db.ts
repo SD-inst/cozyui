@@ -11,6 +11,7 @@ export interface TaskResult {
     duration: number;
     url: string | string[];
     data?: Blob | Blob[];
+    timings?: string; // JSON.stringify(NodeTiming[])
     node_id: string;
     type: string;
     params?: string;
