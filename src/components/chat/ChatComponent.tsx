@@ -218,7 +218,6 @@ export const ChatComponent = ({
     };
 
     const handleRegenerate = (assistantIndex: number) => {
-        const contextAbove = messages.slice(0, assistantIndex - 1);
         const userMessage = messages
             .slice(0, assistantIndex)
             .reverse()
@@ -226,9 +225,10 @@ export const ChatComponent = ({
         if (!userMessage) {
             return;
         }
+        const userIndex = messages.indexOf(userMessage);
         sendMessage(
             { role: 'user', content: userMessage.content },
-            contextAbove,
+            messages.slice(0, userIndex),
         );
     };
 

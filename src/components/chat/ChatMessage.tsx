@@ -201,40 +201,42 @@ export const ChatMessage = ({
                     })()
                 )}
             </CardContent>
-            {role === 'assistant' && onSendToPrompt && (
+            {role === 'assistant' && (onSendToPrompt || onRegenerate) && (
                 <CardActions>
-                    <Button
-                        variant='contained'
-                        size='small'
-                        color='primary'
-                        startIcon={
-                            <Avatar
-                                sx={{
-                                    width: 20,
-                                    height: 20,
-                                    bgcolor: 'secondary.main',
-                                    color: 'secondary.contrastText',
-                                }}
-                            >
-                                <Person sx={{ fontSize: 12 }} />
-                            </Avatar>
-                        }
-                        onClick={() => {
-                            const text =
-                                typeof content === 'string' ? content : '';
-                            if (text) {
-                                onSendToPrompt(text);
+                    {onSendToPrompt && (
+                        <Button
+                            variant='contained'
+                            size='small'
+                            color='primary'
+                            startIcon={
+                                <Avatar
+                                    sx={{
+                                        width: 20,
+                                        height: 20,
+                                        bgcolor: 'secondary.main',
+                                        color: 'secondary.contrastText',
+                                    }}
+                                >
+                                    <Person sx={{ fontSize: 12 }} />
+                                </Avatar>
                             }
-                        }}
-                        sx={{
-                            boxShadow: 1,
-                            '&:hover': {
-                                boxShadow: 2,
-                            },
-                        }}
-                    >
-                        {tr('controls.send_to_prompt')}
-                    </Button>
+                            onClick={() => {
+                                const text =
+                                    typeof content === 'string' ? content : '';
+                                if (text) {
+                                    onSendToPrompt(text);
+                                }
+                            }}
+                            sx={{
+                                boxShadow: 1,
+                                '&:hover': {
+                                    boxShadow: 2,
+                                },
+                            }}
+                        >
+                            {tr('controls.send_to_prompt')}
+                        </Button>
+                    )}
                     {onRegenerate && (
                         <Button
                             variant='outlined'
