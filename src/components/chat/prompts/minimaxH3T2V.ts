@@ -40,13 +40,13 @@ Write camera motion as a natural English action inside the shot, not as labels s
 
 SPEAKERS, DIALOGUE, AND SINGING
 Subjects who speak, sing, or produce an off-screen human voice use stable IDs such as (S1) and (S2). When several already-numbered speakers speak or sing together, use a compound ID such as (S1,S2). A speaker keeps the same ID across shots. Characters who never vocalize receive no speaker ID.
-Always write spoken and sung content in English double quotation marks. Inside the quotation marks include only the language tag and the actual user-provided spoken content, preserving every original word and punctuation mark verbatim, without translation or rewrite.
-When a speaker first appears, provide enough visual and audio context to establish a stable identity: character type, age, gender, whether the person is on-screen, pitch, timbre, speaking rate, or accent. Place the identifying phrase, the ID, the action, and the delivery outside the quotation marks:
-The young woman with a quiet, breathy voice (S1) says: "[English] I get off at the next station."
-The two children (S1,S2) shout together, "[English] Wait for us!"
+Write spoken content inside <d>...</d> tags: include only the language tag and the actual user-provided spoken content, preserving every original word and punctuation mark verbatim, without translation or rewrite. Write sung content in English double quotation marks, with only the language tag and the actual user-provided sung content, preserving every original word and punctuation mark verbatim, without translation or rewrite.
+When a speaker first appears, provide enough visual and audio context to establish a stable identity: character type, age, gender, whether the person is on-screen, pitch, timbre, speaking rate, or accent. Place the identifying phrase, the ID, the action, and the delivery outside the <d> tag:
+The young woman with a quiet, breathy voice (S1) says: <d>[English] I get off at the next station.</d>
+The two children (S1,S2) shout together, <d>[English] Wait for us!</d>
 For voiceover use the exact phrase "says in an off-screen voiceover", and immediately after the quoted voiceover state that the corresponding on-screen character's lips remain closed:
-The man (S1) says in an off-screen voiceover: "[English] I still remember that road." while his lips remain completely closed.
-When the same line of dialogue or lyrics crosses a cut, use <scenetrans> at the connecting point in both parts and explicitly state that the audio continues across the cut, for example with "continues seamlessly across the cut", "continues uninterrupted into the next shot", "carries over from the previous shot", or "remains audible across the transition". Use <cutoff> when speech is truncated by the end of the video.
+The man (S1) says in an off-screen voiceover: <d>[English] I still remember that road.</d> while his lips remain completely closed.
+When the same line of dialogue or lyrics crosses a cut, use <scenetrans> at the connecting point in both parts and explicitly state that the audio continues across the cut, for example with "continues seamlessly across the cut", "continues uninterrupted into the next shot", "carries over from the previous shot", or "remains audible across the transition". Use <|cutoff|> when speech is truncated by the end of the video.
 
 ON-SCREEN TEXT
 Any banner, sign, label, subtitle, or neon text that is actually visible on screen goes in English double quotation marks, with the original text and punctuation preserved verbatim, without translation. Example: A red neon sign reading "营业中" glows above the doorway.
@@ -64,7 +64,7 @@ aspect=16:9
 description=A baker opens the shutters of a small street bakery before sunrise, places a fresh loaf on the wooden counter and says "First batch of the morning."
 
 Assistant:
-integrated_multimodal_description: [Shot 1] Live-action, cinematic, a medium-wide shot frames a baker opening the shutters of a small street bakery before sunrise. The camera pushes in with small amplitude at slow speed as the middle-aged baker with a calm, slightly raspy voice (S1) places a fresh loaf on the wooden counter and says: "[English] First batch of the morning." [Shot 2] At 00:05.000, the camera cuts to a close-up of steam rising from the sliced bread while the baker's final words carry over from the previous shot.
+integrated_multimodal_description: [Shot 1] Live-action, cinematic, a medium-wide shot frames a baker opening the shutters of a small street bakery before sunrise. The camera pushes in with small amplitude at slow speed as the middle-aged baker with a calm, slightly raspy voice (S1) places a fresh loaf on the wooden counter and says: <d>[English] First batch of the morning.</d> [Shot 2] At 00:05.000, the camera cuts to a close-up of steam rising from the sliced bread while the baker's final words carry over from the previous shot.
 
 overall_soundscape: Wooden shutters scrape open over a quiet street as trays clink softly inside the bakery. The doorbell rings once, followed by light footsteps and the crisp sound of bread being sliced.
 

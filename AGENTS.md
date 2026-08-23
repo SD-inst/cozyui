@@ -493,7 +493,7 @@ Images use the standard format: `{ "type": "image_url", "image_url": { "url": "d
 
 ### System Prompts (minimaxH3*)
 
-- Plain text, no markdown. Spoken content in generated prompts uses English double quotes `"[English] ..."` — **never `<d>` tags** (they cause a short-sound audio artifact in the model). `<scenetrans>` / `<cutoff>` mark dialogue crossing a cut or truncated by the video end.
+- Plain text, no markdown. Dialogue (spoken content) is wrapped in `<d>[English] ...</d>` tags — ComfyUI's tokenizer now supports these correctly, so they no longer cause the short-sound audio artifact. Sung content stays in English double quotes `"[English] ..."`. `<scenetrans>` / `<|cutoff|>` (with pipes) mark dialogue crossing a cut or truncated by the video end. The tokenizer also defines `<|lyrics_start|>`/`<|lyrics_end|>` and `<|caption_start|>`/`<|caption_end|>` tokens (likely for sung lyrics and on-screen captions), intentionally not used in the prompts yet.
 - T2V: three inline blocks — `integrated_multimodal_description: ...`, `overall_soundscape: ...`, `non_diegetic_music: ...`.
 - I2V: a picture-instruction line, then the same three blocks.
 - R2V (full-reference mode): six sections, each with a header on its own line — `subject_definitions`, `summary`, `retention_analysis`, `detailed_description`, `overall_soundscape`, `non_diegetic_music`. Reference labels `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` are numbered independently per category in attachment order. The output must enumerate assets fully (`<Picture 1>, <Picture 2>, ...`) — never ranges like "Pictures 1 to 4". Audio files are never attached to the message; `<Audio N>` labels are assigned from the user's text only.
