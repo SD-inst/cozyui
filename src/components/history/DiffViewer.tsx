@@ -265,11 +265,15 @@ const TimingsCompare = () => {
             >
                 A: {new Date(tasks[0].timestamp).toLocaleString()} ·{' '}
                 {tr('controls.steps')}: {stepsA || '—'} ·{' '}
-                {tr('controls.length')}: {valuesA.length ?? '—'}
+                {tr('controls.length')}: {valuesA.length ?? '—'} ·{' '}
+                {tr('controls.total_time')}:{' '}
+                {formatDuration(tasks[0].duration / 1000)}
                 <br />
                 B: {new Date(tasks[1].timestamp).toLocaleString()} ·{' '}
                 {tr('controls.steps')}: {stepsB || '—'} ·{' '}
-                {tr('controls.length')}: {valuesB.length ?? '—'}
+                {tr('controls.length')}: {valuesB.length ?? '—'} ·{' '}
+                {tr('controls.total_time')}:{' '}
+                {formatDuration(tasks[1].duration / 1000)}
             </Typography>
             <Table size='small'>
                 <TableHead>
@@ -288,7 +292,7 @@ const TimingsCompare = () => {
                 </TableHead>
                 <TableBody>
                     {rows.map((r, i) => {
-                        const delta = r.a && r.b ? r.b.ms - r.a.ms : null;
+                        const delta = r.a && r.b ? r.a.ms - r.b.ms : null;
                         return (
                             <TableRow key={i + ':' + (r.a?.node || r.b?.node)}>
                                 <TableCell>{r.label}</TableCell>

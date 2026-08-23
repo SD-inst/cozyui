@@ -144,6 +144,7 @@ const translation = {
         node_timings: 'Node timings',
         phase: 'phase',
         per_step: 's/step',
+        total_time: 'total time',
         virtual_vram: 'virtual VRAM',
         riflex: 'RIFLEx',
         compile_model: 'compile model',

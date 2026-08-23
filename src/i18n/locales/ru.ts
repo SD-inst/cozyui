@@ -143,6 +143,7 @@ const translation = {
         node_timings: 'Тайминги нод',
         phase: 'фаза',
         per_step: 'с/шаг',
+        total_time: 'общее время',
         virtual_vram: 'виртуальная VRAM',
         riflex: 'RIFLEx',
         compile_model: 'скомпилировать модель',
