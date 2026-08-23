@@ -330,6 +330,7 @@ export const applyLatentUpscale = (
                 device: 'cuda',
                 precision: 'fp32',
                 latent: [':separate', 0],
+                enable_chunking: false,
             },
             class_type: 'MinimaxH3LatentUpscaler3D',
             _meta: { title: 'Minimax H3 Latent Upscaler (3D)' },
