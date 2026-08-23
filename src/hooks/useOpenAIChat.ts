@@ -50,6 +50,7 @@ export interface UseOpenAIChatReturn {
     ) => Promise<void>;
     abort: () => void;
     reset: () => void;
+    resetTo: (upToIndex: number) => void;
 }
 
 export function useOpenAIChat({
@@ -79,6 +80,12 @@ export function useOpenAIChat({
         setError(null);
         db.chatLogs.where({ tab, id }).delete();
     }, [id, initialMessages, tab]);
+
+    const resetTo = useCallback((upToIndex: number) => {
+        setMessagesState((prev) => prev.slice(0, upToIndex));
+        setIsComplete(true);
+        setError(null);
+    }, []);
 
     const abort = useCallback(() => {
         if (abortControllerRef.current) {
@@ -284,5 +291,6 @@ export function useOpenAIChat({
         sendMessage,
         abort,
         reset,
+        resetTo,
     };
 }

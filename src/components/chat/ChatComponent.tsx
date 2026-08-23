@@ -115,6 +115,7 @@ export const ChatComponent = ({
         error,
         sendMessage,
         reset,
+        resetTo,
         abort,
         isComplete,
         isGenerating,
@@ -217,6 +218,19 @@ export const ChatComponent = ({
         }, 100);
     };
 
+    const handleEditMessage = (idx: number) => {
+        const msg = messages[idx];
+        if (msg.role !== 'user') {
+            return;
+        }
+        const text = extractFirstMessageText(msg.content);
+        resetTo(idx);
+        setTimeout(() => {
+            form.setValue('input', text);
+            inputRef.current?.focus();
+        }, 100);
+    };
+
     const handleRegenerate = (assistantIndex: number) => {
         const userMessage = messages
             .slice(0, assistantIndex)
@@ -295,6 +309,13 @@ export const ChatComponent = ({
                                                 !isGenerating
                                                     ? () =>
                                                           handleRegenerate(idx)
+                                                    : undefined
+                                            }
+                                            onEdit={
+                                                msg.role === 'user' &&
+                                                !isGenerating
+                                                    ? () =>
+                                                          handleEditMessage(idx)
                                                     : undefined
                                             }
                                         />

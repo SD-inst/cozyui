@@ -1,4 +1,4 @@
-import { Person, Refresh, SmartToy } from '@mui/icons-material';
+import { Edit, Person, Refresh, SmartToy } from '@mui/icons-material';
 import {
     Avatar,
     Box,
@@ -29,6 +29,7 @@ interface ChatMessageProps {
     content: string | ImagePart[];
     onSendToPrompt?: (text: string) => void;
     onRegenerate?: () => void;
+    onEdit?: () => void;
     isComplete?: boolean;
     msgRef?: RefObject<HTMLElement>;
 }
@@ -39,6 +40,7 @@ export const ChatMessage = ({
     onSendToPrompt,
     msgRef,
     onRegenerate,
+    onEdit,
 }: ChatMessageProps) => {
     const tr = useTranslate();
 
@@ -201,9 +203,10 @@ export const ChatMessage = ({
                     })()
                 )}
             </CardContent>
-            {role === 'assistant' && (onSendToPrompt || onRegenerate) && (
+            {((role === 'assistant' && (onSendToPrompt || onRegenerate)) ||
+                (role === 'user' && onEdit)) && (
                 <CardActions>
-                    {onSendToPrompt && (
+                    {role === 'assistant' && onSendToPrompt && (
                         <Button
                             variant='contained'
                             size='small'
@@ -251,6 +254,22 @@ export const ChatMessage = ({
                             }}
                         >
                             {tr('controls.regenerate')}
+                        </Button>
+                    )}
+                    {onEdit && (
+                        <Button
+                            variant='outlined'
+                            size='small'
+                            color='secondary'
+                            startIcon={<Edit sx={{ fontSize: 16 }} />}
+                            onClick={onEdit}
+                            sx={{
+                                '&:hover': {
+                                    backgroundColor: 'secondary.light',
+                                },
+                            }}
+                        >
+                            {tr('controls.chat_edit')}
                         </Button>
                     )}
                 </CardActions>

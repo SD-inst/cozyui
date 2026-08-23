@@ -286,6 +286,7 @@ const translation = {
         chat_new_chat: 'New Chat',
         chat_refine: 'Refine',
         chat_clear: 'Clear',
+        chat_edit: 'Edit',
         chat_refine_confirm: 'Refine prompt',
         chat_refine_confirm_content:
             'The current chat will be cleared and the current prompt will be loaded into the chat input for refinement.',

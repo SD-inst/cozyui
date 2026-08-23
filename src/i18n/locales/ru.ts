@@ -285,6 +285,7 @@ const translation = {
         chat_new_chat: 'Новый чат',
         chat_refine: 'Уточнить',
         chat_clear: 'Очистить',
+        chat_edit: 'Редактировать',
         chat_refine_confirm: 'Уточнить промпт',
         chat_refine_confirm_content:
             'Текущий чат будет очищен, а текущий промпт подставлен в поле ввода чата для уточнения.',
