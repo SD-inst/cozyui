@@ -7,6 +7,7 @@ import { autoscrollSlotProps } from '../controls/utils';
 import { SectionAccordion } from '../controls/SectionAccordion';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { LanguageSelect } from './LanguageSelect';
+import { LLMSettings } from './LLMSettings';
 import { NotificationSetting } from './NotificationSetting';
 import { SettingCheckbox } from './SettingCheckbox';
 import { ImportExport } from '../history/ImportExport';
@@ -48,6 +49,7 @@ export const AppSettings = () => {
                     <SettingCheckbox name={settings.backup_uploads} />
                     <SettingCheckbox name={settings.chat_stream} />
                 </Box>
+                <LLMSettings />
                 {tag_enabled && (
                     <Box
                         mb={1}

@@ -319,6 +319,8 @@ const translation = {
         tag_enabled_tabs: 'Tags enabled on tabs',
         activation_tags_enabled_tabs: 'Activation tags enabled on tabs',
         chat_stream: 'Chat stream',
+        llm_url: 'LLM URL',
+        llm_model: 'LLM model',
         notification: 'Notification sound',
         notification_name: 'Sound effect #%{number}',
         notification_none: 'None',

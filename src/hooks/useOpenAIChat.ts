@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { llmConfigType } from '../redux/config';
-import { useAppSelector } from '../redux/hooks';
-import { RootState } from '../redux/store';
 import { useMessageProcessor } from './useMessageProcessor';
 import { useBooleanSetting } from './useSetting';
 import { settings } from './settings';
+import { useLLMConfig } from './useLLMConfig';
 import { db } from '../components/history/db';
 import { useTabName } from '../components/contexts/TabContext';
 
@@ -58,9 +56,7 @@ export function useOpenAIChat({
     onError,
     id = 'main',
 }: UseOpenAIChatOptions): UseOpenAIChatReturn {
-    const llmConfig: llmConfigType = useAppSelector(
-        (state: RootState) => state.config.llm || ({} as llmConfigType),
-    );
+    const llmConfig = useLLMConfig();
 
     const [messagesState, setMessagesState] =
         useState<OpenAIMessage[]>(initialMessages);

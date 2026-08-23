@@ -12,5 +12,7 @@ export enum settings {
     tag_enabled_tabs = 'tag_enabled_tabs',
     activation_tags_enabled_tabs = 'activation_tags_enabled_tabs',
     chat_stream = 'chat_stream',
+    llm_url = 'llm_url',
+    llm_model = 'llm_model',
     last_active_tab = 'last_active_tab',
 }

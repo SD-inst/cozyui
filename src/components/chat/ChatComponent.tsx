@@ -28,7 +28,7 @@ import {
     useOpenAIChat,
 } from '../../hooks/useOpenAIChat';
 import { useTranslate } from '../../i18n/I18nContext';
-import { useAppSelector } from '../../redux/hooks';
+import { useLLMConfig } from '../../hooks/useLLMConfig';
 import { ext } from '../controls/fileExts';
 import { UploadType } from '../controls/UploadType';
 import { BouncingTextIndicator } from './BouncingTextIndicator';
@@ -65,7 +65,7 @@ export const ChatComponent = ({
     transformFirstMessage?: (text: string) => string;
 }) => {
     const tr = useTranslate();
-    const llmConfig = useAppSelector((state) => state.config.llm);
+    const llmConfig = useLLMConfig();
 
     const form = useForm({
         defaultValues: {
