@@ -14,6 +14,7 @@ import {
     useWatch,
 } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useUploadBackupGuard } from '../../hooks/useUploadBackupGuard';
 import { useTranslate } from '../../i18n/I18nContext';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
@@ -122,6 +123,7 @@ export const ArrayInput = ({
         field: { value },
     } = useController({ name, defaultValue: [] });
     const { append, update } = useFieldArray({ name });
+    useUploadBackupGuard(name, value, keyField);
     useEffect(() => {
         if (value.length < min && min > 0) {
             for (let i = 0; i < min; i++) {
