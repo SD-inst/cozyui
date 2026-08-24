@@ -233,28 +233,23 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 const resampleGraph = {
                     ':video': {
                         inputs: {
-                            video: '',
-                            force_rate: 0,
-                            custom_width: 0,
-                            custom_height: 0,
-                            frame_load_cap: 0,
-                            skip_first_frames: 0,
-                            select_every_nth: 1,
+                            file: '',
+                            'video-preview': '',
                         },
-                        class_type: 'VHS_LoadVideo',
-                        _meta: { title: 'Load Video (Upload)' },
+                        class_type: 'LoadVideo',
+                        _meta: { title: 'Load Video' },
                     },
-                    ':info': {
+                    ':components': {
                         inputs: {
-                            video_info: [':video', 3],
+                            video: [':video', 0],
                         },
-                        class_type: 'VHS_VideoInfoLoaded',
-                        _meta: { title: 'Video Info (Loaded)' },
+                        class_type: 'GetVideoComponents',
+                        _meta: { title: 'Get Video Components' },
                     },
                     ':math': {
                         inputs: {
                             expression: 'a != 24',
-                            'values.a': [':info', 0],
+                            'values.a': [':components', 2],
                         },
                         class_type: 'ComfyMathExpression',
                         _meta: { title: 'Math Expression' },
@@ -262,7 +257,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     ':resample': {
                         inputs: {
                             ckpt_name: 'rife_v4.26.safetensors',
-                            fps_in: [':info', 0],
+                            fps_in: [':components', 2],
                             fps_out: 24,
                             scale_factor: 1,
                             ensemble: true,
@@ -278,7 +273,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                             band_radius: 4,
                             band_soft_sigma: 2,
                             clear_cache_after_n_frames: 0,
-                            frames: [':video', 0],
+                            frames: [':components', 0],
                         },
                         class_type: 'RIFE_FPS_Resample',
                         _meta: { title: 'RIFE VFI FPS Resample' },
@@ -286,7 +281,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     ':switch': {
                         inputs: {
                             switch: [':math', 2],
-                            on_false: [':video', 0],
+                            on_false: [':components', 0],
                             on_true: [':resample', 0],
                         },
                         class_type: 'ComfySwitchNode',
@@ -297,9 +292,10 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 const baseID = insertGraph(api, resampleGraph);
 
                 const videoNodeID = baseID + ':video';
+                const componentsNodeID = baseID + ':components';
                 const resampleSwitchNodeID = baseID + ':switch';
 
-                api[videoNodeID].inputs.video = v.video;
+                api[videoNodeID].inputs.file = v.video;
 
                 let frameSourceId = resampleSwitchNodeID;
                 if (v.trim > 0) {
@@ -327,10 +323,10 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                             class_type: 'PrimitiveFloat',
                             _meta: { title: 'Reference scaling mpx' },
                         },
-                        ':video_info': {
-                            inputs: { video_info: [videoNodeID, 3] },
-                            class_type: 'VHS_VideoInfoLoaded',
-                            _meta: { title: 'Video Info (Loaded)' },
+                        ':size': {
+                            inputs: { image: [componentsNodeID, 0] },
+                            class_type: 'GetImageSize',
+                            _meta: { title: 'Get Image Size' },
                         },
                         ':scale': {
                             inputs: {
@@ -345,8 +341,8 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                         ':math': {
                             inputs: {
                                 expression: 'a * b / 1024 / 1024 > c',
-                                'values.a': [':video_info', 3],
-                                'values.b': [':video_info', 4],
+                                'values.a': [':size', 0],
+                                'values.b': [':size', 1],
                                 'values.c': [':scale_mpx', 0],
                             },
                             class_type: 'ComfyMathExpression',
@@ -375,7 +371,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 if (!v.no_audio) {
                     api[control.node_id].inputs[
                         'ref_video_audios.ref_video_audio_' + idx
-                    ] = [videoNodeID, 2];
+                    ] = [componentsNodeID, 1];
                 }
             });
 

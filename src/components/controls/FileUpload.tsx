@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useBackupUpload } from '../../hooks/useBackupUpload';
 import { useImageURL } from '../../hooks/useImageURL';
@@ -33,20 +34,14 @@ const style = {
     border: '1px solid gray',
 };
 
-const video_node = (video: string, format = 'AnimateDiff') => ({
+const video_node = (video: string) => ({
     inputs: {
-        video,
-        force_rate: 0,
-        custom_width: 0,
-        custom_height: 0,
-        frame_load_cap: 0,
-        skip_first_frames: 0,
-        select_every_nth: 1,
-        format,
+        file: video,
+        'video-preview': '',
     },
-    class_type: 'VHS_LoadVideo',
+    class_type: 'LoadVideo',
     _meta: {
-        title: 'Load Video (Upload) 🎥🅥🅗🅢',
+        title: 'Load Video',
     },
 });
 
@@ -95,8 +90,18 @@ export const FileUpload = ({
         (api: any, val: string, control: controlType) => {
             if (filetype === UploadType.IMAGE) {
                 api[control.node_id].inputs[control.field] = val;
+            } else if (control.format) {
+                // LTX2 I2V: consumers reference this node's [0] as frames, so make it a
+                // GetVideoComponents and keep the LoadVideo as a separate node.
+                const loadNodeID = getFreeNodeId(api) + '';
+                api[loadNodeID] = video_node(val);
+                api[control.node_id] = {
+                    inputs: { video: [loadNodeID, 0] },
+                    class_type: 'GetVideoComponents',
+                    _meta: { title: 'Get Video Components' },
+                };
             } else {
-                api[control.node_id] = video_node(val, control.format);
+                api[control.node_id] = video_node(val);
             }
             if (extraHandler) {
                 extraHandler(api, val, control, filetype);

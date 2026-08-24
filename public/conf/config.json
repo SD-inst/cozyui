@@ -1006,7 +1006,7 @@
             "controls": {
                 "video": {
                     "id": "114:1",
-                    "field": "video"
+                    "field": "file"
                 },
                 "prompt": {
                     "id": "92:3",
@@ -1415,7 +1415,7 @@
             "controls": {
                 "video": {
                     "id": "91",
-                    "field": "video"
+                    "field": "file"
                 },
                 "prompt": {
                     "id": "92",
@@ -3211,7 +3211,7 @@
             "controls": {
                 "video": {
                     "id": "4",
-                    "field": "video"
+                    "field": "file"
                 },
                 "multiplier": {
                     "id": "9",

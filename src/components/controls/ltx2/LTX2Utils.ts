@@ -17,22 +17,11 @@ export const LTXVideoHandler = (
     length: number,
     noAudio: boolean = false,
 ) => {
-    api[nodes.video_node_id].force_rate = fps;
-
     const graph: any = {
-        ':2': {
-            inputs: {
-                video_info: [nodes.video_node_id, 3],
-            },
-            class_type: 'VHS_VideoInfoLoaded',
-            _meta: {
-                title: 'Video Info (Loaded) 🎥🅥🅗🅢',
-            },
-        },
         ':1': {
             inputs: {
                 video_fps: fps,
-                video_start_time: [':2', 2],
+                video_start_time: 0,
                 video_end_time: length / fps,
                 audio_start_time: 0,
                 audio_end_time: length / fps,
@@ -47,10 +36,9 @@ export const LTXVideoHandler = (
 
     if (!noAudio) {
         graph[':1'].inputs.audio_latent = [':3', 0];
-        graph[':1'].inputs.audio_start_time = [':2', 2];
         graph[':3'] = {
             inputs: {
-                audio: [nodes.video_node_id, 2],
+                audio: [nodes.video_node_id, 1],
                 audio_vae: [nodes.audio_vae_node_id, 0],
             },
             class_type: 'LTXVAudioVAEEncode',

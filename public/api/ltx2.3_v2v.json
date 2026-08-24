@@ -12,7 +12,7 @@
             "pingpong": false,
             "save_output": true,
             "images": ["92:116", 0],
-            "audio": ["114:1", 2]
+            "audio": ["114:3", 1]
         },
         "class_type": "VHS_VideoCombine",
         "_meta": {
@@ -39,18 +39,9 @@
             "title": "Something To String"
         }
     },
-    "112": {
-        "inputs": {
-            "video_info": ["114:1", 3]
-        },
-        "class_type": "VHS_VideoInfoLoaded",
-        "_meta": {
-            "title": "Video Info (Loaded) 🎥🅥🅗🅢"
-        }
-    },
     "114": {
         "inputs": {
-            "value": ["112", 0]
+            "value": ["114:3", 2]
         },
         "class_type": "ComfyNumberConvert",
         "_meta": {
@@ -60,7 +51,7 @@
     "115": {
         "inputs": {
             "expression": "a / 2",
-            "values.a": ["112", 3]
+            "values.a": ["114:4", 0]
         },
         "class_type": "ComfyMathExpression",
         "_meta": {
@@ -70,7 +61,7 @@
     "116": {
         "inputs": {
             "expression": "a / 2",
-            "values.a": ["112", 4]
+            "values.a": ["114:4", 1]
         },
         "class_type": "ComfyMathExpression",
         "_meta": {
@@ -79,7 +70,7 @@
     },
     "119": {
         "inputs": {
-            "frames_number": ["112", 1],
+            "frames_number": ["114:4", 2],
             "frame_rate": ["114", 1],
             "batch_size": 1,
             "audio_vae": ["92:48", 0]
@@ -149,18 +140,30 @@
     },
     "114:1": {
         "inputs": {
-            "video": "",
-            "force_rate": 0,
-            "custom_width": 0,
-            "custom_height": 0,
-            "frame_load_cap": 0,
-            "skip_first_frames": 0,
-            "select_every_nth": 1,
-            "format": "LTXV"
+            "file": "",
+            "video-preview": ""
         },
-        "class_type": "VHS_LoadVideo",
+        "class_type": "LoadVideo",
         "_meta": {
-            "title": "Load Video (Upload) 🎥🅥🅗🅢"
+            "title": "Load Video"
+        }
+    },
+    "114:3": {
+        "inputs": {
+            "video": ["114:1", 0]
+        },
+        "class_type": "GetVideoComponents",
+        "_meta": {
+            "title": "Get Video Components"
+        }
+    },
+    "114:4": {
+        "inputs": {
+            "image": ["114:3", 0]
+        },
+        "class_type": "GetImageSize",
+        "_meta": {
+            "title": "Get Image Size"
         }
     },
     "92:48": {
@@ -239,7 +242,7 @@
         "inputs": {
             "width": ["115", 1],
             "height": ["116", 1],
-            "length": ["112", 1],
+            "length": ["114:4", 2],
             "batch_size": 1
         },
         "class_type": "EmptyLTXVLatentVideo",
@@ -249,7 +252,7 @@
     },
     "115:1": {
         "inputs": {
-            "frame_rate": ["112", 0],
+            "frame_rate": ["114:3", 2],
             "positive": ["92:3", 0],
             "negative": ["92:4", 0]
         },
@@ -266,7 +269,7 @@
             "negative": ["115:1", 1],
             "vae": ["92:1", 0],
             "latent": ["92:43", 0],
-            "image": ["114:1", 0]
+            "image": ["114:3", 0]
         },
         "class_type": "LTXVAddGuide",
         "_meta": {
@@ -372,7 +375,7 @@
             "negative": ["111:2", 1],
             "vae": ["92:1", 0],
             "latent": ["112:2", 0],
-            "image": ["114:1", 0]
+            "image": ["114:3", 0]
         },
         "class_type": "LTXVAddGuide",
         "_meta": {

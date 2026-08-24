@@ -10,7 +10,7 @@
       "ensemble": true,
       "scale_factor": 1,
       "frames": [
-        "4",
+        "6",
         0
       ]
     },
@@ -21,18 +21,24 @@
   },
   "4": {
     "inputs": {
-      "video": "video.mp4",
-      "force_rate": 0,
-      "custom_width": 0,
-      "custom_height": 0,
-      "frame_load_cap": 1024,
-      "skip_first_frames": 0,
-      "select_every_nth": 1,
-      "format": "None"
+      "file": "video.mp4",
+      "video-preview": ""
     },
-    "class_type": "VHS_LoadVideo",
+    "class_type": "LoadVideo",
     "_meta": {
-      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+      "title": "Load Video"
+    }
+  },
+  "6": {
+    "inputs": {
+      "video": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Get Video Components"
     }
   },
   "5": {
@@ -55,25 +61,13 @@
         0
       ],
       "audio": [
-        "4",
-        2
+        "6",
+        1
       ]
     },
     "class_type": "VHS_VideoCombine",
     "_meta": {
       "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "8": {
-    "inputs": {
-      "video_info": [
-        "4",
-        3
-      ]
-    },
-    "class_type": "VHS_VideoInfo",
-    "_meta": {
-      "title": "Video Info 🎥🅥🅗🅢"
     }
   },
   "9": {
@@ -93,8 +87,8 @@
         0
       ],
       "b": [
-        "8",
-        5
+        "6",
+        2
       ]
     },
     "class_type": "SimpleMath+",

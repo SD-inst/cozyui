@@ -33,18 +33,21 @@ export const keyframeHandler = (
         const graph: any = {
             ':1': {
                 inputs: {
-                    video: v.image,
-                    force_rate: 0,
-                    custom_width: 0,
-                    custom_height: 0,
-                    frame_load_cap: 0,
-                    skip_first_frames: 0,
-                    select_every_nth: 1,
-                    format: 'LTXV',
+                    file: v.image,
+                    'video-preview': '',
                 },
-                class_type: 'VHS_LoadVideo',
+                class_type: 'LoadVideo',
                 _meta: {
-                    title: 'Load Video (Upload) 🎥🅥🅗🅢',
+                    title: 'Load Video',
+                },
+            },
+            ':1c': {
+                inputs: {
+                    video: [':1', 0],
+                },
+                class_type: 'GetVideoComponents',
+                _meta: {
+                    title: 'Get Video Components',
                 },
             },
             ':2': {
@@ -54,7 +57,7 @@ export const keyframeHandler = (
                     vae: [vae_node_id, 0],
                     frame_idx: v.position,
                     strength: v.strength,
-                    image: [':1', 0],
+                    image: [':1c', 0],
                 },
                 class_type: 'LTXVAddGuide',
                 _meta: {
@@ -67,7 +70,7 @@ export const keyframeHandler = (
                 inputs: {
                     batch_index: v.last ? -v.trim : 0,
                     length: v.trim,
-                    image: [':1', 0],
+                    image: [':1c', 0],
                 },
                 class_type: 'ImageFromBatch',
                 _meta: {

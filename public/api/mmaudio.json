@@ -11,25 +11,60 @@
   },
   "91": {
     "inputs": {
-      "video": "",
-      "force_rate": 0,
-      "custom_width": 0,
-      "custom_height": 0,
-      "frame_load_cap": 0,
-      "skip_first_frames": 0,
-      "select_every_nth": 1,
-      "format": "None"
+      "file": "",
+      "video-preview": ""
     },
-    "class_type": "VHS_LoadVideo",
+    "class_type": "LoadVideo",
     "_meta": {
-      "title": "Load Video (Upload) 🎥🅥🅗🅢"
+      "title": "Load Video"
+    }
+  },
+  "93": {
+    "inputs": {
+      "video": [
+        "91",
+        0
+      ]
+    },
+    "class_type": "GetVideoComponents",
+    "_meta": {
+      "title": "Get Video Components"
+    }
+  },
+  "94": {
+    "inputs": {
+      "image": [
+        "93",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "95": {
+    "inputs": {
+      "expression": "a / b",
+      "values.a": [
+        "94",
+        2
+      ],
+      "values.b": [
+        "93",
+        2
+      ]
+    },
+    "class_type": "ComfyMathExpression",
+    "_meta": {
+      "title": "Duration (frames / fps)"
     }
   },
   "92": {
     "inputs": {
       "duration": [
-        "105",
-        7
+        "95",
+        1
       ],
       "steps": 25,
       "cfg": 4.5,
@@ -47,7 +82,7 @@
         0
       ],
       "images": [
-        "91",
+        "93",
         0
       ]
     },
@@ -59,8 +94,8 @@
   "97": {
     "inputs": {
       "frame_rate": [
-        "105",
-        5
+        "93",
+        2
       ],
       "loop_count": 0,
       "filename_prefix": "MMaudio",
@@ -72,7 +107,7 @@
       "pingpong": false,
       "save_output": false,
       "images": [
-        "91",
+        "93",
         0
       ],
       "audio": [
@@ -108,18 +143,6 @@
     "class_type": "MMAudioFeatureUtilsLoader",
     "_meta": {
       "title": "MMAudio FeatureUtilsLoader"
-    }
-  },
-  "105": {
-    "inputs": {
-      "video_info": [
-        "91",
-        3
-      ]
-    },
-    "class_type": "VHS_VideoInfo",
-    "_meta": {
-      "title": "Video Info 🎥🅥🅗🅢"
     }
   }
 }
