@@ -40,11 +40,12 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - I2I
         - Flux Kontext
         - Qwen Image Edit
-    - Upscale
+    - Postprocessing
         - Chroma upscale
         - SD Upscale
         - Hunyuan latent upscale
         - Video interpolation (with loop/keyframe support)
+        - Video join (combine up to 10 clips with crossfade and brightness correction)
     - T2A (Text-to-Audio)
         - StableAudio
         - MMAudio
@@ -72,11 +73,16 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - Collection cleanup by time (before/after N seconds/minutes/hours/etc.), prompt, file type
     - Compare any two results side by side, generation data and videos, to see how changes affect the result
     - Import/Export to back up the history or transfer it to another browser/device
+- Presets:
+    - Save the current tab's parameters and media (images/video/audio) as a named preset locally in your browser (IndexedDB)
+    - Apply presets from a shared panel; media is merged (deduplicated) and parameters overwritten
+    - Re-uploads files that were deleted in ComfyUI when applying a preset
 - Send results to other tabs if content type allows it (generate image => send to I2V for example)
 - Customizable audio notification when task completes
 - Localization support (English/Russian currently)
 - Many controls have tips and explanation (can be disabled in settings)
-- VRAM and speed optimizations: TeaCache, EasyCache, MultiGPU
+- VRAM and speed optimizations: TeaCache, EasyCache, MultiGPU, H3 sparse attention
+- Video preview scrubbing by pointer drag
 - Hide any model tabs you don't need
 - Danbooru tag completion
 - Optionally save uploaded files in your browser and automatically reupload them if they were deleted in ComfyUI

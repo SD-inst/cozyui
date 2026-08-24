@@ -10,6 +10,7 @@ https://github.com/facok/ComfyUI-HunyuanVideoMultiLora
 https://github.com/Fannovel16/ComfyUI-Frame-Interpolation.git
 https://github.com/filliptm/ComfyUI_Fill-ChatterBox
 https://github.com/fredconex/ComfyUI-SongBloom
+https://github.com/huixingyun/ComfyUI-SoundFlow
 https://github.com/kijai/ComfyUI-Florence2
 https://github.com/kijai/ComfyUI-HunyuanVideoWrapper
 https://github.com/kijai/ComfyUI-KJNodes
@@ -22,7 +23,9 @@ https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch
 https://github.com/nunchaku-ai/ComfyUI-nunchaku
 https://github.com/pollockjj/ComfyUI-MultiGPU
 https://github.com/pythongosssss/ComfyUI-Custom-Scripts
+https://github.com/rkfg/ComfyUI-MiniMaxH3-ToneCompensate
 https://github.com/ssitu/ComfyUI_UltimateSDUpscale
 https://github.com/Tr1dae/ComfyUI-MiniMaxH3_LatentUpscaler
 https://github.com/ussoewwin/ComfyUI-QwenImageLoraLoader.git
 https://github.com/xmarre/ComfyUI-Spectrum-MiniMax-H3
+https://github.com/Zironic/H3-Optimizations
