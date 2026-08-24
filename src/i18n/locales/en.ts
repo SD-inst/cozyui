@@ -306,6 +306,9 @@ const translation = {
         ref_video_last: 'from the end',
         step: 'step',
         i2i: 'image-to-image',
+        videos: 'videos',
+        correct_brightness: 'correct brightness',
+        overlap: 'overlap',
     },
     settings: {
         select_language: 'Select language',

@@ -46,6 +46,7 @@ import { StableAudioTab } from './components/tabs/audio/StableAudio';
 import { VibeVoiceTab } from './components/tabs/audio/VibeVoiceTTS';
 import { VibeVoiceDialogTab } from './components/tabs/audio/VibeVoiceTTSDialog';
 import { VideoInterpolationTab } from './components/tabs/upscale/VideoInterpolation';
+import { VideoJoinTab } from './components/tabs/upscale/VideoJoin';
 import { WanI2VTab } from './components/tabs/i2v/WanI2V';
 import { WanI2V2STab } from './components/tabs/i2v/WanI2V2S';
 import { WanI2VITTab } from './components/tabs/i2v/WanI2VIT';
@@ -113,6 +114,7 @@ function App() {
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
                                 {VideoInterpolationTab}
+                                {VideoJoinTab}
                             </WorkflowTabs>
                             <Progress />
                             <InterruptButton />

@@ -3228,6 +3228,27 @@
                 "type": "gifs"
             }
         },
+        "Video join": {
+            "api": "api/video_join.json",
+            "controls": {
+                "videos": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "set_field": "video",
+                    "max": 10
+                },
+                "correct_brightness": {
+                    "id": "skip"
+                },
+                "overlap": {
+                    "id": "skip"
+                }
+            },
+            "result": {
+                "id": "1",
+                "type": "gifs"
+            }
+        },
         "MiniMax H3 T2V": {
             "api": "api/minimax_h3_t2v.json",
             "controls": {
