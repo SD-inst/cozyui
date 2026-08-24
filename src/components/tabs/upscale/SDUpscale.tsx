@@ -105,7 +105,7 @@ export const SDUpscaleTab = (
     <WFTab
         label='SD'
         value='SD Upscale'
-        group='Upscale'
+        group='Postprocessing'
         receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />

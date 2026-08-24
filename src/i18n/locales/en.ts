@@ -371,7 +371,7 @@ const translation = {
             "Virtual VRAM allows swapping model layers to the regular RAM and load them in advance when needed. There's almost no performance hit and it allows generating high resolution, long videos. Only works with GGUF.",
         riflex: 'RIFLEx allows to create longer videos (>5 seconds) without looping. If you want your video to loop, set the length to maximum and disable RIFLEx.',
         upscale:
-            'Also save the result as a lossless animated WEBP and allow sending it to the upscale tab for further refinement.',
+            'Also save the result as a lossless animated WEBP and allow sending it to the Postprocessing tab for further refinement.',
         nag: 'Normalized Attention Guidance allows using negative prompting in guidance-distilled models (or accelerated CFG models with CFG=1).',
         nag_scale: 'Power of negative prompt.',
         nag_alpha:

@@ -34,7 +34,7 @@ export const VideoInterpolationTab = (
     <WFTab
         label='Video interpolation'
         value='Video interpolation'
-        group='Upscale'
+        group='Postprocessing'
         receivers={[{ name: 'video', acceptedTypes: 'gifs' }]}
         content={<Content />}
     />

@@ -70,7 +70,7 @@ export const HunyanUpscale = (
     <WFTab
         label='Hunyuan'
         value='Hunyuan Upscale'
-        group='Upscale'
+        group='Postprocessing'
         receivers={[{ name: 'image', acceptedTypes: 'gifs' }]}
         content={<Content />}
     />

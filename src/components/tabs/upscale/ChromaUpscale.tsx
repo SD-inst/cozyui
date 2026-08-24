@@ -110,7 +110,7 @@ export const ChromaUpscaleTab = (
     <WFTab
         label='Chroma'
         value='Chroma Upscale'
-        group='Upscale'
+        group='Postprocessing'
         receivers={[{ name: 'image', acceptedTypes: 'images' }]}
         content={<Content />}
     />
