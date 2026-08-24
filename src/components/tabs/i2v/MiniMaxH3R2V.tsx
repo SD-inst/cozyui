@@ -369,9 +369,27 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     outputIdx,
                 ];
                 if (!v.no_audio) {
+                    let audioSourceId = componentsNodeID;
+                    let audioSourceIdx = 1;
+                    if (v.trim > 0) {
+                        const trimSeconds = v.trim / 24;
+                        const audioTrimBaseId = insertGraph(api, {
+                            ':trim_audio': {
+                                inputs: {
+                                    start_index: v.last ? -trimSeconds : 0,
+                                    duration: trimSeconds,
+                                    audio: [componentsNodeID, 1],
+                                },
+                                class_type: 'TrimAudioDuration',
+                                _meta: { title: 'Trim Audio' },
+                            },
+                        });
+                        audioSourceId = audioTrimBaseId + ':trim_audio';
+                        audioSourceIdx = 0;
+                    }
                     api[control.node_id].inputs[
                         'ref_video_audios.ref_video_audio_' + idx
-                    ] = [componentsNodeID, 1];
+                    ] = [audioSourceId, audioSourceIdx];
                 }
             });
 
