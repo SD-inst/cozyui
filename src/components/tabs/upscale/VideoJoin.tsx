@@ -119,9 +119,8 @@ const Videos = ({ name }: { name: string }) => {
                 const mathId = getFreeNodeId(api) + '';
                 api[mathId] = {
                     inputs: {
-                        expression: 'a / b',
-                        'values.a': overlap,
-                        'values.b': fpsRef,
+                        expression: overlap + ' / a',
+                        'values.a': fpsRef,
                     },
                     class_type: 'ComfyMathExpression',
                     _meta: { title: 'Overlap in seconds' },
