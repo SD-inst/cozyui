@@ -8,8 +8,9 @@ import { db } from '../history/db';
 
 export const LLMSettings = () => {
     const tr = useTranslate();
-    const { baseURL, apiKey } = useLLMConfig();
+    const { baseURL, apiKey: effectiveApiKey } = useLLMConfig();
     const url = useStringSetting(settings.llm_url);
+    const apiKey = useStringSetting(settings.llm_api_key);
     const model = useStringSetting(settings.llm_model);
     const [models, setModels] = useState<string[]>([]);
 
@@ -20,8 +21,8 @@ export const LLMSettings = () => {
         }
         let cancelled = false;
         fetch(`${baseURL}/models`, {
-            headers: apiKey
-                ? { Authorization: `Bearer ${apiKey}` }
+            headers: effectiveApiKey
+                ? { Authorization: `Bearer ${effectiveApiKey}` }
                 : undefined,
         })
             .then((r) => r.json())
@@ -41,11 +42,11 @@ export const LLMSettings = () => {
         return () => {
             cancelled = true;
         };
-    }, [baseURL, apiKey]);
+    }, [baseURL, effectiveApiKey]);
 
     return (
         <Box display='flex' gap={2} alignItems='center' flexWrap='wrap' mb={1}>
-            <Box flex={1} minWidth={260}>
+            <Box flex={1} minWidth={220}>
                 <TextField
                     fullWidth
                     value={url}
@@ -61,7 +62,22 @@ export const LLMSettings = () => {
                     size='small'
                 />
             </Box>
-            <Box flex={1} minWidth={260}>
+            <Box flex={1} minWidth={220}>
+                <TextField
+                    fullWidth
+                    value={apiKey}
+                    onChange={(e) =>
+                        db.settings.put({
+                            name: settings.llm_api_key,
+                            value: e.target.value,
+                        })
+                    }
+                    label={tr('settings.llm_api_key')}
+                    aria-label={tr('settings.llm_api_key')}
+                    size='small'
+                />
+            </Box>
+            <Box flex={1} minWidth={220}>
                 <Autocomplete
                     freeSolo
                     value={model}

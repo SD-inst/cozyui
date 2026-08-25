@@ -14,10 +14,12 @@ export const useLLMConfig = (): llmConfigType => {
         (state: RootState) => state.config.llm || ({} as llmConfigType),
     );
     const url = useStringSetting(settings.llm_url);
+    const apiKey = useStringSetting(settings.llm_api_key);
     const model = useStringSetting(settings.llm_model);
     return {
         ...config,
         baseURL: url || config.baseURL,
+        apiKey: apiKey || config.apiKey,
         model: model || config.model,
         modelVision: model || config.modelVision,
     };

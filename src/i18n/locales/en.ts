@@ -323,6 +323,7 @@ const translation = {
         activation_tags_enabled_tabs: 'Activation tags enabled on tabs',
         chat_stream: 'Chat stream',
         llm_url: 'LLM URL',
+        llm_api_key: 'LLM API key',
         llm_model: 'LLM model',
         notification: 'Notification sound',
         notification_name: 'Sound effect #%{number}',

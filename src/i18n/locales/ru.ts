@@ -322,6 +322,7 @@ const translation = {
         activation_tags_enabled_tabs: 'Activation tags разрешены на вкладках',
         chat_stream: 'Стриминг чата',
         llm_url: 'LLM URL',
+        llm_api_key: 'API key LLM',
         llm_model: 'Модель LLM',
         notification: 'Звук уведомления',
         notification_name: 'Звуковой эффект №%{number}',
