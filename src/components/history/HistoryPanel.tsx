@@ -325,7 +325,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                             onChange={(_, c) => setPinned(c)}
                                         />
                                     }
-                                    sx={{ ml: -1, mr: 2 }}
+                                    sx={{ ml: 0, mb: 2 }}
                                 />
                             </Box>
                         </SectionAccordion>
