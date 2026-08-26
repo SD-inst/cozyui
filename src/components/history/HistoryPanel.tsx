@@ -13,6 +13,7 @@ import {
     Typography,
 } from '@mui/material';
 import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -26,7 +27,7 @@ import {
     useRef,
     useState,
 } from 'react';
-import { useTranslate } from '../../i18n/I18nContext';
+import { I18nContext, useTranslate } from '../../i18n/I18nContext';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { FilterContext } from '../contexts/FilterContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
@@ -85,6 +86,17 @@ const HistoryPagination = ({
 
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
+    const { locale } = useContext(I18nContext);
+    // Russian: fixed ru locale (day-first, Russian names). English: follow the
+    // browser region — the US is month-first (MM/DD/YYYY), every other region
+    // day-first (DD.MM.YYYY).
+    const isRussian = locale === 'ru';
+    const adapterLocale = isRussian ? 'ru' : 'en';
+    const dateFormat = isRussian
+        ? undefined
+        : navigator.language === 'en-US'
+            ? 'MM/DD/YYYY'
+            : 'DD.MM.YYYY';
     const [page, setPage] = useState(1);
     const {
         pinned,
@@ -285,10 +297,14 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                         ...tabKeys,
                                     ]}
                                 />
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale={adapterLocale}
+                                >
                                     <DatePicker
                                         label={tr('controls.date_from')}
                                         value={dateFrom ? dayjs(dateFrom) : null}
+                                        format={dateFormat}
                                         onChange={(v) =>
                                             setDateFrom(
                                                 v ? v.format('YYYY-MM-DD') : '',
@@ -304,6 +320,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                     <DatePicker
                                         label={tr('controls.date_to')}
                                         value={dateTo ? dayjs(dateTo) : null}
+                                        format={dateFormat}
                                         onChange={(v) =>
                                             setDateTo(
                                                 v ? v.format('YYYY-MM-DD') : '',
