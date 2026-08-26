@@ -2,6 +2,7 @@ import { useEventCallback } from '@mui/material';
 import { useContext } from 'react';
 import { FilterContext } from '../contexts/FilterContext';
 import { FilterType } from '../contexts/filterType';
+import { WorkflowTabsContext, groupType } from '../contexts/WorkflowTabsContext';
 import { db, markEnum } from './db';
 
 type trFilterFunc = (param?: any) => Promise<number[]>;
@@ -21,6 +22,14 @@ const modelFilter: trFilterFunc = (param: string) => {
     return db.taskResults.where('model').equals(param).primaryKeys();
 };
 
+const tabFilter: trFilterFunc = (param: string) => {
+    return db.taskResults.where('tab').equals(param).primaryKeys();
+};
+
+const groupFilter: trFilterFunc = (param: string[]) => {
+    return db.taskResults.where('tab').anyOf(param).primaryKeys();
+};
+
 const dateFilter: trFilterFunc = (param: { from?: number; to?: number }) => {
     if (param.from !== undefined && param.to !== undefined) {
         return db.taskResults
@@ -37,6 +46,7 @@ const dateFilter: trFilterFunc = (param: { from?: number; to?: number }) => {
 
 export const pkFromFilter = async (
     filter: FilterType,
+    tabGroups?: groupType,
     additionalFilters?: trFilterFunc[] | trFilterFunc
 ) => {
     const filter_words = filter.prompt
@@ -55,6 +65,15 @@ export const pkFromFilter = async (
     }
     if (filter.model) {
         pksP.push(modelFilter(filter.model));
+    }
+    if (filter.tab) {
+        pksP.push(tabFilter(filter.tab));
+    }
+    if (filter.group) {
+        const tabs = tabGroups
+            ? Object.keys(tabGroups).filter((t) => tabGroups[t] === filter.group)
+            : [];
+        pksP.push(groupFilter(tabs));
     }
     if (filter.dateFrom || filter.dateTo) {
         const from = filter.dateFrom
@@ -84,7 +103,9 @@ export const pkFromFilter = async (
 
 export const usePkFromFilter = () => {
     const filter = useContext(FilterContext);
-    return useEventCallback((f: Parameters<typeof pkFromFilter>[1]) =>
-        pkFromFilter(filter, f)
+    const { workflowTabGroups } = useContext(WorkflowTabsContext);
+    return useEventCallback(
+        (f: Parameters<typeof pkFromFilter>[2]) =>
+            pkFromFilter(filter, workflowTabGroups, f)
     );
 };

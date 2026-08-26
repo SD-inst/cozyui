@@ -18,6 +18,7 @@ export interface TaskResult {
     mark: markEnum;
     words?: string[];
     model?: string;
+    tab?: string;
 }
 
 export interface Settings {
@@ -120,6 +121,18 @@ db.version(9)
         });
     });
 
+db.version(10)
+    .stores({ taskResults: '++id, timestamp, type, node_id, mark, *words, model, tab' })
+    .upgrade((tx) => {
+        const subtx = tx.table('taskResults');
+        subtx.each((t) => {
+            const indexed = indexTab(t);
+            if (indexed) {
+                subtx.put(indexed);
+            }
+        });
+    });
+
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {
         return;
@@ -162,7 +175,22 @@ const indexModel = (obj: TaskResult) => {
     }
 };
 
+const indexTab = (obj: TaskResult) => {
+    if (!obj.params) {
+        return;
+    }
+    try {
+        const params = JSON.parse(obj.params);
+        const tab = params.tab;
+        obj.tab = typeof tab === 'string' ? tab : '';
+        return obj;
+    } catch {
+        return;
+    }
+};
+
 db.taskResults.hook('creating', (_pk, obj) => {
     indexPrompt(obj);
     indexModel(obj);
+    indexTab(obj);
 });

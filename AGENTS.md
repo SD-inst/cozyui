@@ -399,7 +399,7 @@ Uses **Dexie** (IndexedDB wrapper) for local storage.
 
 IndexedDB has no query planner; one cursor walks one index. Multi-criteria filtering is done client-side:
 
-- **Multi-filter = index query per criterion + PK intersection.** `pkFromFilter` in `filter.ts` runs one indexed query per active filter (`.where(field).equals/startsWith/between`) and intersects the resulting primary-key arrays in JS. All filterable fields MUST stay indexed (`timestamp`, `type`, `model`, `mark`, `*words`) so the path never degrades to a full scan.
+- **Multi-filter = index query per criterion + PK intersection.** `pkFromFilter` in `filter.ts` runs one indexed query per active filter (`.where(field).equals/startsWith/between`) and intersects the resulting primary-key arrays in JS. All filterable fields MUST stay indexed (`timestamp`, `type`, `model`, `mark`, `*words`, `tab`) so the path never degrades to a full scan. The `group` filter has no stored field: `pkFromFilter` resolves it to the tabs of that group (via `workflowTabGroups` from `WorkflowTabsContext`, passed as its 2nd argument) and queries `.where('tab').anyOf(tabs)`.
 - **Distinct index values (index-only, no record loading):**
   ```ts
   db.taskResults

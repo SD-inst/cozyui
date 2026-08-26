@@ -5,4 +5,6 @@ export type FilterType = {
     model: string;
     dateFrom: string;
     dateTo: string;
+    group: string;
+    tab: string;
 };

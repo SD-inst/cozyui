@@ -9,6 +9,8 @@ export const FilterContext = createContext<
         setModel: Dispatch<string>;
         setDateFrom: Dispatch<string>;
         setDateTo: Dispatch<string>;
+        setGroup: Dispatch<string>;
+        setTab: Dispatch<string>;
         isEmpty: () => boolean;
     }
 >({
@@ -18,11 +20,15 @@ export const FilterContext = createContext<
     model: '',
     dateFrom: '',
     dateTo: '',
+    group: '',
+    tab: '',
     setPrompt: () => {},
     setPinned: () => {},
     setType: () => {},
     setModel: () => {},
     setDateFrom: () => {},
     setDateTo: () => {},
+    setGroup: () => {},
+    setTab: () => {},
     isEmpty: () => true,
 });

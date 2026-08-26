@@ -9,6 +9,8 @@ export const FilterContextProvider = ({ ...props }) => {
         model: '',
         dateFrom: '',
         dateTo: '',
+        group: '',
+        tab: '',
     });
     const setPrompt = (prompt: string) => {
         setFilter((f) => ({ ...f, prompt }));
@@ -24,17 +26,25 @@ export const FilterContextProvider = ({ ...props }) => {
     };
     const setDateFrom = (dateFrom: string) => {
         setFilter((f) => ({ ...f, dateFrom }));
-    };
+    }
     const setDateTo = (dateTo: string) => {
         setFilter((f) => ({ ...f, dateTo }));
-    };
+    }
+    const setGroup = (group: string) => {
+        setFilter((f) => ({ ...f, group }));
+    }
+    const setTab = (tab: string) => {
+        setFilter((f) => ({ ...f, tab }));
+    }
     const isEmpty = () =>
         !filter.pinned &&
         !filter.prompt &&
         !filter.type &&
         !filter.model &&
         !filter.dateFrom &&
-        !filter.dateTo;
+        !filter.dateTo &&
+        !filter.group &&
+        !filter.tab;
     return (
         <FilterContext.Provider
             value={{
@@ -45,6 +55,8 @@ export const FilterContextProvider = ({ ...props }) => {
                 setModel,
                 setDateFrom,
                 setDateTo,
+                setGroup,
+                setTab,
                 isEmpty,
             }}
         >

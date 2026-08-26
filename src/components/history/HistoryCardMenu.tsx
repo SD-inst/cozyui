@@ -11,6 +11,7 @@ import {
 import { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { CompareContext } from '../contexts/CompareContext';
+import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
 import { db, markEnum, TaskResult } from './db';
 import { useTranslate } from '../../i18n/I18nContext';
 import { FilterContext } from '../contexts/FilterContext';
@@ -19,6 +20,7 @@ import { pkFromFilter } from './filter';
 export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
     const tr = useTranslate();
     const filter = useContext(FilterContext);
+    const { workflowTabGroups } = useContext(WorkflowTabsContext);
     const [anchor, setAnchor] = useState<HTMLElement | null>(null);
     const { setCompare, selected_id } = useContext(CompareContext);
     const [open, setOpen] = useState(false);
@@ -33,7 +35,7 @@ export const HistoryCardMenu = ({ output }: { output: TaskResult }) => {
         } else {
             tasks = db.taskResults
                 .where('id')
-                .anyOf(await pkFromFilter(filter))
+                .anyOf(await pkFromFilter(filter, workflowTabGroups))
                 .reverse()
                 .filter((r) => r.id <= output.id);
         }

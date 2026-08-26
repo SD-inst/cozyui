@@ -1,5 +1,6 @@
 import { Close, History } from '@mui/icons-material';
 import {
+    Autocomplete,
     Box,
     Button,
     Checkbox,
@@ -11,18 +12,24 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import dayjs from 'dayjs';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
     Dispatch,
     SetStateAction,
     useContext,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { FilterContext } from '../contexts/FilterContext';
+import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
 import { SelectInputBase } from '../controls/SelectInputBase';
 import { autoscrollSlotProps } from '../controls/utils';
 import { SectionAccordion } from '../controls/SectionAccordion';
@@ -34,6 +41,11 @@ import { HistoryCard } from './HistoryCard';
 
 const page_size = 10;
 
+// Shorten a model id to its display name, same as ModelSelectAutocomplete:
+// filename without the path prefix and the file extension.
+const modelName = (id: string) =>
+    id.slice(id.lastIndexOf('/') + 1, id.lastIndexOf('.'));
+
 const HistoryPagination = ({
     page,
     setPage,
@@ -42,14 +54,15 @@ const HistoryPagination = ({
     setPage: Dispatch<SetStateAction<number>>;
 }) => {
     const filter = useContext(FilterContext);
+    const { workflowTabGroups } = useContext(WorkflowTabsContext);
     const count =
         useLiveQuery(async () => {
             if (filter.isEmpty()) {
                 return db.taskResults.count();
             }
-            const pk_x = await pkFromFilter(filter);
+            const pk_x = await pkFromFilter(filter, workflowTabGroups);
             return db.taskResults.where(':id').anyOf(pk_x).count();
-        }, [filter]) ?? 0;
+        }, [filter, workflowTabGroups]) ?? 0;
     const pages = Math.ceil(count / page_size);
     useEffect(() => {
         if (page > pages && pages > 0) {
@@ -80,14 +93,32 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
         model,
         dateFrom,
         dateTo,
+        group,
+        tab,
         setPinned,
         setPrompt,
         setType,
         setModel,
         setDateFrom,
         setDateTo,
+        setGroup,
+        setTab,
         isEmpty,
     } = useContext(FilterContext);
+    const { workflowTabGroups } = useContext(WorkflowTabsContext);
+    const groups = useMemo(
+        () => [...new Set(Object.values(workflowTabGroups))],
+        [workflowTabGroups],
+    );
+    const tabKeys = useMemo(
+        () =>
+            group
+                ? Object.keys(workflowTabGroups).filter(
+                      (t) => workflowTabGroups[t] === group,
+                  )
+                : Object.keys(workflowTabGroups),
+        [workflowTabGroups, group],
+    );
     const modelOptions = useLiveQuery(async () => {
         // Index-only distinct query: `uniqueKeys()` makes Dexie use openKeyCursor +
         // the `nextunique` cursor direction, so it walks only the model index
@@ -99,6 +130,11 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             .uniqueKeys();
         return (keys as string[]).filter((m) => !!m).sort();
     }, []);
+    const modelOpts = (modelOptions ?? []).map((id) => ({
+        id,
+        label: modelName(id),
+    }));
+    const modelValue = modelOpts.find((o) => o.id === model) ?? null;
     const results = useLiveQuery(async () => {
         if (isEmpty()) {
             // return everything
@@ -109,7 +145,10 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 .limit(page_size)
                 .toArray();
         }
-        const pk_x = await pkFromFilter({ prompt, pinned, type, model, dateFrom, dateTo });
+        const pk_x = await pkFromFilter(
+            { prompt, pinned, type, model, dateFrom, dateTo, group, tab },
+            workflowTabGroups,
+        );
         return db.taskResults
             .where(':id')
             .anyOf(pk_x)
@@ -117,7 +156,19 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             .limit(page_size)
             .reverse()
             .sortBy('timestamp');
-    }, [isEmpty, prompt, pinned, type, model, dateFrom, dateTo, page]);
+    }, [
+        isEmpty,
+        prompt,
+        pinned,
+        type,
+        model,
+        dateFrom,
+        dateTo,
+        group,
+        tab,
+        workflowTabGroups,
+        page,
+    ]);
     const ref = useRef<HTMLElement>(null);
     return (
         <SectionAccordion
@@ -181,53 +232,103 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                      setType(e.target.value as string)
                                  }
                              />
-                             <SelectInputBase
-                                 size='small'
-                                 choices={[
-                                     {
-                                         text: tr('controls.model_any'),
-                                         value: '',
-                                     },
-                                     ...(modelOptions ?? []).map((m) => ({
-                                         text: m,
-                                         value: m,
-                                     })),
-                                 ]}
-                                 name='model'
-                                 value={model}
-                                 onChange={(e) =>
-                                     setModel(e.target.value as string)
-                                 }
-                             />
-                             <TextField
-                                 type='date'
-                                 size='small'
-                                 label={tr('controls.date_from')}
-                                 value={dateFrom}
-                                 onChange={(e) => setDateFrom(e.target.value)}
-                                 slotProps={{ inputLabel: { shrink: true } }}
-                                 sx={{ width: 150, mr: 1, mb: 2 }}
-                             />
-                             <TextField
-                                 type='date'
-                                 size='small'
-                                 label={tr('controls.date_to')}
-                                 value={dateTo}
-                                 onChange={(e) => setDateTo(e.target.value)}
-                                 slotProps={{ inputLabel: { shrink: true } }}
-                                 sx={{ width: 150, mb: 2 }}
-                             />
-                             <FormControlLabel
-                                 label={tr('controls.pinned')}
-                                 control={
-                                     <Checkbox
-                                         checked={pinned}
-                                         onChange={(_, c) => setPinned(c)}
-                                     />
-                                 }
-                                 sx={{ ml: -1, mr: 2 }}
-                             />
                         </Box>
+                        <SectionAccordion label='controls.advanced_filters'>
+                            <Box width='100%' display='flex' flexWrap='wrap'>
+                                <Autocomplete
+                                    size='small'
+                                    fullWidth
+                                    options={modelOpts}
+                                    value={modelValue}
+                                    onChange={(_, v) => setModel(v ? v.id : '')}
+                                    getOptionLabel={(o) =>
+                                        typeof o === 'string' ? o : o.label
+                                    }
+                                    sx={{ mb: 2 }}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label={tr('controls.model')}
+                                            size='small'
+                                        />
+                                    )}
+                                />
+                                <SelectInputBase
+                                    size='small'
+                                    name='group'
+                                    value={group}
+                                    onChange={(e) => {
+                                        const v = e.target.value as string;
+                                        setGroup(v);
+                                        if (tab && v && workflowTabGroups[tab] !== v) {
+                                            setTab('');
+                                        }
+                                    }}
+                                    choices={[
+                                        {
+                                            text: tr('controls.group_any'),
+                                            value: '',
+                                        },
+                                        ...groups,
+                                    ]}
+                                />
+                                <SelectInputBase
+                                    size='small'
+                                    name='tab'
+                                    value={tab}
+                                    onChange={(e) => setTab(e.target.value as string)}
+                                    choices={[
+                                        {
+                                            text: tr('controls.tab_any'),
+                                            value: '',
+                                        },
+                                        ...tabKeys,
+                                    ]}
+                                />
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DatePicker
+                                        label={tr('controls.date_from')}
+                                        value={dateFrom ? dayjs(dateFrom) : null}
+                                        onChange={(v) =>
+                                            setDateFrom(
+                                                v ? v.format('YYYY-MM-DD') : '',
+                                            )
+                                        }
+                                        slotProps={{
+                                            textField: {
+                                                size: 'small',
+                                                sx: { width: 170, mr: 1, mb: 2 },
+                                            },
+                                        }}
+                                    />
+                                    <DatePicker
+                                        label={tr('controls.date_to')}
+                                        value={dateTo ? dayjs(dateTo) : null}
+                                        onChange={(v) =>
+                                            setDateTo(
+                                                v ? v.format('YYYY-MM-DD') : '',
+                                            )
+                                        }
+                                        slotProps={{
+                                            textField: {
+                                                size: 'small',
+                                                sx: { width: 170, mb: 2 },
+                                            },
+                                        }}
+                                    />
+                                </LocalizationProvider>
+                                <FormControlLabel
+                                    label={tr('controls.pinned')}
+                                    control={
+                                        <Checkbox
+                                            checked={pinned}
+                                            onChange={(_, c) => setPinned(c)}
+                                        />
+                                    }
+                                    sx={{ ml: -1, mr: 2 }}
+                                />
+                            </Box>
+                        </SectionAccordion>
                         <HistoryPagination page={page} setPage={setPage} />
                         <List
                             sx={{
