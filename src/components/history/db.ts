@@ -17,6 +17,7 @@ export interface TaskResult {
     params?: string;
     mark: markEnum;
     words?: string[];
+    model?: string;
 }
 
 export interface Settings {
@@ -107,6 +108,18 @@ db.version(6).upgrade((tx) =>
 db.version(7).stores({ chatLogs: '&[tab+id]' });
 db.version(8).stores({ presets: 'id, tab, timestamp', presetFiles: 'id, preset' });
 
+db.version(9)
+    .stores({ taskResults: '++id, timestamp, type, node_id, mark, *words, model' })
+    .upgrade((tx) => {
+        const subtx = tx.table('taskResults');
+        subtx.each((t) => {
+            const indexed = indexModel(t);
+            if (indexed) {
+                subtx.put(indexed);
+            }
+        });
+    });
+
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {
         return;
@@ -135,6 +148,21 @@ const indexPrompt = (obj: TaskResult) => {
     return obj;
 };
 
+const indexModel = (obj: TaskResult) => {
+    if (!obj.params) {
+        return;
+    }
+    try {
+        const params = JSON.parse(obj.params);
+        const model = params.values?.model;
+        obj.model = typeof model === 'string' ? model : '';
+        return obj;
+    } catch {
+        return;
+    }
+};
+
 db.taskResults.hook('creating', (_pk, obj) => {
     indexPrompt(obj);
+    indexModel(obj);
 });

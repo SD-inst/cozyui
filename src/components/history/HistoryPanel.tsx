@@ -8,6 +8,7 @@ import {
     ListProps,
     OutlinedInput,
     Pagination,
+    TextField,
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -72,8 +73,32 @@ const HistoryPagination = ({
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
     const [page, setPage] = useState(1);
-    const { pinned, prompt, type, setPinned, setPrompt, setType, isEmpty } =
-        useContext(FilterContext);
+    const {
+        pinned,
+        prompt,
+        type,
+        model,
+        dateFrom,
+        dateTo,
+        setPinned,
+        setPrompt,
+        setType,
+        setModel,
+        setDateFrom,
+        setDateTo,
+        isEmpty,
+    } = useContext(FilterContext);
+    const modelOptions = useLiveQuery(async () => {
+        // Index-only distinct query: `uniqueKeys()` makes Dexie use openKeyCursor +
+        // the `nextunique` cursor direction, so it walks only the model index
+        // B-tree (no record objects / Blobs loaded) and yields each distinct model
+        // once. `between(undefined, undefined)` = the full index range.
+        const keys = await db.taskResults
+            .where('model')
+            .between(undefined, undefined, true, true)
+            .uniqueKeys();
+        return (keys as string[]).filter((m) => !!m).sort();
+    }, []);
     const results = useLiveQuery(async () => {
         if (isEmpty()) {
             // return everything
@@ -84,7 +109,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 .limit(page_size)
                 .toArray();
         }
-        const pk_x = await pkFromFilter({ prompt, pinned, type });
+        const pk_x = await pkFromFilter({ prompt, pinned, type, model, dateFrom, dateTo });
         return db.taskResults
             .where(':id')
             .anyOf(pk_x)
@@ -92,7 +117,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
             .limit(page_size)
             .reverse()
             .sortBy('timestamp');
-    }, [isEmpty, prompt, pinned, type, page]);
+    }, [isEmpty, prompt, pinned, type, model, dateFrom, dateTo, page]);
     const ref = useRef<HTMLElement>(null);
     return (
         <SectionAccordion
@@ -130,42 +155,78 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                 }
                                 fullWidth
                             />
-                            <SelectInputBase
-                                size='small'
-                                choices={[
-                                    {
-                                        text: tr('controls.type_any'),
-                                        value: '',
-                                    },
-                                    {
-                                        text: tr('controls.type_video'),
-                                        value: 'gifs',
-                                    },
-                                    {
-                                        text: tr('controls.type_audio'),
-                                        value: 'audio',
-                                    },
-                                    {
-                                        text: tr('controls.type_image'),
-                                        value: 'images',
-                                    },
-                                ]}
-                                name='type'
-                                value={type}
-                                onChange={(e) =>
-                                    setType(e.target.value as string)
-                                }
-                            />
-                            <FormControlLabel
-                                label={tr('controls.pinned')}
-                                control={
-                                    <Checkbox
-                                        checked={pinned}
-                                        onChange={(_, c) => setPinned(c)}
-                                    />
-                                }
-                                sx={{ ml: -1 }}
-                            />
+                             <SelectInputBase
+                                 size='small'
+                                 choices={[
+                                     {
+                                         text: tr('controls.type_any'),
+                                         value: '',
+                                     },
+                                     {
+                                         text: tr('controls.type_video'),
+                                         value: 'gifs',
+                                     },
+                                     {
+                                         text: tr('controls.type_audio'),
+                                         value: 'audio',
+                                     },
+                                     {
+                                         text: tr('controls.type_image'),
+                                         value: 'images',
+                                     },
+                                 ]}
+                                 name='type'
+                                 value={type}
+                                 onChange={(e) =>
+                                     setType(e.target.value as string)
+                                 }
+                             />
+                             <SelectInputBase
+                                 size='small'
+                                 choices={[
+                                     {
+                                         text: tr('controls.model_any'),
+                                         value: '',
+                                     },
+                                     ...(modelOptions ?? []).map((m) => ({
+                                         text: m,
+                                         value: m,
+                                     })),
+                                 ]}
+                                 name='model'
+                                 value={model}
+                                 onChange={(e) =>
+                                     setModel(e.target.value as string)
+                                 }
+                             />
+                             <TextField
+                                 type='date'
+                                 size='small'
+                                 label={tr('controls.date_from')}
+                                 value={dateFrom}
+                                 onChange={(e) => setDateFrom(e.target.value)}
+                                 slotProps={{ inputLabel: { shrink: true } }}
+                                 sx={{ width: 150, mr: 1, mb: 2 }}
+                             />
+                             <TextField
+                                 type='date'
+                                 size='small'
+                                 label={tr('controls.date_to')}
+                                 value={dateTo}
+                                 onChange={(e) => setDateTo(e.target.value)}
+                                 slotProps={{ inputLabel: { shrink: true } }}
+                                 sx={{ width: 150, mb: 2 }}
+                             />
+                             <FormControlLabel
+                                 label={tr('controls.pinned')}
+                                 control={
+                                     <Checkbox
+                                         checked={pinned}
+                                         onChange={(_, c) => setPinned(c)}
+                                     />
+                                 }
+                                 sx={{ ml: -1, mr: 2 }}
+                             />
                         </Box>
                         <HistoryPagination page={page} setPage={setPage} />
                         <List

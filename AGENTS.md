@@ -395,6 +395,22 @@ Uses **Dexie** (IndexedDB wrapper) for local storage.
 | [`filter.ts`](src/components/history/filter.ts) | Filter logic |
 | [`ImportExport.tsx`](src/components/history/ImportExport.tsx) | Import/export history |
 
+### Dexie filtering patterns — IMPORTANT
+
+IndexedDB has no query planner; one cursor walks one index. Multi-criteria filtering is done client-side:
+
+- **Multi-filter = index query per criterion + PK intersection.** `pkFromFilter` in `filter.ts` runs one indexed query per active filter (`.where(field).equals/startsWith/between`) and intersects the resulting primary-key arrays in JS. All filterable fields MUST stay indexed (`timestamp`, `type`, `model`, `mark`, `*words`) so the path never degrades to a full scan.
+- **Distinct index values (index-only, no record loading):**
+  ```ts
+  db.taskResults
+      .where('model')
+      .between(undefined, undefined, true, true) // full index range → Collection
+      .uniqueKeys(); // distinct values only
+  ```
+  `uniqueKeys()` lives on `Collection`, not on `WhereClause` — a value method (e.g. `between(undefined, undefined)`) is required to get a `Collection`. Dexie then uses `openKeyCursor` + the native `nextunique` cursor direction: it walks only the index B-tree (record objects are NOT loaded) and yields each distinct value once. This is how `HistoryPanel` lists the model-filter options without scanning thousands of records.
+- **NEVER full-scan `taskResults` for filter options** (`.filter(...).toArray()` without a limit): records carry `data?: Blob` (generated files when `save_outputs_locally` is on), so an unbounded scan loads all media into memory. Page result queries always use `.limit(page_size)`.
+- Dexie tests run against `fake-indexeddb` (polyfill via `import 'fake-indexeddb/auto'`; jsdom has no IndexedDB) — see `distinctModels.test.ts`.
+
 ---
 
 ## Settings

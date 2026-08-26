@@ -44,6 +44,7 @@
         "eslint": "^9.17.0",
         "eslint-plugin-react-hooks": "^5.0.0",
         "eslint-plugin-react-refresh": "^0.4.16",
+        "fake-indexeddb": "^6.2.5",
         "globals": "^15.14.0",
         "jsdom": "^30.0.1",
         "lodash": "^4.17.21",

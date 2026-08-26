@@ -17,6 +17,24 @@ const typeFilter: trFilterFunc = (param: string) => {
     return db.taskResults.where('type').equals(param).primaryKeys();
 };
 
+const modelFilter: trFilterFunc = (param: string) => {
+    return db.taskResults.where('model').equals(param).primaryKeys();
+};
+
+const dateFilter: trFilterFunc = (param: { from?: number; to?: number }) => {
+    if (param.from !== undefined && param.to !== undefined) {
+        return db.taskResults
+            .where('timestamp')
+            .between(param.from, param.to, true, true)
+            .primaryKeys();
+    } else if (param.from !== undefined) {
+        return db.taskResults.where('timestamp').aboveOrEqual(param.from).primaryKeys();
+    } else if (param.to !== undefined) {
+        return db.taskResults.where('timestamp').belowOrEqual(param.to).primaryKeys();
+    }
+    return Promise.resolve([]);
+};
+
 export const pkFromFilter = async (
     filter: FilterType,
     additionalFilters?: trFilterFunc[] | trFilterFunc
@@ -34,6 +52,18 @@ export const pkFromFilter = async (
     }
     if (filter.type) {
         pksP.push(typeFilter(filter.type));
+    }
+    if (filter.model) {
+        pksP.push(modelFilter(filter.model));
+    }
+    if (filter.dateFrom || filter.dateTo) {
+        const from = filter.dateFrom
+            ? new Date(filter.dateFrom + 'T00:00:00').getTime()
+            : undefined;
+        const to = filter.dateTo
+            ? new Date(filter.dateTo + 'T23:59:59').getTime()
+            : undefined;
+        pksP.push(dateFilter({ from, to }));
     }
     if (additionalFilters) {
         const af = Array.isArray(additionalFilters)

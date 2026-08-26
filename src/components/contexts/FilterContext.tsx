@@ -6,14 +6,23 @@ export const FilterContext = createContext<
         setPrompt: Dispatch<string>;
         setPinned: Dispatch<boolean>;
         setType: Dispatch<string>;
+        setModel: Dispatch<string>;
+        setDateFrom: Dispatch<string>;
+        setDateTo: Dispatch<string>;
         isEmpty: () => boolean;
     }
 >({
     prompt: '',
     pinned: false,
     type: '',
+    model: '',
+    dateFrom: '',
+    dateTo: '',
     setPrompt: () => {},
     setPinned: () => {},
     setType: () => {},
+    setModel: () => {},
+    setDateFrom: () => {},
+    setDateTo: () => {},
     isEmpty: () => true,
 });
