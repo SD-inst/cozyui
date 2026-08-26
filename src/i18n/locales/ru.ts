@@ -175,6 +175,7 @@ const translation = {
         spectrum_warmup_steps: 'Spectrum Warmup Steps',
         spectrum_bootstrap_first_forecast: 'Spectrum Bootstrap First Forecast',
         turbo: 'Турбо',
+        pdd: 'PDD',
         turbo_lora: 'Турбо LoRA',
         turbo_lora_strength: 'Сила',
         latent_upscale: 'Латентный апскейл',

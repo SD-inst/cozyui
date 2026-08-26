@@ -1,6 +1,6 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { Workflow } from '../../api/graph';
+import { NodeRef, Workflow } from '../../api/graph';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SamplerSelectInput } from './SamplerSelectInput';
@@ -38,6 +38,12 @@ export const MiniMaxH3LatentUpscale = ({
             aspectRatio: getValues('aspect_ratio'),
             baseMP: getValues('megapixels'),
             targetMP: value.megapixels,
+            // PDD variant 2: run the upscale pass on the model before the PDD
+            // node (the PDD LoRAs are only valid on the base pass).
+            pddModelRef:
+                getValues('pdd') && control.sigma_shift_node_id
+                    ? ([control.sigma_shift_node_id, 0] as NodeRef)
+                    : undefined,
         });
         },
     );

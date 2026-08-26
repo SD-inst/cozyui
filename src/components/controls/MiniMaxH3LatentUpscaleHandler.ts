@@ -1,4 +1,4 @@
-import { Workflow } from '../../api/graph';
+import { NodeRef, Workflow } from '../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import {
@@ -109,6 +109,12 @@ export type TSecondGuiderValues = {
     baseMP?: number;
     /** The latent-upscale target megapixels. */
     targetMP?: number;
+    /**
+     * When PDD acceleration is on, the second (upscale) pass runs on the model
+     * BEFORE the PDD node — the PDD LoRAs are only valid on the base pass, so
+     * the second guider's model is set to this ref instead of the base guider's.
+     */
+    pddModelRef?: NodeRef;
 };
 
 /**
@@ -137,6 +143,7 @@ export const buildSecondGuider = (
     baseNodeID: string,
     control: controlType,
     values: TSecondGuiderValues,
+    modelRef?: NodeRef,
 ): string | null => {
     const refNodeID = control.node_id;
     const guiderNodeID = control.guider_node_id;
@@ -144,7 +151,7 @@ export const buildSecondGuider = (
     if (!guiderNodeID || !refNode) {
         return null;
     }
-    const model = api[guiderNodeID].inputs.model;
+    const model = modelRef ?? api[guiderNodeID].inputs.model;
 
     if (refNode.class_type === 'MiniMaxH3ReferenceToVideo') {
         const entries = collectKeyframeEntries(
@@ -154,7 +161,22 @@ export const buildSecondGuider = (
             refNodeID,
         );
         if (!entries.length) {
-            return null;
+            if (!modelRef) {
+                return null;
+            }
+            // PDD variant 2: no keyframes, but the upscale pass must run on the
+            // pre-PDD model (the base guider carries the PDD model). Reuse the
+            // base conditioning and swap only the model.
+            const guiderID = getFreeNodeId(api) + '';
+            api[guiderID] = {
+                inputs: {
+                    model,
+                    conditioning: api[guiderNodeID].inputs.conditioning,
+                },
+                class_type: 'BasicGuider',
+                _meta: { title: 'Basic Guider (Latent Upscale)' },
+            };
+            return guiderID;
         }
         // The second sampler does NOT overlay keyframes (no AddGuide) — the
         // keyframes are passed as VLM reference material only. A parallel
@@ -220,7 +242,21 @@ export const buildSecondGuider = (
         const hasFirst = values.firstFrame && refNode.inputs.first_frame;
         const hasLast = values.lastFrame && refNode.inputs.last_frame;
         if (!hasFirst && !hasLast) {
-            return null;
+            if (!modelRef) {
+                return null;
+            }
+            // PDD variant 2: no frames, but the upscale pass must run on the
+            // pre-PDD model. Reuse the base conditioning and swap only the model.
+            const guiderID = getFreeNodeId(api) + '';
+            api[guiderID] = {
+                inputs: {
+                    model,
+                    conditioning: api[guiderNodeID].inputs.conditioning,
+                },
+                class_type: 'BasicGuider',
+                _meta: { title: 'Basic Guider (Latent Upscale)' },
+            };
+            return guiderID;
         }
         // Upscaled pixel size = upscaled video latent size × VAE downsample (16).
         const sizeID = getFreeNodeId(api) + '';
@@ -288,20 +324,23 @@ export const applyLatentUpscale = (
     }
     const {
         sampler_node_id,
-        scheduler_node_id,
         video_vae_decode_node_id,
         audio_vae_decode_node_id,
         guider_node_id,
     } = control;
     if (
         !sampler_node_id ||
-        !scheduler_node_id ||
         !video_vae_decode_node_id ||
         !audio_vae_decode_node_id ||
         !guider_node_id
     ) {
         return;
     }
+    // The main pass keeps whatever sigmas it already has: the scheduler's in
+    // normal mode, or the PDD node's when PDD acceleration is on (the PDD
+    // handler runs first and rewires the main sampler's sigmas). Splitting
+    // those keeps the PDD schedule intact on the base pass.
+    const mainSigmas = api[sampler_node_id].inputs.sigmas;
     const sigmas = STEPS_SIGMAS[value.steps] ?? STEPS_SIGMAS[3];
     const graph = {
         ':seed': {
@@ -312,7 +351,7 @@ export const applyLatentUpscale = (
         ':split_sigmas': {
             inputs: {
                 step: value.main_steps,
-                sigmas: [scheduler_node_id, 0],
+                sigmas: mainSigmas,
             },
             class_type: 'SplitSigmas',
             _meta: { title: 'SplitSigmas' },
@@ -378,7 +417,13 @@ export const applyLatentUpscale = (
     api[video_vae_decode_node_id].inputs.samples = output;
     api[audio_vae_decode_node_id].inputs.samples = output;
 
-    const newGuiderID = buildSecondGuider(api, baseNodeID, control, values);
+    const newGuiderID = buildSecondGuider(
+        api,
+        baseNodeID,
+        control,
+        values,
+        values.pddModelRef,
+    );
     if (newGuiderID) {
         api[baseNodeID + ':sampler'].inputs.guider = [newGuiderID, 0];
     }

@@ -22,7 +22,6 @@ const control: controlType = {
     video_vae_decode_node_id: '105:10',
     audio_vae_decode_node_id: '105:23',
     guider_node_id: '105:16',
-    scheduler_node_id: '105:9',
     node_id: '105:104',
 };
 

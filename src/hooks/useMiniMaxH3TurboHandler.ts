@@ -20,6 +20,11 @@ export const useMiniMaxH3TurboHandler = () => {
             return;
         }
 
+        // PDD acceleration replaces turbo — when PDD is on, turbo has no effect.
+        if (getValues('pdd')) {
+            return;
+        }
+
         const {
             output_node_ids,
             api_input_name,

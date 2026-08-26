@@ -3330,6 +3330,15 @@
                     "unet_loader_node_id": "105:6",
                     "spectrum_node_id": "137"
                 },
+                "pdd": {
+                    "id": "handle",
+                    "sigma_shift_node_id": "136",
+                    "guider_node_id": "105:16",
+                    "sampler_node_id": "105:14",
+                    "sampler_select_node_id": "105:17",
+                    "spectrum_node_id": "137",
+                    "pdd_file": "minimax_h3_fl2va_pdd_acc_8step_comfyui.safetensors"
+                },
                 "sparse_attention": {
                     "id": "handle",
                     "sigma_shift_node_id": "136"
@@ -3343,8 +3352,8 @@
                     "video_vae_decode_node_id": "105:10",
                     "audio_vae_decode_node_id": "105:23",
                     "guider_node_id": "105:16",
-                    "scheduler_node_id": "105:9",
-                    "node_id": "105:104"
+                    "node_id": "105:104",
+                    "sigma_shift_node_id": "136"
                 }
             },
             "handler_options": {
@@ -3466,6 +3475,15 @@
                     "unet_loader_node_id": "105:6",
                     "spectrum_node_id": "137"
                 },
+                "pdd": {
+                    "id": "handle",
+                    "sigma_shift_node_id": "136",
+                    "guider_node_id": "105:16",
+                    "sampler_node_id": "105:14",
+                    "sampler_select_node_id": "105:17",
+                    "spectrum_node_id": "137",
+                    "pdd_file": "minimax_h3_fl2va_pdd_acc_8step_comfyui.safetensors"
+                },
                 "sparse_attention": {
                     "id": "handle",
                     "sigma_shift_node_id": "136"
@@ -3479,8 +3497,8 @@
                     "video_vae_decode_node_id": "105:10",
                     "audio_vae_decode_node_id": "105:23",
                     "guider_node_id": "105:16",
-                    "scheduler_node_id": "105:9",
-                    "node_id": "105:104"
+                    "node_id": "105:104",
+                    "sigma_shift_node_id": "136"
                 }
             },
             "handler_options": {
@@ -3609,6 +3627,15 @@
                     "unet_loader_node_id": "105:6",
                     "spectrum_node_id": "137"
                 },
+                "pdd": {
+                    "id": "handle",
+                    "sigma_shift_node_id": "136",
+                    "guider_node_id": "105:16",
+                    "sampler_node_id": "105:14",
+                    "sampler_select_node_id": "105:17",
+                    "spectrum_node_id": "137",
+                    "pdd_file": "minimax_h3_ref2va_pdd_acc_8step_comfyui.safetensors"
+                },
                 "sparse_attention": {
                     "id": "handle",
                     "sigma_shift_node_id": "136"
@@ -3630,8 +3657,8 @@
                     "video_vae_decode_node_id": "105:10",
                     "audio_vae_decode_node_id": "105:23",
                     "guider_node_id": "105:16",
-                    "scheduler_node_id": "105:9",
-                    "node_id": "105:104"
+                    "node_id": "105:104",
+                    "sigma_shift_node_id": "136"
                 }
             },
             "handler_options": {

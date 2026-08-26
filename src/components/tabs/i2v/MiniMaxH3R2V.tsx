@@ -9,6 +9,8 @@ import { LengthInput } from '../../controls/LengthSlider';
 import { MiniMaxH3LatentUpscale } from '../../controls/MiniMaxH3LatentUpscale';
 import { H3SparseAttention } from '../../controls/H3SparseAttention';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
+import { MiniMaxH3Steps } from '../../controls/MiniMaxH3Steps';
+import { TurboPDDToggle } from '../../controls/TurboPDDToggle';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { SectionAccordion } from '../../controls/SectionAccordion';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
@@ -16,6 +18,7 @@ import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlide
 import { Workflow } from '../../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
+import { useMiniMaxH3PDDHandler } from '../../../hooks/useMiniMaxH3PDDHandler';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useTranslate } from '../../../i18n/I18nContext';
 import { controlType } from '../../../redux/config';
@@ -492,8 +495,10 @@ const ReferenceScaling = ({ name }: { name: string }) => {
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
+    const pddHandler = useMiniMaxH3PDDHandler();
     const transformFirstMessage = useMiniMaxH3FirstMessageTransform();
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
+    useRegisterHandler({ name: 'pdd', handler: pddHandler });
     return (
         <Layout>
             <GridLeft>
@@ -545,8 +550,8 @@ const Content = () => {
                     max={30}
                     step={0.1}
                 />
-                <SliderInput name='steps' defaultValue={8} min={1} max={50} />
-                <ToggleInput name='turbo' label='turbo' defaultValue={true} />
+                <MiniMaxH3Steps />
+                <TurboPDDToggle />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'

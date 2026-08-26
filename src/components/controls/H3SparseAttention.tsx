@@ -1,5 +1,5 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { Workflow } from '../../api/graph';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
@@ -24,9 +24,14 @@ export const H3SparseAttention = ({
     ...props
 }: { name?: string } & BoxProps) => {
     const value = useWatch({ name, defaultValue });
+    const { getValues } = useFormContext();
     const handler = useEventCallback(
         (api: Workflow, value: TValue, control: controlType) => {
             if (!value?.enabled) {
+                return;
+            }
+            // PDD acceleration replaces sparse attention — no effect when PDD is on.
+            if (getValues('pdd')) {
                 return;
             }
             const { sigma_shift_node_id } = control;

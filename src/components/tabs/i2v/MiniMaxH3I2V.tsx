@@ -6,6 +6,8 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { MiniMaxH3LatentUpscale } from '../../controls/MiniMaxH3LatentUpscale';
 import { H3SparseAttention } from '../../controls/H3SparseAttention';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
+import { MiniMaxH3Steps } from '../../controls/MiniMaxH3Steps';
+import { TurboPDDToggle } from '../../controls/TurboPDDToggle';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
@@ -15,13 +17,13 @@ import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
-import { ToggleInput } from '../../controls/ToggleInput';
 import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { Workflow } from '../../../api/graph';
 import { controlType } from '../../../redux/config';
+import { useMiniMaxH3PDDHandler } from '../../../hooks/useMiniMaxH3PDDHandler';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useMiniMaxH3I2VFirstMessageTransform } from '../../../hooks/useMiniMaxH3I2VFirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -57,8 +59,10 @@ const ImageFrameInput = ({ name }: { name: string }) => {
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
+    const pddHandler = useMiniMaxH3PDDHandler();
     const transformFirstMessage = useMiniMaxH3I2VFirstMessageTransform();
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
+    useRegisterHandler({ name: 'pdd', handler: pddHandler });
     return (
         <Layout>
             <GridLeft>
@@ -93,8 +97,8 @@ const Content = () => {
                     max={30}
                     step={0.1}
                 />
-                <SliderInput name='steps' defaultValue={8} min={1} max={50} />
-                <ToggleInput name='turbo' label='turbo' defaultValue={true} />
+                <MiniMaxH3Steps />
+                <TurboPDDToggle />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'
