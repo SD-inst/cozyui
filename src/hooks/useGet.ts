@@ -1,6 +1,6 @@
 import { StaleTime, useQuery } from '@tanstack/react-query';
 
-export const useGet = ({
+export const useGet = <T = any>({
     url,
     enabled,
     staleTime = 3600000,
@@ -11,7 +11,7 @@ export const useGet = ({
     staleTime?: StaleTime<any>;
     cache?: boolean;
 }) => {
-    return useQuery({
+    return useQuery<T>({
         enabled,
         queryKey: [url],
         staleTime,

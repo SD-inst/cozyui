@@ -1,5 +1,6 @@
 import { useEventCallback } from '@mui/material';
 import { useController, useFormContext } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
 
@@ -7,7 +8,7 @@ export const WanFLF2V = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
     useController({ name, defaultValue: true });
     const handler = useEventCallback(
-        (api: any, _: any, control: controlType) => {
+        (api: Workflow, _: any, control: controlType) => {
             const model = getValues('model');
             if (
                 !control.i2v_encode_node_id ||

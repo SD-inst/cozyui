@@ -1,6 +1,7 @@
 import { useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId } from '../../../api/utils';
 import { useAPI } from '../../../hooks/useAPI';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -19,7 +20,7 @@ export const HYTeaCacheInput = ({ ...props }: SliderInputProps) => {
             setValue('sampler', 'DPMSolverMultistepScheduler');
         }
     }, [getValues, setValue, v]);
-    const handler = useEventCallback((api: any, value: number) => {
+    const handler = useEventCallback((api: Workflow, value: number) => {
         if (!value) {
             return;
         }

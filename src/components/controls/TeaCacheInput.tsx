@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../api/graph';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -14,7 +15,7 @@ export const TeaCacheInput = ({
     defaultEnd?: number;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: any, control: controlType) => {
+        (api: Workflow, value: any, control: controlType) => {
             if (
                 !value ||
                 !value.reuse_threshold ||

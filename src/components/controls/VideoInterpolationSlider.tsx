@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { isNodeRef, Workflow } from '../../api/graph';
 import { insertNode } from '../../api/utils';
 import { useResultParam } from '../../hooks/useResult';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -14,7 +15,7 @@ export const VideoInterpolationSlider = ({
 }: Optional<SliderInputProps, 'name'>) => {
     const { id } = useResultParam();
     const { getValues } = useFormContext();
-    const handler = useEventCallback((api: any, value: number) => {
+    const handler = useEventCallback((api: Workflow, value: number) => {
         if (value === 1 || getValues('length') < 2) {
             return;
         }
@@ -33,10 +34,10 @@ export const VideoInterpolationSlider = ({
         };
         insertNode(api, id, 'images', rifeNode, 0, 'frames');
         let currentFps = api[id].inputs.frame_rate;
-        if (Array.isArray(currentFps)) {
+        if (isNodeRef(currentFps)) {
             currentFps = api[currentFps[0]].inputs.value;
         }
-        api[id].inputs.frame_rate = currentFps * value;
+        api[id].inputs.frame_rate = (currentFps as number) * value;
     });
     useRegisterHandler({ name, handler });
     return (

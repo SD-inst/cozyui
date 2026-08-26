@@ -36,6 +36,7 @@ import {
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
 import { controlType } from '../../redux/config';
+import { Workflow } from '../../api/graph';
 import { ConnectionIndicator } from './ConnectionIndicator';
 import { hasRegisteredField } from '../../utils/registeredFields';
 
@@ -117,7 +118,7 @@ export const GenerateButton = ({
     const { api, controls } = useAPI();
 
     const apiUrl = useApiURL();
-    const { data: apiData, isSuccess: apiSuccess } = useGet({
+    const { data: apiData, isSuccess: apiSuccess } = useGet<Workflow>({
         url: api,
         enabled: !!api,
     });
@@ -129,7 +130,7 @@ export const GenerateButton = ({
 
         const params = {
             client_id,
-            prompt: cloneDeep(apiData),
+            prompt: cloneDeep(apiData) as Workflow,
         };
         if (enable_previews) {
             (params as any).extra_data = {

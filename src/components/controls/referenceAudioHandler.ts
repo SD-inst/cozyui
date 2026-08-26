@@ -1,4 +1,5 @@
 import { useEventCallback } from 'yet-another-react-lightbox';
+import { Workflow } from '../../api/graph';
 import { insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useFormContext } from 'react-hook-form';
@@ -14,7 +15,7 @@ export type TReferenceAudio = {
 export const useReferenceAudioHandler = () => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: TReferenceAudio, control: controlType) => {
+        (api: Workflow, value: TReferenceAudio, control: controlType) => {
             if (!value || !value.enabled || !value.audio) {
                 return;
             }

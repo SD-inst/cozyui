@@ -13,6 +13,7 @@ import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumContr
 import { SectionAccordion } from '../../controls/SectionAccordion';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
@@ -73,7 +74,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
 
     const handler = useEventCallback(
-        (api: any, value: Array<{ image: string }>, control: controlType) => {
+        (api: Workflow, value: Array<{ image: string }>, control: controlType) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
@@ -168,7 +169,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
 
 const ReferenceAudio = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: Array<{ audio: string }>, control: controlType) => {
+        (api: Workflow, value: Array<{ audio: string }>, control: controlType) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
@@ -210,7 +211,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
 
     const handler = useEventCallback(
         (
-            api: any,
+            api: Workflow,
             value: Array<{
                 video: string;
                 no_audio: boolean;
@@ -440,7 +441,7 @@ const ReferenceScaling = ({ name }: { name: string }) => {
     const mode = useWatch({ name, defaultValue: 'scale' });
 
     const handler = useEventCallback(
-        (api: any, value: string, control: controlType) => {
+        (api: Workflow, value: string, control: controlType) => {
             if (!control.node_id) {
                 return;
             }

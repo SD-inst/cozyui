@@ -1,3 +1,4 @@
+import { NodeRef, Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
 import { controlType } from '../../redux/config';
 
@@ -19,7 +20,7 @@ export type TKeyframeEntry = { image: any; position: number };
  * position.
  */
 export const collectKeyframeEntries = (
-    api: any,
+    api: Workflow,
     images: TRefEntry[],
     videos: TRefEntry[],
     refNodeID: string,
@@ -63,7 +64,7 @@ export const collectKeyframeEntries = (
  * entries).
  */
 export const buildKeyframeChain = (
-    api: any,
+    api: Workflow,
     entries: TKeyframeEntry[],
     latent: [string, number],
     basePositive: [string, number],
@@ -96,7 +97,7 @@ export const buildKeyframeChain = (
  * conditioning input, the same way LoRAs are chained.
  */
 export const keyframeHandler = (
-    api: any,
+    api: Workflow,
     images: TRefEntry[],
     videos: TRefEntry[],
     control: controlType,
@@ -114,7 +115,7 @@ export const keyframeHandler = (
         return;
     }
 
-    const basePositive = api[guiderNodeID].inputs.conditioning;
+    const basePositive = api[guiderNodeID].inputs.conditioning as NodeRef;
     const result = buildKeyframeChain(
         api,
         entries,

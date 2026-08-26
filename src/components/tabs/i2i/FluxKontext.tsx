@@ -2,6 +2,7 @@ import { Cancel } from '@mui/icons-material';
 import { Box, Button, Typography, useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { replaceNodeConnection } from '../../../api/utils';
 import { useResult } from '../../../hooks/useResult';
 import { useTranslate } from '../../../i18n/I18nContext';
@@ -45,7 +46,7 @@ const AppendImage = ({
     const { getValues } = useFormContext();
     const { resetLatents } = useLatents('latents');
     const handler = useEventCallback(
-        (api: any, value: boolean, control: controlType) => {
+        (api: Workflow, value: boolean, control: controlType) => {
             if (
                 !value ||
                 !control.image_1_id ||
@@ -86,7 +87,7 @@ const AppendImage = ({
 
 const LoadLatents = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control: controlType) => {
+        (api: Workflow, value: boolean, control: controlType) => {
             if (!value || !control.reference_node_id) {
                 return;
             }

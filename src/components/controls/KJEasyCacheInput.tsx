@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../api/graph';
 import { replaceNodeConnection } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -14,7 +15,7 @@ export const KJEasyCacheInput = ({
     defaultEnd?: number;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: any, control: controlType) => {
+        (api: Workflow, value: any, control: controlType) => {
             if (!value || !control.node_id) {
                 return;
             }

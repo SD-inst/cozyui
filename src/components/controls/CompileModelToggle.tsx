@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../api/graph';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -9,7 +10,7 @@ export const CompileModelToggle = ({
     ...props
 }: Optional<ToggleInputProps, 'name'>) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control: controlType) => {
+        (api: Workflow, value: boolean, control: controlType) => {
             if (!value) {
                 return;
             }

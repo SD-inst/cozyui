@@ -1,4 +1,5 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId } from '../../../api/utils';
 import { useAPI } from '../../../hooks/useAPI';
 import { useWatchForm } from '../../../hooks/useWatchForm';
@@ -19,7 +20,7 @@ export const KJHYBlockSwapInput = ({
     ...props
 }: { name?: string } & BoxProps) => {
     const { handler_options } = useAPI();
-    const handler = useEventCallback((api: any, value: valueType) => {
+    const handler = useEventCallback((api: Workflow, value: valueType) => {
         const { enabled, ...inputs } = value;
         if (!enabled) {
             return;

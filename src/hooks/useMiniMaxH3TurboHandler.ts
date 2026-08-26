@@ -1,5 +1,6 @@
 import { useEventCallback } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import { NodeRef, Workflow } from '../api/graph';
 import { getFreeNodeId, insertNode } from '../api/utils';
 import { useAPI } from './useAPI';
 
@@ -14,7 +15,7 @@ export const useMiniMaxH3TurboHandler = () => {
     const lora_params = handler_options?.lora_params ?? {};
     const { getValues } = useFormContext();
 
-    const handler = useEventCallback((api: any, value: boolean, control: any) => {
+    const handler = useEventCallback((api: Workflow, value: boolean, control: any) => {
         if (!value) {
             return;
         }
@@ -48,8 +49,11 @@ export const useMiniMaxH3TurboHandler = () => {
         const is4Step = isLightX2V && turboLoraName.includes('4step');
 
         if (isLightX2V) {
-            const inputNodeId =
-                api[output_node_ids[0]]?.inputs?.[api_input_name]?.[0];
+            const inputNodeId = (
+                api[output_node_ids[0]]?.inputs?.[api_input_name] as
+                    | NodeRef
+                    | undefined
+            )?.[0];
             const additionalFields: Record<string, any> = {};
             if (inputNodeId && output_idx !== undefined) {
                 additionalFields[lora_input_name] = [inputNodeId, output_idx];

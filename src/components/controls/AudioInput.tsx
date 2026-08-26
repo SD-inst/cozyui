@@ -1,5 +1,6 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import { Workflow } from '../../api/graph';
 import { replaceNodeConnection } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -17,7 +18,7 @@ export const AudioInput = ({
 }) => {
     const { watch, getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: boolean, control: controlType) => {
+        (api: Workflow, value: boolean, control: controlType) => {
             const audio = getValues(audioName);
             if (
                 !value ||

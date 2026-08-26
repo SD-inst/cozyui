@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../../api/graph';
 import { insertNode } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -6,7 +7,7 @@ import { ToggleInput, ToggleInputProps } from '../ToggleInput';
 
 export const HYRiflexInput = ({ ...props }: ToggleInputProps) => {
     const handler = useEventCallback(
-        (api: any, value: any, control: controlType) => {
+        (api: Workflow, value: any, control: controlType) => {
             if (!value) {
                 return;
             }

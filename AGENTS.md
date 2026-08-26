@@ -708,6 +708,24 @@ import { NewTabTab } from './components/tabs/NewTab';
 
 ## Dynamic Workflow Modification
 
+### Graph Types — the workflow is typed, never `any`
+
+The workflow graph is typed in [`src/api/graph.ts`](src/api/graph.ts):
+
+```typescript
+type NodeId = string;                       // "12" or a prefixed id from insertGraph, "12:main"
+type NodeRef = [NodeId, number];           // a link to another node's output
+type InputValue = string | number | boolean | null | NodeRef | Array<...>;
+interface WorkflowNode { inputs: Record<string, InputValue>; class_type?: string; _meta?: NodeMeta }
+type Workflow = Record<NodeId, WorkflowNode>;
+```
+
+- **Handlers type `api` as `Workflow`** — the registration pipeline enforces it: `handlerType` and `useRegisterHandler` in `TabContext.tsx` declare `(api: Workflow, value, control)`, and `GenerateButton` passes `params.prompt: Workflow` (a `cloneDeep` of the fetched API JSON, via `useGet<Workflow>`). Never write `api: any` in a handler.
+- **`InputValue` includes `null`** — handlers clear connections with `null`.
+- **Reading references:** an input is an `InputValue`, so to index a ref you must cast: `(api[id].inputs.images as NodeRef)[0]` — or use the `isNodeRef()` type guard. The same applies to arithmetic on inputs: `(api[id].inputs.frame_rate as number) * value`.
+- Node IDs are **strings** (may be composite, e.g. `12:main`); `getFreeNodeId` returns a `number` — append `'' + idx` when building IDs. Indexing `Workflow` with a number is fine.
+- `s.tab.api` in Redux (`tab.ts`) stores the last sent prompt as a `Workflow` (`setApi`).
+
 ### insertGraph — Inserting node groups at runtime
 
 `insertGraph` is the primary utility for inserting groups of nodes into the workflow dynamically. Located in [`src/api/utils.ts`](src/api/utils.ts).
@@ -715,7 +733,7 @@ import { NewTabTab } from './components/tabs/NewTab';
 **Signature:**
 
 ```typescript
-insertGraph(api: any, graph: any): string
+insertGraph(api: Workflow, graph: Workflow): string
 ```
 
 **How it works:**
@@ -730,7 +748,7 @@ insertGraph(api: any, graph: any): string
 ```tsx
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
 
-const handler = useEventCallback((api: any, value: any, control: controlType) => {
+const handler = useEventCallback((api: Workflow, value: any, control: controlType) => {
     if (!value || !value.length || !control.sampler_id) {
         return;
     }
@@ -786,7 +804,7 @@ import { insertGraph } from '../../../api/utils';
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: any, control: controlType) => {
+        (api: Workflow, value: any, control: controlType) => {
             // Node IDs come from config.json — never search by class_type
             if (!control.reference_node_id) return;
             
@@ -848,7 +866,7 @@ For controls that need to modify the workflow based on runtime values (e.g., swi
 ```tsx
 const useModelHandler = () => {
     return useEventCallback(
-        (api: any, value: string, control: controlType) => {
+        (api: Workflow, value: string, control: controlType) => {
             const isNunchaku = value.toLowerCase().includes('nunchaku');
             if (isNunchaku) {
                 // Replace model loader with NunchakuQwenImageDiTLoader

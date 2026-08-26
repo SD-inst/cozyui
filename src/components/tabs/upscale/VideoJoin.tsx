@@ -15,6 +15,7 @@ import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { WFTab } from '../../WFTab';
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 
@@ -22,7 +23,7 @@ const videoValue = { video: '' };
 
 // Builds the whole join pipeline dynamically. Node IDs come exclusively from
 // getFreeNodeId — never hardcoded.
-const buildLoad = (api: any, filename: string): string => {
+const buildLoad = (api: Workflow, filename: string): string => {
     const loadId = getFreeNodeId(api) + '';
     api[loadId] = {
         inputs: { file: filename, 'video-preview': '' },
@@ -41,7 +42,7 @@ const buildLoad = (api: any, filename: string): string => {
 const Videos = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: Array<{ video: string }>, control: controlType) => {
+        (api: Workflow, value: Array<{ video: string }>, control: controlType) => {
             if (!control.node_id) {
                 return;
             }

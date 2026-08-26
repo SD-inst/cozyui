@@ -17,6 +17,7 @@ import { get } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
+import { NodeRef, Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
 import { useAPI } from '../../hooks/useAPI';
 import { useListChoices } from '../../hooks/useListChoices';
@@ -258,7 +259,7 @@ export const LoraInput = ({
             setValue('prompt', newPrompt);
         }
     };
-    const handler = useEventCallback((api: any, values: valueType[]) => {
+    const handler = useEventCallback((api: Workflow, values: valueType[]) => {
         if (append) {
             values = values.concat(append);
         }
@@ -270,8 +271,11 @@ export const LoraInput = ({
             ...additional_inputs,
             ...overrideInputs,
         } as any;
-        const input_node_id =
-            api[output_node_ids?.[0]]?.inputs?.[api_input_name]?.[0];
+        const input_node_id = (
+            api[output_node_ids?.[0]]?.inputs?.[api_input_name] as
+                | NodeRef
+                | undefined
+        )?.[0];
         if (input_node_id && output_idx !== undefined) {
             additional_fields[lora_input_name] = [input_node_id, output_idx];
             if (clip_input_name) {
@@ -317,7 +321,7 @@ export const LoraInput = ({
                 (api[id].inputs[api_input_name] = [
                     '' + last_node_id,
                     output_idx,
-                ])
+                ] as NodeRef)
         );
         if (output_clip_ids) {
             output_clip_ids.forEach(

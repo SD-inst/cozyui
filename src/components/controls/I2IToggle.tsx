@@ -1,6 +1,7 @@
 import { Box, useEventCallback } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
+import { NodeRef, Workflow } from '../../api/graph';
 import { insertGraph } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useImageURL } from '../../hooks/useImageURL';
@@ -152,7 +153,7 @@ export const I2IToggle = ({
     });
 
     // Helper: find guider node ID from SamplerCustomAdvanced
-    const findGuiderId = (api: any, samplerId: string): string | null => {
+    const findGuiderId = (api: Workflow, samplerId: string): string | null => {
         const samplerNode = api[samplerId];
         if (!samplerNode) return null;
         const guiderLink = samplerNode.inputs.guider;
@@ -164,7 +165,7 @@ export const I2IToggle = ({
 
     // Helper: update sampler/guider connections to point to InpaintModelConditioning output
     const connectInpaintToSampler = (
-        api: any,
+        api: Workflow,
         samplerId: string,
         inpaintConditioningId: string,
         guiderId: string | null,
@@ -180,7 +181,7 @@ export const I2IToggle = ({
     };
 
     const handler = useEventCallback(
-        async (api: any, value: TValue, control: controlType) => {
+        async (api: Workflow, value: TValue, control: controlType) => {
             if (!value?.enabled || !value?.image) {
                 return;
             }
@@ -410,7 +411,7 @@ export const I2IToggle = ({
             } else if (samplerNode?.class_type === 'SamplerCustomAdvanced') {
                 const sigmasLink = samplerNode.inputs.sigmas; // [schedulerNodeId, 0]
                 if (sigmasLink && Array.isArray(sigmasLink)) {
-                    const schedulerNodeId = sigmasLink[0];
+                    const schedulerNodeId = (sigmasLink as NodeRef)[0];
                     api[schedulerNodeId].inputs.denoise = value.denoise;
                 }
             }

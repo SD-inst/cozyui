@@ -1,5 +1,6 @@
 import { Box, useEventCallback } from '@mui/material';
 import { useController, useFormContext } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { insertNode, replaceNodeConnection } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -34,7 +35,7 @@ export const WanNAG = ({
     });
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: valueType, control: controlType) => {
+        (api: Workflow, value: valueType, control: controlType) => {
             if (
                 !value.enabled ||
                 !control.sampler_node_id ||

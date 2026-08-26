@@ -1,26 +1,16 @@
+import {
+    Workflow,
+    WorkflowNode,
+    InputValue,
+    isNodeRef,
+} from './graph';
+
 let noCache = '';
 
 export const updateNoCache = () =>
     (noCache = Math.floor(Math.random() * 1000000).toFixed(0));
 
-export const shiftStr = (a: string, b: number) => '' + (parseInt(a) + b);
-
-export const shiftIds = (api: any, base: number) => {
-    Object.keys(api).forEach((k) => {
-        Object.keys(api[k].inputs).forEach((ik) => {
-            if (
-                typeof api[k].inputs[ik] === 'object' &&
-                api[k].inputs[ik].length === 2
-            ) {
-                api[k].inputs[ik][0] = shiftStr(api[k].inputs[ik][0], base);
-            }
-        });
-        api[shiftStr(k, base)] = api[k];
-        delete api[k];
-    });
-};
-
-export const getFreeNodeId = (api: any) =>
+export const getFreeNodeId = (api: Workflow) =>
     Object.keys(api)
         .map((k) => parseInt(k.split(':')[0]))
         .reduce((a, k) => Math.max(a, k)) + 1;
@@ -39,10 +29,10 @@ export const getFreeNodeId = (api: any) =>
  * @returns our node id
  */
 export const insertNode = (
-    api: any,
+    api: Workflow,
     output_node_ids: string | string[],
     field: string,
-    node: any,
+    node: WorkflowNode,
     node_output_index: number = 0,
     node_field_override?: string
 ): string => {
@@ -60,10 +50,10 @@ export const insertNode = (
 };
 
 export const replaceNodeConnection = (
-    api: any,
+    api: Workflow,
     target_node_id: string,
     target_field: string,
-    node: any,
+    node: WorkflowNode,
     output_index: number = 0
 ): string => {
     const new_node_id = getFreeNodeId(api) + '';
@@ -94,25 +84,20 @@ export const bigRandom = (len: number) => {
  * @param graph object with nodes to insert, IDs should start with a colon ':', a free node ID will be prepended; all links between the graph nodes will also be prepended with this free node ID, if they start with a colon, otherwise they're unchanged
  * @returns new node ID which is prefixed to all nodes in the graph and
  */
-export const insertGraph = (api: any, graph: any) => {
+export const insertGraph = (api: Workflow, graph: Workflow) => {
     const newNodeID = getFreeNodeId(api) + '';
     Object.entries(graph).forEach(([k, v]) => {
         const inputs = Object.fromEntries(
-            Object.entries((v as any).inputs).map(([ik, iv]) => {
-                if (
-                    Array.isArray(iv) &&
-                    iv.length == 2 &&
-                    typeof iv[0] === 'string' &&
-                    iv[1] !== undefined &&
-                    iv[0].startsWith(':')
-                ) {
-                    return [ik, [newNodeID + iv[0], iv[1]]];
-                } else {
+            Object.entries(v.inputs).map(
+                ([ik, iv]): [string, InputValue] => {
+                    if (isNodeRef(iv) && iv[0].startsWith(':')) {
+                        return [ik, [newNodeID + iv[0], iv[1]]];
+                    }
                     return [ik, iv];
                 }
-            })
+            )
         );
-        api[`${newNodeID}${k}`] = { ...(v as any), inputs };
+        api[`${newNodeID}${k}`] = { ...v, inputs };
     });
     return newNodeID;
 };

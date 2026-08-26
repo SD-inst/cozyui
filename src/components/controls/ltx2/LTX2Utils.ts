@@ -1,4 +1,5 @@
 import { useEventCallback } from 'yet-another-react-lightbox';
+import { Workflow } from '../../../api/graph';
 import { insertGraph } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { UploadType } from '../UploadType';
@@ -11,7 +12,7 @@ type nodes = {
 };
 
 export const LTXVideoHandler = (
-    api: any,
+    api: Workflow,
     nodes: nodes,
     fps: number,
     length: number,
@@ -61,7 +62,7 @@ export const useLTXUploadHandler = () => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
         (
-            api: any,
+            api: Workflow,
             _value: string,
             control: controlType,
             filetype: UploadType,

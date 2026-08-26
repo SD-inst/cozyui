@@ -1,3 +1,4 @@
+import { Workflow } from '../../api/graph';
 import { insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 
@@ -11,7 +12,7 @@ export type TKeyframe = {
 };
 
 export const keyframeHandler = (
-    api: any,
+    api: Workflow,
     value: TKeyframe[],
     control: controlType,
 ) => {

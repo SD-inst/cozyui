@@ -1,6 +1,7 @@
 import { useEventCallback } from '@mui/material';
 import { get } from 'lodash';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
+import { Workflow } from '../../api/graph';
 import { delResult } from '../../redux/tab';
 import { useRegisterHandler, useTabName } from '../contexts/TabContext';
 import { ToggleInput, ToggleInputProps } from './ToggleInput';
@@ -11,7 +12,7 @@ export const UpscaleToggle = ({ ...props }: ToggleInputProps) => {
         get(s, ['config', 'tabs', tab_name, 'result', 1, 'id'], null)
     );
     const dispatch = useAppDispatch();
-    const handler = useEventCallback((api: any, val: boolean) => {
+    const handler = useEventCallback((api: Workflow, val: boolean) => {
         if (val || !webp_node_id) {
             return;
         }

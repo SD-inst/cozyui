@@ -5,6 +5,7 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useController } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId } from '../../../api/utils';
 import { useAPI } from '../../../hooks/useAPI';
 import { useTranslate } from '../../../i18n/I18nContext';
@@ -22,7 +23,7 @@ export const KJHYCFG = ({
     const tr = useTranslate();
     const { handler_options } = useAPI();
     const handler = useEventCallback(
-        (api: any, value: { neg_prompt: string; cfg: string }) => {
+        (api: Workflow, value: { neg_prompt: string; cfg: string }) => {
             const cfg = parseFloat(value.cfg);
             if (!cfg) {
                 return;

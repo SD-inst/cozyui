@@ -20,6 +20,7 @@ import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
+import { Workflow } from '../../../api/graph';
 import { controlType } from '../../../redux/config';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
 import { useMiniMaxH3I2VFirstMessageTransform } from '../../../hooks/useMiniMaxH3I2VFirstMessageTransform';
@@ -29,7 +30,7 @@ import { miniMaxH3I2VSystemPrompt } from '../../chat/prompts/minimaxH3I2V';
 
 const ImageFrameInput = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: string, control: controlType) => {
+        (api: Workflow, value: string, control: controlType) => {
             if (!value) {
                 return;
             }

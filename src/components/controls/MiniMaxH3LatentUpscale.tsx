@@ -1,5 +1,6 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { Workflow } from '../../api/graph';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SamplerSelectInput } from './SamplerSelectInput';
@@ -28,7 +29,7 @@ export const MiniMaxH3LatentUpscale = ({
     const mainSteps = useWatch({ name: 'steps', defaultValue: 8 }) as number;
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: TValue, control: controlType) => {
+        (api: Workflow, value: TValue, control: controlType) => {
         applyLatentUpscale(api, value, control, {
             refImages: getValues('ref_images'),
             refVideos: getValues('ref_videos'),

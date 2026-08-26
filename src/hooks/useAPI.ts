@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { useContext, useMemo } from 'react';
 import { TabContext } from '../components/contexts/TabContext';
 import { controlType, tabConfigType } from '../redux/config';
+import { Workflow } from '../api/graph';
 import { useAppSelector } from '../redux/hooks';
 
 const emptyParams = {
@@ -14,7 +15,7 @@ const emptyParams = {
     },
 };
 
-const emptyApi = {};
+const emptyApi: Workflow = {};
 
 export const useAPI = () => {
     const { api, tab_name } = useContext(TabContext);

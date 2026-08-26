@@ -1,24 +1,31 @@
 import { describe, expect, it } from 'vitest';
+import { Workflow } from './graph';
 import { getFreeNodeId, insertGraph, insertNode } from './utils';
 
 describe('getFreeNodeId', () => {
     it('returns the max numeric base id plus one', () => {
         // ids may be composite ("105:14"); only the base part matters
-        expect(getFreeNodeId({ '105:9': {}, '105:14': {}, '7': {} })).toBe(106);
+        expect(
+            getFreeNodeId({
+                '105:9': { inputs: {} },
+                '105:14': { inputs: {} },
+                '7': { inputs: {} },
+            })
+        ).toBe(106);
     });
 
     it('ignores non-numeric base parts', () => {
-        expect(getFreeNodeId({ '42:main': {} })).toBe(43);
+        expect(getFreeNodeId({ '42:main': { inputs: {} } })).toBe(43);
     });
 });
 
 describe('insertGraph', () => {
     it('allocates a free base id and prefixes all graph nodes', () => {
-        const api: any = {
+        const api: Workflow = {
             '1': { inputs: {}, class_type: 'Model' },
             '2': { inputs: {}, class_type: 'Sampler' },
         };
-        const graph = {
+        const graph: Workflow = {
             ':main': { inputs: {}, class_type: 'MainNode' },
             ':aux': { inputs: {}, class_type: 'AuxNode' },
         };
@@ -30,10 +37,10 @@ describe('insertGraph', () => {
     });
 
     it('rewrites internal links and keeps external links intact', () => {
-        const api: any = {
+        const api: Workflow = {
             '2': { inputs: {}, class_type: 'Sampler' },
         };
-        const graph = {
+        const graph: Workflow = {
             ':main': {
                 inputs: { noise: [':aux', 0], model: ['2', 0] },
                 class_type: 'MainNode',
@@ -48,7 +55,7 @@ describe('insertGraph', () => {
 
 describe('insertNode', () => {
     it('wires input => new node => output and returns the new id', () => {
-        const api: any = {
+        const api: Workflow = {
             '1': { inputs: {}, class_type: 'Model' },
             '2': { inputs: { model: ['1', 0] }, class_type: 'Sampler' },
         };
@@ -59,7 +66,7 @@ describe('insertNode', () => {
     });
 
     it('supports multiple output nodes at once', () => {
-        const api: any = {
+        const api: Workflow = {
             '1': { inputs: {}, class_type: 'Model' },
             '2': { inputs: { model: ['1', 0] }, class_type: 'SamplerA' },
             '3': { inputs: { model: ['1', 0] }, class_type: 'SamplerB' },

@@ -1,11 +1,12 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../../api/graph';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ToggleInput, ToggleInputProps } from '../ToggleInput';
 
 export const WanRiflexToggle = ({ ...props }: ToggleInputProps) => {
     const handler = useEventCallback(
-        (api: any, value: boolean, control: controlType) => {
+        (api: Workflow, value: boolean, control: controlType) => {
             if (!value || !control.node_id || !control.field) {
                 return;
             }

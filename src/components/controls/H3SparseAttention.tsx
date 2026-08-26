@@ -1,5 +1,6 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useWatch } from 'react-hook-form';
+import { Workflow } from '../../api/graph';
 import { insertNode } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -24,7 +25,7 @@ export const H3SparseAttention = ({
 }: { name?: string } & BoxProps) => {
     const value = useWatch({ name, defaultValue });
     const handler = useEventCallback(
-        (api: any, value: TValue, control: controlType) => {
+        (api: Workflow, value: TValue, control: controlType) => {
             if (!value?.enabled) {
                 return;
             }

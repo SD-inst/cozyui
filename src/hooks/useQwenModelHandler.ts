@@ -1,6 +1,7 @@
 import { useEventCallback } from '@mui/material';
 import { cloneDeep } from 'lodash';
 import { useWatchForm } from './useWatchForm';
+import { Workflow } from '../api/graph';
 import { insertNode } from '../api/utils';
 import { controlType } from '../redux/config';
 
@@ -21,7 +22,7 @@ export const useQwenModelHandler = () => {
         modelName?.toLowerCase().includes(NUNCHAKU_KEYWORD);
 
     const handler = useEventCallback(
-        (api: any, value: string, control: controlType) => {
+        (api: Workflow, value: string, control: controlType) => {
             if (!value) {
                 return;
             }

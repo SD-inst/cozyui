@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -27,7 +28,7 @@ const newValue = { enabled: true };
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: ReferenceType, control: controlType) => {
+        (api: Workflow, value: ReferenceType, control: controlType) => {
             if (!value || !value.length || !control.sampler_id) {
                 return;
             }
@@ -81,7 +82,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
     );
 };
 
-const modelHandler = (api: any, value: string, control: controlType) => {
+const modelHandler = (api: Workflow, value: string, control: controlType) => {
     if (!value) return;
 
     const isDev = value.includes('_dev_');

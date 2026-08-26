@@ -1,5 +1,6 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useWatch } from 'react-hook-form';
+import { NodeRef, Workflow } from '../../../api/graph';
 import { insertGraph } from '../../../api/utils';
 import { useResultParam } from '../../../hooks/useResult';
 import { useWatchForm } from '../../../hooks/useWatchForm';
@@ -50,7 +51,7 @@ export const LTX2UpsampleControl = ({
     const value = useWatch({ name, defaultValue });
     const raHandler = useReferenceAudioHandler();
     const handler = useEventCallback(
-        (api: any, value: TValue, control: controlType) => {
+        (api: Workflow, value: TValue, control: controlType) => {
             if (!value) {
                 return;
             }
@@ -284,8 +285,9 @@ export const LTX2UpsampleControl = ({
                 wf[':2'].inputs.video_latent = [':9', 0];
                 if (api[load_image_node_id].class_type == 'GetVideoComponents') {
                     // video loaded, need to find and copy the mask node
-                    const [maskNodeID] =
-                        api[concat_node_id].inputs.video_latent;
+                    const [maskNodeID] = (
+                        api[concat_node_id].inputs.video_latent as NodeRef
+                    )[0];
                     wf[':10'] = {
                         ...api[maskNodeID],
                         inputs: {

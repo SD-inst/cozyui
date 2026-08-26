@@ -11,6 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useBackupUpload } from '../../hooks/useBackupUpload';
@@ -56,7 +57,7 @@ export const FileUpload = ({
     type?: UploadType;
     onUpload?: (file: File) => void;
     extraHandler?: (
-        api: any,
+        api: Workflow,
         value: string,
         control: controlType,
         filetype: UploadType,
@@ -87,7 +88,7 @@ export const FileUpload = ({
         return UploadType.IMAGE;
     }, [field.value]);
     const handler = useEventCallback(
-        (api: any, val: string, control: controlType) => {
+        (api: Workflow, val: string, control: controlType) => {
             if (filetype === UploadType.IMAGE) {
                 api[control.node_id].inputs[control.field] = val;
             } else if (control.format) {

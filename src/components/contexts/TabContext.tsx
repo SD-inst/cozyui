@@ -11,10 +11,11 @@ import {
 } from 'react';
 import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { controlType } from '../../redux/config';
+import { Workflow } from '../../api/graph';
 
 export type handlerType = {
     [control_name: string]: (
-        api: any,
+        api: Workflow,
         value: any[],
         control: controlType
     ) => void | Promise<void>;
@@ -68,7 +69,11 @@ export const useRegisterHandler = ({
     handler,
 }: {
     name: string;
-    handler: (api: any, value: any, control: controlType) => void | Promise<void>;
+    handler: (
+        api: Workflow,
+        value: any,
+        control: controlType,
+    ) => void | Promise<void>;
 }) => {
     const { setValue } = useContext(TabContext);
     useEffect(() => {

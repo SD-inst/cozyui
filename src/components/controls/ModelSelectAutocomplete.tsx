@@ -9,6 +9,7 @@ import { get } from 'lodash';
 import { useController } from 'react-hook-form';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useTranslate } from '../../i18n/I18nContext';
+import { Workflow } from '../../api/graph';
 import { controlType } from '../../redux/config';
 import { useAppSelector } from '../../redux/hooks';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
@@ -40,7 +41,11 @@ export const ModelSelectAutocomplete = ({
     field?: string;
     previews?: boolean;
     extraFilter?: (v: string) => boolean;
-    customHandler?: (api: any, value: string, control: controlType) => void | Promise<void>;
+    customHandler?: (
+        api: Workflow,
+        value: string,
+        control: controlType,
+    ) => void | Promise<void>;
 } & Omit<
     AutocompleteProps<valueType, false, any, any>,
     'renderInput' | 'options'
@@ -72,7 +77,7 @@ export const ModelSelectAutocomplete = ({
         });
     const optsIdx = Object.fromEntries(opts.map((o) => [o.id, o.label]));
     const handler = useEventCallback(
-        (api: any, value: string, control: controlType) => {
+        (api: Workflow, value: string, control: controlType) => {
             if (customHandler) {
                 customHandler(api, value, control);
             } else if (!value || !control.node_id) {

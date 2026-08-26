@@ -1,5 +1,6 @@
 import { useEventCallback } from '@mui/material';
 import { useFormContext } from 'react-hook-form';
+import { Workflow } from '../../api/graph';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SelectInput, SelectInputProps } from './SelectInput';
@@ -7,7 +8,7 @@ import { SelectInput, SelectInputProps } from './SelectInput';
 export const ModelSelectInput = ({ ...props }: SelectInputProps) => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, val: string, control: controlType) => {
+        (api: Workflow, val: string, control: controlType) => {
             if (!control['node_id']) {
                 throw 'control undefined';
             }

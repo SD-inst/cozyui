@@ -1,3 +1,4 @@
+import { Workflow } from '../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import {
@@ -132,7 +133,7 @@ export type TSecondGuiderValues = {
  * conditioning is then resolution-independent and the base guider stays valid).
  */
 export const buildSecondGuider = (
-    api: any,
+    api: Workflow,
     baseNodeID: string,
     control: controlType,
     values: TSecondGuiderValues,
@@ -168,7 +169,8 @@ export const buildSecondGuider = (
         const resSelID =
             Array.isArray(refNode.inputs.width) && refNode.inputs.width[0];
         const multiple =
-            (resSelID && api[resSelID]?.inputs?.multiple) || 32;
+            ((resSelID && api[resSelID as string]?.inputs?.multiple) as number) ||
+            32;
         const upSize = computeUpscaledPixelSize(
             values.aspectRatio,
             values.baseMP ?? 0.4,
@@ -276,7 +278,7 @@ export const buildSecondGuider = (
  * (operates on the `api` object + a value getter) so it can be unit-tested.
  */
 export const applyLatentUpscale = (
-    api: any,
+    api: Workflow,
     value: TValue,
     control: controlType,
     values: TSecondGuiderValues,

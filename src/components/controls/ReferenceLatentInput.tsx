@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { NodeRef, Workflow } from '../../api/graph';
 import { insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
@@ -23,7 +24,7 @@ export const ReferenceLatentInput = ({
     receiverFieldName?: string;
 }) => {
     const handler = useEventCallback(
-        (api: any, value: ReferenceType, control: controlType) => {
+        (api: Workflow, value: ReferenceType, control: controlType) => {
             if (
                 !value ||
                 !value.length ||
@@ -33,7 +34,7 @@ export const ReferenceLatentInput = ({
                 return;
             }
             const srcNode = api[control.guider_node_id].inputs.conditioning;
-            let prevNode = srcNode[0];
+            let prevNode = (srcNode as NodeRef)[0];
             value.forEach((v) => {
                 if (!v.size || !v.image || !v.enabled) {
                     return;

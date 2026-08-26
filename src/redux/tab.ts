@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { setWith, unset } from 'lodash';
+import { Workflow } from '../api/graph';
 
 export enum actionEnum {
     STORE,
@@ -24,7 +25,7 @@ type resultType = {
 
 type tabType = {
     current_tab: string;
-    api: any;
+    api: Workflow;
     prompt: {
         [id: string]: {
             tab_name: string;
@@ -38,7 +39,7 @@ const slice = createSlice({
     name: 'tab',
     initialState: {
         current_tab: '',
-        api: {} as any,
+        api: {},
         prompt: {},
         params: {
             tab: '',
@@ -51,7 +52,7 @@ const slice = createSlice({
             ...s,
             current_tab: action.payload,
         }),
-        setApi: (s, action: PayloadAction<any>) => ({
+        setApi: (s, action: PayloadAction<Workflow>) => ({
             ...s,
             api: action.payload,
         }),

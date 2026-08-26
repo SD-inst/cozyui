@@ -2,6 +2,7 @@ import { useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useResultParam } from '../../hooks/useResult';
+import { Workflow } from '../../api/graph';
 import { useRegisterHandler } from '../contexts/TabContext';
 
 export const VideoImageOverride = ({
@@ -12,7 +13,7 @@ export const VideoImageOverride = ({
     const { id } = useResultParam();
     const { setValue } = useFormContext();
     const length = useWatch({ name: 'length' });
-    const handler = useEventCallback((api: any, value: boolean) => {
+    const handler = useEventCallback((api: Workflow, value: boolean) => {
         if (!value) {
             return;
         }

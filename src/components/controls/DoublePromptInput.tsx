@@ -3,6 +3,7 @@ import { PromptInput } from './PromptInput';
 import { TextInputProps } from './TextInput';
 import { ToggleInput } from './ToggleInput';
 import { useRegisterHandler } from '../contexts/TabContext';
+import { Workflow } from '../../api/graph';
 import { controlType } from '../../redux/config';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useEffect } from 'react';
@@ -14,7 +15,7 @@ type TValue = {
 
 export const DoublePromptInput = ({ name, ...props }: TextInputProps) => {
     const handler = useEventCallback(
-        (api: any, value: TValue, control: controlType) => {
+        (api: Workflow, value: TValue, control: controlType) => {
             if (!control.node_id || !control.field) {
                 return;
             }

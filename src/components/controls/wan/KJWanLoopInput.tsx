@@ -1,5 +1,6 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController } from 'react-hook-form';
+import { NodeRef, Workflow } from '../../../api/graph';
 import { insertNode, replaceNodeConnection } from '../../../api/utils';
 import { useResultParam } from '../../../hooks/useResult';
 import { controlType } from '../../../redux/config';
@@ -22,13 +23,13 @@ export const KJWanLoopInput = ({
 }: BoxProps & { name: string }) => {
     const { id } = useResultParam();
     const handler = useEventCallback(
-        (api: any, value: valueType, control: controlType) => {
+        (api: Workflow, value: valueType, control: controlType) => {
             const { enabled, color_correction, ...inputs } = value;
             if (!enabled || !control.sampler_node_id) {
                 return;
             }
             if (color_correction != 'off') {
-                const decode_node_id = api[id].inputs['images'][0];
+                const decode_node_id = (api[id].inputs['images'] as NodeRef)[0];
                 const selectNode = {
                     inputs: {
                         indexes: '-9',

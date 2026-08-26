@@ -1,4 +1,5 @@
 import { useEventCallback } from '@mui/material';
+import { Workflow } from '../../../api/graph';
 import { insertGraph } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useQwenModelHandler } from '../../../hooks/useQwenModelHandler';
@@ -34,7 +35,7 @@ const newValue = { size: 1, enabled: true };
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: any, value: ReferenceType, control: controlType) => {
+        (api: Workflow, value: ReferenceType, control: controlType) => {
             if (
                 !value ||
                 !value.length ||

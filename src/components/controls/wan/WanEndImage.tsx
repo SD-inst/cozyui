@@ -1,6 +1,7 @@
 import { Box, useEventCallback } from '@mui/material';
 import { cloneDeep } from 'lodash';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { getFreeNodeId } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -17,7 +18,7 @@ export const WanEndImage = ({
     const useEndImage = useWatch({ name });
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: any, value: boolean, control: controlType) => {
+        (api: Workflow, value: boolean, control: controlType) => {
             if (
                 !control.image_node_id ||
                 !control.i2v_encode_node_id ||

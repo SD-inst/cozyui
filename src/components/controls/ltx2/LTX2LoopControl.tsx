@@ -1,6 +1,7 @@
 import { Box, useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
+import { Workflow } from '../../../api/graph';
 import { insertGraph } from '../../../api/utils';
 import { useControl } from '../../../hooks/useAPI';
 import { useResultParam } from '../../../hooks/useResult';
@@ -36,7 +37,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });
     const { append } = useFieldArray({ name: 'keyframes' });
     const { setValue, getValues } = useFormContext();
-    const handler = useEventCallback((api: any, value: TValue) => {
+    const handler = useEventCallback((api: Workflow, value: TValue) => {
         if (!value || !value.enabled) {
             return;
         }

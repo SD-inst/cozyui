@@ -1,4 +1,5 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
+import { Workflow } from '../../../api/graph';
 import { replaceNodeConnection } from '../../../api/utils';
 import { useWatchForm } from '../../../hooks/useWatchForm';
 import { controlType } from '../../../redux/config';
@@ -19,7 +20,7 @@ export const KJWanBlockSwapInput = ({
     ...props
 }: BoxProps & { name?: string }) => {
     const handler = useEventCallback(
-        (api: any, value: valueType, control: controlType) => {
+        (api: Workflow, value: valueType, control: controlType) => {
             const { enabled, ...inputs } = value;
             if (!enabled || !control.loader_node_id) {
                 return;
