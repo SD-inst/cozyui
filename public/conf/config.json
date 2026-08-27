@@ -3242,6 +3242,11 @@
                 },
                 "overlap": {
                     "id": "skip"
+                },
+                "randomizer": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "prefix": "video_join_"
                 }
             },
             "result": {

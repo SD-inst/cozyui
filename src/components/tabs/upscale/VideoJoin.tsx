@@ -9,6 +9,7 @@ import {
     GridRight,
     Layout,
 } from '../../controls/Layout';
+import { Randomizer } from '../../controls/Randomizer';
 import { SliderInput } from '../../controls/SliderInput';
 import { ToggleInput } from '../../controls/ToggleInput';
 import { UploadType } from '../../controls/UploadType';
@@ -183,6 +184,7 @@ const Content = () => {
                     max={240}
                     step={1}
                 />
+                <Randomizer />
             </GridLeft>
             <GridRight>
                 <VideoResult />
