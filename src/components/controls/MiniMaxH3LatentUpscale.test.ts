@@ -226,6 +226,62 @@ describe('applyLatentUpscale — I2V', () => {
     });
 });
 
+describe('applyLatentUpscale — PDD', () => {
+    const makeApi = (): Record<string, any> => ({
+        '105:14': {
+            inputs: { sigmas: ['999', 1], guider: ['105:16', 0] },
+            class_type: 'SamplerCustomAdvanced',
+        },
+        '999': { inputs: {}, class_type: 'MiniMaxH3PDDAccApply' },
+        '105:16': {
+            inputs: { model: ['999', 0], conditioning: ['105:104', 0] },
+            class_type: 'BasicGuider',
+        },
+        '105:10': {
+            inputs: { samples: ['105:14', 0] },
+            class_type: 'VAEDecode',
+        },
+        '105:23': {
+            inputs: { samples: ['105:14', 0] },
+            class_type: 'VAEDecodeAudio',
+        },
+        '105:104': {
+            inputs: {
+                prompt: 'test prompt',
+                clip: ['105:13', 0],
+                vae: ['105:11', 0],
+                audio_vae: ['105:24', 0],
+                length: ['105:107', 1],
+                'ref_images.ref_image_0': ['200', 0],
+            },
+            class_type: 'MiniMaxH3ReferenceToVideo',
+        },
+    });
+
+    const pddValues = {
+        refImages: [{ image: 'a.png', keyframe: false }],
+        pddModelRef: ['999', 0] as [string, number],
+    };
+
+    it('does not insert a SplitSigmas and keeps the full PDD sigmas on the main sampler', () => {
+        const api = makeApi();
+        const baseNodeID = getFreeNodeId(api) + '';
+        applyLatentUpscale(api, value, control, pddValues);
+
+        // no SplitSigmas node — the PDD schedule is not split
+        expect(findNodes(api, 'SplitSigmas')).toHaveLength(0);
+        // the main sampler keeps the PDD sigmas (not rewired to a split node)
+        expect(api['105:14'].inputs.sigmas).toEqual(['999', 1]);
+        // the second (upscale) sampler is still inserted
+        expect(api[baseNodeID + ':sampler'].class_type).toBe(
+            'SamplerCustomAdvanced',
+        );
+        // the main pass still feeds the upscale chain (separate → upscale)
+        const separate = findNodes(api, 'LTXVSeparateAVLatent')[0];
+        expect(separate.inputs.av_latent).toEqual(['105:14', 1]);
+    });
+});
+
 describe('buildSecondGuider — no reference node', () => {
     it('returns null when the tab has no keyframe reference node', () => {
         const api: Record<string, any> = {

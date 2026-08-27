@@ -336,10 +336,14 @@ export const applyLatentUpscale = (
     ) {
         return;
     }
-    // The main pass keeps whatever sigmas it already has: the scheduler's in
-    // normal mode, or the PDD node's when PDD acceleration is on (the PDD
-    // handler runs first and rewires the main sampler's sigmas). Splitting
-    // those keeps the PDD schedule intact on the base pass.
+    // In PDD mode the main pass runs the COMPLETE PDD schedule: the PDD LoRAs
+    // are trained on a fixed nfe (4/6/8) step schedule that cannot be split,
+    // so the main-pass step count has no effect and no SplitSigmas is inserted
+    // — the main sampler keeps the PDD sigmas it already has (rewired by the
+    // PDD handler). In normal mode the scheduler's sigmas are split at
+    // `main_steps` so the main pass only runs the early steps and the second
+    // pass finishes the denoising on the upscaled latent.
+    const isPDD = !!values.pddModelRef;
     const mainSigmas = api[sampler_node_id].inputs.sigmas;
     const sigmas = STEPS_SIGMAS[value.steps] ?? STEPS_SIGMAS[3];
     const graph = {
@@ -348,14 +352,18 @@ export const applyLatentUpscale = (
             class_type: 'PrimitiveInt',
             _meta: { title: 'Seed (Latent Upscale)' },
         },
-        ':split_sigmas': {
-            inputs: {
-                step: value.main_steps,
-                sigmas: mainSigmas,
-            },
-            class_type: 'SplitSigmas',
-            _meta: { title: 'SplitSigmas' },
-        },
+        ...(isPDD
+            ? {}
+            : {
+                ':split_sigmas': {
+                    inputs: {
+                        step: value.main_steps,
+                        sigmas: mainSigmas,
+                    },
+                    class_type: 'SplitSigmas',
+                    _meta: { title: 'SplitSigmas' },
+                },
+            }),
         ':separate': {
             inputs: { av_latent: [sampler_node_id, 1] },
             class_type: 'LTXVSeparateAVLatent',
@@ -412,7 +420,9 @@ export const applyLatentUpscale = (
         },
     };
     const baseNodeID = insertGraph(api, graph);
-    api[sampler_node_id].inputs.sigmas = [baseNodeID + ':split_sigmas', 0];
+    if (!isPDD) {
+        api[sampler_node_id].inputs.sigmas = [baseNodeID + ':split_sigmas', 0];
+    }
     const output: [string, number] = [baseNodeID + ':sampler', 0];
     api[video_vae_decode_node_id].inputs.samples = output;
     api[audio_vae_decode_node_id].inputs.samples = output;
