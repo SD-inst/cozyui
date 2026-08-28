@@ -16,7 +16,7 @@ const defaultValue: TValue = {
     enabled: false,
     main_steps: 4,
     megapixels: 1,
-    sampler: 'lcm',
+    sampler: 'er_sde',
     seed: 1024,
     steps: 3,
 };

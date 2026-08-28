@@ -77,7 +77,7 @@ const Content = () => {
                         previews={false}
                         sx={{ mb: 2 }}
                     />
-                    <SamplerSelectInput name='sampler' defaultValue='lcm' />
+                    <SamplerSelectInput name='sampler' defaultValue='er_sde' />
                     <SchedulerSelectInput
                         name='scheduler'
                         defaultValue='beta57'
