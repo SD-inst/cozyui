@@ -540,7 +540,7 @@ const Content = () => {
                     defaultValue={0.4}
                     min={0.1}
                     max={2}
-                    step={0.1}
+                    step={0.01}
                 />
                 <SliderInput
                     name='length'

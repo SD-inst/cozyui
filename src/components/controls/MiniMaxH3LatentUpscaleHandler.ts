@@ -1,10 +1,7 @@
 import { NodeRef, Workflow } from '../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
-import {
-    collectKeyframeEntries,
-    TRefEntry,
-} from './MiniMaxH3KeyframeHandler';
+import { collectKeyframeEntries, TRefEntry } from './MiniMaxH3KeyframeHandler';
 
 export type TValue = {
     enabled: boolean;
@@ -191,8 +188,8 @@ export const buildSecondGuider = (
         const resSelID =
             Array.isArray(refNode.inputs.width) && refNode.inputs.width[0];
         const multiple =
-            ((resSelID && api[resSelID as string]?.inputs?.multiple) as number) ||
-            32;
+            ((resSelID &&
+                api[resSelID as string]?.inputs?.multiple) as number) || 32;
         const upSize = computeUpscaledPixelSize(
             values.aspectRatio,
             values.baseMP ?? 0.4,
@@ -355,15 +352,15 @@ export const applyLatentUpscale = (
         ...(isPDD
             ? {}
             : {
-                ':split_sigmas': {
-                    inputs: {
-                        step: value.main_steps,
-                        sigmas: mainSigmas,
-                    },
-                    class_type: 'SplitSigmas',
-                    _meta: { title: 'SplitSigmas' },
-                },
-            }),
+                  ':split_sigmas': {
+                      inputs: {
+                          step: value.main_steps,
+                          sigmas: mainSigmas,
+                      },
+                      class_type: 'SplitSigmas',
+                      _meta: { title: 'SplitSigmas' },
+                  },
+              }),
         ':separate': {
             inputs: { av_latent: [sampler_node_id, 1] },
             class_type: 'LTXVSeparateAVLatent',
@@ -380,6 +377,8 @@ export const applyLatentUpscale = (
                 precision: 'fp32',
                 latent: [':separate', 0],
                 enable_chunking: false,
+                enable_temporal_chunking: false,
+                force_unload: true,
             },
             class_type: 'MinimaxH3LatentUpscaler3D',
             _meta: { title: 'Minimax H3 Latent Upscaler (3D)' },

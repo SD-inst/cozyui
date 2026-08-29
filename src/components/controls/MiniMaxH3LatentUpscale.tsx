@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
@@ -28,7 +29,12 @@ export const MiniMaxH3LatentUpscale = ({
     const value = useWatch({ name, defaultValue });
     const mainSteps = useWatch({ name: 'steps', defaultValue: 8 }) as number;
     const pdd = useWatch({ name: 'pdd', defaultValue: false }) as boolean;
-    const { getValues } = useFormContext();
+    const { getValues, setValue } = useFormContext();
+    // The main-pass step count defaults to the base step count (the slider's
+    // maximum) and follows the `steps` control whenever it changes.
+    useEffect(() => {
+        setValue(`${name}.main_steps`, mainSteps);
+    }, [mainSteps, name, setValue]);
     const handler = useEventCallback(
         (api: Workflow, value: TValue, control: controlType) => {
         applyLatentUpscale(api, value, control, {
@@ -65,7 +71,7 @@ export const MiniMaxH3LatentUpscale = ({
                         <SliderInput
                             name={`${name}.main_steps`}
                             label='latent_upscale_main_steps'
-                            defaultValue={defaultValue.main_steps}
+                            defaultValue={mainSteps}
                             min={1}
                             max={Math.max(1, mainSteps)}
                             step={1}
