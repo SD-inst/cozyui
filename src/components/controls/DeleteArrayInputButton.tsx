@@ -1,21 +1,25 @@
 import { Close } from '@mui/icons-material';
 import { Button, ButtonProps } from '@mui/material';
-import { useFieldArray } from 'react-hook-form';
 import { useWatchForm } from '../../hooks/useWatchForm';
 
 export const DeleteArrayInputButton = ({
     index,
     min,
     name,
+    onRemove,
     ...props
-}: { index: number; min: number; name: string } & ButtonProps) => {
+}: {
+    index: number;
+    min: number;
+    name: string;
+    onRemove: (index: number) => void;
+} & ButtonProps) => {
     const value: any = useWatchForm(name) || [];
-    const { remove } = useFieldArray({ name });
     if (value.length <= min) {
         return null;
     }
     return (
-        <Button onClick={() => remove(index)} {...props}>
+        <Button onClick={() => onRemove(index)} {...props}>
             <Close />
         </Button>
     );

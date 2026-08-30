@@ -2322,6 +2322,7 @@ __metadata:
     react-diff-viewer-continued: "npm:^4.0.5"
     react-dom: "npm:^18.3.1"
     react-dropzone: "npm:^14.3.5"
+    react-flip-toolkit: "npm:^7.2.4"
     react-hook-form: "npm:^7.54.2"
     react-hot-toast: "npm:^2.5.1"
     react-redux: "npm:^9.2.0"
@@ -2967,6 +2968,15 @@ __metadata:
   version: 3.3.2
   resolution: "flatted@npm:3.3.2"
   checksum: 10c0/24cc735e74d593b6c767fe04f2ef369abe15b62f6906158079b9874bdb3ee5ae7110bb75042e70cd3f99d409d766f357caf78d5ecee9780206f5fdc5edbad334
+  languageName: node
+  linkType: hard
+
+"flip-toolkit@npm:7.2.4":
+  version: 7.2.4
+  resolution: "flip-toolkit@npm:7.2.4"
+  dependencies:
+    rematrix: "npm:0.2.2"
+  checksum: 10c0/9ebb9a9a13bcd55f06beadbf62066178d89a73e48bbb14a8b704d27fc275abf0a979f9c7e5de9383067f8814d626f7a2d14d82f1d193872bd0823ab657ce559b
   languageName: node
   linkType: hard
 
@@ -4203,6 +4213,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-flip-toolkit@npm:^7.2.4":
+  version: 7.2.4
+  resolution: "react-flip-toolkit@npm:7.2.4"
+  dependencies:
+    flip-toolkit: "npm:7.2.4"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ">= 16.x"
+    react-dom: ">= 16.x"
+  checksum: 10c0/096943a911340525f16c4441af82cbaeb38ba6ad9ea42c01c3c56230c939792e555f12e2f318ff4b03d253e23034d335fb2d797eb25f80ef2eec3ff7a85aba4d
+  languageName: node
+  linkType: hard
+
 "react-hook-form@npm:^7.54.2":
   version: 7.54.2
   resolution: "react-hook-form@npm:7.54.2"
@@ -4326,6 +4349,13 @@ __metadata:
   version: 0.14.1
   resolution: "regenerator-runtime@npm:0.14.1"
   checksum: 10c0/1b16eb2c4bceb1665c89de70dcb64126a22bc8eb958feef3cd68fe11ac6d2a4899b5cd1b80b0774c7c03591dc57d16631a7f69d2daa2ec98100e2f29f7ec4cc4
+  languageName: node
+  linkType: hard
+
+"rematrix@npm:0.2.2":
+  version: 0.2.2
+  resolution: "rematrix@npm:0.2.2"
+  checksum: 10c0/b9b5a9ceee2fc684ae43c41f4e805109c4734c61859eea6dac6021ce980e7f3c4e914fe5e3561fe078f4134db59c190c7d42b89bea4c0fae95bbbae4792cbcb8
   languageName: node
   linkType: hard
 

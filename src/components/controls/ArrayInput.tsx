@@ -7,6 +7,7 @@ import React, {
     ReactNode,
     useEffect,
 } from 'react';
+import { Flipped, Flipper } from 'react-flip-toolkit';
 import {
     useController,
     useFieldArray,
@@ -25,12 +26,16 @@ const cloneChildren = ({
     min = 0,
     index,
     depth = 0,
+    onSwap,
+    onRemove,
 }: {
     children: any;
     name: string;
     min?: number;
     index: number;
     depth?: number;
+    onSwap: (a: number, b: number) => void;
+    onRemove: (index: number) => void;
 }) => {
     return React.Children.map(
         children,
@@ -46,6 +51,8 @@ const cloneChildren = ({
                     min,
                     index,
                     depth: depth + 1,
+                    onSwap,
+                    onRemove,
                 }),
             };
             if (child.props.name) {
@@ -72,6 +79,7 @@ const cloneChildren = ({
                                     index={index}
                                     min={min}
                                     name={name}
+                                    onRemove={onRemove}
                                 />
                             </Box>
                             <Box flex={1} />
@@ -80,11 +88,13 @@ const cloneChildren = ({
                                     index={index}
                                     name={name}
                                     direction='up'
+                                    onSwap={onSwap}
                                 />
                                 <MoveArrayInputButton
                                     index={index}
                                     name={name}
                                     direction='down'
+                                    onSwap={onSwap}
                                 />
                             </Stack>
                             <Box flex={1} />
@@ -122,7 +132,7 @@ export const ArrayInput = ({
     const {
         field: { value },
     } = useController({ name, defaultValue: [] });
-    const { append, update } = useFieldArray({ name });
+    const { fields, append, update, swap, remove } = useFieldArray({ name });
     useUploadBackupGuard(name, value, keyField);
     useEffect(() => {
         if (value.length < min && min > 0) {
@@ -175,25 +185,33 @@ export const ArrayInput = ({
     return (
         <Box display='flex' flexDirection='column' alignItems='center' gap={2}>
             {label ? tr(label) : tr('controls.' + name)}
-            {value.map((val: any, index: number) => (
-                <Box
-                    display='flex'
-                    flexDirection='column'
-                    gap={1}
-                    width='100%'
-                    key={`${index}_${val[keyField]}`}
-                >
-                    <Typography variant='body2' align='center'>
-                        {index + 1}
-                    </Typography>
-                    {cloneChildren({
-                        children: props.children,
-                        name,
-                        index,
-                        min,
-                    })}
-                </Box>
-            ))}
+            <Box width='100%'>
+                <Flipper flipKey={fields.map((f: any) => f.id).join(',')}>
+                    {fields.map((field: any, index: number) => (
+                        <Flipped flipId={field.id} key={field.id}>
+                            <Box
+                                display='flex'
+                                flexDirection='column'
+                                gap={1}
+                                width='100%'
+                                className='array-input-item'
+                            >
+                                <Typography variant='body2' align='center'>
+                                    {index + 1}
+                                </Typography>
+                                {cloneChildren({
+                                    children: props.children,
+                                    name,
+                                    index,
+                                    min,
+                                    onSwap: swap,
+                                    onRemove: remove,
+                                })}
+                            </Box>
+                        </Flipped>
+                    ))}
+                </Flipper>
+            </Box>
             {(value.length < max || max === -1) && (
                 <Button onClick={handleAdd}>
                     <Add />
