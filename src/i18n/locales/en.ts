@@ -85,6 +85,8 @@ const translation = {
         merge_type_double: 'Double blocks only',
         merge_type_full: 'Full',
         strength: 'strength',
+        model_page: 'original model',
+        model_page_civitai_red: 'civitai.red',
         change_lora_merge_params: 'Change lora merge params',
         delete_result: 'Delete result',
         confirm_delete_result: 'Are you sure you want to delete this result?',

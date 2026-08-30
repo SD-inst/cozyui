@@ -11,6 +11,7 @@ import {
     DialogTitle,
     MenuItem,
     TextField,
+    Typography,
     useEventCallback,
 } from '@mui/material';
 import { get } from 'lodash';
@@ -59,6 +60,11 @@ const LoraChip = ({
     const [open, setOpen] = useState(false);
     const [strength, setStrength] = useState('' + value.strength);
     const [merge, setMerge] = useState(value.merge);
+    const [modelPage, setModelPage] = useState<string | null>(null);
+    const preview_root = useAppSelector((s) => s.config.preview_root);
+    const civitaiRedUrl = modelPage && modelPage.includes('civitai.com')
+        ? modelPage.replace('civitai.com', 'civitai.red')
+        : null;
     const ref = useRef<HTMLInputElement>(null);
     const handleOK = () => {
         onOK(parseFloat(strength) || 1, merge);
@@ -72,6 +78,31 @@ const LoraChip = ({
         setMerge(value.merge);
         setTimeout(() => ref.current?.focus(), 100);
     }, [open, value.merge, value.strength]);
+    useEffect(() => {
+        if (!open || !preview_root || !value.id.endsWith('.safetensors')) {
+            setModelPage(null);
+            return;
+        }
+        let cancelled = false;
+        const jsonPath =
+            preview_root +
+            '/' +
+            value.id.replace(/(\.safetensors)$/, '.json');
+        setModelPage(null);
+        fetch(jsonPath)
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) => {
+                if (!cancelled && data?.['model page']) {
+                    setModelPage(data['model page']);
+                }
+            })
+            .catch(() => {
+                if (!cancelled) setModelPage(null);
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [open, preview_root, value.id]);
     return (
         <>
             <Chip
@@ -114,6 +145,45 @@ const LoraChip = ({
                             e.stopPropagation();
                         }}
                     />
+                    {modelPage && (
+                        <Box
+                            component='span'
+                            sx={{
+                                display: 'inline-flex',
+                                gap: 1,
+                                alignSelf: 'flex-start',
+                                maxWidth: '100%',
+                                wordBreak: 'break-all',
+                            }}
+                        >
+                            <Typography
+                                component='a'
+                                href={modelPage}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                variant='body2'
+                                sx={{ wordBreak: 'break-all' }}
+                            >
+                                {tr('controls.model_page')}
+                            </Typography>
+                            {civitaiRedUrl && (
+                                <Typography
+                                    component='a'
+                                    href={civitaiRedUrl}
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    variant='body2'
+                                    sx={{
+                                        wordBreak: 'break-all',
+                                        color: '#c62828',
+                                        '&:hover': { color: '#b71c1c' },
+                                    }}
+                                >
+                                    {tr('controls.model_page_civitai_red')}
+                                </Typography>
+                            )}
+                        </Box>
+                    )}
                     {!hideMergeType && (
                         <SelectControl
                             label={'controls.merge_type'}

@@ -84,6 +84,8 @@ const translation = {
         merge_type_double: 'Только двойные блоки',
         merge_type_full: 'Полностью',
         strength: 'сила',
+        model_page: 'оригинальная модель',
+        model_page_civitai_red: 'civitai.red',
         change_lora_merge_params: 'Изменить параметры слияния лоры',
         delete_result: 'Удалить результат',
         confirm_delete_result: 'Вы уверены, что хотите удалить этот результат?',
