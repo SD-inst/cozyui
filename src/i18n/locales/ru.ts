@@ -179,7 +179,6 @@ const translation = {
         turbo_lora: 'Турбо LoRA',
         turbo_lora_strength: 'Сила',
         latent_upscale: 'Латентный апскейл',
-        latent_upscale_main_steps: 'шаги основного прохода (до апскейла)',
         latent_upscale_megapixels: 'мегапиксели апскейла',
         latent_upscale_steps: 'шаги апскейла',
         latent_upscale_sampler: 'сэмплер апскейла',

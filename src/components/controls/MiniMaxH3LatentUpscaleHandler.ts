@@ -5,7 +5,6 @@ import { collectKeyframeEntries, TRefEntry } from './MiniMaxH3KeyframeHandler';
 
 export type TValue = {
     enabled: boolean;
-    main_steps: number;
     megapixels: number;
     steps: number;
     sampler: string;
@@ -333,15 +332,8 @@ export const applyLatentUpscale = (
     ) {
         return;
     }
-    // In PDD mode the main pass runs the COMPLETE PDD schedule: the PDD LoRAs
-    // are trained on a fixed nfe (4/6/8) step schedule that cannot be split,
-    // so the main-pass step count has no effect and no SplitSigmas is inserted
-    // — the main sampler keeps the PDD sigmas it already has (rewired by the
-    // PDD handler). In normal mode the scheduler's sigmas are split at
-    // `main_steps` so the main pass only runs the early steps and the second
-    // pass finishes the denoising on the upscaled latent.
-    const isPDD = !!values.pddModelRef;
-    const mainSigmas = api[sampler_node_id].inputs.sigmas;
+    // The main pass always runs its full step schedule — the upscale second
+    // pass (3/4/5 steps) is a refinement on the upscaled latent.
     const sigmas = STEPS_SIGMAS[value.steps] ?? STEPS_SIGMAS[3];
     const graph = {
         ':seed': {
@@ -349,18 +341,6 @@ export const applyLatentUpscale = (
             class_type: 'PrimitiveInt',
             _meta: { title: 'Seed (Latent Upscale)' },
         },
-        ...(isPDD
-            ? {}
-            : {
-                  ':split_sigmas': {
-                      inputs: {
-                          step: value.main_steps,
-                          sigmas: mainSigmas,
-                      },
-                      class_type: 'SplitSigmas',
-                      _meta: { title: 'SplitSigmas' },
-                  },
-              }),
         ':separate': {
             inputs: { av_latent: [sampler_node_id, 1] },
             class_type: 'LTXVSeparateAVLatent',
@@ -419,9 +399,6 @@ export const applyLatentUpscale = (
         },
     };
     const baseNodeID = insertGraph(api, graph);
-    if (!isPDD) {
-        api[sampler_node_id].inputs.sigmas = [baseNodeID + ':split_sigmas', 0];
-    }
     const output: [string, number] = [baseNodeID + ':sampler', 0];
     api[video_vae_decode_node_id].inputs.samples = output;
     api[audio_vae_decode_node_id].inputs.samples = output;

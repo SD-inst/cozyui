@@ -180,7 +180,6 @@ const translation = {
         turbo_lora: 'Turbo LoRA',
         turbo_lora_strength: 'Strength',
         latent_upscale: 'Latent Upscale',
-        latent_upscale_main_steps: 'main pass steps (before upscale)',
         latent_upscale_megapixels: 'upscale megapixels',
         latent_upscale_steps: 'upscale steps',
         latent_upscale_sampler: 'upscale sampler',

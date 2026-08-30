@@ -8,7 +8,6 @@ import {
 
 const value = {
     enabled: true,
-    main_steps: 4,
     megapixels: 1,
     steps: 4,
     sampler: 'lcm',
