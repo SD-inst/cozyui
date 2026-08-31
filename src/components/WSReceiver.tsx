@@ -49,6 +49,17 @@ export const WSReceiver = () => {
     const status = useAppSelector((s) => s.progress.status);
     const node_events = useAppSelector((s) => s.progress.node_events);
     lastProgressUpdate.current.status = status;
+    // The container can start up after we've sent the prompt, and the WS
+    // reconnect during that window drops the initial execution_start message.
+    // Any real activity message (executing / progress) from our own task means
+    // the run is live — recover the RUNNING status so the progress bar and
+    // interrupt button appear.
+    const markRunning = () => {
+        if (status !== statusEnum.RUNNING) {
+            dispatch(setStatus(statusEnum.RUNNING));
+            dispatch(setGenerationStart());
+        }
+    };
     const handleMessage = useEventCallback((ev: MessageEvent) => {
         if (ev.data instanceof ArrayBuffer) {
             const dv = new DataView(ev.data.slice(0, 16));
@@ -80,7 +91,7 @@ export const WSReceiver = () => {
                 // WS reconnect); keep the events collected so far in that case.
                 if (status === statusEnum.RUNNING && node_events.length > 0) {
                     console.warn(
-                        '[node_events] execution_start mid-run, keeping collected events'
+                        '[node_events] execution_start mid-run, keeping collected events',
                     );
                 } else {
                     dispatch(clearNodeEvents());
@@ -96,24 +107,29 @@ export const WSReceiver = () => {
                         node: j.data.node || '',
                         ts: new Date().getTime(),
                         type: 'executed',
-                    })
+                    }),
                 );
                 dispatch(
                     addResult({
                         prompt_id: j.data.prompt_id,
                         node_id: j.data.node,
                         output: j.data.output,
-                    })
+                    }),
                 );
                 break;
             case 'executing':
+                // A node is actively running our task — recover if we missed
+                // the initial execution_start (covers nodes without progress).
+                if (j.data.node) {
+                    markRunning();
+                }
                 dispatch(setCurrentNode(j.data.node || ''));
                 dispatch(
                     addNodeEvent({
                         node: j.data.node || '',
                         ts: new Date().getTime(),
                         type: 'executing',
-                    })
+                    }),
                 );
                 break;
             case 'status':
@@ -122,13 +138,16 @@ export const WSReceiver = () => {
             case 'progress':
                 // node boundary marker (backup for executing/executed)
                 if (j.data.node && j.data.node !== lastProgressNode.current) {
+                    // Real progress data from our task — recover if we missed the
+                    // initial execution_start.
+                    markRunning();
                     lastProgressNode.current = j.data.node;
                     dispatch(
                         addNodeEvent({
                             node: j.data.node,
                             ts: new Date().getTime(),
                             type: 'progress',
-                        })
+                        }),
                     );
                 }
                 // rate limit progress updates to not trigger React
@@ -155,7 +174,7 @@ export const WSReceiver = () => {
                         setProgress({
                             max: lastProgressUpdate.current.max,
                             value: lastProgressUpdate.current.value,
-                        })
+                        }),
                     );
                 }, 100);
                 break;
@@ -165,7 +184,7 @@ export const WSReceiver = () => {
                     setStatusMessage({
                         status: statusEnum.ERROR,
                         message: j.data.exception_message,
-                    })
+                    }),
                 );
                 reset();
                 break;
@@ -193,7 +212,7 @@ export const WSReceiver = () => {
         handleMessage,
         handleOpen,
         handleClose,
-        !!apiUrl && tr_ready
+        !!apiUrl && tr_ready,
     );
     return null;
 };

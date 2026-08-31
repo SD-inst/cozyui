@@ -232,6 +232,11 @@ export const GenerateButton = ({
             return Promise.resolve();
         }
         dispatch(clearGenerationTS());
+        try {
+            await fetch(apiUrl + '/api/queue'); // warm up the container
+        } catch {
+            // ignore errors, browsers drop connections on container start up
+        }
         return fetch(apiUrl + '/api/prompt', {
             method: 'POST',
             body: JSON.stringify(params),
