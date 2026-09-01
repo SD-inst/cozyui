@@ -26,6 +26,7 @@ import {
 import { db } from '../history/db';
 import { UploadType } from './UploadType';
 import { ext } from './fileExts';
+import { useArrayFileContext } from './ArrayFileContext';
 
 const style = {
     maxWidth: 200,
@@ -112,27 +113,34 @@ export const FileUpload = ({
     useRegisterHandler({ name: props.name, handler });
     const tabName = useTabName();
     const uploadKey = tabName + '/' + props.name;
+    const arrayCtx = useArrayFileContext();
+    // Upload a single file to ComfyUI's input dir; returns its filename and
+    // the renamed File (timestamp-prefixed) for backup / onUpload.
+    const uploadOne = useEventCallback(async (src: File) => {
+        const formData = new FormData();
+        const file = new File(
+            [src],
+            new Date().getTime() + '_' + src.name,
+            { type: src.type },
+        );
+        formData.append('image', file);
+        const r = await fetch(apiUrl + '/api/upload/image', {
+            method: 'POST',
+            body: formData,
+        });
+        const j = await r.json();
+        j.filename = j.name;
+        delete j.name;
+        return { filename: j.filename, file };
+    });
     const { mutate } = useMutation({
         onMutate: async (files: File[]) => {
-            const formData = new FormData();
-            const file = new File(
-                [files[0]],
-                new Date().getTime() + '_' + files[0].name,
-                { type: files[0].type },
-            );
-            formData.append('image', file);
             try {
                 setUploadProgress(true);
-                const r = await fetch(apiUrl + '/api/upload/image', {
-                    method: 'POST',
-                    body: formData,
-                });
-                const j = await r.json();
-                j.filename = j.name;
-                delete j.name;
-                field.onChange(j.filename);
+                const { filename, file } = await uploadOne(files[0]);
+                field.onChange(filename);
                 maybeBackupUpload(files[0]);
-                if (onUpload && j.filename) {
+                if (onUpload && filename) {
                     onUpload(file);
                 }
             } catch (e) {
@@ -142,9 +150,40 @@ export const FileUpload = ({
             }
         },
     });
-    const onDrop = useEventCallback((acceptedFiles: any) =>
-        mutate(acceptedFiles),
-    );
+    const onDrop = useEventCallback(async (acceptedFiles: File[]) => {
+        if (!acceptedFiles.length) {
+            return;
+        }
+        if (arrayCtx && acceptedFiles.length > 1) {
+            // Multi-file drop inside an array: the current slot takes the first
+            // file, the rest are appended into fresh slots (up to max).
+            setUploadProgress(true);
+            try {
+                const results = await Promise.all(acceptedFiles.map(uploadOne));
+                const filenames = results.map((r) => r.filename);
+                field.onChange(filenames[0]);
+                maybeBackupUpload(acceptedFiles[0]);
+                if (onUpload && filenames[0]) {
+                    onUpload(results[0].file);
+                }
+                const subField = props.name.split('.').pop();
+                if (subField) {
+                    const added = arrayCtx.appendSlots(
+                        filenames.slice(1).map((fn) => ({ [subField]: fn })),
+                    );
+                    if (added < filenames.length - 1) {
+                        toast.error(tr('toasts.array_overflow'));
+                    }
+                }
+            } catch (e) {
+                toast(tr('toasts.error_uploading', { err: e }));
+            } finally {
+                setUploadProgress(false);
+            }
+        } else {
+            mutate(acceptedFiles);
+        }
+    });
     const accept = useMemo(() => {
         switch (type) {
             case UploadType.IMAGE:
@@ -171,6 +210,9 @@ export const FileUpload = ({
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         accept,
+        // Allow multi-file selection only inside an array, where each extra
+        // file becomes its own slot.
+        multiple: !!arrayCtx,
     });
     const handlePaste = useEventCallback((e: ClipboardEvent) => {
         const items = e.clipboardData?.items;
@@ -186,17 +228,23 @@ export const FileUpload = ({
             if (item.kind === 'file') {
                 if (item.type.startsWith('image/') && acceptsImage) {
                     const file = item.getAsFile();
-                    onDrop([file]);
+                    if (file) {
+                        onDrop([file]);
+                    }
                     return;
                 }
                 if (item.type.startsWith('video/') && acceptsVideo) {
                     const file = item.getAsFile();
-                    onDrop([file]);
+                    if (file) {
+                        onDrop([file]);
+                    }
                     return;
                 }
                 if (item.type.startsWith('audio/') && acceptsAudio) {
                     const file = item.getAsFile();
-                    onDrop([file]);
+                    if (file) {
+                        onDrop([file]);
+                    }
                     return;
                 }
             }

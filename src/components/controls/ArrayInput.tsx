@@ -17,6 +17,8 @@ import {
 import toast from 'react-hot-toast';
 import { useUploadBackupGuard } from '../../hooks/useUploadBackupGuard';
 import { useTranslate } from '../../i18n/I18nContext';
+import { roomForNewSlots } from '../../utils/arraySlots';
+import { ArrayFileContext } from './ArrayFileContext';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
 
@@ -144,6 +146,19 @@ export const ArrayInput = ({
     const handleAdd = () => {
         append(clone(newValue));
     };
+    // Append several slots at once (used by a FileUpload that received a
+    // multi-file drop), each partial entry merged over the default template
+    // and capped by `max`. Returns how many were actually added.
+    const appendSlots = (entries: Record<string, any>[]): number => {
+        const room = roomForNewSlots(value.length, max, entries.length);
+        const toAppend = entries
+            .slice(0, room)
+            .map((e) => ({ ...clone(newValue), ...e }));
+        if (toAppend.length) {
+            append(toAppend);
+        }
+        return toAppend.length;
+    };
     const receiverFieldValue = useWatch({
         name: receiverFieldName || '',
         disabled: !receiverFieldName || !targetFieldName,
@@ -189,6 +204,9 @@ export const ArrayInput = ({
                 <Flipper flipKey={fields.map((f: any) => f.id).join(',')}>
                     {fields.map((field: any, index: number) => (
                         <Flipped flipId={field.id} key={field.id}>
+                            {/* Box is Flipped's direct child so the FLIP
+                                transform lands on it; the provider sits inside
+                                so it never intercepts the animated element. */}
                             <Box
                                 display='flex'
                                 flexDirection='column'
@@ -199,14 +217,23 @@ export const ArrayInput = ({
                                 <Typography variant='body2' align='center'>
                                     {index + 1}
                                 </Typography>
-                                {cloneChildren({
-                                    children: props.children,
-                                    name,
-                                    index,
-                                    min,
-                                    onSwap: swap,
-                                    onRemove: remove,
-                                })}
+                                <ArrayFileContext.Provider
+                                    value={{
+                                        name,
+                                        index,
+                                        max,
+                                        appendSlots,
+                                    }}
+                                >
+                                    {cloneChildren({
+                                        children: props.children,
+                                        name,
+                                        index,
+                                        min,
+                                        onSwap: swap,
+                                        onRemove: remove,
+                                    })}
+                                </ArrayFileContext.Provider>
                             </Box>
                         </Flipped>
                     ))}
