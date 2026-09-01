@@ -16,4 +16,5 @@ export enum settings {
     llm_api_key = 'llm_api_key',
     llm_model = 'llm_model',
     last_active_tab = 'last_active_tab',
+    tab_order = 'tab_order',
 }

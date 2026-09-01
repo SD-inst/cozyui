@@ -13,6 +13,7 @@ import { SettingCheckbox } from './SettingCheckbox';
 import { ImportExport } from '../history/ImportExport';
 import { Version } from './Version';
 import { HiddenTabs } from './HiddenTabs';
+import { ResetTabOrderButton } from './ResetTabOrderButton';
 import { SettingNumber } from './SettingNumber';
 import { SettingMultichoice } from './SettingMultichoice';
 import {
@@ -87,6 +88,7 @@ export const AppSettings = () => {
                 <ClearHistoryButton sx={{ mt: 5 }} />
                 <ImportExport />
                 <HiddenTabs />
+                <ResetTabOrderButton />
                 <Version />
             </SectionAccordion>
     );

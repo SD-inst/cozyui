@@ -1,13 +1,17 @@
-import { Tab, Tabs } from '@mui/material';
+import { useTabOrder } from '../hooks/useTabOrder';
+import { SortableTabs } from './SortableTabs';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { TabsProps } from '@mui/material';
 import React, {
     Children,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
     useRef,
     useState,
 } from 'react';
+import { reorderItems } from '../utils/orderTabs';
 import { FormProvider, useForm, useWatch } from 'react-hook-form';
 import { useCurrentTab } from '../hooks/useCurrentTab';
 import { useRestoreValues } from '../hooks/useRestoreValues';
@@ -158,36 +162,62 @@ const TabContent = ({ ...props }) => {
     );
 };
 
+const SUBTAB_TABS_SX: TabsProps['sx'] = { mt: -2 };
+
 const SubTabContent = ({
+    group,
     active,
+    onTabDragEnd,
     ...props
-}: React.PropsWithChildren & { active: boolean }) => {
+}: React.PropsWithChildren & {
+    group: string;
+    active: boolean;
+    onTabDragEnd: (group: string, activeId: string, overId: string) => void;
+}) => {
     const current_tab = useCurrentTab();
     const dispatch = useAppDispatch();
-    const ref = useRef<HTMLDivElement>(null);
-    useScroller(ref.current);
+    const items = useMemo(
+        () =>
+            Children.toArray(props.children)
+                .filter((c) => React.isValidElement(c))
+                .map((c) => (c.props as any).value),
+        [props.children],
+    );
+    const labels = useMemo(() => {
+        const result: { [id: string]: React.ReactNode } = {};
+        Children.toArray(props.children).forEach((c) => {
+            if (React.isValidElement(c)) {
+                result[(c.props as any).value] = (c.props as any).label;
+            }
+        });
+        return result;
+    }, [props.children]);
+    const handleTabDragEnd = useCallback(
+        (activeId: string, overId: string) =>
+            onTabDragEnd(group, activeId, overId),
+        [group, onTabDragEnd],
+    );
+    const handleTabClick = useCallback(
+        (id: string) => dispatch(setTab(id)),
+        [dispatch],
+    );
     return (
         <VerticalBox mt={3} width='100%' display={active ? 'flex' : 'none'}>
-            <Tabs
-                value={active ? current_tab : false}
-                onChange={(_, v) => dispatch(setTab(v))}
-                variant='scrollable'
-                sx={{ width: '100%', mt: -2 }}
-                ref={ref}
-            >
-                {Children.map(props.children, (c) => {
-                    if (!React.isValidElement(c)) {
-                        return null;
-                    }
-                    const { label, value } = c.props;
-                    return <Tab label={label} value={value} key={value} />;
-                })}
-            </Tabs>
-            {Children.map(props.children, (c) => {
+            <SortableTabs
+                items={items}
+                activeId={active ? current_tab : ''}
+                labels={labels}
+                onDragEnd={handleTabDragEnd}
+                onItemClick={handleTabClick}
+                sx={SUBTAB_TABS_SX}
+            />
+            {Children.toArray(props.children).map((c) => {
                 if (!React.isValidElement(c)) {
                     return null;
                 }
-                return <TabContent key={c.props.value}>{c}</TabContent>;
+                return (
+                    <TabContent key={(c.props as any).value}>{c}</TabContent>
+                );
             })}
         </VerticalBox>
     );
@@ -195,39 +225,24 @@ const SubTabContent = ({
 
 type activeType = { [group: string]: string };
 
-const GroupTabs = ({ groups }: { groups: groupType }) => {
-    const dispatch = useAppDispatch();
+const GroupTabContents = ({
+    groups,
+    onTabDragEnd,
+}: {
+    groups: groupType;
+    onTabDragEnd: (group: string, activeId: string, overId: string) => void;
+}) => {
     const current_tab = useCurrentTab();
-    const activeSubtabs = useRef<activeType>({}); // remember selected subtabs here
     return Object.entries(groups).map((e) => {
         const tabValues = e[1].map((c) => c.props.value);
         const selected = tabValues.includes(current_tab);
-        if (selected) {
-            activeSubtabs.current[e[0]] = current_tab;
-        }
         return (
-            <Tab
-                label={e[0]}
-                value={e[0]}
+            <SubTabContent
                 key={e[0]}
-                onClick={() => {
-                    if (!activeSubtabs.current[e[0]]) {
-                        activeSubtabs.current[e[0]] = e[1][0].props.value;
-                    }
-                    dispatch(setTab(activeSubtabs.current[e[0]]));
-                }}
-            />
-        );
-    });
-};
-
-const GroupTabContents = ({ groups }: { groups: groupType }) => {
-    const current_tab = useCurrentTab();
-    return Object.entries(groups).map((e) => {
-        const tabValues = e[1].map((c) => c.props.value);
-        const selected = tabValues.includes(current_tab);
-        return (
-            <SubTabContent key={e[0]} active={selected}>
+                group={e[0]}
+                active={selected}
+                onTabDragEnd={onTabDragEnd}
+            >
                 {e[1]}
             </SubTabContent>
         );
@@ -238,29 +253,6 @@ type groupType = {
     [group: string]: React.ReactElement[];
 };
 
-const useScroller = (root: HTMLDivElement | null) => {
-    useEffect(() => {
-        if (!root) {
-            return;
-        }
-        const c = root.getElementsByClassName('MuiTabs-scroller');
-        if (!c?.length) {
-            return;
-        }
-        const scroller = c.item(0) as HTMLDivElement;
-        if (!scroller) {
-            return;
-        }
-        scroller.addEventListener('wheel', (e: WheelEvent) => {
-            if (!root || !e) {
-                return;
-            }
-            e.preventDefault();
-            scroller.scrollLeft += e.deltaY;
-        });
-    }, [root]);
-};
-
 export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     const current_tab = useCurrentTab();
     const dispatch = useAppDispatch();
@@ -268,6 +260,7 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         setWorkflowTabs,
         setWorkflowTabGroups,
         setReceivers,
+        setResetTabOrder,
         workflowTabGroups,
     } = useContext(WorkflowTabsContext);
     const { userFilteredTabs } = useTabVisibility();
@@ -281,6 +274,44 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
     // Restore last active tab from IndexedDB
     // undefinedAwait: true — returns undefined until DB resolves
     const savedTab = useStringSetting(settings.last_active_tab, '', true);
+
+    // Full (unfiltered) list of groups and tabs in their default (code) order,
+    // so that hidden and newly-added tabs keep a stable position in the saved order
+    const allGroups = useMemo(() => {
+        const g: string[] = [];
+        React.Children.forEach(props.children, (c) => {
+            if (
+                React.isValidElement(c) &&
+                c.props.group &&
+                !g.includes(c.props.group)
+            ) {
+                g.push(c.props.group);
+            }
+        });
+        return g;
+    }, [props.children]);
+    const allTabsByGroup = useMemo(() => {
+        const result: { [group: string]: string[] } = {};
+        React.Children.forEach(props.children, (c) => {
+            if (React.isValidElement(c) && c.props.group) {
+                if (!result[c.props.group]) {
+                    result[c.props.group] = [];
+                }
+                result[c.props.group].push(c.props.value);
+            }
+        });
+        return result;
+    }, [props.children]);
+
+    const { order, saveOrder, resetOrder } = useTabOrder(
+        allGroups,
+        allTabsByGroup,
+    );
+
+    // Expose the reset callback to the settings panel (different subtree)
+    useEffect(() => {
+        setResetTabOrder(resetOrder);
+    }, [resetOrder, setResetTabOrder]);
 
     // Save active tab to IndexedDB when it changes
     useEffect(() => {
@@ -344,10 +375,11 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             dispatch(setTab(''));
         }
     }, [current_tab, dispatch, userFilteredTabs]);
-    const ref = useRef<HTMLDivElement>(null);
-    useScroller(ref.current);
+
+    const activeSubtabs = useRef<activeType>({});
+
     const groups = useMemo(() => {
-        const result: groupType = {};
+        const raw: groupType = {};
         React.Children.forEach(props.children, (c) => {
             if (
                 !React.isValidElement(c) ||
@@ -356,14 +388,37 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
             ) {
                 return;
             }
-            if (!result[c.props.group]) {
-                result[c.props.group] = [c];
+            if (!raw[c.props.group]) {
+                raw[c.props.group] = [c];
             } else {
-                result[c.props.group].push(c);
+                raw[c.props.group].push(c);
             }
         });
-        return result;
-    }, [props.children, userFilteredTabs]);
+        // Sort groups by saved order, and tabs within each group
+        const sorted: groupType = {};
+        for (const g of order.groups) {
+            if (!raw[g]) {
+                continue;
+            }
+            const orderTabs = order.tabs[g] ?? [];
+            sorted[g] = [...raw[g]].sort((a, b) => {
+                const ia = orderTabs.indexOf((a.props as any).value);
+                const ib = orderTabs.indexOf((b.props as any).value);
+                return (ia === -1 ? Infinity : ia) - (ib === -1 ? Infinity : ib);
+            });
+        }
+        return sorted;
+    }, [props.children, userFilteredTabs, order]);
+
+    // remember selected subtabs (for group click navigation)
+    useEffect(() => {
+        for (const [g, tabs] of Object.entries(groups)) {
+            if (tabs.some((t) => (t.props as any).value === current_tab)) {
+                activeSubtabs.current[g] = current_tab;
+            }
+        }
+    }, [groups, current_tab]);
+
     // index tab groups
     useEffect(() => {
         const tabGroups = Object.fromEntries(
@@ -373,23 +428,61 @@ export const WorkflowTabs = ({ ...props }: React.PropsWithChildren) => {
         );
         setWorkflowTabGroups(tabGroups);
     }, [groups, setWorkflowTabGroups, userFilteredTabs.length]);
+
     const selectedGroupTab = workflowTabGroups[current_tab];
-    const activeTab =
-        Object.keys(workflowTabGroups).length > 0
-            ? selectedGroupTab || current_tab || false
-            : false;
+    const visibleGroups = useMemo(() => Object.keys(groups), [groups]);
+    const groupLabels = useMemo(
+        () => Object.fromEntries(visibleGroups.map((g) => [g, g])),
+        [visibleGroups],
+    );
+
+    const handleGroupClick = useCallback(
+        (group: string) => {
+            if (!activeSubtabs.current[group]) {
+                activeSubtabs.current[group] = groups[group][0].props.value;
+            }
+            dispatch(setTab(activeSubtabs.current[group]));
+        },
+        [groups, dispatch],
+    );
+    // Reorder is applied to the FULL order (order.groups / order.tabs[g]), not
+    // the visible-only list, so hidden groups/tabs keep their saved positions
+    const handleGroupDragEnd = useCallback(
+        (activeId: string, overId: string) => {
+            saveOrder(
+                reorderItems(order.groups, activeId, overId),
+                order.tabs,
+            );
+        },
+        [order, saveOrder],
+    );
+    const handleTabDragEnd = useCallback(
+        (group: string, activeId: string, overId: string) => {
+            saveOrder(
+                order.groups,
+                {
+                    ...order.tabs,
+                    [group]: reorderItems(
+                        order.tabs[group] ?? [],
+                        activeId,
+                        overId,
+                    ),
+                },
+            );
+        },
+        [order, saveOrder],
+    );
+
     return (
         <>
-            <Tabs
-                ref={ref}
-                value={activeTab}
-                onChange={(_, v) => dispatch(setTab(v))}
-                variant='scrollable'
-                sx={{ width: '100%' }}
-            >
-                {GroupTabs({ groups })}
-            </Tabs>
-            <GroupTabContents groups={groups} />
+            <SortableTabs
+                items={visibleGroups}
+                activeId={selectedGroupTab || ''}
+                labels={groupLabels}
+                onDragEnd={handleGroupDragEnd}
+                onItemClick={handleGroupClick}
+            />
+            <GroupTabContents groups={groups} onTabDragEnd={handleTabDragEnd} />
         </>
     );
 };

@@ -1,6 +1,7 @@
 import { useAppSelector } from '../redux/hooks';
 
 export const useCurrentTab = () => {
-    const { current_tab } = useAppSelector((s) => s.tab);
-    return current_tab;
+    // Select only the tab id, not the whole s.tab slice — otherwise every
+    // unrelated tab action (e.g. addResult per executed node) re-renders consumers.
+    return useAppSelector((s) => s.tab.current_tab);
 };

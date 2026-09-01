@@ -351,6 +351,10 @@ const translation = {
         nothing_to_delete_text:
             'Нет результатов %{cmp}, чем %{number} %{unit}.',
         clear_history: 'Очистка истории',
+        tab_order_reset: 'Сбросить порядок вкладок',
+        tab_order_reset_text:
+            'Порядок вкладок будет сброшен к исходному.',
+        tab_order_reset_ok: 'Сбросить',
         clear_history_text:
             'Вы уверены, что хотите удалить результаты %{cmp}, чем %{number} %{unit}?<br />%{toDelete}',
         to_delete:

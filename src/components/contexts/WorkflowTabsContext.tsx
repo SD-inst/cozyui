@@ -14,6 +14,8 @@ export type WorkflowTabsType = {
     setWorkflowTabs: Dispatch<string[]>;
     setWorkflowTabGroups: Dispatch<groupType>;
     setReceivers: Dispatch<receiverType>;
+    resetTabOrder: () => void;
+    setResetTabOrder: Dispatch<() => void>;
 };
 
 export const defaultValue = {
@@ -23,6 +25,8 @@ export const defaultValue = {
     setWorkflowTabs: () => {},
     setWorkflowTabGroups: () => {},
     setReceivers: () => {},
+    resetTabOrder: () => {},
+    setResetTabOrder: () => {},
 };
 
 export const WorkflowTabsContext =

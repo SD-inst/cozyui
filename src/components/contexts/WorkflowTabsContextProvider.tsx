@@ -28,6 +28,9 @@ export const WorkflowTabsContextProvider = ({
             receivers,
         }));
     });
+    const setResetTabOrder = useEventCallback((resetTabOrder: () => void) =>
+        setState((v) => ({ ...v, resetTabOrder }))
+    );
     return (
         <WorkflowTabsContext.Provider
             value={{
@@ -35,6 +38,7 @@ export const WorkflowTabsContextProvider = ({
                 setWorkflowTabs,
                 setWorkflowTabGroups,
                 setReceivers,
+                setResetTabOrder,
                 ...value,
             }}
         >

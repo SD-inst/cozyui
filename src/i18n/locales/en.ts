@@ -352,6 +352,10 @@ const translation = {
         nothing_to_delete_text:
             'There are no results %{cmp} than %{number} %{unit}.',
         clear_history: 'History cleanup',
+        tab_order_reset: 'Reset tab order',
+        tab_order_reset_text:
+            'The tab order will be reset to the default (code) order.',
+        tab_order_reset_ok: 'Reset',
         clear_history_text:
             'Are you sure you want to delete history %{cmp} than %{number} %{unit}?<br />%{toDelete}',
         to_delete:
