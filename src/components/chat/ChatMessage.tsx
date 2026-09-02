@@ -13,7 +13,7 @@ import { RefObject } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export interface ImagePart {
-    type: 'text' | 'image_url' | 'input_video';
+    type: 'text' | 'image_url' | 'input_video' | 'input_audio';
     text?: string;
     image_url?: {
         url: string;
@@ -21,6 +21,10 @@ export interface ImagePart {
     };
     input_video?: {
         data: string;
+    };
+    input_audio?: {
+        data: string;
+        format: string;
     };
 }
 
@@ -123,7 +127,8 @@ export const ChatMessage = ({
                         const media = content.filter(
                             (part) =>
                                 part.type === 'image_url' ||
-                                part.type === 'input_video',
+                                part.type === 'input_video' ||
+                                part.type === 'input_audio',
                         );
                         const texts = content.filter(
                             (part) => part.type === 'text',
@@ -180,6 +185,27 @@ export const ChatMessage = ({
                                                         borderRadius: '4px',
                                                         cursor: 'pointer',
                                                         background: 'black',
+                                                    }}
+                                                />
+                                            ) : part.type === 'input_audio' ? (
+                                                <audio
+                                                    key={index}
+                                                    src={
+                                                        part.input_audio
+                                                            ? `data:audio/${
+                                                                part
+                                                                    .input_audio
+                                                                    .format
+                                                            };base64,${
+                                                                part
+                                                                    .input_audio
+                                                                    .data
+                                                            }`
+                                                            : ''
+                                                    }
+                                                    controls
+                                                    style={{
+                                                        maxWidth: 200,
                                                     }}
                                                 />
                                             ) : (

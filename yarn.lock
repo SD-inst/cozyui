@@ -184,6 +184,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@breezystack/lamejs@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "@breezystack/lamejs@npm:1.2.7"
+  checksum: 10c0/b0b9db9a7434e8815e0d5fab2fb2cc21fc974da64b478d2f84f998388f241627c3dd163bc5c921aac81b18b78cfc81eb4c79cbef8572b2474a7a33961be3d107
+  languageName: node
+  linkType: hard
+
 "@csstools/color-helpers@npm:^6.1.1":
   version: 6.1.1
   resolution: "@csstools/color-helpers@npm:6.1.1"
@@ -2331,6 +2338,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "cozyui@workspace:."
   dependencies:
+    "@breezystack/lamejs": "npm:^1.2.7"
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@dnd-kit/utilities": "npm:^3.2.2"

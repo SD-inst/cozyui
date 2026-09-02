@@ -15,6 +15,8 @@ export enum settings {
     llm_url = 'llm_url',
     llm_api_key = 'llm_api_key',
     llm_model = 'llm_model',
+    llm_supports_video = 'llm_supports_video',
+    llm_supports_audio = 'llm_supports_audio',
     last_active_tab = 'last_active_tab',
     tab_order = 'tab_order',
 }

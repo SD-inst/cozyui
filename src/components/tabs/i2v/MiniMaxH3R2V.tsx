@@ -527,6 +527,11 @@ const Content = () => {
                             kind: 'video',
                             itemField: 'video',
                         },
+                        {
+                            name: 'ref_audio',
+                            kind: 'audio',
+                            itemField: 'audio',
+                        },
                     ]}
                     transformFirstMessage={transformFirstMessage}
                 />

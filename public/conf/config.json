@@ -3765,6 +3765,7 @@
         "model": "",
         "modelVision": "",
         "supportsVideo": false,
+        "supportsAudio": false,
         "temperature": 1.0
     }
 }

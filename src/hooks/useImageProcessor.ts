@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 export interface ImagePart {
-    type: 'text' | 'image_url' | 'input_video';
+    type: 'text' | 'image_url' | 'input_video' | 'input_audio';
     text?: string;
     image_url?: {
         url: string;
@@ -9,6 +9,10 @@ export interface ImagePart {
     };
     input_video?: {
         data: string;
+    };
+    input_audio?: {
+        data: string;
+        format: string;
     };
 }
 
@@ -96,6 +100,86 @@ export const useImageProcessor = () => {
         }
     };
 
+    const processAudio = async (
+        audioUrl: string,
+    ): Promise<ImagePart | null> => {
+        try {
+            setIsProcessing(true);
+
+            const response = await fetch(audioUrl);
+            if (!response.ok) {
+                throw new Error(
+                    `Failed to fetch audio: ${response.statusText}`,
+                );
+            }
+
+            const arrayBuffer = await response.arrayBuffer();
+
+            // The llama.cpp backend base64-decodes `input_audio.data` directly
+            // (no data-url prefix) and validates `format` to 'wav' | 'mp3'; the
+            // container is then auto-detected from the raw bytes. We re-encode
+            // to mono MP3, which is compact, reliably decodable and covers every
+            // accepted input (mp3/ogg/wav/flac/aac).
+            const audioContext = new AudioContext();
+            try {
+                const audioBuffer =
+                    await audioContext.decodeAudioData(arrayBuffer);
+                const mp3Blob = await encodeMp3(audioBuffer);
+                return {
+                    type: 'input_audio',
+                    input_audio: {
+                        data: await blobToBase64(mp3Blob),
+                        format: 'mp3',
+                    },
+                };
+            } finally {
+                void audioContext.close();
+            }
+        } catch (error) {
+            console.error('Error processing audio:', error);
+            return null;
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
+    // Encode a decoded AudioBuffer to a mono MP3 blob (128 kbps).
+    // The lamejs encoder is imported lazily so Vite code-splits it into a
+    // separate chunk that is only fetched when audio is actually encoded.
+    const encodeMp3 = async (
+        audioBuffer: AudioBuffer,
+    ): Promise<Blob> => {
+        const lame = await import('@breezystack/lamejs');
+        const sampleRate = audioBuffer.sampleRate;
+        const encoder = new lame.Mp3Encoder(1, sampleRate, 128);
+
+        const floatData = audioBuffer.getChannelData(0);
+        const int16 = new Int16Array(floatData.length);
+        for (let i = 0; i < floatData.length; i++) {
+            const s = Math.max(-1, Math.min(1, floatData[i]));
+            int16[i] = s < 0 ? s * 0x8000 : s * 0x7fff;
+        }
+
+        const chunkSize = 1152;
+        const parts: BlobPart[] = [];
+        for (let i = 0; i < int16.length; i += chunkSize) {
+            const chunk = int16.subarray(
+                i,
+                Math.min(i + chunkSize, int16.length),
+            );
+            const mp3buf = encoder.encodeBuffer(chunk);
+            if (mp3buf.length > 0) {
+                parts.push(mp3buf);
+            }
+        }
+        const mp3end = encoder.flush();
+        if (mp3end.length > 0) {
+            parts.push(mp3end);
+        }
+
+        return new Blob(parts, { type: 'audio/mp3' });
+    };
+
     const convertToJPEG = async (blob: Blob): Promise<Blob> => {
         return new Promise((resolve, reject) => {
             const img = new Image();
@@ -147,6 +231,7 @@ export const useImageProcessor = () => {
     return {
         processImage,
         processVideo,
+        processAudio,
         isProcessing,
     };
 };

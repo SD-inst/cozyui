@@ -41,6 +41,13 @@ const isVideo = (filename?: string): boolean => {
     );
 };
 
+const isAudio = (filename?: string): boolean => {
+    if (!filename) return false;
+    return ext[UploadType.AUDIO].some((ext) =>
+        filename.toLowerCase().endsWith(ext),
+    );
+};
+
 const buttonSx = {
     minWidth: { xs: 100, sm: 120 },
     px: { xs: 2, sm: 3 },
@@ -49,7 +56,7 @@ const buttonSx = {
 
 export type mediaFieldType = {
     name: string;
-    kind: 'image' | 'video';
+    kind: 'image' | 'video' | 'audio';
     itemField?: string;
 };
 
@@ -88,7 +95,10 @@ export const ChatComponent = ({
         if (!field) {
             return [];
         }
-        if (field.kind === 'video' && !llmConfig?.supportsVideo) {
+        if (
+            (field.kind === 'video' && !llmConfig?.supportsVideo) ||
+            (field.kind === 'audio' && !llmConfig?.supportsAudio)
+        ) {
             return [];
         }
         const entries = Array.isArray(value) ? value : [value];
@@ -100,7 +110,10 @@ export const ChatComponent = ({
                 (filename: any) =>
                     typeof filename === 'string' &&
                     filename.length > 0 &&
-                    !(field.kind === 'image' && isVideo(filename)),
+                    !(
+                        field.kind === 'image' &&
+                        (isVideo(filename) || isAudio(filename))
+                    ),
             )
             .map((filename: string) => ({ filename, kind: field.kind }));
     });

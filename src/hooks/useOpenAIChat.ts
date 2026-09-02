@@ -7,7 +7,7 @@ import { db } from '../components/history/db';
 import { useTabName } from '../components/contexts/TabContext';
 
 export interface ImagePart {
-    type: 'text' | 'image_url' | 'input_video';
+    type: 'text' | 'image_url' | 'input_video' | 'input_audio';
     text?: string;
     image_url?: {
         url: string;
@@ -16,11 +16,15 @@ export interface ImagePart {
     input_video?: {
         data: string;
     };
+    input_audio?: {
+        data: string;
+        format: string;
+    };
 }
 
 export interface MediaRef {
     url: string;
-    kind: 'image' | 'video';
+    kind: 'image' | 'video' | 'audio';
 }
 
 export interface OpenAIMessage {

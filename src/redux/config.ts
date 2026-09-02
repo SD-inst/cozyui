@@ -59,6 +59,7 @@ export type llmConfigType = {
     model: string;
     modelVision?: string;
     supportsVideo?: boolean;
+    supportsAudio?: boolean;
     temperature?: number;
 };
 

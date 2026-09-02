@@ -3,7 +3,8 @@ import { useImageProcessor } from './useImageProcessor';
 import { ImagePart, MediaRef, OpenAIMessage } from './useOpenAIChat';
 
 export const useMessageProcessor = () => {
-    const { processImage, processVideo } = useImageProcessor();
+    const { processImage, processVideo, processAudio } =
+        useImageProcessor();
 
     const processUserMessage = useCallback(
         async (text: string, media?: MediaRef[]): Promise<OpenAIMessage> => {
@@ -20,7 +21,9 @@ export const useMessageProcessor = () => {
                         media.map((m) =>
                             m.kind === 'video'
                                 ? processVideo(m.url)
-                                : processImage(m.url),
+                                : m.kind === 'audio'
+                                  ? processAudio(m.url)
+                                  : processImage(m.url),
                         ),
                     )
                 ).filter((part): part is ImagePart => part !== null);
@@ -40,7 +43,7 @@ export const useMessageProcessor = () => {
                 content: text,
             };
         },
-        [processImage, processVideo],
+        [processImage, processVideo, processAudio],
     );
 
     return {
