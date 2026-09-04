@@ -52,8 +52,9 @@ export const MiniMaxH3ImageOverride = ({
         };
     });
     useRegisterHandler({ name, handler });
+    const rawValue = useWatch({ name });
     useEffect(() => {
         setValue(name, length <= imageThreshold);
-    }, [length, imageThreshold, name, setValue]);
+    }, [rawValue, length, imageThreshold, name, setValue]);
     return null;
 };

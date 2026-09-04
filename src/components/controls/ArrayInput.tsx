@@ -183,16 +183,20 @@ export const ArrayInput = ({
     const theme = useTheme();
     const apiUrl = useApiURL();
     const { unregister, getValues, setValue } = useFormContext();
-    const value = useWatch({ name, defaultValue: [] });
+    const rawValue = useWatch({ name });
+    const value = React.useMemo(
+        () => rawValue ?? [],
+        [rawValue],
+    );
     const { fields, append, update, swap, remove, replace } = useFieldArray({
         name,
     });
     useUploadBackupGuard(name, value, keyField);
     useEffect(() => {
-        if (value === undefined || value === null) {
+        if (rawValue === undefined || rawValue === null) {
             setValue(name, []);
         }
-    }, [value, name, setValue]);
+    }, [rawValue, name, setValue]);
     const prevFieldsLen = useRef(0);
     useEffect(() => {
         const prev = prevFieldsLen.current;
