@@ -233,8 +233,8 @@ export const CompactFileItem = memo(
                         size='small'
                         sx={{
                             position: 'absolute',
-                            top: -10,
-                            right: 2,
+                            top: isAudio ? -10 : 5,
+                            right: isAudio ? -10 : 5,
                             width: 20,
                             height: 20,
                             p: 0,

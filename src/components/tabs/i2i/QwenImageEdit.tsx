@@ -89,7 +89,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
         <ArrayInput
             name={name}
             newValue={newValue}
-            min={1}
+            min={0}
             max={3}
             receiverFieldName='image'
             targetFieldName='image'
@@ -115,7 +115,7 @@ const Content = () => {
         <Layout>
             <GridLeft>
                 <ReferenceImages name='reference_images' />
-                <PromptInput name='prompt' />
+                <PromptInput name='prompt' sx={{ mt: 2 }} />
                 <PromptInput name='neg_prompt' defaultValue='' />
                 <SliderInput name='steps' defaultValue={20} min={1} max={40} />
                 <CFGInput defaultValue={4} max={10} />
@@ -142,7 +142,9 @@ const Content = () => {
                 <LoraInput
                     name='lora'
                     type='qwen'
-                    classNameOverride={isNunchaku ? 'NunchakuQwenImageLoraLoader' : undefined}
+                    classNameOverride={
+                        isNunchaku ? 'NunchakuQwenImageLoraLoader' : undefined
+                    }
                 />
                 <CompileModelToggle />
                 <SeedInput name='seed' defaultValue={1024} />
