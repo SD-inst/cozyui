@@ -6,10 +6,10 @@ import React, {
     PropsWithChildren,
     ReactNode,
     useEffect,
+    useRef,
 } from 'react';
 import { Flipped, Flipper } from 'react-flip-toolkit';
 import {
-    useController,
     useFieldArray,
     useFormContext,
     useWatch,
@@ -131,18 +131,31 @@ export const ArrayInput = ({
 } & PropsWithChildren) => {
     const tr = useTranslate();
     const { unregister } = useFormContext();
+    const value = useWatch({ name, defaultValue: [] });
     const {
-        field: { value },
-    } = useController({ name, defaultValue: [] });
-    const { fields, append, update, swap, remove } = useFieldArray({ name });
+        fields,
+        append,
+        update,
+        swap,
+        remove,
+        replace,
+    } = useFieldArray({ name });
     useUploadBackupGuard(name, value, keyField);
+    const prevFieldsLen = useRef(0);
     useEffect(() => {
+        const prev = prevFieldsLen.current;
+        prevFieldsLen.current = fields.length;
+        const justAppended = fields.length > prev;
+        if (!justAppended && value.length === 0 && fields.length > 0) {
+            replace([]);
+            return;
+        }
         if (value.length < min && min > 0) {
             for (let i = 0; i < min; i++) {
                 append(clone(newValue));
             }
         }
-    }, [append, min, newValue, value.length]);
+    }, [append, min, newValue, value.length, fields.length, replace]);
     const handleAdd = () => {
         append(clone(newValue));
     };
