@@ -6,7 +6,13 @@ import { useAppSelector } from '../../redux/hooks';
 import { statusEnum } from '../../redux/progress';
 import { useTabName } from '../contexts/TabContext';
 
-export const ImagePreview = ({ size }: { size: number }) => {
+export const ImagePreview = ({
+    size,
+    maxFrames,
+}: {
+    size: number;
+    maxFrames?: number;
+}) => {
     const tab_name = useTabName();
     const enabled = useBooleanSetting(settings.enable_previews);
     const status = useAppSelector((s) => s.progress.status);
@@ -23,7 +29,10 @@ export const ImagePreview = ({ size }: { size: number }) => {
             console.log("Couldn't get canvas context");
             return;
         }
-        if (!active || !frames.length || !frames[0]) {
+        const count = maxFrames
+            ? Math.min(frames.length, maxFrames)
+            : frames.length;
+        if (!active || !count || !frames[0]) {
             ctx.clearRect(0, 0, ref.current.width, ref.current.height);
             ref.current.width = size;
             ref.current.height = size;
@@ -31,22 +40,16 @@ export const ImagePreview = ({ size }: { size: number }) => {
         }
         const image_aspect = frames[0].width / frames[0].height;
         const tiles_x_f = Math.max(
-            Math.min(
-                frames.length,
-                Math.floor(Math.sqrt(frames.length / image_aspect)),
-            ),
+            Math.min(count, Math.floor(Math.sqrt(count / image_aspect))),
             1,
         );
-        const tiles_y_f = Math.ceil(frames.length / tiles_x_f);
+        const tiles_y_f = Math.ceil(count / tiles_x_f);
 
         const tiles_x_c = Math.max(
-            Math.min(
-                frames.length,
-                Math.ceil(Math.sqrt(frames.length / image_aspect)),
-            ),
+            Math.min(count, Math.ceil(Math.sqrt(count / image_aspect))),
             1,
         );
-        const tiles_y_c = Math.ceil(frames.length / tiles_x_c);
+        const tiles_y_c = Math.ceil(count / tiles_x_c);
 
         const tiles_x =
             Math.abs(Math.SQRT2 - (tiles_x_f * image_aspect) / tiles_y_f) <
@@ -54,7 +57,7 @@ export const ImagePreview = ({ size }: { size: number }) => {
                 ? tiles_x_f
                 : tiles_x_c;
 
-        const tiles_y = Math.ceil(frames.length / tiles_x);
+        const tiles_y = Math.ceil(count / tiles_x);
         const sx = size / tiles_x;
         const sy = (sx / frames[0].width) * frames[0].height;
         ref.current.width = size;
@@ -62,7 +65,7 @@ export const ImagePreview = ({ size }: { size: number }) => {
         for (let y = 0; y < tiles_y; y++) {
             for (let x = 0; x < tiles_x; x++) {
                 const idx = y * tiles_x + x;
-                if (idx >= frames.length) {
+                if (idx >= count) {
                     break;
                 }
                 const frame = frames[idx];
@@ -74,7 +77,7 @@ export const ImagePreview = ({ size }: { size: number }) => {
                 ctx.drawImage(frame, cx, cy, sx, sy);
             }
         }
-    }, [active, frames, size]);
+    }, [active, frames, size, maxFrames]);
 
     return (
         <canvas

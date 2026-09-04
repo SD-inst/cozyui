@@ -3359,6 +3359,9 @@
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
                     "sigma_shift_node_id": "136"
+                },
+                "video_image_override": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -3504,6 +3507,9 @@
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
                     "sigma_shift_node_id": "136"
+                },
+                "video_image_override": {
+                    "id": "handle"
                 }
             },
             "handler_options": {
@@ -3664,6 +3670,9 @@
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
                     "sigma_shift_node_id": "136"
+                },
+                "video_image_override": {
+                    "id": "handle"
                 }
             },
             "handler_options": {

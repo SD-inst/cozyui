@@ -15,8 +15,9 @@ import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
+import { MiniMaxH3ImageOverride } from '../../controls/MiniMaxH3ImageOverride';
 import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
-import { VideoResult } from '../../controls/VideoResult';
+import { VideoImageResult } from '../../controls/VideoImageResult';
 import { WFTab } from '../../WFTab';
 import { useMiniMaxH3PDDHandler } from '../../../hooks/useMiniMaxH3PDDHandler';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
@@ -55,7 +56,7 @@ const Content = () => {
                     name='length'
                     label='length'
                     defaultValue={5}
-                    min={1}
+                    min={0}
                     max={30}
                     step={0.1}
                 />
@@ -90,9 +91,14 @@ const Content = () => {
                 </AdvancedSettings>
                 <LoraInput name='lora' type='minimax_h3' sx={{ mt: 1 }} />
                 <SeedInput name='seed' defaultValue={1024} />
+                <MiniMaxH3ImageOverride imageThreshold={0} />
             </GridLeft>
             <GridRight>
-                <VideoResult rate_override={4} />
+                <VideoImageResult
+                    imageThreshold={0}
+                    imagePreviewMaxFrames={1}
+                    rate_override={4}
+                />
             </GridRight>
             <GridBottom>
                 <GenerateButton />

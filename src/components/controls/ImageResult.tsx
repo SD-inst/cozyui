@@ -27,12 +27,14 @@ export const ImageResult = ({
     sendFields,
     sendLabel,
     sendOnClick,
+    previewMaxFrames,
 }: {
     title?: string;
     sendTargetTab?: string;
     sendFields?: string[];
     sendLabel?: string;
     sendOnClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    previewMaxFrames?: number;
 }) => {
     const results = useResult();
     const tr = useTranslate();
@@ -110,7 +112,7 @@ export const ImageResult = ({
                     closeOnBackdropClick: true,
                 }}
             />
-            <ImagePreview size={400} />
+            <ImagePreview size={400} maxFrames={previewMaxFrames} />
             <SendResultButton
                 targetTab={sendTargetTab}
                 fields={sendFields}

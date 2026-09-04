@@ -6,15 +6,21 @@ import { VideoResult, VideoResultProps } from './VideoResult';
 
 export const VideoImageResult = ({
     lengthName = 'length',
+    imageThreshold = 1,
+    imagePreviewMaxFrames,
     ...props
-}: VideoResultProps & { lengthName?: string }) => {
+}: VideoResultProps & {
+    lengthName?: string;
+    imageThreshold?: number;
+    imagePreviewMaxFrames?: number;
+}) => {
     const length = useWatchForm(lengthName);
     const { id } = useResultParam();
-    return length > 1 ? (
+    return length > imageThreshold ? (
         <VideoResult {...props} />
     ) : (
         <ResultOverrideContextProvider value={{ id, type: 'images' }}>
-            <ImageResult />
+            <ImageResult previewMaxFrames={imagePreviewMaxFrames} />
         </ResultOverrideContextProvider>
     );
 };
