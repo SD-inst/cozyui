@@ -99,6 +99,8 @@ const translation = {
         unpin_confirm:
             'Вы уверены, что хотите открепить этот результат? Его станет возможно удалить через очистку истории.',
         reset: 'Сброс',
+        remove: 'Удалить',
+        replace: 'Заменить',
         reset_form: 'Сброс формы',
         confirm_reset: 'Подтвердите сброс',
         confirm_reset_content:

@@ -72,10 +72,12 @@ export const DownloadImageButton = ({
 
 export const DownloadImageButtonLightbox = () => {
     const { currentSlide } = useLightboxState();
+    const raw = currentSlide as unknown as Record<string, unknown>;
+    const src = typeof raw?.src === 'string' ? raw.src : '';
     return (
         <DownloadImageButton
             lightbox
-            url={currentSlide?.src || ''}
+            url={src}
             sx={{ mr: 2 }}
         />
     );

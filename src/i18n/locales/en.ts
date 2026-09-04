@@ -100,6 +100,8 @@ const translation = {
         unpin_confirm:
             'Are you sure you want to unpin this result? It could then be deleted when clearing history.',
         reset: 'Reset',
+        remove: 'Remove',
+        replace: 'Replace',
         reset_form: 'Reset form',
         confirm_reset: 'Confirm reset',
         confirm_reset_content:
