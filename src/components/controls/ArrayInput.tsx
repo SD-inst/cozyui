@@ -188,6 +188,11 @@ export const ArrayInput = ({
         name,
     });
     useUploadBackupGuard(name, value, keyField);
+    useEffect(() => {
+        if (value === undefined || value === null) {
+            setValue(name, []);
+        }
+    }, [value, name, setValue]);
     const prevFieldsLen = useRef(0);
     useEffect(() => {
         const prev = prevFieldsLen.current;
