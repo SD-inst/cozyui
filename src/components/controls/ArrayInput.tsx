@@ -41,6 +41,8 @@ import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useUploadBackupGuard } from '../../hooks/useUploadBackupGuard';
+import { useReuploadLost } from '../../hooks/useBackupUpload';
+import { useTabName } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 import { roomForNewSlots } from '../../utils/arraySlots';
 import { UploadType } from './UploadType';
@@ -277,21 +279,24 @@ export const ArrayInput = ({
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Upload helper
-    const uploadFile = async (file: File): Promise<string> => {
-        const formData = new FormData();
-        const renamed = new File(
-            [file],
-            new Date().getTime() + '_' + file.name,
-            { type: file.type },
-        );
-        formData.append('image', renamed);
-        const r = await fetch(apiUrl + '/api/upload/image', {
-            method: 'POST',
-            body: formData,
-        });
-        const j = await r.json();
-        return j.name;
-    };
+    const uploadFile = React.useCallback(
+        async (file: File): Promise<string> => {
+            const formData = new FormData();
+            const renamed = new File(
+                [file],
+                new Date().getTime() + '_' + file.name,
+                { type: file.type },
+            );
+            formData.append('image', renamed);
+            const r = await fetch(apiUrl + '/api/upload/image', {
+                method: 'POST',
+                body: formData,
+            });
+            const j = await r.json();
+            return j.name;
+        },
+        [apiUrl],
+    );
 
     const handleCompactAdd = () => {
         if (fileInputRef.current) {
@@ -347,6 +352,17 @@ export const ArrayInput = ({
             }
         }
     };
+
+    const tabName = useTabName();
+    const handleUploadLost = useReuploadLost(
+        (index: number) => `${tabName}/${name}.${index}.${keyField}`,
+        () => {},
+        async (file, _key, index) => {
+            const filename = await uploadFile(file);
+            const current = getValues(name);
+            update(index, { ...current[index], [keyField]: filename });
+        },
+    );
 
     // Compact mode rendering
     if (!listMode) {
@@ -421,6 +437,7 @@ export const ArrayInput = ({
                                     onOpenControls={(i) =>
                                         setControlsDialogIndex(i)
                                     }
+                                    onUploadLost={handleUploadLost}
                                 />
                             ))}
                             {(value.length < max || max === -1) && (

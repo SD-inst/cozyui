@@ -7,14 +7,14 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useMutation } from '@tanstack/react-query';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Accept, useDropzone } from 'react-dropzone';
 import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useBackupUpload } from '../../hooks/useBackupUpload';
+import { useBackupUpload, useReuploadLost } from '../../hooks/useBackupUpload';
 import { useImageURL } from '../../hooks/useImageURL';
 import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
@@ -23,7 +23,6 @@ import {
     useRegisterHandler,
     useTabName,
 } from '../contexts/TabContext';
-import { db } from '../history/db';
 import { UploadType } from './UploadType';
 import { ext } from './fileExts';
 import { useArrayFileContext } from './ArrayFileContext';
@@ -65,7 +64,6 @@ export const FileUpload = ({
     ) => void;
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
-    const reuploadAttempts = useRef(0);
     const [maybeBackupUpload] = useBackupUpload(props.name);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
@@ -257,17 +255,14 @@ export const FileUpload = ({
         }
         return () => document.removeEventListener('paste', handlePaste);
     }, [isCurrentTab, handlePaste]);
-    const handleUploadLost = useEventCallback(async () => {
-        const file = await db.uploads.get(uploadKey);
-        if (!file) {
-            field.onChange(null);
-            return;
-        }
-        if (reuploadAttempts.current > 2) {
-            return;
-        }
-        mutate([file.file], { onError: () => reuploadAttempts.current++ });
-    });
+    const handleUploadLost = useReuploadLost(
+        () => uploadKey,
+        () => field.onChange(null),
+        (file) => {
+            mutate([file]);
+            return Promise.resolve();
+        },
+    );
     return (
         <Box mb={2} display='flex' flexDirection='column' width='100%'>
             <Typography variant='body1'>

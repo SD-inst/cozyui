@@ -31,6 +31,7 @@ export const CompactFileItem = memo(
         onReplace,
         lightboxOpen,
         onOpenControls,
+        onUploadLost,
     }: {
         id: string;
         index: number;
@@ -39,6 +40,7 @@ export const CompactFileItem = memo(
         onReplace: (index: number, file: File) => void;
         lightboxOpen: (index: number) => void;
         onOpenControls: (index: number) => void;
+        onUploadLost: (index: number) => void;
     }) => {
         const theme = useTheme();
         const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -88,7 +90,7 @@ export const CompactFileItem = memo(
                 sx={{
                     cursor: 'grab',
                     '&:active': { cursor: 'grabbing' },
-                    ...(isAudio ? { flex: '1 1 300px' } : {}),
+                    ...(isAudio ? { mr: 1, mb: 1 } : {}),
                 }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
@@ -99,8 +101,7 @@ export const CompactFileItem = memo(
                 {isAudio ? (
                     <Box
                         sx={{
-                            width: '100%',
-                            maxWidth: 300,
+                            width: 300,
                             height: AUDIO_ITEM_HEIGHT,
                             display: 'flex',
                             alignItems: 'center',
@@ -110,6 +111,7 @@ export const CompactFileItem = memo(
                             <audio
                                 src={imageURL}
                                 controls
+                                onError={() => onUploadLost(index)}
                                 style={{ width: '100%' }}
                             />
                         ) : (
@@ -145,6 +147,7 @@ export const CompactFileItem = memo(
                                 muted
                                 playsInline
                                 preload='auto'
+                                onError={() => onUploadLost(index)}
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -199,6 +202,7 @@ export const CompactFileItem = memo(
                             <img
                                 src={imageURL}
                                 alt=''
+                                onError={() => onUploadLost(index)}
                                 style={{
                                     width: '100%',
                                     height: '100%',
@@ -229,7 +233,7 @@ export const CompactFileItem = memo(
                         size='small'
                         sx={{
                             position: 'absolute',
-                            top: 2,
+                            top: -10,
                             right: 2,
                             width: 20,
                             height: 20,
