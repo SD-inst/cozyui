@@ -16,11 +16,17 @@ export const VideoImageResult = ({
 }) => {
     const length = useWatchForm(lengthName);
     const { id } = useResultParam();
-    return length > imageThreshold ? (
-        <VideoResult {...props} />
-    ) : (
-        <ResultOverrideContextProvider value={{ id, type: 'images' }}>
-            <ImageResult previewMaxFrames={imagePreviewMaxFrames} />
-        </ResultOverrideContextProvider>
+    const isVideo = (length ?? 0) > imageThreshold;
+    return (
+        <>
+            <div style={{ display: isVideo ? 'block' : 'none' }}>
+                <VideoResult {...props} />
+            </div>
+            <div style={{ display: isVideo ? 'none' : 'block' }}>
+                <ResultOverrideContextProvider value={{ id, type: 'images' }}>
+                    <ImageResult previewMaxFrames={imagePreviewMaxFrames} />
+                </ResultOverrideContextProvider>
+            </div>
+        </>
     );
 };
