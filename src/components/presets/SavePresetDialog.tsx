@@ -41,11 +41,14 @@ const MediaRowView = ({
     onAddFile: (field: string) => void;
 }) => {
     const tr = useTranslate();
-    const url = useMemo(
-        () => (row.file ? URL.createObjectURL(row.file) : ''),
-        [row.file],
-    );
-    useEffect(() => () => URL.revokeObjectURL(url), [url]);
+    const [url, setUrl] = useState('');
+    useEffect(() => {
+        const u = row.file ? URL.createObjectURL(row.file) : '';
+        setUrl(u);
+        return () => {
+            if (u) URL.revokeObjectURL(u);
+        };
+    }, [row.file]);
     const preview = url ? (
         row.kind === 'image' ? (
             <img

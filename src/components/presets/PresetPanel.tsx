@@ -78,8 +78,6 @@ export const PresetPanel = ({ ...props }: ListProps) => {
                         size='small'
                         name='tab'
                         value={tabFilter}
-                        // show the "All tabs" option when the value is empty
-                        displayEmpty
                         onChange={(e) => setTabFilter(e.target.value as string)}
                         choices={[
                             {

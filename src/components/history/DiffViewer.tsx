@@ -81,29 +81,30 @@ const VideoCompare = () => {
                 db.taskResults.get(B_id || 0),
         ]), [A_id, B_id]
     );
-    const urls = useMemo(
-        () =>
-            (tasks ?? []).map((t): string | undefined => {
-                if (!t) return undefined;
-                if (Array.isArray(t.data)) {
-                    return t.data.length > 0
-                        ? URL.createObjectURL(t.data[0])
-                        : undefined;
-                }
-                if (t.data) {
-                    return URL.createObjectURL(t.data);
-                }
-                if (Array.isArray(t.url)) {
-                    return t.url[0];
-                }
-                return t.url;
-            }),
-        [tasks],
-    );
-    useEffect(() => () => urls?.forEach((u) => u && URL.revokeObjectURL(u)), [urls]);
+    const [blobUrls, setBlobUrls] = useState<(string | undefined)[]>([]);
+    useEffect(() => {
+        const arr = (tasks ?? []).map((t): string | undefined => {
+            if (!t || !t.data) return undefined;
+            const blob = Array.isArray(t.data) ? t.data[0] : t.data;
+            return blob ? URL.createObjectURL(blob) : undefined;
+        });
+        setBlobUrls(arr);
+        return () => arr.forEach((u) => u && URL.revokeObjectURL(u));
+    }, [tasks]);
     if (!tasks || !tasks[0] || !tasks[1]) {
         return null;
     }
+    const urls = tasks.map((t, i): string | undefined => {
+        if (!t) return undefined;
+        if (t.data) {
+            const blob = Array.isArray(t.data) ? t.data[0] : t.data;
+            return blob ? blobUrls[i] : undefined;
+        }
+        if (Array.isArray(t.url)) {
+            return t.url[0];
+        }
+        return t.url;
+    });
     const VideoViewer = ({ i }: { i: number }) => (
         <video
             key={i}

@@ -14,7 +14,7 @@ import {
     CardContent,
     CardHeader,
 } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
 import { markEnum, TaskResult } from './db';
@@ -47,17 +47,19 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const urlList = Array.isArray(output.url) ? output.url : [output.url];
     const batchCount = output.type === 'images' && urlList.length > 1 ? urlList.length : 0;
     const firstUrl = urlList[0];
-    const displayUrl = useMemo(
-        () =>
-            output.data
-                ? URL.createObjectURL(
-                    Array.isArray(output.data) ? output.data[0] : output.data,
-                )
-                : firstUrl,
-        [output.data, firstUrl],
-    );
-    useEffect(() => () => URL.revokeObjectURL(displayUrl), [displayUrl]);
-    const cacheUrl = displayUrl;
+    const [displayUrl, setDisplayUrl] = useState('');
+    useEffect(() => {
+        const url = output.data
+            ? URL.createObjectURL(
+                Array.isArray(output.data) ? output.data[0] : output.data,
+            )
+            : '';
+        setDisplayUrl(url);
+        return () => {
+            if (url) URL.revokeObjectURL(url);
+        };
+    }, [output.data]);
+    const cacheUrl = displayUrl || firstUrl;
     let dlUrl = firstUrl;
     if (!dlUrl.startsWith('http')) {
         dlUrl = 'http://127.0.0.1/' + dlUrl; //fake URL, only need it for parsing the filename

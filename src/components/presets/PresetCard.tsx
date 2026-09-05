@@ -17,7 +17,7 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
@@ -33,8 +33,12 @@ import { SavePresetDialog } from './SavePresetDialog';
 import { useApplyPreset } from './useApplyPreset';
 
 const Preview = ({ file }: { file: File }) => {
-    const url = useMemo(() => URL.createObjectURL(file), [file]);
-    useEffect(() => () => URL.revokeObjectURL(url), [url]);
+    const [url, setUrl] = useState('');
+    useEffect(() => {
+        const u = URL.createObjectURL(file);
+        setUrl(u);
+        return () => URL.revokeObjectURL(u);
+    }, [file]);
     const kind = kindOf(file.name);
     if (kind === 'image') {
         return (

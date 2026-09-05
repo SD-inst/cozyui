@@ -28,7 +28,7 @@ export const useBackupUpload = (
     ];
 };
 
-export const useReuploadLost = <T>(
+export const useReuploadLost = <T,>(
     getKey: (arg: T) => string,
     onLost: (key: string) => void,
     onReupload: (file: File, key: string, arg: T) => Promise<void>,
@@ -45,10 +45,17 @@ export const useReuploadLost = <T>(
             if ((attempts.current[key] || 0) > 2) {
                 return;
             }
+            // Count every recovery attempt, not just failed re-uploads. The
+            // re-upload "succeeds" (the backed-up file is re-uploaded and the
+            // field value is swapped to a fresh filename), so it never throws —
+            // but if the media still errors (e.g. a 416 from the server), the
+            // onError → re-upload cycle would otherwise loop forever, creating a
+            // new duplicate file on the server every iteration.
+            attempts.current[key] = (attempts.current[key] || 0) + 1;
             try {
                 await onReupload(entry.file, key, arg);
             } catch {
-                attempts.current[key] = (attempts.current[key] || 0) + 1;
+                // Re-upload failed; the attempt cap above stops the loop.
             }
         },
         [getKey, onLost, onReupload],

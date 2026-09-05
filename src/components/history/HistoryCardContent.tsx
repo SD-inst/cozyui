@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -26,12 +26,14 @@ export const HistoryCardContent = ({
     const [open, setOpen] = useState(false);
     const p = params ? JSON.parse(params) : null;
 
-    const dataUrls = useMemo(() => {
+    const [dataUrls, setDataUrls] = useState<string[]>([]);
+    useEffect(() => {
         const arr = Array.isArray(data) ? data : data ? [data] : [];
-        return arr.map((d) => URL.createObjectURL(d));
+        const urls = arr.map((d) => URL.createObjectURL(d));
+        setDataUrls(urls);
+        return () => urls.forEach((u) => URL.revokeObjectURL(u));
     }, [data]);
-    useEffect(() => () => dataUrls.forEach((u) => URL.revokeObjectURL(u)), [dataUrls]);
-    const useData = dataUrls.length > 0;
+    const useData = data ? (Array.isArray(data) ? data.length > 0 : true) : false;
 
     switch (type) {
         case 'gifs': {
