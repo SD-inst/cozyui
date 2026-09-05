@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -26,12 +26,17 @@ export const HistoryCardContent = ({
     const [open, setOpen] = useState(false);
     const p = params ? JSON.parse(params) : null;
 
+    const dataUrls = useMemo(() => {
+        const arr = Array.isArray(data) ? data : data ? [data] : [];
+        return arr.map((d) => URL.createObjectURL(d));
+    }, [data]);
+    useEffect(() => () => dataUrls.forEach((u) => URL.revokeObjectURL(u)), [dataUrls]);
+    const useData = dataUrls.length > 0;
+
     switch (type) {
         case 'gifs': {
             const gifUrl = Array.isArray(url) ? url[0] : url;
-            const dataArray = Array.isArray(data) ? data : (data ? [data] : []);
-            const useData = dataArray.length > 0;
-            const displayGifUrl = useData ? URL.createObjectURL(dataArray[0]) : gifUrl;
+            const displayGifUrl = useData ? dataUrls[0] : gifUrl;
             return (
                 <video
                     style={{
@@ -47,9 +52,7 @@ export const HistoryCardContent = ({
         }
         case 'audio': {
             const audioUrl = Array.isArray(url) ? url[0] : url;
-            const dataArray = Array.isArray(data) ? data : (data ? [data] : []);
-            const useData = dataArray.length > 0;
-            const displayAudioUrl = useData ? URL.createObjectURL(dataArray[0]) : audioUrl;
+            const displayAudioUrl = useData ? dataUrls[0] : audioUrl;
             return (
                 <Box
                     sx={{
@@ -82,17 +85,13 @@ export const HistoryCardContent = ({
         }
         case 'images': {
             const urlArray = Array.isArray(url) ? url : [url];
-            const dataArray = Array.isArray(data) ? data : (data ? [data] : []);
-            const useData = dataArray.length > 0;
-            const firstUrl = useData
-                ? URL.createObjectURL(dataArray[0])
-                : urlArray[0];
+            const firstUrl = useData ? dataUrls[0] : urlArray[0];
             const allSlides = useData
-                ? dataArray.map((d) => ({ src: URL.createObjectURL(d) }))
+                ? dataUrls.map((u) => ({ src: u }))
                 : urlArray.map((u) => ({ src: u }));
             const batch = useData
-                ? dataArray.map((d, i) => ({
-                      url: URL.createObjectURL(d),
+                ? dataUrls.map((u, i) => ({
+                      url: u,
                       filename:
                           new URL(urlArray[i], location.href).searchParams.get(
                               'filename'

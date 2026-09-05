@@ -142,8 +142,10 @@ const Content = () => {
     const { setValue } = useFormContext();
     const updateSize = useEventCallback(async (file: File) => {
         const img = new Image();
-        img.src = URL.createObjectURL(file);
+        const url = URL.createObjectURL(file);
+        img.src = url;
         img.onload = () => {
+            URL.revokeObjectURL(url);
             let width = img.width;
             let height = img.height;
             const size = width * height;
@@ -155,6 +157,9 @@ const Content = () => {
             }
             setValue('width', Math.ceil(width - (width % 16)));
             setValue('height', Math.ceil(height - (height % 16)));
+        };
+        img.onerror = () => {
+            URL.revokeObjectURL(url);
         };
     });
     return (

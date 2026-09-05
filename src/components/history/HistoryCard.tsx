@@ -14,7 +14,7 @@ import {
     CardContent,
     CardHeader,
 } from '@mui/material';
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo } from 'react';
 import { formatDuration } from '../../hooks/useTaskDuration';
 import { VerticalBox } from '../VerticalBox';
 import { markEnum, TaskResult } from './db';
@@ -29,7 +29,6 @@ import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContext
 import { useTranslate } from '../../i18n/I18nContext';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
-    const cache = useRef('');
     const tr = useTranslate();
     const avatar = (type: string) => {
         switch (type) {
@@ -48,12 +47,17 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const urlList = Array.isArray(output.url) ? output.url : [output.url];
     const batchCount = output.type === 'images' && urlList.length > 1 ? urlList.length : 0;
     const firstUrl = urlList[0];
-    const hasData = !!output.data;
-    const displayUrl = hasData
-        ? URL.createObjectURL(Array.isArray(output.data) ? output.data[0] : output.data!)
-        : firstUrl;
-    const cacheUrl = cache.current || displayUrl;
-    cache.current = cacheUrl;
+    const displayUrl = useMemo(
+        () =>
+            output.data
+                ? URL.createObjectURL(
+                    Array.isArray(output.data) ? output.data[0] : output.data,
+                )
+                : firstUrl,
+        [output.data, firstUrl],
+    );
+    useEffect(() => () => URL.revokeObjectURL(displayUrl), [displayUrl]);
+    const cacheUrl = displayUrl;
     let dlUrl = firstUrl;
     if (!dlUrl.startsWith('http')) {
         dlUrl = 'http://127.0.0.1/' + dlUrl; //fake URL, only need it for parsing the filename

@@ -50,6 +50,7 @@ export const ImportExport = () => {
         link.href = URL.createObjectURL(blob);
         link.download = 'cozydb.json';
         link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000);
     };
     const handleImport = async (file: File) => {
         interrupt.current = false;

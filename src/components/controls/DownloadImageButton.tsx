@@ -37,6 +37,7 @@ export const DownloadImageButton = ({
                 'image.png'
             ).replace(/\.png$/, '.jpg');
             a.click();
+            setTimeout(() => URL.revokeObjectURL(a.href), 1000);
         }, 'image/jpeg');
     };
     if (lightbox) {
