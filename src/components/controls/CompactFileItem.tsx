@@ -2,7 +2,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
 import { Badge, Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import { UploadType } from './UploadType';
 import { ext } from './fileExts';
 import { useImageURL } from '../../hooks/useImageURL';
@@ -44,7 +44,6 @@ export const CompactFileItem = memo(
     }) => {
         const theme = useTheme();
         const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-        const [hovered, setHovered] = useState(false);
         const fileType = getFileType(filename);
         const imageURL = useImageURL(filename);
 
@@ -91,9 +90,11 @@ export const CompactFileItem = memo(
                     cursor: 'grab',
                     '&:active': { cursor: 'grabbing' },
                     ...(isAudio ? { mr: 1, mb: 1 } : {}),
+                    '&:hover .remove-btn': {
+                        opacity: 1,
+                        pointerEvents: 'auto',
+                    },
                 }}
-                onMouseEnter={() => setHovered(true)}
-                onMouseLeave={() => setHovered(false)}
                 onClick={handleClick}
                 onDrop={handleDrop}
                 onDragOver={(e) => e.preventDefault()}
@@ -228,19 +229,23 @@ export const CompactFileItem = memo(
                     </Box>
                 )}
 
-                {!isMobile && hovered && filename && (
+                {!isMobile && filename && (
                     <IconButton
+                        className='remove-btn'
                         size='small'
                         sx={{
                             position: 'absolute',
                             top: isAudio ? -10 : 5,
-                            right: isAudio ? -10 : 5,
+                            right: isAudio ? 0 : 5,
                             width: 20,
                             height: 20,
                             p: 0,
                             bgcolor: 'rgba(0,0,0,0.6)',
                             color: 'white',
                             zIndex: 1,
+                            opacity: 0,
+                            pointerEvents: 'none',
+                            transition: 'opacity 0.15s',
                             '&:hover': { bgcolor: 'rgba(200,0,0,0.8)' },
                         }}
                         onClick={(e) => {
@@ -262,7 +267,7 @@ export const CompactFileItem = memo(
                     sx={{
                         position: 'absolute',
                         top: isAudio ? 0 : 15,
-                        left: isAudio ? 0 : 15,
+                        left: isAudio ? 10 : 15,
                         cursor: 'pointer',
                         '&:hover': {
                             bgcolor: theme.palette.primary.dark,
