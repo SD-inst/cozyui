@@ -89,21 +89,14 @@
     },
     "34": {
         "inputs": {
-            "frame_rate": 24,
-            "loop_count": 0,
-            "filename_prefix": ["53", 0],
-            "format": "video/h264-mp4",
-            "pix_fmt": "yuv420p",
-            "crf": 19,
-            "save_metadata": false,
-            "trim_to_audio": false,
-            "pingpong": false,
-            "save_output": false,
+            "fps": 24,
+            "bit_depth": "auto",
+            "color_space": "sRGB",
             "images": ["5", 0]
         },
-        "class_type": "VHS_VideoCombine",
+        "class_type": "CreateVideo",
         "_meta": {
-            "title": "Video Combine 🎥🅥🅗🅢"
+            "title": "Create Video"
         }
     },
     "52": {
@@ -124,6 +117,19 @@
         "class_type": "SomethingToString",
         "_meta": {
             "title": "Something To String"
+        }
+    },
+    "54": {
+        "inputs": {
+            "filename_prefix": ["53", 0],
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["34", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
         }
     }
 }

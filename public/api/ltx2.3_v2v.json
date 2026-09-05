@@ -1,22 +1,15 @@
 {
     "103": {
         "inputs": {
-            "frame_rate": ["114", 0],
-            "loop_count": 0,
-            "filename_prefix": ["105", 0],
-            "format": "video/h264-mp4",
-            "pix_fmt": "yuv420p",
-            "crf": 19,
-            "save_metadata": true,
-            "trim_to_audio": false,
-            "pingpong": false,
-            "save_output": true,
+            "fps": ["114", 0],
+            "bit_depth": "auto",
+            "color_space": "sRGB",
             "images": ["92:116", 0],
             "audio": ["114:3", 1]
         },
-        "class_type": "VHS_VideoCombine",
+        "class_type": "CreateVideo",
         "_meta": {
-            "title": "Video Combine 🎥🅥🅗🅢"
+            "title": "Create Video"
         }
     },
     "104": {
@@ -460,6 +453,19 @@
         "class_type": "VAEDecodeTiled",
         "_meta": {
             "title": "VAE Decode (Tiled)"
+        }
+    },
+    "120": {
+        "inputs": {
+            "filename_prefix": ["105", 0],
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["103", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
         }
     }
 }

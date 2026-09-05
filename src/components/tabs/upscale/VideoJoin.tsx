@@ -61,7 +61,10 @@ const Videos = ({ name }: { name: string }) => {
                 const compId = buildLoad(api, videos[0].video);
                 api[combineNode].inputs.images = [compId, 0];
                 api[combineNode].inputs.audio = [compId, 1];
-                api[combineNode].inputs.frame_rate = [compId, 2];
+                api[combineNode].inputs.fps = [compId, 2];
+                if (control.save_node_id) {
+                    api[control.save_node_id].inputs.video = [combineNode, 0];
+                }
                 return;
             }
 
@@ -145,7 +148,10 @@ const Videos = ({ name }: { name: string }) => {
 
             api[combineNode].inputs.images = framesRef;
             api[combineNode].inputs.audio = audioRef;
-            api[combineNode].inputs.frame_rate = fpsRef;
+            api[combineNode].inputs.fps = fpsRef;
+            if (control.save_node_id) {
+                api[control.save_node_id].inputs.video = [combineNode, 0];
+            }
         },
     );
     useRegisterHandler({ name, handler });

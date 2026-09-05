@@ -43,7 +43,7 @@ export const LTX2UpsampleControl = ({
     i2v?: boolean;
 } & BoxProps) => {
     const fps = useWatchForm('fps');
-    const { id: resultNodeID } = useResultParam();
+    const { id: resultNodeID, create_video_node_id } = useResultParam();
     const keyframes: TKeyframe[] = useWatch({ name: 'keyframes' });
     const referenceAudio: TReferenceAudio = useWatch({
         name: 'reference_audio',
@@ -140,7 +140,8 @@ export const LTX2UpsampleControl = ({
                 const newNodeID = insertGraph(api, temporalUpscale);
                 samplesNode = [newNodeID + ':2', 0];
                 condNodeID = newNodeID + ':3';
-                api[resultNodeID].inputs.frame_rate = fps * 2;
+                const videoNodeId = create_video_node_id || resultNodeID;
+                api[videoNodeId].inputs.fps = fps * 2;
             }
             if (value.spatial) {
                 const spatialUpscale = {

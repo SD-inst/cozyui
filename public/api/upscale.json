@@ -1,119 +1,98 @@
 {
-  "1": {
-    "inputs": {},
-    "class_type": "GetImageSizeAndCount",
-    "_meta": {
-      "title": "Get Image Size & Count"
-    }
-  },
-  "2": {
-    "inputs": {
-      "expression": "a*2",
-      "a": [
-        "1",
-        1
-      ]
+    "1": {
+        "inputs": {},
+        "class_type": "GetImageSizeAndCount",
+        "_meta": {
+            "title": "Get Image Size & Count"
+        }
     },
-    "class_type": "MathExpression|pysssss",
-    "_meta": {
-      "title": "Math Expression 🐍"
-    }
-  },
-  "3": {
-    "inputs": {
-      "expression": "a*2",
-      "a": [
-        "1",
-        2
-      ]
+    "2": {
+        "inputs": {
+            "expression": "a*2",
+            "a": ["1", 1]
+        },
+        "class_type": "MathExpression|pysssss",
+        "_meta": {
+            "title": "Math Expression \ud83d\udc0d"
+        }
     },
-    "class_type": "MathExpression|pysssss",
-    "_meta": {
-      "title": "Math Expression 🐍"
-    }
-  },
-  "4": {
-    "inputs": {
-      "model_name": "4x_foolhardy_Remacri.pth"
+    "3": {
+        "inputs": {
+            "expression": "a*2",
+            "a": ["1", 2]
+        },
+        "class_type": "MathExpression|pysssss",
+        "_meta": {
+            "title": "Math Expression \ud83d\udc0d"
+        }
     },
-    "class_type": "UpscaleModelLoader",
-    "_meta": {
-      "title": "Load Upscale Model"
-    }
-  },
-  "5": {
-    "inputs": {
-      "upscale_method": "lanczos",
-      "width": [
-        "2",
-        0
-      ],
-      "height": [
-        "3",
-        0
-      ],
-      "crop": "center",
-      "image": [
-        "6",
-        0
-      ]
+    "4": {
+        "inputs": {
+            "model_name": "4x_foolhardy_Remacri.pth"
+        },
+        "class_type": "UpscaleModelLoader",
+        "_meta": {
+            "title": "Load Upscale Model"
+        }
     },
-    "class_type": "ImageScale",
-    "_meta": {
-      "title": "Upscale Image"
-    }
-  },
-  "6": {
-    "inputs": {
-      "upscale_model": [
-        "4",
-        0
-      ],
-      "image": [
-        "1",
-        0
-      ]
+    "5": {
+        "inputs": {
+            "upscale_method": "lanczos",
+            "width": ["2", 0],
+            "height": ["3", 0],
+            "crop": "center",
+            "image": ["6", 0]
+        },
+        "class_type": "ImageScale",
+        "_meta": {
+            "title": "Upscale Image"
+        }
     },
-    "class_type": "ImageUpscaleWithModel",
-    "_meta": {
-      "title": "Upscale Image (using Model)"
-    }
-  },
-  "7": {
-    "inputs": {
-      "ckpt_name": "film_net_fp32.pt",
-      "clear_cache_after_n_frames": 20,
-      "multiplier": 2,
-      "frames": [
-        "5",
-        0
-      ]
+    "6": {
+        "inputs": {
+            "upscale_model": ["4", 0],
+            "image": ["1", 0]
+        },
+        "class_type": "ImageUpscaleWithModel",
+        "_meta": {
+            "title": "Upscale Image (using Model)"
+        }
     },
-    "class_type": "FILM VFI",
-    "_meta": {
-      "title": "FILM VFI"
-    }
-  },
-  "8": {
-    "inputs": {
-      "frame_rate": 48,
-      "loop_count": 0,
-      "filename_prefix": "Hunyuan/2025_01_25/interpolate/vid",
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "7",
-        0
-      ]
+    "7": {
+        "inputs": {
+            "ckpt_name": "film_net_fp32.pt",
+            "clear_cache_after_n_frames": 20,
+            "multiplier": 2,
+            "frames": ["5", 0]
+        },
+        "class_type": "FILM VFI",
+        "_meta": {
+            "title": "FILM VFI"
+        }
     },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine 🎥🅥🅗🅢"
+    "8": {
+        "inputs": {
+            "fps": 48,
+            "bit_depth": "auto",
+            "color_space": "sRGB",
+            "images": ["7", 0]
+        },
+        "class_type": "CreateVideo",
+        "_meta": {
+            "title": "Create Video"
+        }
+    },
+    "9": {
+        "inputs": {
+            "filename_prefix": "Hunyuan/2025_01_25/interpolate/vid",
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["8", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
+        }
     }
-  }
 }

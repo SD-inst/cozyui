@@ -5,6 +5,7 @@ export type resultOptionsType = {
     type?: string;
     url?: string;
     filename?: string;
+    create_video_node_id?: string;
     batch?: { url: string; filename: string; type: string }[];
 };
 

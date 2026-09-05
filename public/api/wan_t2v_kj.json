@@ -14,7 +14,7 @@
     "16": {
         "inputs": {
             "positive_prompt": "prompt",
-            "negative_prompt": "过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走, walking backwards, blurry, unfinished",
+            "negative_prompt": "\u8fc7\u66dd\uff0c\u9759\u6001\uff0c\u7ec6\u8282\u6a21\u7cca\u4e0d\u6e05\uff0c\u5b57\u5e55\uff0c\u753b\u9762\uff0c\u9759\u6b62\uff0c\u6574\u4f53\u53d1\u7070\uff0c\u6700\u5dee\u8d28\u91cf\uff0c\u4f4e\u8d28\u91cf\uff0cJPEG\u538b\u7f29\u6b8b\u7559\uff0c\u4e11\u964b\u7684\uff0c\u6b8b\u7f3a\u7684\uff0c\u591a\u4f59\u7684\u624b\u6307\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u624b\u90e8\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u8138\u90e8\uff0c\u7578\u5f62\u7684\uff0c\u6bc1\u5bb9\u7684\uff0c\u5f62\u6001\u7578\u5f62\u7684\u80a2\u4f53\uff0c\u624b\u6307\u878d\u5408\uff0c\u9759\u6b62\u4e0d\u52a8\u7684\u753b\u9762\uff0c\u6742\u4e71\u7684\u80cc\u666f\uff0c\u4e09\u6761\u817f\uff0c\u80cc\u666f\u4eba\u5f88\u591a\uff0c\u5012\u7740\u8d70, walking backwards, blurry, unfinished",
             "force_offload": true,
             "t5": ["11", 0]
         },
@@ -94,21 +94,14 @@
     },
     "30": {
         "inputs": {
-            "frame_rate": 16,
-            "loop_count": 0,
-            "filename_prefix": ["29", 0],
-            "format": "video/h264-mp4",
-            "pix_fmt": "yuv420p",
-            "crf": 19,
-            "save_metadata": false,
-            "trim_to_audio": false,
-            "pingpong": false,
-            "save_output": true,
+            "fps": 16,
+            "bit_depth": "auto",
+            "color_space": "sRGB",
             "images": ["28", 0]
         },
-        "class_type": "VHS_VideoCombine",
+        "class_type": "CreateVideo",
         "_meta": {
-            "title": "Video Combine 🎥🅥🅗🅢"
+            "title": "Create Video"
         }
     },
     "38": {
@@ -130,6 +123,19 @@
         "class_type": "WanVideoEmptyEmbeds",
         "_meta": {
             "title": "WanVideo Empty Embeds"
+        }
+    },
+    "114": {
+        "inputs": {
+            "filename_prefix": ["29", 0],
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["30", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
         }
     }
 }

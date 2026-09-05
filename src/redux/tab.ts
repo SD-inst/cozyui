@@ -94,7 +94,7 @@ const slice = createSlice({
          * @param action.prompt_id UUID of the prompt returned, the result tab is then picked from the s.prompt branch
          * @param action.tab_name explicitly specify the result tab
          */
-        addResult: (
+         addResult: (
             s,
             action: PayloadAction<{
                 prompt_id?: string;
@@ -109,6 +109,12 @@ const slice = createSlice({
                 );
                 return s;
             }
+            const output = { ...action.payload.output };
+            // Native SaveVideo outputs `images` + `animated: [true]` instead of `gifs`.
+            // Normalize so the existing result lookup (type: "gifs") works.
+            if (output.images && output.animated?.[0]) {
+                output.gifs = output.images;
+            }
             const tab_name =
                 action.payload.tab_name ||
                 s.prompt[action.payload.prompt_id!]?.tab_name;
@@ -121,7 +127,7 @@ const slice = createSlice({
                             action.payload.prompt_id,
                             action.payload.node_id,
                         ],
-                        action.payload.output,
+                        output,
                         Object
                     );
                     console.warn(
@@ -137,7 +143,7 @@ const slice = createSlice({
             setWith(
                 s,
                 ['result', tab_name, action.payload.node_id],
-                action.payload.output,
+                output,
                 Object
             );
         },

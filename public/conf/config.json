@@ -103,7 +103,7 @@
             },
             "result": [
                 {
-                    "id": "16",
+                    "id": "20",
                     "type": "gifs"
                 },
                 {
@@ -198,7 +198,7 @@
             },
             "result": [
                 {
-                    "id": "102",
+                    "id": "128",
                     "type": "gifs"
                 }
             ]
@@ -289,7 +289,7 @@
             },
             "result": [
                 {
-                    "id": "128",
+                    "id": "131",
                     "type": "gifs"
                 }
             ]
@@ -358,7 +358,7 @@
                 }
             },
             "result": {
-                "id": "20",
+                "id": "31",
                 "type": "gifs"
             },
             "handler_options": {
@@ -454,7 +454,7 @@
                 }
             },
             "result": {
-                "id": "34",
+                "id": "54",
                 "type": "gifs"
             }
         },
@@ -525,7 +525,7 @@
                 }
             },
             "result": {
-                "id": "60",
+                "id": "195",
                 "type": "gifs"
             }
         },
@@ -648,8 +648,9 @@
                 }
             },
             "result": {
-                "id": "103",
-                "type": "gifs"
+                "id": "108",
+                "type": "gifs",
+                "create_video_node_id": "103"
             }
         },
         "LTX-2 I2V": {
@@ -762,8 +763,9 @@
                 }
             },
             "result": {
-                "id": "103",
-                "type": "gifs"
+                "id": "109",
+                "type": "gifs",
+                "create_video_node_id": "103"
             }
         },
         "LTX-2.3 T2V": {
@@ -866,8 +868,9 @@
                 }
             },
             "result": {
-                "id": "103",
-                "type": "gifs"
+                "id": "108",
+                "type": "gifs",
+                "create_video_node_id": "103"
             }
         },
         "LTX-2.3 I2V": {
@@ -997,8 +1000,9 @@
                 }
             },
             "result": {
-                "id": "103",
-                "type": "gifs"
+                "id": "109",
+                "type": "gifs",
+                "create_video_node_id": "103"
             }
         },
         "LTX-2.3 V2V": {
@@ -1058,7 +1062,7 @@
                 }
             },
             "result": {
-                "id": "103",
+                "id": "120",
                 "type": "gifs"
             }
         },
@@ -1150,7 +1154,7 @@
                 }
             },
             "result": {
-                "id": "34",
+                "id": "58",
                 "type": "gifs"
             }
         },
@@ -1250,7 +1254,7 @@
             },
             "result": [
                 {
-                    "id": "50",
+                    "id": "93",
                     "type": "gifs"
                 },
                 {
@@ -1440,7 +1444,7 @@
             },
             "result": [
                 {
-                    "id": "97",
+                    "id": "103",
                     "type": "gifs"
                 },
                 {
@@ -2710,7 +2714,7 @@
                 }
             },
             "result": {
-                "id": "30",
+                "id": "118",
                 "type": "gifs"
             },
             "defaults": {
@@ -2815,7 +2819,7 @@
                 }
             },
             "result": {
-                "id": "30",
+                "id": "131",
                 "type": "gifs"
             },
             "defaults": {
@@ -2903,7 +2907,7 @@
                 }
             },
             "result": {
-                "id": "56",
+                "id": "73",
                 "type": "gifs"
             },
             "defaults": {
@@ -3015,7 +3019,7 @@
                 }
             },
             "result": {
-                "id": "30",
+                "id": "114",
                 "type": "gifs"
             },
             "defaults": {
@@ -3219,13 +3223,14 @@
                 },
                 "randomizer": {
                     "id": "handle",
-                    "node_id": "5",
+                    "node_id": "12",
                     "prefix": "interp_"
                 }
             },
             "result": {
-                "id": "5",
-                "type": "gifs"
+                "id": "12",
+                "type": "gifs",
+                "create_video_node_id": "5"
             }
         },
         "Video join": {
@@ -3235,7 +3240,8 @@
                     "id": "handle",
                     "node_id": "1",
                     "set_field": "video",
-                    "max": 10
+                    "max": 10,
+                    "save_node_id": "2"
                 },
                 "correct_brightness": {
                     "id": "skip"
@@ -3245,12 +3251,12 @@
                 },
                 "randomizer": {
                     "id": "handle",
-                    "node_id": "1",
+                    "node_id": "2",
                     "prefix": "video_join_"
                 }
             },
             "result": {
-                "id": "1",
+                "id": "2",
                 "type": "gifs"
             }
         },
@@ -3376,7 +3382,7 @@
                 }
             },
             "result": {
-                "id": "105:121",
+                "id": "138",
                 "type": "gifs"
             },
             "defaults": {
@@ -3524,7 +3530,7 @@
                 }
             },
             "result": {
-                "id": "105:121",
+                "id": "140",
                 "type": "gifs"
             },
             "defaults": {
@@ -3533,7 +3539,7 @@
                 "length": 5,
                 "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
                 "video_vae": "minimax_h3_video_vae_int8_convrot.safetensors",
-                "prompt": "How the reference pictures align with the target video — Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A"
+                "prompt": "How the reference pictures align with the target video \u2014 Picture 1 (from Shot 1) aligns with the 0.00-second mark of the target video; Picture 2 (from Shot 1) aligns with the 5.00-second mark of the target video.\n\nintegrated_multimodal_description: [Shot 1] \n\noverall_soundscape: \n\nnon_diegetic_music: N/A"
             }
         },
         "MiniMax H3 R2V": {
@@ -3687,7 +3693,7 @@
                 }
             },
             "result": {
-                "id": "105:121",
+                "id": "138",
                 "type": "gifs"
             },
             "defaults": {
@@ -3698,7 +3704,7 @@
                 "video_vae": "minimax_h3_video_vae_int8_convrot.safetensors",
                 "turbo_lora.lora_name": "h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_lightx2v_bf16.safetensors",
                 "seed": 1024,
-                "prompt": "subject_definitions:\n<Subject 1> is the visual content (e.g. a character, background, or motion) in <Picture 1>, <Picture 2>, etc. — the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. — the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved — describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved — describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A"
+                "prompt": "subject_definitions:\n<Subject 1> is the visual content (e.g. a character, background, or motion) in <Picture 1>, <Picture 2>, etc. \u2014 the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. \u2014 the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved \u2014 describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved \u2014 describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A"
             }
         }
     },

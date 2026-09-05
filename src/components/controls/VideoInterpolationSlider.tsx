@@ -13,12 +13,13 @@ export const VideoInterpolationSlider = ({
     sx,
     ...props
 }: Optional<SliderInputProps, 'name'>) => {
-    const { id } = useResultParam();
+    const { id, create_video_node_id } = useResultParam();
     const { getValues } = useFormContext();
     const handler = useEventCallback((api: Workflow, value: number) => {
         if (value === 1 || getValues('length') < 2) {
             return;
         }
+        const videoNodeId = create_video_node_id || id;
         const rifeNode = {
             inputs: {
                 ckpt_name: 'rife_v4.26.safetensors',
@@ -32,12 +33,12 @@ export const VideoInterpolationSlider = ({
                 title: '🐇 RIFE VFI Interpolate by Multiple',
             },
         };
-        insertNode(api, id, 'images', rifeNode, 0, 'frames');
-        let currentFps = api[id].inputs.frame_rate;
+        insertNode(api, videoNodeId, 'images', rifeNode, 0, 'frames');
+        let currentFps = api[videoNodeId].inputs.fps;
         if (isNodeRef(currentFps)) {
             currentFps = api[currentFps[0]].inputs.value;
         }
-        api[id].inputs.frame_rate = (currentFps as number) * value;
+        api[videoNodeId].inputs.fps = (currentFps as number) * value;
     });
     useRegisterHandler({ name, handler });
     return (

@@ -1,349 +1,274 @@
 {
-  "11": {
-    "inputs": {
-      "model_name": "umt5-xxl-enc-bf16.safetensors",
-      "precision": "bf16",
-      "load_device": "offload_device",
-      "quantization": "disabled"
+    "11": {
+        "inputs": {
+            "model_name": "umt5-xxl-enc-bf16.safetensors",
+            "precision": "bf16",
+            "load_device": "offload_device",
+            "quantization": "disabled"
+        },
+        "class_type": "LoadWanVideoT5TextEncoder",
+        "_meta": {
+            "title": "WanVideo T5 Text Encoder Loader"
+        }
     },
-    "class_type": "LoadWanVideoT5TextEncoder",
-    "_meta": {
-      "title": "WanVideo T5 Text Encoder Loader"
-    }
-  },
-  "16": {
-    "inputs": {
-      "positive_prompt": "cartoon animation showing a maid woman talking. She's nervous and is constantly adjusting her maid uniform, looking around.",
-      "negative_prompt": "过曝，静态，细节模糊不清，字幕，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走, walking backwards, blurry, unfinished",
-      "force_offload": true,
-      "use_disk_cache": false,
-      "device": "gpu",
-      "t5": [
-        "11",
-        0
-      ]
+    "16": {
+        "inputs": {
+            "positive_prompt": "cartoon animation showing a maid woman talking. She's nervous and is constantly adjusting her maid uniform, looking around.",
+            "negative_prompt": "\u8fc7\u66dd\uff0c\u9759\u6001\uff0c\u7ec6\u8282\u6a21\u7cca\u4e0d\u6e05\uff0c\u5b57\u5e55\uff0c\u753b\u9762\uff0c\u9759\u6b62\uff0c\u6574\u4f53\u53d1\u7070\uff0c\u6700\u5dee\u8d28\u91cf\uff0c\u4f4e\u8d28\u91cf\uff0cJPEG\u538b\u7f29\u6b8b\u7559\uff0c\u4e11\u964b\u7684\uff0c\u6b8b\u7f3a\u7684\uff0c\u591a\u4f59\u7684\u624b\u6307\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u624b\u90e8\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u8138\u90e8\uff0c\u7578\u5f62\u7684\uff0c\u6bc1\u5bb9\u7684\uff0c\u5f62\u6001\u7578\u5f62\u7684\u80a2\u4f53\uff0c\u624b\u6307\u878d\u5408\uff0c\u9759\u6b62\u4e0d\u52a8\u7684\u753b\u9762\uff0c\u6742\u4e71\u7684\u80cc\u666f\uff0c\u4e09\u6761\u817f\uff0c\u80cc\u666f\u4eba\u5f88\u591a\uff0c\u5012\u7740\u8d70, walking backwards, blurry, unfinished",
+            "force_offload": true,
+            "use_disk_cache": false,
+            "device": "gpu",
+            "t5": ["11", 0]
+        },
+        "class_type": "WanVideoTextEncode",
+        "_meta": {
+            "title": "WanVideo TextEncode"
+        }
     },
-    "class_type": "WanVideoTextEncode",
-    "_meta": {
-      "title": "WanVideo TextEncode"
-    }
-  },
-  "22": {
-    "inputs": {
-      "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
-      "base_precision": "fp16_fast",
-      "quantization": "disabled",
-      "load_device": "offload_device",
-      "attention_mode": "sageattn",
-      "multitalk_model": [
-        "125",
-        0
-      ]
+    "22": {
+        "inputs": {
+            "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
+            "base_precision": "fp16_fast",
+            "quantization": "disabled",
+            "load_device": "offload_device",
+            "attention_mode": "sageattn",
+            "multitalk_model": ["125", 0]
+        },
+        "class_type": "WanVideoModelLoader",
+        "_meta": {
+            "title": "WanVideo Model Loader"
+        }
     },
-    "class_type": "WanVideoModelLoader",
-    "_meta": {
-      "title": "WanVideo Model Loader"
-    }
-  },
-  "27": {
-    "inputs": {
-      "steps": 6,
-      "cfg": 1,
-      "shift": 11,
-      "seed": [
-        "123",
-        0
-      ],
-      "force_offload": true,
-      "scheduler": "dpm++_sde",
-      "riflex_freq_index": 0,
-      "denoise_strength": 1,
-      "batched_cfg": false,
-      "rope_function": "comfy",
-      "start_step": 0,
-      "end_step": -1,
-      "add_noise_to_samples": true,
-      "model": [
-        "22",
-        0
-      ],
-      "image_embeds": [
-        "118",
-        0
-      ],
-      "text_embeds": [
-        "16",
-        0
-      ],
-      "multitalk_embeds": [
-        "119",
-        0
-      ]
+    "27": {
+        "inputs": {
+            "steps": 6,
+            "cfg": 1,
+            "shift": 11,
+            "seed": ["123", 0],
+            "force_offload": true,
+            "scheduler": "dpm++_sde",
+            "riflex_freq_index": 0,
+            "denoise_strength": 1,
+            "batched_cfg": false,
+            "rope_function": "comfy",
+            "start_step": 0,
+            "end_step": -1,
+            "add_noise_to_samples": true,
+            "model": ["22", 0],
+            "image_embeds": ["118", 0],
+            "text_embeds": ["16", 0],
+            "multitalk_embeds": ["119", 0]
+        },
+        "class_type": "WanVideoSampler",
+        "_meta": {
+            "title": "WanVideo Sampler"
+        }
     },
-    "class_type": "WanVideoSampler",
-    "_meta": {
-      "title": "WanVideo Sampler"
-    }
-  },
-  "28": {
-    "inputs": {
-      "enable_vae_tiling": false,
-      "tile_x": 272,
-      "tile_y": 272,
-      "tile_stride_x": 144,
-      "tile_stride_y": 128,
-      "normalization": "default",
-      "vae": [
-        "38",
-        0
-      ],
-      "samples": [
-        "27",
-        0
-      ]
+    "28": {
+        "inputs": {
+            "enable_vae_tiling": false,
+            "tile_x": 272,
+            "tile_y": 272,
+            "tile_stride_x": 144,
+            "tile_stride_y": 128,
+            "normalization": "default",
+            "vae": ["38", 0],
+            "samples": ["27", 0]
+        },
+        "class_type": "WanVideoDecode",
+        "_meta": {
+            "title": "WanVideo Decode"
+        }
     },
-    "class_type": "WanVideoDecode",
-    "_meta": {
-      "title": "WanVideo Decode"
-    }
-  },
-  "30": {
-    "inputs": {
-      "frame_rate": [
-        "130",
-        0
-      ],
-      "loop_count": 0,
-      "filename_prefix": [
-        "124",
-        0
-      ],
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "28",
-        0
-      ],
-      "audio": [
-        "122",
-        0
-      ]
+    "30": {
+        "inputs": {
+            "fps": ["130", 0],
+            "bit_depth": "auto",
+            "color_space": "sRGB",
+            "images": ["28", 0],
+            "audio": ["122", 0]
+        },
+        "class_type": "CreateVideo",
+        "_meta": {
+            "title": "Create Video"
+        }
     },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "38": {
-    "inputs": {
-      "model_name": "wan_2.1_vae.safetensors",
-      "precision": "bf16"
+    "38": {
+        "inputs": {
+            "model_name": "wan_2.1_vae.safetensors",
+            "precision": "bf16"
+        },
+        "class_type": "WanVideoVAELoader",
+        "_meta": {
+            "title": "WanVideo VAE Loader"
+        }
     },
-    "class_type": "WanVideoVAELoader",
-    "_meta": {
-      "title": "WanVideo VAE Loader"
-    }
-  },
-  "58": {
-    "inputs": {
-      "image": "image.jpg"
+    "58": {
+        "inputs": {
+            "image": "image.jpg"
+        },
+        "class_type": "LoadImage",
+        "_meta": {
+            "title": "Load Image"
+        }
     },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
-  "93": {
-    "inputs": {
-      "strength_1": 1,
-      "strength_2": 1,
-      "crop": "disabled",
-      "combine_embeds": "average",
-      "force_offload": true,
-      "tiles": 0,
-      "ratio": 0.5,
-      "clip_vision": [
-        "94",
-        0
-      ],
-      "image_1": [
-        "58",
-        0
-      ]
+    "93": {
+        "inputs": {
+            "strength_1": 1,
+            "strength_2": 1,
+            "crop": "disabled",
+            "combine_embeds": "average",
+            "force_offload": true,
+            "tiles": 0,
+            "ratio": 0.5,
+            "clip_vision": ["94", 0],
+            "image_1": ["58", 0]
+        },
+        "class_type": "WanVideoClipVisionEncode",
+        "_meta": {
+            "title": "WanVideo ClipVision Encode"
+        }
     },
-    "class_type": "WanVideoClipVisionEncode",
-    "_meta": {
-      "title": "WanVideo ClipVision Encode"
-    }
-  },
-  "94": {
-    "inputs": {
-      "clip_name": "clip_vision_h.safetensors"
+    "94": {
+        "inputs": {
+            "clip_name": "clip_vision_h.safetensors"
+        },
+        "class_type": "CLIPVisionLoader",
+        "_meta": {
+            "title": "Load CLIP Vision"
+        }
     },
-    "class_type": "CLIPVisionLoader",
-    "_meta": {
-      "title": "Load CLIP Vision"
-    }
-  },
-  "116": {
-    "inputs": {
-      "width": [
-        "117",
-        0
-      ],
-      "height": [
-        "117",
-        0
-      ],
-      "upscale_method": "lanczos",
-      "keep_proportion": "resize",
-      "pad_color": "0, 0, 0",
-      "crop_position": "center",
-      "divisible_by": 16,
-      "device": "cpu",
-      "image": [
-        "58",
-        0
-      ]
+    "116": {
+        "inputs": {
+            "width": ["117", 0],
+            "height": ["117", 0],
+            "upscale_method": "lanczos",
+            "keep_proportion": "resize",
+            "pad_color": "0, 0, 0",
+            "crop_position": "center",
+            "divisible_by": 16,
+            "device": "cpu",
+            "image": ["58", 0]
+        },
+        "class_type": "ImageResizeKJv2",
+        "_meta": {
+            "title": "Resize Image v2"
+        }
     },
-    "class_type": "ImageResizeKJv2",
-    "_meta": {
-      "title": "Resize Image v2"
-    }
-  },
-  "117": {
-    "inputs": {
-      "value": 720
+    "117": {
+        "inputs": {
+            "value": 720
+        },
+        "class_type": "PrimitiveInt",
+        "_meta": {
+            "title": "Size"
+        }
     },
-    "class_type": "PrimitiveInt",
-    "_meta": {
-      "title": "Size"
-    }
-  },
-  "118": {
-    "inputs": {
-      "width": [
-        "116",
-        1
-      ],
-      "height": [
-        "116",
-        2
-      ],
-      "frame_window_size": 81,
-      "motion_frame": 9,
-      "force_offload": false,
-      "colormatch": "disabled",
-      "tiled_vae": false,
-      "mode": "infinitetalk",
-      "vae": [
-        "38",
-        0
-      ],
-      "start_image": [
-        "116",
-        0
-      ],
-      "clip_embeds": [
-        "93",
-        0
-      ]
+    "118": {
+        "inputs": {
+            "width": ["116", 1],
+            "height": ["116", 2],
+            "frame_window_size": 81,
+            "motion_frame": 9,
+            "force_offload": false,
+            "colormatch": "disabled",
+            "tiled_vae": false,
+            "mode": "infinitetalk",
+            "vae": ["38", 0],
+            "start_image": ["116", 0],
+            "clip_embeds": ["93", 0]
+        },
+        "class_type": "WanVideoImageToVideoMultiTalk",
+        "_meta": {
+            "title": "WanVideo Long I2V Multi/InfiniteTalk"
+        }
     },
-    "class_type": "WanVideoImageToVideoMultiTalk",
-    "_meta": {
-      "title": "WanVideo Long I2V Multi/InfiniteTalk"
-    }
-  },
-  "119": {
-    "inputs": {
-      "normalize_loudness": true,
-      "num_frames": 2000,
-      "fps": [
-        "130",
-        0
-      ],
-      "audio_scale": 1,
-      "audio_cfg_scale": 1,
-      "multi_audio_type": "para",
-      "wav2vec_model": [
-        "121",
-        0
-      ],
-      "audio_1": [
-        "122",
-        0
-      ]
+    "119": {
+        "inputs": {
+            "normalize_loudness": true,
+            "num_frames": 2000,
+            "fps": ["130", 0],
+            "audio_scale": 1,
+            "audio_cfg_scale": 1,
+            "multi_audio_type": "para",
+            "wav2vec_model": ["121", 0],
+            "audio_1": ["122", 0]
+        },
+        "class_type": "MultiTalkWav2VecEmbeds",
+        "_meta": {
+            "title": "Multi/InfiniteTalk Wav2vec2 Embeds"
+        }
     },
-    "class_type": "MultiTalkWav2VecEmbeds",
-    "_meta": {
-      "title": "Multi/InfiniteTalk Wav2vec2 Embeds"
-    }
-  },
-  "121": {
-    "inputs": {
-      "model": "TencentGameMate/chinese-wav2vec2-base",
-      "base_precision": "fp16",
-      "load_device": "main_device"
+    "121": {
+        "inputs": {
+            "model": "TencentGameMate/chinese-wav2vec2-base",
+            "base_precision": "fp16",
+            "load_device": "main_device"
+        },
+        "class_type": "DownloadAndLoadWav2VecModel",
+        "_meta": {
+            "title": "(Down)load Wav2Vec Model"
+        }
     },
-    "class_type": "DownloadAndLoadWav2VecModel",
-    "_meta": {
-      "title": "(Down)load Wav2Vec Model"
-    }
-  },
-  "122": {
-    "inputs": {
-      "audio": "audio.flac",
-      "audioUI": ""
+    "122": {
+        "inputs": {
+            "audio": "audio.flac",
+            "audioUI": ""
+        },
+        "class_type": "LoadAudio",
+        "_meta": {
+            "title": "LoadAudio"
+        }
     },
-    "class_type": "LoadAudio",
-    "_meta": {
-      "title": "LoadAudio"
-    }
-  },
-  "123": {
-    "inputs": {
-      "value": 1024
+    "123": {
+        "inputs": {
+            "value": 1024
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "INT Constant"
+        }
     },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "INT Constant"
-    }
-  },
-  "124": {
-    "inputs": {
-      "prefix": "WanI2V_InfiniteTalk_",
-      "suffix": "",
-      "input": [
-        "123",
-        0
-      ]
+    "124": {
+        "inputs": {
+            "prefix": "WanI2V_InfiniteTalk_",
+            "suffix": "",
+            "input": ["123", 0]
+        },
+        "class_type": "SomethingToString",
+        "_meta": {
+            "title": "Something To String"
+        }
     },
-    "class_type": "SomethingToString",
-    "_meta": {
-      "title": "Something To String"
-    }
-  },
-  "125": {
-    "inputs": {
-      "model": "infinitetalk/Wan2_1-InfiniTetalk-Single_fp16.safetensors"
+    "125": {
+        "inputs": {
+            "model": "infinitetalk/Wan2_1-InfiniTetalk-Single_fp16.safetensors"
+        },
+        "class_type": "MultiTalkModelLoader",
+        "_meta": {
+            "title": "Multi/InfiniteTalk Model Loader"
+        }
     },
-    "class_type": "MultiTalkModelLoader",
-    "_meta": {
-      "title": "Multi/InfiniteTalk Model Loader"
-    }
-  },
-  "130": {
-    "inputs": {
-      "value": 25
+    "130": {
+        "inputs": {
+            "value": 25
+        },
+        "class_type": "FloatConstant",
+        "_meta": {
+            "title": "Float Constant"
+        }
     },
-    "class_type": "FloatConstant",
-    "_meta": {
-      "title": "Float Constant"
+    "131": {
+        "inputs": {
+            "filename_prefix": ["124", 0],
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["30", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
+        }
     }
-  }
 }

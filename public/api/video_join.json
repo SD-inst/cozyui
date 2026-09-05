@@ -1,28 +1,28 @@
 {
-  "1": {
-    "inputs": {
-      "frame_rate": 24,
-      "loop_count": 0,
-      "filename_prefix": "video_join_",
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "1",
-        0
-      ],
-      "audio": [
-        "1",
-        0
-      ]
+    "1": {
+        "inputs": {
+            "fps": 24,
+            "bit_depth": "auto",
+            "color_space": "sRGB",
+            "images": ["1", 0],
+            "audio": ["1", 0]
+        },
+        "class_type": "CreateVideo",
+        "_meta": {
+            "title": "Create Video"
+        }
     },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine"
+    "2": {
+        "inputs": {
+            "filename_prefix": "video_join_",
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["1", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
+        }
     }
-  }
 }

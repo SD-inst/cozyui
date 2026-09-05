@@ -1,386 +1,281 @@
 {
-  "6": {
-    "inputs": {
-      "text": "positive prompt",
-      "clip": [
-        "38",
-        0
-      ]
+    "6": {
+        "inputs": {
+            "text": "positive prompt",
+            "clip": ["38", 0]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Positive Prompt)"
+        }
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Positive Prompt)"
-    }
-  },
-  "7": {
-    "inputs": {
-      "text": "色调艳丽，过曝，静态，细节模糊不清，字幕，风格，作品，画作，画面，静止，整体发灰，最差质量，低质量，JPEG压缩残留，丑陋的，残缺的，多余的手指，画得不好的手部，画得不好的脸部，畸形的，毁容的，形态畸形的肢体，手指融合，静止不动的画面，杂乱的背景，三条腿，背景人很多，倒着走",
-      "clip": [
-        "38",
-        0
-      ]
+    "7": {
+        "inputs": {
+            "text": "\u8272\u8c03\u8273\u4e3d\uff0c\u8fc7\u66dd\uff0c\u9759\u6001\uff0c\u7ec6\u8282\u6a21\u7cca\u4e0d\u6e05\uff0c\u5b57\u5e55\uff0c\u98ce\u683c\uff0c\u4f5c\u54c1\uff0c\u753b\u4f5c\uff0c\u753b\u9762\uff0c\u9759\u6b62\uff0c\u6574\u4f53\u53d1\u7070\uff0c\u6700\u5dee\u8d28\u91cf\uff0c\u4f4e\u8d28\u91cf\uff0cJPEG\u538b\u7f29\u6b8b\u7559\uff0c\u4e11\u964b\u7684\uff0c\u6b8b\u7f3a\u7684\uff0c\u591a\u4f59\u7684\u624b\u6307\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u624b\u90e8\uff0c\u753b\u5f97\u4e0d\u597d\u7684\u8138\u90e8\uff0c\u7578\u5f62\u7684\uff0c\u6bc1\u5bb9\u7684\uff0c\u5f62\u6001\u7578\u5f62\u7684\u80a2\u4f53\uff0c\u624b\u6307\u878d\u5408\uff0c\u9759\u6b62\u4e0d\u52a8\u7684\u753b\u9762\uff0c\u6742\u4e71\u7684\u80cc\u666f\uff0c\u4e09\u6761\u817f\uff0c\u80cc\u666f\u4eba\u5f88\u591a\uff0c\u5012\u7740\u8d70",
+            "clip": ["38", 0]
+        },
+        "class_type": "CLIPTextEncode",
+        "_meta": {
+            "title": "CLIP Text Encode (Negative Prompt)"
+        }
     },
-    "class_type": "CLIPTextEncode",
-    "_meta": {
-      "title": "CLIP Text Encode (Negative Prompt)"
-    }
-  },
-  "8": {
-    "inputs": {
-      "samples": [
-        "61",
-        0
-      ],
-      "vae": [
-        "39",
-        0
-      ]
+    "8": {
+        "inputs": {
+            "samples": ["61", 0],
+            "vae": ["39", 0]
+        },
+        "class_type": "VAEDecode",
+        "_meta": {
+            "title": "VAE Decode"
+        }
     },
-    "class_type": "VAEDecode",
-    "_meta": {
-      "title": "VAE Decode"
-    }
-  },
-  "37": {
-    "inputs": {
-      "unet_name": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
-      "weight_dtype": "default"
+    "37": {
+        "inputs": {
+            "unet_name": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
+            "weight_dtype": "default"
+        },
+        "class_type": "UNETLoader",
+        "_meta": {
+            "title": "Load Diffusion Model"
+        }
     },
-    "class_type": "UNETLoader",
-    "_meta": {
-      "title": "Load Diffusion Model"
-    }
-  },
-  "38": {
-    "inputs": {
-      "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
-      "type": "wan",
-      "device": "default"
+    "38": {
+        "inputs": {
+            "clip_name": "umt5_xxl_fp8_e4m3fn_scaled.safetensors",
+            "type": "wan",
+            "device": "default"
+        },
+        "class_type": "CLIPLoader",
+        "_meta": {
+            "title": "Load CLIP"
+        }
     },
-    "class_type": "CLIPLoader",
-    "_meta": {
-      "title": "Load CLIP"
-    }
-  },
-  "39": {
-    "inputs": {
-      "vae_name": "wan_2.1_vae.safetensors"
+    "39": {
+        "inputs": {
+            "vae_name": "wan_2.1_vae.safetensors"
+        },
+        "class_type": "VAELoader",
+        "_meta": {
+            "title": "Load VAE"
+        }
     },
-    "class_type": "VAELoader",
-    "_meta": {
-      "title": "Load VAE"
-    }
-  },
-  "49": {
-    "inputs": {
-      "clip_name": "clip_vision_h.safetensors"
+    "49": {
+        "inputs": {
+            "clip_name": "clip_vision_h.safetensors"
+        },
+        "class_type": "CLIPVisionLoader",
+        "_meta": {
+            "title": "Load CLIP Vision"
+        }
     },
-    "class_type": "CLIPVisionLoader",
-    "_meta": {
-      "title": "Load CLIP Vision"
-    }
-  },
-  "50": {
-    "inputs": {
-      "width": [
-        "63",
-        1
-      ],
-      "height": [
-        "63",
-        2
-      ],
-      "length": 81,
-      "batch_size": 1,
-      "positive": [
-        "6",
-        0
-      ],
-      "negative": [
-        "7",
-        0
-      ],
-      "vae": [
-        "39",
-        0
-      ],
-      "clip_vision_output": [
-        "51",
-        0
-      ],
-      "start_image": [
-        "63",
-        0
-      ]
+    "50": {
+        "inputs": {
+            "width": ["63", 1],
+            "height": ["63", 2],
+            "length": 81,
+            "batch_size": 1,
+            "positive": ["6", 0],
+            "negative": ["7", 0],
+            "vae": ["39", 0],
+            "clip_vision_output": ["51", 0],
+            "start_image": ["63", 0]
+        },
+        "class_type": "WanImageToVideo",
+        "_meta": {
+            "title": "WanImageToVideo"
+        }
     },
-    "class_type": "WanImageToVideo",
-    "_meta": {
-      "title": "WanImageToVideo"
-    }
-  },
-  "51": {
-    "inputs": {
-      "crop": "none",
-      "clip_vision": [
-        "49",
-        0
-      ],
-      "image": [
-        "63",
-        0
-      ]
+    "51": {
+        "inputs": {
+            "crop": "none",
+            "clip_vision": ["49", 0],
+            "image": ["63", 0]
+        },
+        "class_type": "CLIPVisionEncode",
+        "_meta": {
+            "title": "CLIP Vision Encode"
+        }
     },
-    "class_type": "CLIPVisionEncode",
-    "_meta": {
-      "title": "CLIP Vision Encode"
-    }
-  },
-  "52": {
-    "inputs": {
-      "image": ""
+    "52": {
+        "inputs": {
+            "image": ""
+        },
+        "class_type": "LoadImage",
+        "_meta": {
+            "title": "Load Image"
+        }
     },
-    "class_type": "LoadImage",
-    "_meta": {
-      "title": "Load Image"
-    }
-  },
-  "54": {
-    "inputs": {
-      "shift": 8,
-      "model": [
-        "72",
-        0
-      ]
+    "54": {
+        "inputs": {
+            "shift": 8,
+            "model": ["72", 0]
+        },
+        "class_type": "ModelSamplingSD3",
+        "_meta": {
+            "title": "ModelSamplingSD3"
+        }
     },
-    "class_type": "ModelSamplingSD3",
-    "_meta": {
-      "title": "ModelSamplingSD3"
-    }
-  },
-  "55": {
-    "inputs": {
-      "add_noise": "enable",
-      "noise_seed": [
-        "59",
-        0
-      ],
-      "steps": 20,
-      "cfg": 6,
-      "sampler_name": "uni_pc",
-      "scheduler": "simple",
-      "start_at_step": 0,
-      "end_at_step": [
-        "65",
-        0
-      ],
-      "return_with_leftover_noise": "disable",
-      "model": [
-        "54",
-        0
-      ],
-      "positive": [
-        "50",
-        0
-      ],
-      "negative": [
-        "50",
-        1
-      ],
-      "latent_image": [
-        "50",
-        2
-      ]
+    "55": {
+        "inputs": {
+            "add_noise": "enable",
+            "noise_seed": ["59", 0],
+            "steps": 20,
+            "cfg": 6,
+            "sampler_name": "uni_pc",
+            "scheduler": "simple",
+            "start_at_step": 0,
+            "end_at_step": ["65", 0],
+            "return_with_leftover_noise": "disable",
+            "model": ["54", 0],
+            "positive": ["50", 0],
+            "negative": ["50", 1],
+            "latent_image": ["50", 2]
+        },
+        "class_type": "KSamplerAdvanced",
+        "_meta": {
+            "title": "KSampler (Advanced)"
+        }
     },
-    "class_type": "KSamplerAdvanced",
-    "_meta": {
-      "title": "KSampler (Advanced)"
-    }
-  },
-  "56": {
-    "inputs": {
-      "frame_rate": 16,
-      "loop_count": 0,
-      "filename_prefix": [
-        "57",
-        0
-      ],
-      "format": "video/h264-mp4",
-      "pix_fmt": "yuv420p",
-      "crf": 19,
-      "save_metadata": true,
-      "trim_to_audio": false,
-      "pingpong": false,
-      "save_output": true,
-      "images": [
-        "8",
-        0
-      ]
+    "56": {
+        "inputs": {
+            "fps": 16,
+            "bit_depth": "auto",
+            "color_space": "sRGB",
+            "images": ["8", 0]
+        },
+        "class_type": "CreateVideo",
+        "_meta": {
+            "title": "Create Video"
+        }
     },
-    "class_type": "VHS_VideoCombine",
-    "_meta": {
-      "title": "Video Combine 🎥🅥🅗🅢"
-    }
-  },
-  "57": {
-    "inputs": {
-      "prefix": "WAN_I2V_",
-      "suffix": "",
-      "input": [
-        "59",
-        0
-      ]
+    "57": {
+        "inputs": {
+            "prefix": "WAN_I2V_",
+            "suffix": "",
+            "input": ["59", 0]
+        },
+        "class_type": "SomethingToString",
+        "_meta": {
+            "title": "Something To String"
+        }
     },
-    "class_type": "SomethingToString",
-    "_meta": {
-      "title": "Something To String"
-    }
-  },
-  "59": {
-    "inputs": {
-      "value": 1024
+    "59": {
+        "inputs": {
+            "value": 1024
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Seed"
+        }
     },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Seed"
-    }
-  },
-  "60": {
-    "inputs": {
-      "lora_name": "wan/Wan21_I2V_14B_lightx2v_cfg_step_distill_lora_rank64.safetensors",
-      "strength_model": 1,
-      "model": [
-        "54",
-        0
-      ]
+    "60": {
+        "inputs": {
+            "lora_name": "wan/Wan21_I2V_14B_lightx2v_cfg_step_distill_lora_rank64.safetensors",
+            "strength_model": 1,
+            "model": ["54", 0]
+        },
+        "class_type": "LoraLoaderModelOnly",
+        "_meta": {
+            "title": "LoraLoaderModelOnly"
+        }
     },
-    "class_type": "LoraLoaderModelOnly",
-    "_meta": {
-      "title": "LoraLoaderModelOnly"
-    }
-  },
-  "61": {
-    "inputs": {
-      "add_noise": "enable",
-      "noise_seed": [
-        "59",
-        0
-      ],
-      "steps": [
-        "69",
-        0
-      ],
-      "cfg": 1,
-      "sampler_name": "uni_pc",
-      "scheduler": "simple",
-      "start_at_step": [
-        "65",
-        0
-      ],
-      "end_at_step": 10000,
-      "return_with_leftover_noise": "disable",
-      "model": [
-        "60",
-        0
-      ],
-      "positive": [
-        "50",
-        0
-      ],
-      "negative": [
-        "50",
-        1
-      ],
-      "latent_image": [
-        "55",
-        0
-      ]
+    "61": {
+        "inputs": {
+            "add_noise": "enable",
+            "noise_seed": ["59", 0],
+            "steps": ["69", 0],
+            "cfg": 1,
+            "sampler_name": "uni_pc",
+            "scheduler": "simple",
+            "start_at_step": ["65", 0],
+            "end_at_step": 10000,
+            "return_with_leftover_noise": "disable",
+            "model": ["60", 0],
+            "positive": ["50", 0],
+            "negative": ["50", 1],
+            "latent_image": ["55", 0]
+        },
+        "class_type": "KSamplerAdvanced",
+        "_meta": {
+            "title": "KSampler (Advanced)"
+        }
     },
-    "class_type": "KSamplerAdvanced",
-    "_meta": {
-      "title": "KSampler (Advanced)"
-    }
-  },
-  "63": {
-    "inputs": {
-      "width": [
-        "70",
-        0
-      ],
-      "height": [
-        "70",
-        0
-      ],
-      "upscale_method": "lanczos",
-      "keep_proportion": "resize",
-      "pad_color": "0, 0, 0",
-      "crop_position": "center",
-      "divisible_by": 16,
-      "device": "cpu",
-      "image": [
-        "52",
-        0
-      ]
+    "63": {
+        "inputs": {
+            "width": ["70", 0],
+            "height": ["70", 0],
+            "upscale_method": "lanczos",
+            "keep_proportion": "resize",
+            "pad_color": "0, 0, 0",
+            "crop_position": "center",
+            "divisible_by": 16,
+            "device": "cpu",
+            "image": ["52", 0]
+        },
+        "class_type": "ImageResizeKJv2",
+        "_meta": {
+            "title": "Resize Image v2"
+        }
     },
-    "class_type": "ImageResizeKJv2",
-    "_meta": {
-      "title": "Resize Image v2"
-    }
-  },
-  "65": {
-    "inputs": {
-      "value": 5
+    "65": {
+        "inputs": {
+            "value": 5
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Full steps"
+        }
     },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Full steps"
-    }
-  },
-  "67": {
-    "inputs": {
-      "value": 5
+    "67": {
+        "inputs": {
+            "value": 5
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Refine steps"
+        }
     },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Refine steps"
-    }
-  },
-  "69": {
-    "inputs": {
-      "expression": "a + b",
-      "a": [
-        "65",
-        0
-      ],
-      "b": [
-        "67",
-        0
-      ]
+    "69": {
+        "inputs": {
+            "expression": "a + b",
+            "a": ["65", 0],
+            "b": ["67", 0]
+        },
+        "class_type": "MathExpression|pysssss",
+        "_meta": {
+            "title": "Math Expression \ud83d\udc0d"
+        }
     },
-    "class_type": "MathExpression|pysssss",
-    "_meta": {
-      "title": "Math Expression 🐍"
-    }
-  },
-  "70": {
-    "inputs": {
-      "value": 768
+    "70": {
+        "inputs": {
+            "value": 768
+        },
+        "class_type": "INTConstant",
+        "_meta": {
+            "title": "Size"
+        }
     },
-    "class_type": "INTConstant",
-    "_meta": {
-      "title": "Size"
-    }
-  },
-  "72": {
-    "inputs": {
-      "sage_attention": "sageattn_qk_int8_pv_fp16_cuda",
-      "model": [
-        "37",
-        0
-      ]
+    "72": {
+        "inputs": {
+            "sage_attention": "sageattn_qk_int8_pv_fp16_cuda",
+            "model": ["37", 0]
+        },
+        "class_type": "PathchSageAttentionKJ",
+        "_meta": {
+            "title": "Patch Sage Attention KJ"
+        }
     },
-    "class_type": "PathchSageAttentionKJ",
-    "_meta": {
-      "title": "Patch Sage Attention KJ"
+    "73": {
+        "inputs": {
+            "filename_prefix": ["57", 0],
+            "format": "mp4",
+            "format.codec": "auto",
+            "codec": "auto",
+            "video": ["56", 0]
+        },
+        "class_type": "SaveVideo",
+        "_meta": {
+            "title": "Save Video"
+        }
     }
-  }
 }
