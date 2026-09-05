@@ -17,7 +17,7 @@ import {
     filterNodeTimings,
 } from '../utils/nodeTimings';
 
-export const useSaveToHistory = () => {
+export const useSaveToHistory = (disabled?: boolean) => {
     const tr = useTranslate();
     const apiUrl = useApiURL();
     const results = useResult();
@@ -33,6 +33,7 @@ export const useSaveToHistory = () => {
     useEffect(() => {
         // store result to IndexedDB history
         if (
+            disabled ||
             !save_history ||
             !start_ts ||
             !end_ts ||
@@ -148,6 +149,7 @@ export const useSaveToHistory = () => {
         action,
         api,
         apiUrl,
+        disabled,
         dispatch,
         end_ts,
         id,

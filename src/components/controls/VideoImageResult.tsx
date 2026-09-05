@@ -24,7 +24,7 @@ export const VideoImageResult = ({
             </div>
             <div style={{ display: isVideo ? 'none' : 'block' }}>
                 <ResultOverrideContextProvider value={{ id, type: 'images' }}>
-                    <ImageResult previewMaxFrames={imagePreviewMaxFrames} />
+                    <ImageResult previewMaxFrames={imagePreviewMaxFrames} noHistory={isVideo} />
                 </ResultOverrideContextProvider>
             </div>
         </>

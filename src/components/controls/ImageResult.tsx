@@ -28,6 +28,7 @@ export const ImageResult = ({
     sendLabel,
     sendOnClick,
     previewMaxFrames,
+    noHistory,
 }: {
     title?: string;
     sendTargetTab?: string;
@@ -35,6 +36,7 @@ export const ImageResult = ({
     sendLabel?: string;
     sendOnClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     previewMaxFrames?: number;
+    noHistory?: boolean;
 }) => {
     const results = useResult();
     const tr = useTranslate();
@@ -50,7 +52,7 @@ export const ImageResult = ({
             }
         });
     }, [results]);
-    useSaveToHistory();
+    useSaveToHistory(noHistory);
     const urls = results?.map((r: any): string => makeOutputUrl(apiUrl, r));
     return (
         <VerticalBox width='100%'>
