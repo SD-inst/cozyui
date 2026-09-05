@@ -104,7 +104,8 @@
             "result": [
                 {
                     "id": "20",
-                    "type": "gifs"
+                    "type": "gifs",
+                    "create_video_node_id": "16"
                 },
                 {
                     "id": "20",
@@ -199,7 +200,8 @@
             "result": [
                 {
                     "id": "128",
-                    "type": "gifs"
+                    "type": "gifs",
+                    "create_video_node_id": "102"
                 }
             ]
         },
@@ -290,7 +292,8 @@
             "result": [
                 {
                     "id": "131",
-                    "type": "gifs"
+                    "type": "gifs",
+                    "create_video_node_id": "128"
                 }
             ]
         },
@@ -359,7 +362,8 @@
             },
             "result": {
                 "id": "31",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "20"
             },
             "handler_options": {
                 "lora_params": {
@@ -455,7 +459,8 @@
             },
             "result": {
                 "id": "54",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "34"
             }
         },
         "LTX I2V": {
@@ -526,7 +531,8 @@
             },
             "result": {
                 "id": "195",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "60"
             }
         },
         "Describe image": {
@@ -1063,7 +1069,8 @@
             },
             "result": {
                 "id": "120",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "103"
             }
         },
         "Hunyuan I2V KJ": {
@@ -1155,7 +1162,8 @@
             },
             "result": {
                 "id": "58",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "34"
             }
         },
         "Hunyuan I2V": {
@@ -1255,7 +1263,8 @@
             "result": [
                 {
                     "id": "93",
-                    "type": "gifs"
+                    "type": "gifs",
+                    "create_video_node_id": "50"
                 },
                 {
                     "id": "93",
@@ -1445,7 +1454,8 @@
             "result": [
                 {
                     "id": "103",
-                    "type": "gifs"
+                    "type": "gifs",
+                    "create_video_node_id": "97"
                 },
                 {
                     "id": "98",
@@ -2715,7 +2725,8 @@
             },
             "result": {
                 "id": "118",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "30"
             },
             "defaults": {
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
@@ -2820,7 +2831,8 @@
             },
             "result": {
                 "id": "131",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "30"
             },
             "defaults": {
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
@@ -2908,7 +2920,8 @@
             },
             "result": {
                 "id": "73",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "56"
             },
             "defaults": {
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
@@ -3020,7 +3033,8 @@
             },
             "result": {
                 "id": "114",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "30"
             },
             "defaults": {
                 "model": "wan/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors"
@@ -3257,7 +3271,8 @@
             },
             "result": {
                 "id": "2",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "1"
             }
         },
         "MiniMax H3 T2V": {
@@ -3383,7 +3398,8 @@
             },
             "result": {
                 "id": "138",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "105:121"
             },
             "defaults": {
                 "aspect_ratio": "16:9 (Widescreen)",
@@ -3531,7 +3547,8 @@
             },
             "result": {
                 "id": "140",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "105:121"
             },
             "defaults": {
                 "aspect_ratio": "16:9 (Widescreen)",
@@ -3694,7 +3711,8 @@
             },
             "result": {
                 "id": "138",
-                "type": "gifs"
+                "type": "gifs",
+                "create_video_node_id": "105:121"
             },
             "defaults": {
                 "aspect_ratio": "16:9 (Widescreen)",

@@ -21,7 +21,7 @@ export const KJWanLoopInput = ({
     name,
     ...props
 }: BoxProps & { name: string }) => {
-    const { id } = useResultParam();
+    const { id, create_video_node_id } = useResultParam();
     const handler = useEventCallback(
         (api: Workflow, value: valueType, control: controlType) => {
             const { enabled, color_correction, ...inputs } = value;
@@ -29,7 +29,8 @@ export const KJWanLoopInput = ({
                 return;
             }
             if (color_correction != 'off') {
-                const decode_node_id = (api[id].inputs['images'] as NodeRef)[0];
+                const videoNodeId = create_video_node_id || id;
+                const decode_node_id = (api[videoNodeId].inputs['images'] as NodeRef)[0];
                 const selectNode = {
                     inputs: {
                         indexes: '-9',
@@ -55,7 +56,7 @@ export const KJWanLoopInput = ({
                         title: 'Color Match',
                     },
                 };
-                replaceNodeConnection(api, id, 'images', colorMatchNode);
+                replaceNodeConnection(api, videoNodeId, 'images', colorMatchNode);
             }
             const loopArgsNode = {
                 inputs,

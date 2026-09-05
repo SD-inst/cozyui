@@ -325,7 +325,7 @@ export const I2IToggle = ({
                     };
 
                     // Find VAEDecode ID from result node (before insertGraph)
-                    const resultNodeId = resultParam.id;
+                    const resultNodeId = resultParam.create_video_node_id || resultParam.id;
                     const resultNode = api[resultNodeId];
                     const imagesInput = resultNode?.inputs?.images;
                     const vaeDecodeNodeId = Array.isArray(imagesInput)

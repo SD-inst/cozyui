@@ -23,20 +23,20 @@ export const MiniMaxH3ImageOverride = ({
     name?: string;
     imageThreshold?: number;
 }) => {
-    const { id } = useResultParam();
+    const { id, create_video_node_id } = useResultParam();
     const { setValue } = useFormContext();
     const length = useWatch({ name: 'length' });
     const handler = useEventCallback((api: Workflow, value: boolean) => {
         if (!value) {
             return;
         }
-        const videoNode = api[id];
+        const videoNodeId = create_video_node_id || id;
         const extractBaseId = insertGraph(api, {
             ':extract_frame': {
                 inputs: {
                     batch_index: 0,
                     length: 1,
-                    image: videoNode.inputs.images,
+                    image: api[videoNodeId].inputs.images,
                 },
                 class_type: 'ImageFromBatch',
                 _meta: { title: 'Extract Single Frame' },
@@ -44,7 +44,7 @@ export const MiniMaxH3ImageOverride = ({
         });
         api[id] = {
             inputs: {
-                filename_prefix: videoNode.inputs.filename_prefix,
+                filename_prefix: api[id].inputs.filename_prefix,
                 images: [extractBaseId + ':extract_frame', 0],
             },
             class_type: 'SaveImage',

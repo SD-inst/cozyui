@@ -101,7 +101,7 @@ describe('buildNodeTimings', () => {
                 class_type: 'SamplerCustomAdvanced',
                 _meta: { title: 'SamplerCustomAdvanced' },
             },
-            '105:121': { class_type: 'VHS_VideoCombine' },
+            '105:121': { class_type: 'SaveVideo' },
         };
         const events = [
             ev('105:14', 1000, 'executing'),
@@ -112,8 +112,8 @@ describe('buildNodeTimings', () => {
         const t = buildNodeTimings(events, 900, api);
         expect(t[0].label).toBe('SamplerCustomAdvanced');
         expect(t[0].cls).toBe('SamplerCustomAdvanced');
-        expect(t[1].label).toBe('VHS_VideoCombine');
-        expect(t[1].cls).toBe('VHS_VideoCombine');
+        expect(t[1].label).toBe('SaveVideo');
+        expect(t[1].cls).toBe('SaveVideo');
     });
 
     it('returns nodes in order of first appearance', () => {

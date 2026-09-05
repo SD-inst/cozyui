@@ -21,7 +21,7 @@ const defaultValue: TValue = {
 };
 
 export const LTX2LoopControl = ({ name }: { name: string }) => {
-    const { id } = useResultParam();
+    const { id, create_video_node_id } = useResultParam();
     const lengthCtl = useControl('length');
     const enabled = useWatch({
         name: name + '.enabled',
@@ -41,12 +41,13 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
         if (!value || !value.enabled) {
             return;
         }
+        const videoNodeId = create_video_node_id || id;
         const graph = {
             ':1': {
                 inputs: {
                     batch_index: getValues(`${name}.strip`),
                     length: length,
-                    image: api[id].inputs.images,
+                    image: api[videoNodeId].inputs.images,
                 },
                 class_type: 'ImageFromBatch',
                 _meta: {
@@ -57,7 +58,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
                 inputs: {
                     batch_index: 0,
                     length: 1,
-                    image: api[id].inputs.images,
+                    image: api[videoNodeId].inputs.images,
                 },
                 class_type: 'ImageFromBatch',
                 _meta: {
@@ -79,7 +80,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             },
         };
         const newNodeID = insertGraph(api, graph);
-        api[id].inputs.images = [newNodeID + ':3', 0];
+        api[videoNodeId].inputs.images = [newNodeID + ':3', 0];
         api[lengthCtl.id].inputs[lengthCtl.field] = length + value.overlap;
     });
     useRegisterHandler({ name, handler });

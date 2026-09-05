@@ -14,8 +14,8 @@ const timings: NodeTiming[] = [
     },
     {
         node: '105:121',
-        cls: 'VHS_VideoCombine',
-        label: 'Video Combine',
+        cls: 'SaveVideo',
+        label: 'Save Video',
         ms: 5000,
         offset_ms: 100000,
     },
@@ -38,7 +38,7 @@ describe('NodeTimingsBar', () => {
         fireEvent.click(screen.getByRole('button', { name: 'Node timings' }));
         expect(screen.getByText('SamplerCustomAdvanced')).toBeInTheDocument();
         expect(screen.getByText('01:40 (87%)')).toBeInTheDocument();
-        expect(screen.getByText('Video Combine')).toBeInTheDocument();
+        expect(screen.getByText('Save Video')).toBeInTheDocument();
         expect(screen.getByText('00:05 (4%)')).toBeInTheDocument();
     });
 

@@ -10,18 +10,18 @@ export const VideoImageOverride = ({
 }: {
     name?: string;
 }) => {
-    const { id } = useResultParam();
+    const { id, create_video_node_id } = useResultParam();
     const { setValue } = useFormContext();
     const length = useWatch({ name: 'length' });
     const handler = useEventCallback((api: Workflow, value: boolean) => {
         if (!value) {
             return;
         }
-        const videoNode = api[id];
+        const videoNodeId = create_video_node_id || id;
         const node = {
             inputs: {
-                filename_prefix: videoNode.inputs.filename_prefix,
-                images: videoNode.inputs.images,
+                filename_prefix: api[id].inputs.filename_prefix,
+                images: api[videoNodeId].inputs.images,
             },
             class_type: 'SaveImage',
             _meta: {
