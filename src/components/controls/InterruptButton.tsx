@@ -20,9 +20,8 @@ export const InterruptButton = ({ ...props }: ButtonProps) => {
     }
     const handleInterrupt = () => {
         const interrupt = (cnt: number) => {
-            fetch(apiUrl + '/api/interrupt', {
+            fetch(`${apiUrl}/api/jobs/${prompt_ids[0]}/cancel`, {
                 method: 'POST',
-                body: JSON.stringify({ id: prompt_ids[0] }),
             })
                 .then((r) => {
                     if (r.status !== 200) {

@@ -602,7 +602,7 @@ export const ArrayInput = ({
                                 input.type = 'file';
                                 input.accept =
                                     keyField === 'audio'
-                                        ? 'audio/*'
+                                        ? 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm'
                                         : keyField === 'video'
                                           ? 'video/*'
                                           : 'image/*,video/*';
@@ -639,7 +639,7 @@ export const ArrayInput = ({
                     onChange={handleCompactFileSelect}
                     accept={
                         keyField === 'audio'
-                            ? 'audio/*'
+                            ? 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm'
                             : keyField === 'video'
                               ? 'video/*'
                               : 'image/*,video/*'
