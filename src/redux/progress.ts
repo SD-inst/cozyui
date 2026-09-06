@@ -48,9 +48,14 @@ const progressSlice = createSlice({
         setStatus: (s, action: PayloadAction<statusEnum>) => {
             if (
                 action.payload === statusEnum.INTERRUPTED &&
-                s.status !== statusEnum.CANCELLED
+                s.status !== statusEnum.CANCELLED &&
+                s.status !== statusEnum.RUNNING &&
+                s.status !== statusEnum.WAITING
             ) {
-                // Only show interrupted status if it's currently cancelled, otherwise ignore. if execution was interrupted but user started another generation, don't change the status as it would cause a race condition and bad GB/IB behavior.
+                // Only allow INTERRUPTED to replace an active run (RUNNING /
+                // WAITING) or a user-initiated cancel (CANCELLED). Terminal
+                // states (FINISHED / ERROR) and the initial state are left
+                // untouched so a stray interrupt can't clobber them.
                 return s;
             }
             return {

@@ -189,8 +189,16 @@ export const WSReceiver = () => {
                 reset();
                 break;
             case 'execution_interrupted':
+                // The task can be interrupted by an external proxy (timeout on
+                // long-running generations) without the user pressing
+                // InterruptButton (IB). IB clears the prompt and sets CANCELLED
+                // itself, so when status is already CANCELLED we just finalize
+                // (reset(true) skips the prompt, IB already did). Otherwise the
+                // run is still marked RUNNING/WAITING and we must stop it here
+                // (reset() clears the prompt), else the UI sticks on "Running"
+                // with a stale interrupt button.
                 dispatch(setStatus(statusEnum.INTERRUPTED));
-                reset(true); // don't reset promptId, it should've been done by InterruptButton (IB) already; if we reset here the user could've started another generation between pressing IB and GB and we'd cause a state race condition (GB enabled, IB missing, but generation is going on). Happens with long step duration.
+                reset(status === statusEnum.CANCELLED);
                 break;
             case 'VHS_latentpreview':
                 dispatch(initPreview(j.data));

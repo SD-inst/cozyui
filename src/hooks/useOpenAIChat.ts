@@ -153,7 +153,7 @@ export function useOpenAIChat({
             ]);
             setIsComplete(false);
             setIsGenerating(true);
-            setIsThinking(!stream);
+            setIsThinking(false);
             setIsConnecting(true);
             setError(null);
 

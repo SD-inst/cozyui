@@ -5,9 +5,18 @@ import {
     progress as reducer,
     setGenerationEnd,
     setGenerationStart,
+    setStatus,
+    statusEnum,
 } from './progress';
 
 const initialState = () => reducer(undefined, { type: 'INIT' });
+
+type ProgressState = ReturnType<typeof reducer>;
+
+const withStatus = (status: statusEnum): ProgressState => ({
+    ...initialState(),
+    status,
+});
 
 describe('progress slice — node events', () => {
     it('starts with an empty node_events list', () => {
@@ -38,5 +47,38 @@ describe('progress slice — node events', () => {
         expect(s.end_ts).toBe(0);
         s = reducer(s, setGenerationEnd());
         expect(s.end_ts).toBeGreaterThanOrEqual(s.start_ts);
+    });
+});
+
+describe('progress slice — setStatus INTERRUPTED guard', () => {
+    // INTERRUPTED may replace an active run (proxy timeout) or a user cancel,
+    // but must not clobber terminal or initial states.
+    const expectAllowed = (from: statusEnum) => {
+        const s = reducer(withStatus(from), setStatus(statusEnum.INTERRUPTED));
+        expect(s.status).toBe(statusEnum.INTERRUPTED);
+    };
+    const expectBlocked = (from: statusEnum) => {
+        const s = reducer(withStatus(from), setStatus(statusEnum.INTERRUPTED));
+        expect(s.status).toBe(from);
+    };
+
+    it('allows INTERRUPTED from an active run (proxy timeout)', () => {
+        expectAllowed(statusEnum.RUNNING);
+        expectAllowed(statusEnum.WAITING);
+    });
+
+    it('allows INTERRUPTED from a user-initiated cancel', () => {
+        expectAllowed(statusEnum.CANCELLED);
+    });
+
+    it('blocks INTERRUPTED from terminal / initial states', () => {
+        expectBlocked(statusEnum.FINISHED);
+        expectBlocked(statusEnum.ERROR);
+    });
+
+    it('applies non-INTERRUPTED statuses unconditionally', () => {
+        let s = withStatus(statusEnum.RUNNING);
+        s = reducer(s, setStatus(statusEnum.FINISHED));
+        expect(s.status).toBe(statusEnum.FINISHED);
     });
 });
