@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslate } from '../../i18n/I18nContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
 import Zoom from 'yet-another-react-lightbox/plugins/zoom';
@@ -35,20 +35,31 @@ export const HistoryCardContent = ({
     }, [data]);
     const useData = data ? (Array.isArray(data) ? data.length > 0 : true) : false;
 
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const handleEnded = useCallback(() => {
+        const v = videoRef.current;
+        if (v) {
+            v.currentTime = 0;
+            v.play().catch(() => {});
+        }
+    }, []);
+
     switch (type) {
         case 'gifs': {
             const gifUrl = Array.isArray(url) ? url[0] : url;
             const displayGifUrl = useData ? dataUrls[0] : gifUrl;
             return (
                 <video
+                    ref={videoRef}
                     style={{
                         width: '100%',
                         maxHeight: 500,
                     }}
                     src={displayGifUrl}
                     controls
-                    loop
                     playsInline
+                    preload="auto"
+                    onEnded={handleEnded}
                 />
             );
         }
