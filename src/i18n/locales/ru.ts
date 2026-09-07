@@ -171,6 +171,8 @@ const translation = {
         nag_tau: 'NAG тау',
         nag_alpha: 'NAG альфа',
         nag_sigma_end: 'NAG последняя сигма',
+        sigma_shift_video: 'Sigma Shift Video',
+        sigma_shift_audio: 'Sigma Shift Audio',
         spectrum: 'Spectrum',
         spectrum_enabled: 'Включить Spectrum',
         spectrum_blend_weight: 'Spectrum Blend Weight',

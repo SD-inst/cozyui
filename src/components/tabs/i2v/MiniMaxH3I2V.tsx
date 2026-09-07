@@ -10,6 +10,7 @@ import { MiniMaxH3Steps } from '../../controls/MiniMaxH3Steps';
 import { TurboPDDToggle } from '../../controls/TurboPDDToggle';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
+import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { LoraInput } from '../../controls/LoraInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
@@ -107,6 +108,7 @@ const Content = () => {
                 />
                 <MiniMaxH3Steps />
                 <TurboPDDToggle />
+                <MiniMaxH3LatentUpscale />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'
@@ -128,7 +130,7 @@ const Content = () => {
                         name='scheduler'
                         defaultValue='beta57'
                     />
-                    <MiniMaxH3LatentUpscale />
+                    <MiniMaxH3SigmaShiftControls />
                     <H3SparseAttention />
                     <MiniMaxH3SpectrumControls />
                     <VideoInterpolationSlider />

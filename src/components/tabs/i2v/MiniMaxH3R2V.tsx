@@ -12,6 +12,7 @@ import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionS
 import { MiniMaxH3Steps } from '../../controls/MiniMaxH3Steps';
 import { TurboPDDToggle } from '../../controls/TurboPDDToggle';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
+import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { SectionAccordion } from '../../controls/SectionAccordion';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 
@@ -562,6 +563,7 @@ const Content = () => {
                 />
                 <MiniMaxH3Steps />
                 <TurboPDDToggle />
+                <MiniMaxH3LatentUpscale />
                 <AdvancedSettings>
                     <ModelSelectAutocomplete
                         name='model'
@@ -583,7 +585,7 @@ const Content = () => {
                         name='scheduler'
                         defaultValue='beta57'
                     />
-                    <MiniMaxH3LatentUpscale />
+                    <MiniMaxH3SigmaShiftControls />
                     <H3SparseAttention />
                     <MiniMaxH3SpectrumControls />
                     <ReferenceScaling name='ref_image_size' />

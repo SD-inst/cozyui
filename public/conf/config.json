@@ -3320,6 +3320,14 @@
                     "node_id": "105:11",
                     "field": "vae_name"
                 },
+                "sigma_shift_video": {
+                    "id": "136",
+                    "field": "shift_video"
+                },
+                "sigma_shift_audio": {
+                    "id": "136",
+                    "field": "shift_audio"
+                },
                 "spectrum_enabled": {
                     "id": "137",
                     "field": "enabled"
@@ -3468,6 +3476,14 @@
                     "id": "handle",
                     "node_id": "105:11",
                     "field": "vae_name"
+                },
+                "sigma_shift_video": {
+                    "id": "136",
+                    "field": "shift_video"
+                },
+                "sigma_shift_audio": {
+                    "id": "136",
+                    "field": "shift_audio"
                 },
                 "spectrum_enabled": {
                     "id": "137",
@@ -3624,6 +3640,14 @@
                     "id": "handle",
                     "node_id": "105:11",
                     "field": "vae_name"
+                },
+                "sigma_shift_video": {
+                    "id": "136",
+                    "field": "shift_video"
+                },
+                "sigma_shift_audio": {
+                    "id": "136",
+                    "field": "shift_audio"
                 },
                 "spectrum_enabled": {
                     "id": "137",
