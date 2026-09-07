@@ -11,7 +11,7 @@ import { preview } from '../redux/preview';
 import { I18nContext, defaultValue } from '../i18n/I18nContext';
 import Polyglot from 'node-polyglot';
 import { setStatus, statusEnum } from '../redux/progress';
-import { setPrompt } from '../redux/tab';
+import { clearPrompt, setPrompt } from '../redux/tab';
 
 vi.mock('react-hot-toast', () => ({
     default: {
@@ -101,7 +101,6 @@ describe('WSReceiver message dispatch', () => {
     let store: ReturnType<typeof makeStore>;
 
     beforeAll(() => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (globalThis as any).IS_REACT_ACT_ENVIRONMENT = false;
     });
 
@@ -190,5 +189,57 @@ describe('WSReceiver message dispatch', () => {
             sendJson('execution_interrupted', {});
         });
         expect(store.getState().progress.status).toBe(statusEnum.INTERRUPTED);
+    });
+
+    it('ignores a stale execution_interrupted from a cancelled prompt so a restarted run keeps its state', () => {
+        setup();
+        // Run A is active.
+        act(() => {
+            store.dispatch(setPrompt({ prompt_id: 'A', tab_name: 'T2V' }));
+            store.dispatch(setStatus(statusEnum.RUNNING));
+        });
+        act(() => {
+            sendJson('execution_start', { prompt_id: 'A' });
+        });
+
+        // User cancels A on the client side (clears the prompt, marks
+        // CANCELLED) and immediately restarts as B — before A is actually
+        // cancelled on the server, which takes a few seconds.
+        act(() => {
+            store.dispatch(clearPrompt());
+            store.dispatch(setStatus(statusEnum.CANCELLED));
+            store.dispatch(setPrompt({ prompt_id: 'B', tab_name: 'T2V' }));
+            store.dispatch(setStatus(statusEnum.WAITING));
+        });
+
+        // A's interruption arrives late. It must NOT clobber B's state.
+        act(() => {
+            sendJson('execution_interrupted', { prompt_id: 'A' });
+        });
+
+        // B's prompt entry survives → the interrupt button stays available.
+        expect(Object.keys(store.getState().tab.prompt)).toEqual(['B']);
+        // The stale event did not flip the status to INTERRUPTED.
+        expect(store.getState().progress.status).toBe(statusEnum.WAITING);
+
+        // B starts and completes; the result lands under the tab (not a
+        // temporary key), so it is displayed and saved to history.
+        act(() => {
+            sendJson('execution_start', { prompt_id: 'B' });
+        });
+        act(() => {
+            sendJson('executed', {
+                node: '16',
+                prompt_id: 'B',
+                output: { images: ['out.png'] },
+            });
+        });
+        act(() => {
+            sendJson('execution_success', { prompt_id: 'B' });
+        });
+
+        const s = store.getState();
+        expect(s.progress.status).toBe(statusEnum.FINISHED);
+        expect(s.tab.result.T2V['16']).toEqual({ images: ['out.png'] });
     });
 });

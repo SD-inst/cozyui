@@ -48,6 +48,7 @@ export const WSReceiver = () => {
     const apiUrl = useAppSelector((s) => s.config.api);
     const status = useAppSelector((s) => s.progress.status);
     const node_events = useAppSelector((s) => s.progress.node_events);
+    const prompts = useAppSelector((s) => s.tab.prompt);
     lastProgressUpdate.current.status = status;
     // The container can start up after we've sent the prompt, and the WS
     // reconnect during that window drops the initial execution_start message.
@@ -80,6 +81,24 @@ export const WSReceiver = () => {
         if (j.type !== 'progress' && j.type !== 'progress_state') {
             // less spam
             console.log(ev.data);
+        }
+        // Drop events for a prompt that is no longer the active one. A cancel
+        // takes a few seconds on the ComfyUI side, so after a cancel followed
+        // by an immediate restart the OLD prompt's terminal events (mainly
+        // execution_interrupted, but executed/progress/error can also arrive
+        // late) land AFTER the new prompt is already registered in `prompts`.
+        // Without this guard they clobber the new run: reset() clears the
+        // prompt entry (so the interrupt button disappears and the result is
+        // filed under a temporary key instead of the tab). Events with no
+        // prompt_id (e.g. queue `status`) always pass through; when no prompt
+        // is active (the run the client just finalized) events pass too.
+        const active_prompt_ids = Object.keys(prompts);
+        if (
+            active_prompt_ids.length > 0 &&
+            j.data?.prompt_id &&
+            !active_prompt_ids.includes(j.data.prompt_id)
+        ) {
+            return;
         }
         switch (j.type) {
             case 'execution_success':
