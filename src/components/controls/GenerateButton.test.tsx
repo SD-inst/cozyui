@@ -94,6 +94,14 @@ const renderButton = (
 ) => {
     const store = makeStore(storeOverrides);
     const polyglot = new Polyglot({ locale: 'en' });
+    polyglot.extend({
+        'controls.generate': 'Generate',
+        'controls.reset_form': 'Reset',
+        'controls.confirm_reset': 'Confirm reset',
+        'controls.confirm_reset_content': 'Reset all values?',
+        'controls.ok': 'OK',
+        'controls.cancel': 'Cancel',
+    });
 
     const Inner = () => {
         const form = useForm({ defaultValues: values });
@@ -142,7 +150,7 @@ describe('GenerateButton pipeline', () => {
             { prompt: 'hi', steps: 10 },
             { connected: false },
         );
-        const btn = screen.getByRole('button', { name: 'controls.generate' });
+        const btn = screen.getByRole('button', { name: 'Generate' });
         expect(btn).toBeDisabled();
     });
 
@@ -151,19 +159,19 @@ describe('GenerateButton pipeline', () => {
             { prompt: 'hi', steps: 10 },
             { status: 'Running' },
         );
-        const btn = screen.getByRole('button', { name: 'controls.generate' });
+        const btn = screen.getByRole('button', { name: 'Generate' });
         expect(btn).toBeDisabled();
     });
 
     it('is enabled when connected and IDLE', () => {
         renderButton({ prompt: 'hi', steps: 10 });
-        const btn = screen.getByRole('button', { name: 'controls.generate' });
+        const btn = screen.getByRole('button', { name: 'Generate' });
         expect(btn).not.toBeDisabled();
     });
 
     it('sends the prompt via fetch when clicked', async () => {
         renderButton({ prompt: 'hello', steps: 5 });
-        const btn = screen.getByRole('button', { name: 'controls.generate' });
+        const btn = screen.getByRole('button', { name: 'Generate' });
         fireEvent.click(btn);
 
         await waitFor(() => {

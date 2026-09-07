@@ -1,8 +1,8 @@
 import '@testing-library/jest-dom/vitest';
-import { render } from '@testing-library/react';
+import { act, render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { WSReceiver } from './WSReceiver';
 import { progress } from '../redux/progress';
 import { tab } from '../redux/tab';
@@ -13,28 +13,37 @@ import Polyglot from 'node-polyglot';
 import { setStatus, statusEnum } from '../redux/progress';
 import { setPrompt } from '../redux/tab';
 
-let mockWS: {
-    onmessage: ((ev: any) => void) | null;
-    onopen: ((ev: any) => void) | null;
-    onclose: (() => void) | null;
-    close: () => void;
+vi.mock('react-hot-toast', () => ({
+    default: {
+        success: () => {},
+        error: () => {},
+    },
+}));
+
+let wsCallbacks: {
+    onMessage: ((ev: any) => void) | null;
+    onOpen: ((ev: any) => void) | null;
 };
 
-const MockWebSocket = class {
-    onmessage: ((ev: any) => void) | null = null;
-    onopen: ((ev: any) => void) | null = null;
-    onclose: (() => void) | null = null;
-    binaryType = '';
-    close = () => {};
-    constructor(_url: string) {
-        void _url;
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        mockWS = this;
-    }
-};
+vi.mock('../hooks/useWebSocket', () => ({
+    useWebSocket: (
+        _url: string,
+        onMessage?: (ev: any) => void,
+        onOpen?: (ev: any) => void,
+    ) => {
+        wsCallbacks = {
+            onMessage: onMessage ?? null,
+            onOpen: onOpen ?? null,
+        };
+    },
+}));
 
 const sendJson = (type: string, data: any) => {
-    mockWS.onmessage?.({ data: JSON.stringify({ type, data }) });
+    wsCallbacks.onMessage?.({ data: JSON.stringify({ type, data }) });
+};
+
+const fireOpen = () => {
+    wsCallbacks.onOpen?.({});
 };
 
 const makeStore = (overrides: any = {}) =>
@@ -76,6 +85,7 @@ const makeStore = (overrides: any = {}) =>
 
 const renderReceiver = (store: ReturnType<typeof makeStore>) => {
     const polyglot = new Polyglot({ locale: 'en' });
+    polyglot.extend({ 'toasts.connected': 'Connected' });
     return render(
         <Provider store={store}>
             <I18nContext.Provider
@@ -90,18 +100,25 @@ const renderReceiver = (store: ReturnType<typeof makeStore>) => {
 describe('WSReceiver message dispatch', () => {
     let store: ReturnType<typeof makeStore>;
 
-    vi.stubGlobal('WebSocket', MockWebSocket);
+    beforeAll(() => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (globalThis as any).IS_REACT_ACT_ENVIRONMENT = false;
+    });
 
     const setup = () => {
         store = makeStore();
         renderReceiver(store);
-        mockWS.onopen?.({});
+        act(() => {
+            fireOpen();
+        });
         return store;
     };
 
     it('sets status to RUNNING and clears node events on execution_start', () => {
         setup();
-        sendJson('execution_start', {});
+        act(() => {
+            sendJson('execution_start', {});
+        });
         const s = store.getState();
         expect(s.progress.status).toBe(statusEnum.RUNNING);
         expect(s.progress.node_events).toEqual([]);
@@ -110,7 +127,9 @@ describe('WSReceiver message dispatch', () => {
     it('sets status to FINISHED on execution_success and resets progress', () => {
         setup();
         store.dispatch(setStatus(statusEnum.RUNNING));
-        sendJson('execution_success', {});
+        act(() => {
+            sendJson('execution_success', {});
+        });
         const s = store.getState();
         expect(s.progress.status).toBe(statusEnum.FINISHED);
         expect(s.progress.value).toBe(-1);
@@ -119,7 +138,9 @@ describe('WSReceiver message dispatch', () => {
     it('adds executing node events with timestamps', () => {
         setup();
         store.dispatch(setStatus(statusEnum.RUNNING));
-        sendJson('executing', { node: '105:14' });
+        act(() => {
+            sendJson('executing', { node: '105:14' });
+        });
         const s = store.getState();
         expect(s.progress.node_events.length).toBe(1);
         expect(s.progress.node_events[0].node).toBe('105:14');
@@ -130,10 +151,12 @@ describe('WSReceiver message dispatch', () => {
         setup();
         store.dispatch(setStatus(statusEnum.RUNNING));
         store.dispatch(setPrompt({ prompt_id: 'p1', tab_name: 'T2V' }));
-        sendJson('executed', {
-            node: '16',
-            prompt_id: 'p1',
-            output: { images: ['out.png'] },
+        act(() => {
+            sendJson('executed', {
+                node: '16',
+                prompt_id: 'p1',
+                output: { images: ['out.png'] },
+            });
         });
         const s = store.getState();
         expect(s.progress.node_events.length).toBe(1);
@@ -143,14 +166,18 @@ describe('WSReceiver message dispatch', () => {
 
     it('sets queue on status message', () => {
         setup();
-        sendJson('status', { status: { exec_info: { queue_remaining: 5 } } });
+        act(() => {
+            sendJson('status', { status: { exec_info: { queue_remaining: 5 } } });
+        });
         expect(store.getState().progress.queue).toBe(5);
     });
 
     it('sets ERROR status and message on execution_error', () => {
         setup();
         store.dispatch(setStatus(statusEnum.RUNNING));
-        sendJson('execution_error', { exception_message: 'Something broke' });
+        act(() => {
+            sendJson('execution_error', { exception_message: 'Something broke' });
+        });
         const s = store.getState();
         expect(s.progress.status).toBe(statusEnum.ERROR);
         expect(s.progress.status_message).toBe('Something broke');
@@ -159,7 +186,9 @@ describe('WSReceiver message dispatch', () => {
     it('sets INTERRUPTED status on execution_interrupted', () => {
         setup();
         store.dispatch(setStatus(statusEnum.RUNNING));
-        sendJson('execution_interrupted', {});
+        act(() => {
+            sendJson('execution_interrupted', {});
+        });
         expect(store.getState().progress.status).toBe(statusEnum.INTERRUPTED);
     });
 });

@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
     addResult,
     clearPrompt,
@@ -66,6 +66,7 @@ describe('tab slice — addResult', () => {
     });
 
     it('stores under prompt_id when tab_name is not yet known (race)', () => {
+        const spy = vi.spyOn(console, 'warn').mockImplementation(() => {});
         let s = initialState();
         s = reducer(
             s,
@@ -76,20 +77,25 @@ describe('tab slice — addResult', () => {
             }),
         );
         expect(s.result.unknown['16']).toEqual({ images: ['early.png'] });
+        spy.mockRestore();
     });
 
     it('returns unchanged state when neither tab_name nor prompt_id is set', () => {
+        const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
         const s = initialState();
         const next = reducer(
             s,
             addResult({ node_id: '16', output: {} }),
         );
         expect(next).toBe(s);
+        spy.mockRestore();
     });
 });
 
 describe('tab slice — setPrompt + result relocation', () => {
     it('moves a temporary prompt result to the tab when setPrompt resolves the tab', () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
         let s = initialState();
         // Simulate: result arrived before setPrompt
         s = reducer(
@@ -104,6 +110,8 @@ describe('tab slice — setPrompt + result relocation', () => {
         s = reducer(s, setPrompt({ prompt_id: 'abc', tab_name: 'T2V' }));
         expect(s.result.T2V['16']).toEqual({ images: ['r.png'] });
         expect(s.result.unknown).toBeUndefined();
+        warnSpy.mockRestore();
+        errorSpy.mockRestore();
     });
 });
 
