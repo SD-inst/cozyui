@@ -30,6 +30,8 @@ import { useMiniMaxH3I2VFirstMessageTransform } from '../../../hooks/useMiniMaxH
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ChatComponent } from '../../chat/ChatComponent';
 import { miniMaxH3I2VSystemPrompt } from '../../chat/prompts/minimaxH3I2V';
+import { miniMaxH3I2VImageSystemPrompt } from '../../chat/prompts/minimaxH3I2VImage';
+import { useWatch } from 'react-hook-form';
 
 const ImageFrameInput = ({ name }: { name: string }) => {
     const handler = useEventCallback(
@@ -62,6 +64,11 @@ const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
     const pddHandler = useMiniMaxH3PDDHandler();
     const transformFirstMessage = useMiniMaxH3I2VFirstMessageTransform();
+    const length = useWatch({ name: 'length', defaultValue: 5 });
+    const systemPrompt =
+        length === 0
+            ? miniMaxH3I2VImageSystemPrompt
+            : miniMaxH3I2VSystemPrompt;
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     useRegisterHandler({ name: 'pdd', handler: pddHandler });
     return (
@@ -71,7 +78,7 @@ const Content = () => {
                 <ImageFrameInput name='last_frame' />
                 <TextInput name='prompt' multiline />
                 <ChatComponent
-                    systemPrompt={miniMaxH3I2VSystemPrompt}
+                    systemPrompt={systemPrompt}
                     mediaFields={[
                         { name: 'first_frame', kind: 'image' },
                         { name: 'last_frame', kind: 'image' },

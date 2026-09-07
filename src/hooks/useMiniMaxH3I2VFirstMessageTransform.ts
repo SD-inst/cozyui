@@ -13,7 +13,11 @@ export const useMiniMaxH3I2VFirstMessageTransform = () => {
 
     return useCallback(
         (text: string) => {
-            const lines = [`length=${length}`, `aspect=${aspect}`];
+            const lines: string[] = [];
+            if (length !== 0) {
+                lines.push(`length=${length}`);
+            }
+            lines.push(`aspect=${aspect}`);
             let picture = 0;
             if (firstFrame) {
                 lines.push(`first_image=Picture ${++picture}`);

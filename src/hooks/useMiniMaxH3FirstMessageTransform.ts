@@ -10,8 +10,15 @@ export const useMiniMaxH3FirstMessageTransform = () => {
     const aspect = aspectRatio.split(' ')[0];
 
     return useCallback(
-        (text: string) =>
-            `length=${length}\naspect=${aspect}\ndescription=${text}`,
+        (text: string) => {
+            const lines: string[] = [];
+            if (length !== 0) {
+                lines.push(`length=${length}`);
+            }
+            lines.push(`aspect=${aspect}`);
+            lines.push(`description=${text}`);
+            return lines.join('\n');
+        },
         [length, aspect],
     );
 };

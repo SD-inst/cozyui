@@ -122,6 +122,30 @@ export function useOpenAIChat({
         }
     }, [id, isComplete, messagesState, tab]);
 
+    // The system prompt is a live parameter: keep the system message in sync
+    // with the current `initialMessages` system content so it always reflects
+    // the current mode (e.g. image vs video), even after load or a mid-session
+    // change.
+    const systemContent = initialMessages.find(
+        (m) => m.role === 'system',
+    )?.content;
+    useEffect(() => {
+        if (typeof systemContent !== 'string') {
+            return;
+        }
+        setMessagesState((prev) =>
+            prev.some(
+                (m) => m.role === 'system' && m.content !== systemContent,
+            )
+                ? prev.map((m) =>
+                        m.role === 'system'
+                            ? { ...m, content: systemContent }
+                            : m,
+                    )
+                : prev,
+        );
+    }, [systemContent, messagesState]);
+
     const sendMessage = useCallback(
         async (
             content: string | OpenAIMessage,

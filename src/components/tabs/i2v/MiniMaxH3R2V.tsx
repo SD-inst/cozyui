@@ -24,6 +24,7 @@ import { useTranslate } from '../../../i18n/I18nContext';
 import { controlType } from '../../../redux/config';
 import { ChatComponent } from '../../chat/ChatComponent';
 import { miniMaxH3R2VSystemPrompt } from '../../chat/prompts/minimaxH3R2V';
+import { miniMaxH3R2VImageSystemPrompt } from '../../chat/prompts/minimaxH3R2VImage';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { LoraInput } from '../../controls/LoraInput';
 import { keyframeHandler } from '../../controls/MiniMaxH3KeyframeHandler';
@@ -498,6 +499,9 @@ const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
     const pddHandler = useMiniMaxH3PDDHandler();
     const transformFirstMessage = useMiniMaxH3FirstMessageTransform();
+    const length = useWatch({ name: 'length', defaultValue: 5 });
+    const systemPrompt =
+        length === 0 ? miniMaxH3R2VImageSystemPrompt : miniMaxH3R2VSystemPrompt;
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     useRegisterHandler({ name: 'pdd', handler: pddHandler });
     return (
@@ -516,7 +520,7 @@ const Content = () => {
                 </SectionAccordion>
                 <TextInput name='prompt' multiline />
                 <ChatComponent
-                    systemPrompt={miniMaxH3R2VSystemPrompt}
+                    systemPrompt={systemPrompt}
                     mediaFields={[
                         {
                             name: 'ref_images',

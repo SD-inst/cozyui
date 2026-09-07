@@ -25,11 +25,16 @@ import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3Fi
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ChatComponent } from '../../chat/ChatComponent';
 import { miniMaxH3T2VSystemPrompt } from '../../chat/prompts/minimaxH3T2V';
+import { miniMaxH3T2VImageSystemPrompt } from '../../chat/prompts/minimaxH3T2VImage';
+import { useWatch } from 'react-hook-form';
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();
     const pddHandler = useMiniMaxH3PDDHandler();
     const transformFirstMessage = useMiniMaxH3FirstMessageTransform();
+    const length = useWatch({ name: 'length', defaultValue: 5 });
+    const systemPrompt =
+        length === 0 ? miniMaxH3T2VImageSystemPrompt : miniMaxH3T2VSystemPrompt;
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     useRegisterHandler({ name: 'pdd', handler: pddHandler });
     return (
@@ -37,7 +42,7 @@ const Content = () => {
             <GridLeft>
                 <TextInput name='prompt' multiline />
                 <ChatComponent
-                    systemPrompt={miniMaxH3T2VSystemPrompt}
+                    systemPrompt={systemPrompt}
                     transformFirstMessage={transformFirstMessage}
                 />
                 <MiniMaxH3ResolutionSelector
