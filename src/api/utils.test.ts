@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { Workflow } from './graph';
-import { getFreeNodeId, insertGraph, insertNode } from './utils';
+import {
+    getFreeNodeId,
+    insertGraph,
+    insertNode,
+    makeOutputUrl,
+    replaceNodeConnection,
+} from './utils';
 
 describe('getFreeNodeId', () => {
     it('returns the max numeric base id plus one', () => {
@@ -79,5 +85,59 @@ describe('insertNode', () => {
         expect(api['4'].inputs.model).toEqual(['1', 0]);
         expect(api['2'].inputs.model).toEqual(['4', 0]);
         expect(api['3'].inputs.model).toEqual(['4', 0]);
+    });
+});
+
+describe('replaceNodeConnection', () => {
+    it('inserts a new node and rewires the target field to it', () => {
+        const api: Workflow = {
+            '1': { inputs: {}, class_type: 'Model' },
+            '2': { inputs: { model: ['1', 0] }, class_type: 'Sampler' },
+        };
+        const id = replaceNodeConnection(
+            api,
+            '2',
+            'model',
+            { inputs: {}, class_type: 'Lora' },
+        );
+        expect(id).toBe('3');
+        expect(api['3'].class_type).toBe('Lora');
+        expect(api['2'].inputs.model).toEqual(['3', 0]);
+    });
+
+    it('supports non-zero output index', () => {
+        const api: Workflow = {
+            '1': { inputs: {}, class_type: 'Model' },
+            '2': { inputs: { model: ['1', 0] }, class_type: 'Sampler' },
+        };
+        const id = replaceNodeConnection(
+            api,
+            '2',
+            'model',
+            { inputs: {}, class_type: 'Lora' },
+            2,
+        );
+        expect(id).toBe('3');
+        expect(api['2'].inputs.model).toEqual(['3', 2]);
+    });
+});
+
+describe('makeOutputUrl', () => {
+    it('returns the url directly when present', () => {
+        expect(makeOutputUrl('http://x', { url: 'http://img.png' })).toBe(
+            'http://img.png',
+        );
+    });
+
+    it('builds the view URL from filename, subfolder, and type', () => {
+        const url = makeOutputUrl('http://comfy', {
+            filename: 'a.png',
+            subfolder: 'outputs',
+            type: 'temp',
+        });
+        expect(url).toMatch(/^http:\/\/comfy\/api\/view\?filename=a\.png/);
+        expect(url).toContain('subfolder=outputs');
+        expect(url).toContain('type=temp');
+        expect(url).toContain('noCache=');
     });
 });
