@@ -60,7 +60,7 @@ export const MiniMaxH3LatentUpscale = ({
                         label='latent_upscale_megapixels'
                         defaultValue={defaultValue.megapixels}
                         min={0.1}
-                        max={2}
+                        max={4}
                         step={0.1}
                     />
                     <SliderInput
