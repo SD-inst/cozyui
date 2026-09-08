@@ -145,6 +145,33 @@ const cloneChildren = ({
     );
 };
 
+// Recursively remap `name` props on a control element (and any nested
+// descendants) to the per-item array field, mirroring cloneChildren's name
+// mapping. The compact-mode controls dialog renders children outside
+// cloneChildren, so it must recurse itself; without this, controls wrapped in
+// an intermediate element (e.g. a Box) keep their top-level names and mount as
+// bogus top-level form fields.
+const remapFieldNames = (
+    child: ReactNode,
+    name: string,
+    index: number,
+): ReactNode => {
+    if (!React.isValidElement(child)) {
+        return child;
+    }
+    const props = {
+        ...child.props,
+        children: React.Children.map(
+            child.props.children,
+            (c: ReactNode) => remapFieldNames(c, name, index),
+        ),
+    };
+    if (child.props.name) {
+        props.name = `${name}.${index}.${child.props.name}`;
+    }
+    return React.cloneElement(child, props);
+};
+
 const getFileType = (filename?: string): UploadType => {
     if (!filename) {
         return UploadType.IMAGE;
@@ -558,21 +585,21 @@ export const ArrayInput = ({
                                 '& > *': { mb: 2 },
                             }}
                         >
-                            {controlsDialogIndex !== null &&
-                                childrenArray.slice(1).map((child, ci) => {
-                                    if (!React.isValidElement(child)) {
-                                        return child;
-                                    }
-                                    const el = React.cloneElement(
-                                        child as any,
-                                        {
-                                            name:
-                                                (child as any).props.name &&
-                                                `${name}.${controlsDialogIndex}.${(child as any).props.name}`,
-                                        },
-                                    );
-                                    return <Box key={ci}>{el}</Box>;
-                                })}
+                    {controlsDialogIndex !== null &&
+                        childrenArray.slice(1).map((child, ci) => {
+                            if (!React.isValidElement(child)) {
+                                return child;
+                            }
+                            return (
+                                <Box key={ci}>
+                                    {remapFieldNames(
+                                        child,
+                                        name,
+                                        controlsDialogIndex,
+                                    )}
+                                </Box>
+                            );
+                        })}
                         </Box>
                     </DialogContent>
                     <DialogActions sx={{ flexWrap: 'wrap' }}>
