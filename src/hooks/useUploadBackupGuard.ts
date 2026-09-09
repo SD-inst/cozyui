@@ -111,8 +111,18 @@ export const useUploadBackupGuard = (
                 }
             }
             // GC: drop backups for files no longer in the field.
+            // Also drop stale backups where the key is still live but the file
+            // has been replaced (same key, different filename).
             for (const k of orphans) {
-                if (liveKeys.has(k)) continue;
+                if (liveKeys.has(k)) {
+                    // Key is still live; check if the stored filename matches.
+                    const liveFilename = live.find((l) => l.key === k)?.filename;
+                    const stored = await db.uploads.get(k);
+                    if (stored && stored.file.name !== liveFilename) {
+                        await db.uploads.delete(k);
+                    }
+                    continue;
+                }
                 await db.uploads.delete(k);
             }
             // Populate: fetch-if-missing for the rest.

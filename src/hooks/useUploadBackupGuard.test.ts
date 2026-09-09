@@ -1,9 +1,27 @@
-import { describe, expect, it } from 'vitest';
+import 'fake-indexeddb/auto';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
+import { renderHook, act } from '@testing-library/react';
+
+// Mock the hooks used inside the component
+vi.mock('../components/contexts/TabContext', () => ({
+    useTabName: () => 'test_tab',
+    useIsCurrentTab: () => true,
+}));
+vi.mock('./useApiURL', () => ({
+    useApiURL: () => 'http://localhost:8188',
+}));
+vi.mock('../api/utils', () => ({
+    makeOutputUrl: (apiUrl: string, params: any) =>
+        `${apiUrl}/api/view?subfolder=${params.subfolder}&type=${params.type}&filename=${params.filename}`,
+}));
+
 import {
     backupEntry,
     buildBackupKeys,
     computeBackupMoves,
+    useUploadBackupGuard,
 } from './useUploadBackupGuard';
+import { db } from '../components/history/db';
 
 describe('buildBackupKeys', () => {
     it('maps occupied slots to <tab>/<field>.<i>.<keyField> keys', () => {
@@ -87,5 +105,99 @@ describe('computeBackupMoves', () => {
         const prev = [k(0, 'a'), k(1, 'b')];
         const live = [k(0, 'a')];
         expect(computeBackupMoves(prev, live)).toEqual([]);
+    });
+});
+
+describe('useUploadBackupGuard', () => {
+    beforeEach(async () => {
+        await db.open();
+        await db.uploads.clear();
+    });
+
+    it('deletes stale backup when file is replaced (same key, different filename)', async () => {
+        const key = 'test_tab/ref_images.0.image';
+
+        // Mock fetch for populate phase
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            blob: () => Promise.resolve(new Blob(['content'], { type: 'image/png' })),
+        }) as any;
+
+        // Spy on db.uploads.delete to verify GC deletes stale backup
+        const deleteSpy = vi.spyOn(db.uploads, 'delete');
+
+        // Use a result object that allows updating props
+        const result = renderHook(
+            ({ entries }) => useUploadBackupGuard('ref_images', entries, 'image'),
+            { initialProps: { entries: [{ image: 'old.png' }] } },
+        );
+
+        // Wait for populate to complete
+        await act(async () => {
+            await new Promise((r) => setTimeout(r, 100));
+        });
+
+        // Verify backup was populated
+        let stored = await db.uploads.get(key);
+        expect(stored).toBeDefined();
+
+        // Reset delete spy call count before the replacement
+        deleteSpy.mockClear();
+
+        // Simulate file replacement by updating the prop
+        act(() => {
+            result.rerender({ entries: [{ image: 'new.png' }] });
+        });
+        await act(async () => {
+            await new Promise((r) => setTimeout(r, 100));
+        });
+
+        // Old backup should have been deleted (filename mismatch detected)
+        expect(deleteSpy).toHaveBeenCalledWith(key);
+
+        // New file should be fetched and stored
+        stored = await db.uploads.get(key);
+        expect(stored).toBeDefined();
+        result.unmount();
+    });
+
+    it('keeps backup when filename unchanged', async () => {
+        const key = 'test_tab/ref_images.0.image';
+
+        // Mock fetch for populate phase
+        globalThis.fetch = vi.fn().mockResolvedValue({
+            blob: () => Promise.resolve(new Blob(['x'], { type: 'image/png' })),
+        }) as any;
+
+        // Spy on db.uploads.delete to verify GC does NOT delete existing backup
+        const deleteSpy = vi.spyOn(db.uploads, 'delete');
+
+        // First render populates backup
+        const result = renderHook(
+            ({ entries }) => useUploadBackupGuard('ref_images', entries, 'image'),
+            { initialProps: { entries: [{ image: 'test.png' }] } },
+        );
+        await act(async () => {
+            await new Promise((r) => setTimeout(r, 100));
+        });
+
+        // Reset delete spy call count
+        deleteSpy.mockClear();
+
+        // Re-render with same filename (should not delete backup)
+        act(() => {
+            result.rerender({ entries: [{ image: 'test.png' }] });
+        });
+        await act(async () => {
+            await new Promise((r) => setTimeout(r, 100));
+        });
+
+        // Backup for the file should NOT have been deleted (filename matches)
+        // Note: the hook does delete the stray top-level key <tab>/<field> on every run
+        expect(deleteSpy).not.toHaveBeenCalledWith(key);
+
+        // Backup should still exist
+        const stored = await db.uploads.get(key);
+        expect(stored).toBeDefined();
+        result.unmount();
     });
 });
