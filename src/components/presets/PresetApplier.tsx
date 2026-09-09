@@ -10,7 +10,7 @@ import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
 import { db, Preset } from '../history/db';
 import { useRestoreValues } from '../../hooks/useRestoreValues';
 import { saveUploadBackup } from '../../hooks/useBackupUpload';
-import { fileOnServer, uploadFile } from '../../api/files';
+import { fileOnServer, ensureFileOnServer } from '../../api/files';
 import {
     getReceiverFields,
     MediaRef,
@@ -110,19 +110,24 @@ const PresetApplier = ({ formInitialized }: { formInitialized: boolean }) => {
             const lost: MediaRef[] = [];
             for (const ref of refs) {
                 const local = filesMap.get(ref.filename);
-                if (await fileOnServer(ref.filename, apiUrl)) {
-                    resolved[ref.filename] = ref.filename;
+                if (!local) {
+                    // no local backup: the only source is the server
+                    if (await fileOnServer(ref.filename, apiUrl)) {
+                        resolved[ref.filename] = ref.filename;
+                    } else {
+                        lost.push(ref);
+                    }
                     continue;
                 }
-                if (local) {
-                    try {
-                        resolved[ref.filename] = await uploadFile(local, apiUrl);
-                        continue;
-                    } catch {
-                        // fall through to lost
-                    }
+                try {
+                    resolved[ref.filename] = await ensureFileOnServer(
+                        local,
+                        ref.filename,
+                        apiUrl,
+                    );
+                } catch {
+                    lost.push(ref);
                 }
-                lost.push(ref);
             }
             if (cancelled) {
                 return;

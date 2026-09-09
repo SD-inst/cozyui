@@ -76,6 +76,7 @@ export interface RefMod {
     mode: 'encode' | 'training';
     createdAt: number;
     updatedAt: number;
+    serverFilename?: string; // name of the file in the ComfyUI input folder
 }
 
 export interface RefModFile {

@@ -1,10 +1,9 @@
 import { useEventCallback } from '@mui/material';
 import { db } from '../components/history/db';
-import { uploadFile } from '../api/files';
+import { ensureFileOnServer } from '../api/files';
 import { Workflow, NodeRef } from '../api/graph';
 import { controlType } from '../redux/config';
 import { useApiURL } from './useApiURL';
-import { genId } from '../utils/id';
 import { insertGraph } from '../api/utils';
 
 const MAX_SLOTS = 8;
@@ -17,7 +16,9 @@ export const useMiniMaxH3RefModHandler = () => {
             if (!value || !value.length || !control.cond_node_id || !apiUrl)
                 return;
 
-            // Upload each mod file to the server
+            // Resolve each mod to a filename in the server's input folder:
+            // reuse the stored name if the file is still there, otherwise
+            // (re-)upload it and remember the new name for next time.
             const uploadedNames: string[] = [];
             for (const { id } of value) {
                 const file = await db.refModFiles
@@ -25,14 +26,19 @@ export const useMiniMaxH3RefModHandler = () => {
                     .and((f: any) => f.fileType === 'safetensors')
                     .first();
                 if (!file) continue;
-                const name = await uploadFile(
+                const mod = await db.refMods.get(id);
+                const name = await ensureFileOnServer(
                     new File(
                         [file.file],
-                        genId().replace(/-/g, '').slice(0, 12) + '.safetensors',
+                        file.filename,
                         { type: 'application/octet-stream' },
                     ),
+                    mod?.serverFilename,
                     apiUrl,
                 );
+                if (mod && mod.serverFilename !== name) {
+                    await db.refMods.update(id, { serverFilename: name });
+                }
                 uploadedNames.push(name);
             }
             if (!uploadedNames.length) return;
