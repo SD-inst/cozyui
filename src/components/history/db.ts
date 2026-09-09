@@ -65,6 +65,27 @@ export interface PresetFile {
     file: File;
 }
 
+export interface RefMod {
+    id: string;
+    name: string;
+    kind: 'image' | 'video' | 'audio';
+    conceptType: string;
+    description: string;
+    tokens: number;
+    shape: [number, number, number];
+    mode: 'encode' | 'training';
+    createdAt: number;
+    updatedAt: number;
+}
+
+export interface RefModFile {
+    id: string; // `${modId}/${filename}`
+    mod: string;
+    filename: string;
+    file: File;
+    fileType: 'safetensors' | 'thumbnail' | 'source';
+}
+
 export const db = new Dexie('task_results') as Dexie & {
     taskResults: EntityTable<TaskResult, 'id'>;
     settings: Table<Settings, string>;
@@ -74,6 +95,8 @@ export const db = new Dexie('task_results') as Dexie & {
     chatLogs: Table<ChatLog, string>;
     presets: Table<Preset, string>;
     presetFiles: Table<PresetFile, string>;
+    refMods: Table<RefMod, string>;
+    refModFiles: Table<RefModFile, string>;
 };
 
 db.version(2)
@@ -107,10 +130,15 @@ db.version(6).upgrade((tx) =>
     tx.table('settings').put({ name: settings.chat_stream, value: 'true' }),
 );
 db.version(7).stores({ chatLogs: '&[tab+id]' });
-db.version(8).stores({ presets: 'id, tab, timestamp', presetFiles: 'id, preset' });
+db.version(8).stores({
+    presets: 'id, tab, timestamp',
+    presetFiles: 'id, preset',
+});
 
 db.version(9)
-    .stores({ taskResults: '++id, timestamp, type, node_id, mark, *words, model' })
+    .stores({
+        taskResults: '++id, timestamp, type, node_id, mark, *words, model',
+    })
     .upgrade((tx) => {
         const subtx = tx.table('taskResults');
         subtx.each((t) => {
@@ -122,7 +150,9 @@ db.version(9)
     });
 
 db.version(10)
-    .stores({ taskResults: '++id, timestamp, type, node_id, mark, *words, model, tab' })
+    .stores({
+        taskResults: '++id, timestamp, type, node_id, mark, *words, model, tab',
+    })
     .upgrade((tx) => {
         const subtx = tx.table('taskResults');
         subtx.each((t) => {
@@ -132,6 +162,11 @@ db.version(10)
             }
         });
     });
+
+db.version(11).stores({
+    refMods: 'id, name, kind, conceptType, createdAt',
+    refModFiles: 'id, mod, filename',
+});
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

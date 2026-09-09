@@ -60,6 +60,7 @@ import { LTX23I2VTab } from './components/tabs/i2v/LTX23I2V';
 import { LTX23V2VTab } from './components/tabs/v2v/LTX23V2V';
 import { MiniMaxH3I2VTab } from './components/tabs/i2v/MiniMaxH3I2V';
 import { MiniMaxH3R2VTab } from './components/tabs/i2v/MiniMaxH3R2V';
+import { RefModManagerTab } from './components/tabs/t2v/RefModManager';
 
 function App() {
     return (
@@ -76,6 +77,7 @@ function App() {
                                 {LTX2T2VTab}
                                 {LTX23T2VTab}
                                 {MiniMaxH3T2VTab}
+                                {RefModManagerTab}
                                 {Hunyan15T2VTab}
                                 {WanI2VTab}
                                 {WanT2VTab}

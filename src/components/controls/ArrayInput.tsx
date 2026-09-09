@@ -10,16 +10,19 @@ import {
 } from '@dnd-kit/core';
 import {
     SortableContext,
-    arrayMove,
     sortableKeyboardCoordinates,
+    useSortable,
 } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
+    Badge,
     Box,
     Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogTitle,
+    IconButton,
     Stack,
     Typography,
     useTheme,
@@ -57,6 +60,98 @@ import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
 
 import 'yet-another-react-lightbox/styles.css';
+
+const CustomItemShell = ({
+    id,
+    index,
+    onRemove,
+    onOpenControls,
+    children,
+}: {
+    id: string;
+    index: number;
+    onRemove: (i: number) => void;
+    onOpenControls: (i: number) => void;
+    children: ReactNode;
+}) => {
+    const theme = useTheme();
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id });
+
+    const style: React.CSSProperties = {
+        transform: CSS.Transform.toString(transform),
+        transition: transition || undefined,
+        opacity: isDragging ? 0.5 : undefined,
+        position: 'relative',
+    };
+
+    return (
+        <Box
+            ref={setNodeRef}
+            {...listeners}
+            {...attributes}
+            style={style}
+            sx={{
+                cursor: 'grab',
+                '&:active': { cursor: 'grabbing' },
+                '&:hover .remove-btn': {
+                    opacity: 1,
+                    pointerEvents: 'auto',
+                },
+            }}
+        >
+            {children}
+            <IconButton
+                className='remove-btn'
+                size='small'
+                sx={{
+                    position: 'absolute',
+                    top: 5,
+                    right: 5,
+                    width: 20,
+                    height: 20,
+                    p: 0,
+                    bgcolor: 'rgba(0,0,0,0.6)',
+                    color: 'white',
+                    zIndex: 1,
+                    opacity: 0,
+                    pointerEvents: 'none',
+                    transition: 'opacity 0.15s',
+                    '&:hover': { bgcolor: 'rgba(200,0,0,0.8)' },
+                }}
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onRemove(index);
+                }}
+            >
+                <Close sx={{ fontSize: 12 }} />
+            </IconButton>
+            <Badge
+                onClick={(e) => {
+                    e.stopPropagation();
+                    onOpenControls(index);
+                }}
+                badgeContent={index + 1}
+                color='primary'
+                sx={{
+                    position: 'absolute',
+                    top: 15,
+                    left: 15,
+                    cursor: 'pointer',
+                    '&:hover': {
+                        bgcolor: theme.palette.primary.dark,
+                    },
+                }}
+            />
+        </Box>
+    );
+};
 
 const cloneChildren = ({
     children,
@@ -161,9 +256,8 @@ const remapFieldNames = (
     }
     const props = {
         ...child.props,
-        children: React.Children.map(
-            child.props.children,
-            (c: ReactNode) => remapFieldNames(c, name, index),
+        children: React.Children.map(child.props.children, (c: ReactNode) =>
+            remapFieldNames(c, name, index),
         ),
     };
     if (child.props.name) {
@@ -194,6 +288,10 @@ export const ArrayInput = ({
     listMode = false,
     receiverFieldName,
     targetFieldName,
+    renderItem,
+    onAddClick,
+    onReplaceClick,
+    renderPreview,
     ...props
 }: {
     name: string;
@@ -205,19 +303,19 @@ export const ArrayInput = ({
     listMode?: boolean;
     receiverFieldName?: string;
     targetFieldName?: string;
+    renderItem?: (item: any, index: number) => ReactNode;
+    onAddClick?: () => void;
+    onReplaceClick?: (index: number) => void;
+    renderPreview?: (item: any, index: number) => ReactNode;
 } & PropsWithChildren) => {
     const tr = useTranslate();
     const theme = useTheme();
     const apiUrl = useApiURL();
     const { unregister, getValues, setValue } = useFormContext();
     const rawValue = useWatch({ name });
-    const value = React.useMemo(
-        () => rawValue ?? [],
-        [rawValue],
-    );
-    const { fields, append, update, swap, remove, replace } = useFieldArray({
-        name,
-    });
+    const value = React.useMemo(() => rawValue ?? [], [rawValue]);
+    const { fields, append, update, swap, remove, replace, move } =
+        useFieldArray({ name });
     useUploadBackupGuard(name, value, keyField);
     useEffect(() => {
         if (rawValue === undefined || rawValue === null) {
@@ -381,10 +479,11 @@ export const ArrayInput = ({
             const oldIndex = fields.findIndex((f) => f.id === active.id);
             const newIndex = fields.findIndex((f) => f.id === over.id);
             if (oldIndex !== -1 && newIndex !== -1) {
-                const current = getValues(name);
-                setValue(name, arrayMove(current, oldIndex, newIndex), {
-                    shouldDirty: false,
-                });
+                // `move` reorders both the values and the per-item field ids in
+                // place, so the stable `field.id` React keys survive the reorder.
+                // A raw `setValue(arrayMove(...))` would emit the array subject
+                // and regenerate every id, remounting all items (flicker).
+                move(oldIndex, newIndex);
             }
         }
     };
@@ -439,6 +538,9 @@ export const ArrayInput = ({
                 </Typography>
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                     <SortableContext items={fields.map((f) => f.id)}>
+                        <Flipper
+                            flipKey={fields.map((f: any) => f.id).join(',')}
+                        >
                         <Box
                             display='flex'
                             flexWrap='wrap'
@@ -446,39 +548,62 @@ export const ArrayInput = ({
                             alignItems='center'
                         >
                             {fields.map((field, index) => (
-                                <CompactFileItem
-                                    key={
-                                        (value as any[])[index]?.[keyField] ||
-                                        field.id
-                                    }
-                                    id={field.id}
-                                    index={index}
-                                    filename={
-                                        (value as any[])[index]?.[keyField]
-                                    }
-                                    onRemove={(i) => {
-                                        if (value.length <= min) {
-                                            return;
-                                        }
-                                        remove(i);
-                                    }}
-                                    onReplace={handleCompactReplace}
-                                    lightboxOpen={(i) => {
-                                        const idx = validIndices.indexOf(i);
-                                        if (idx >= 0) {
-                                            setLightboxIndex(idx);
-                                            setLightboxOpen(true);
-                                        }
-                                    }}
-                                    onOpenControls={(i) =>
-                                        setControlsDialogIndex(i)
-                                    }
-                                    onUploadLost={handleUploadLost}
-                                />
+                                <Flipped
+                                    key={field.id}
+                                    flipId={field.id}
+                                >
+                                    {renderItem ? (
+                                        <CustomItemShell
+                                            id={field.id}
+                                            index={index}
+                                            onRemove={(i) => {
+                                                if (value.length <= min) return;
+                                                remove(i);
+                                            }}
+                                            onOpenControls={(i) =>
+                                                setControlsDialogIndex(i)
+                                            }
+                                        >
+                                            {renderItem(
+                                                (value as any[])[index],
+                                                index,
+                                            )}
+                                        </CustomItemShell>
+                                    ) : (
+                                        <CompactFileItem
+                                            id={field.id}
+                                            index={index}
+                                            filename={
+                                                (value as any[])[index]?.[
+                                                    keyField
+                                                ]
+                                            }
+                                            onRemove={(i) => {
+                                                if (value.length <= min) {
+                                                    return;
+                                                }
+                                                remove(i);
+                                            }}
+                                            onReplace={handleCompactReplace}
+                                            lightboxOpen={(i) => {
+                                                const idx =
+                                                    validIndices.indexOf(i);
+                                                if (idx >= 0) {
+                                                    setLightboxIndex(idx);
+                                                    setLightboxOpen(true);
+                                                }
+                                            }}
+                                            onOpenControls={(i) =>
+                                                setControlsDialogIndex(i)
+                                            }
+                                            onUploadLost={handleUploadLost}
+                                        />
+                                    )}
+                                </Flipped>
                             ))}
                             {(value.length < max || max === -1) && (
                                 <Box
-                                    onClick={handleCompactAdd}
+                                    onClick={onAddClick || handleCompactAdd}
                                     sx={{
                                         width:
                                             keyField === 'audio'
@@ -508,6 +633,7 @@ export const ArrayInput = ({
                                 </Box>
                             )}
                         </Box>
+                        </Flipper>
                     </SortableContext>
                 </DndContext>
                 {/* Controls dialog for per-item extra controls */}
@@ -523,9 +649,14 @@ export const ArrayInput = ({
                     </DialogTitle>
                     <DialogContent>
                         {controlsDialogIndex !== null &&
-                            (() => {
+                            (renderPreview ? (
+                                renderPreview(
+                                    (value as any[])[controlsDialogIndex],
+                                    controlsDialogIndex,
+                                )
+                            ) : (() => {
                                 const file = (value as any[])[
-                                    controlsDialogIndex
+                                    controlsDialogIndex!
                                 ]?.[keyField];
                                 if (!file) {
                                     return null;
@@ -577,7 +708,7 @@ export const ArrayInput = ({
                                         }}
                                     />
                                 );
-                            })()}
+                            })())}
                         <Box
                             component='form'
                             sx={{
@@ -585,21 +716,21 @@ export const ArrayInput = ({
                                 '& > *': { mb: 2 },
                             }}
                         >
-                    {controlsDialogIndex !== null &&
-                        childrenArray.slice(1).map((child, ci) => {
-                            if (!React.isValidElement(child)) {
-                                return child;
-                            }
-                            return (
-                                <Box key={ci}>
-                                    {remapFieldNames(
-                                        child,
-                                        name,
-                                        controlsDialogIndex,
-                                    )}
-                                </Box>
-                            );
-                        })}
+                            {controlsDialogIndex !== null &&
+                                (renderItem ? childrenArray : childrenArray.slice(1)).map((child, ci) => {
+                                    if (!React.isValidElement(child)) {
+                                        return child;
+                                    }
+                                    return (
+                                        <Box key={ci}>
+                                            {remapFieldNames(
+                                                child,
+                                                name,
+                                                controlsDialogIndex,
+                                            )}
+                                        </Box>
+                                    );
+                                })}
                         </Box>
                     </DialogContent>
                     <DialogActions sx={{ flexWrap: 'wrap' }}>
@@ -625,27 +756,33 @@ export const ArrayInput = ({
                         <Button
                             startIcon={<Refresh />}
                             onClick={() => {
-                                const input = document.createElement('input');
-                                input.type = 'file';
-                                input.accept =
-                                    keyField === 'audio'
-                                        ? 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm'
-                                        : keyField === 'video'
-                                          ? 'video/*'
-                                          : 'image/*,video/*';
-                                input.onchange = () => {
-                                    if (
-                                        input.files?.[0] &&
-                                        controlsDialogIndex !== null
-                                    ) {
-                                        handleCompactReplace(
-                                            controlsDialogIndex,
-                                            input.files[0],
-                                        );
-                                        setControlsDialogIndex(null);
-                                    }
-                                };
-                                input.click();
+                                if (controlsDialogIndex === null) return;
+                                if (onReplaceClick) {
+                                    onReplaceClick(controlsDialogIndex);
+                                    setControlsDialogIndex(null);
+                                } else {
+                                    const input = document.createElement('input');
+                                    input.type = 'file';
+                                    input.accept =
+                                        keyField === 'audio'
+                                            ? 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm'
+                                            : keyField === 'video'
+                                              ? 'video/*'
+                                              : 'image/*,video/*';
+                                    input.onchange = () => {
+                                        if (
+                                            input.files?.[0] &&
+                                            controlsDialogIndex !== null
+                                        ) {
+                                            handleCompactReplace(
+                                                controlsDialogIndex,
+                                                input.files[0],
+                                            );
+                                            setControlsDialogIndex(null);
+                                        }
+                                    };
+                                    input.click();
+                                }
                             }}
                         >
                             {tr('controls.replace')}
