@@ -366,22 +366,21 @@ const CreateModPanel = () => {
     const results = useResult();
     const [isProcessing, setIsProcessing] = useState(false);
     const { setValue } = useFormContext();
+    // The only headless field on this tab — the generation result has no input
+    // control, so register it here for the handler to read/write. Every other
+    // field is registered by its own input (SelectInput / TextInput /
+    // ArrayInput / FileUpload); we only *read* those below via useWatch.
     const refModOutputHandler = useRefModOutputHandler();
     useRegisterHandler({ name: 'refmod_output', handler: refModOutputHandler });
     useController({ name: 'refmod_output', defaultValue: '' });
     const refImagesHandler = useRefModFilesHandler('ref_image');
     useRegisterHandler({ name: 'ref_images', handler: refImagesHandler });
-    const audioSource = useWatch({ name: 'audio_source' });
+    // audio_source / audio_file are read here and handed to the ref_videos
+    // handler (which builds the audio wiring); the pipeline skips both, and
+    // their SelectInput / FileUpload own the form field + default.
+    const audioSource = useWatch({ name: 'audio_source', defaultValue: 'upload' });
     const audioFile = useWatch({ name: 'audio_file' });
     const mode = useWatch({ name: 'mode' });
-    // The audio connection is made by the ref_videos handler (it owns the
-    // per-video components nodes); these two controls only keep the form
-    // fields registered so the button can read their values.
-    const noopHandler = useEventCallback(() => {});
-    useRegisterHandler({ name: 'audio_source', handler: noopHandler });
-    useRegisterHandler({ name: 'audio_file', handler: noopHandler });
-    useController({ name: 'audio_source', defaultValue: 'upload' });
-    useController({ name: 'audio_file', defaultValue: '' });
     const refVideosHandler = useRefModVideoHandler(audioSource, audioFile);
     useRegisterHandler({ name: 'ref_videos', handler: refVideosHandler });
 
@@ -545,6 +544,7 @@ const CreateModPanel = () => {
             <SelectInput
                 name='audio_source'
                 label='audio_source'
+                defaultValue='upload'
                 choices={audioSourceChoices}
                 sx={{ width: 200 }}
             />
