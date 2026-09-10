@@ -5,6 +5,7 @@
             "mode": "training",
             "concept_type": "identity",
             "vae": ["2", 0],
+            "audio_vae": ["4", 0],
             "ref_resolution": 1024,
             "latent_frames": 16,
             "identity": 500,
@@ -18,9 +19,9 @@
             "description": "",
             "save": false
         },
-        "class_type": "MiniMaxH3RefModExtract",
+        "class_type": "MiniMaxH3RefModMasterExtract",
         "_meta": {
-            "title": "Create H3 RefMod"
+            "title": "Create H3 RefMod Master"
         }
     },
     "2": {
@@ -30,6 +31,15 @@
         "class_type": "VAELoader",
         "_meta": {
             "title": "VAE Loader (Video)"
+        }
+    },
+    "4": {
+        "inputs": {
+            "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+        },
+        "class_type": "VAELoader",
+        "_meta": {
+            "title": "VAE Loader (Audio)"
         }
     },
     "3": {

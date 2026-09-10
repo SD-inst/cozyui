@@ -26,7 +26,7 @@ import { SliderInput } from '../../controls/SliderInput';
 import { ToggleInput } from '../../controls/ToggleInput';
 import { ArrayInput } from '../../controls/ArrayInput';
 import { Workflow } from '../../../api/graph';
-import { getFreeNodeId } from '../../../api/utils';
+import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useResult } from '../../../hooks/useResult';
 import { useApiURL } from '../../../hooks/useApiURL';
@@ -211,6 +211,66 @@ const useRefModFilesHandler = (nodeField: string) => {
     );
 };
 
+// Reference videos are loaded as videos: each one's frames feed a
+// `ref_video_N` visual ref. The Master node has a single `audio` input, so
+// the audio source is chosen separately via `audio_source`:
+//   - "video:<n>"  → the n-th uploaded video's own audio track
+//   - "upload"     → a standalone audio file loaded from `audio_file`
+//   - anything else ("none") → no audio
+const useRefModVideoHandler = (
+    audioSource: string | undefined,
+    audioFile: string | undefined,
+) => {
+    return useEventCallback(
+        (api: Workflow, value: any, control: controlType) => {
+            if (!control.node_id) return;
+            if (!value || !value.length) return;
+
+            const uploadedComponents: string[] = [];
+            value.forEach((v: { image?: string }, idx: number) => {
+                if (!v?.image) return;
+
+                const baseID = insertGraph(api, {
+                    ':video': {
+                        inputs: { file: '', 'video-preview': '' },
+                        class_type: 'LoadVideo',
+                        _meta: { title: 'Load Video' },
+                    },
+                    ':components': {
+                        inputs: { video: [':video', 0] },
+                        class_type: 'GetVideoComponents',
+                        _meta: { title: 'Get Video Components' },
+                    },
+                });
+                const componentsNodeID = baseID + ':components';
+
+                api[baseID + ':video'].inputs.file = v.image;
+                api[control.node_id].inputs['ref_video_' + (idx + 1)] = [
+                    componentsNodeID,
+                    0,
+                ];
+                uploadedComponents.push(componentsNodeID);
+            });
+
+            if (audioSource?.startsWith?.('video:')) {
+                const n = parseInt(audioSource.slice(6));
+                const componentsNodeID = uploadedComponents[n - 1];
+                if (componentsNodeID) {
+                    api[control.node_id].inputs.audio = [componentsNodeID, 1];
+                }
+            } else if (audioSource === 'upload' && audioFile) {
+                const audioNodeID = getFreeNodeId(api) + '';
+                api[audioNodeID] = {
+                    inputs: { audio: audioFile },
+                    class_type: 'LoadAudio',
+                    _meta: { title: 'LoadAudio' },
+                };
+                api[control.node_id].inputs.audio = [audioNodeID, 0];
+            }
+        },
+    );
+};
+
 const CreateModPanel = () => {
     const tr = useTranslate();
     const apiUrl = useApiURL();
@@ -224,11 +284,38 @@ const CreateModPanel = () => {
     useController({ name: 'refmod_output', defaultValue: '' });
     const refImagesHandler = useRefModFilesHandler('ref_image');
     useRegisterHandler({ name: 'ref_images', handler: refImagesHandler });
-    const refVideosHandler = useRefModFilesHandler('ref_video');
+    const audioSource = useWatch({ name: 'audio_source' });
+    const audioFile = useWatch({ name: 'audio_file' });
+    // The audio connection is made by the ref_videos handler (it owns the
+    // per-video components nodes); these two controls only keep the form
+    // fields registered so the button can read their values.
+    const noopHandler = useEventCallback(() => {});
+    useRegisterHandler({ name: 'audio_source', handler: noopHandler });
+    useRegisterHandler({ name: 'audio_file', handler: noopHandler });
+    useController({ name: 'audio_source', defaultValue: 'video:1' });
+    useController({ name: 'audio_file', defaultValue: '' });
+    const refVideosHandler = useRefModVideoHandler(audioSource, audioFile);
     useRegisterHandler({ name: 'ref_videos', handler: refVideosHandler });
 
     const refImages = useWatch({ name: 'ref_images' });
     const refVideos = useWatch({ name: 'ref_videos' });
+    const hasVideos = (refVideos ?? []).some(
+        (v: { image?: string }) => !!v?.image,
+    );
+    const videoCount = (refVideos ?? []).filter(
+        (v: { image?: string }) => !!v?.image,
+    ).length;
+    const audioSourceChoices = useMemo(
+        () => [
+            ...Array.from({ length: videoCount }, (_, i) => ({
+                text: tr('refmods.video_n', { n: i + 1 }),
+                value: `video:${i + 1}`,
+            })),
+            { text: tr('refmods.no_audio'), value: 'none' },
+            { text: tr('refmods.upload_audio'), value: 'upload' },
+        ],
+        [videoCount, tr],
+    );
     const importedRef = useRef(false);
 
     useEffect(() => {
@@ -374,6 +461,17 @@ const CreateModPanel = () => {
                     type={UploadType.VIDEO}
                 />
             </ArrayInput>
+            {hasVideos && (
+                <SelectInput
+                    name='audio_source'
+                    label='audio_source'
+                    choices={audioSourceChoices}
+                    sx={{ width: 200 }}
+                />
+            )}
+            {audioSource === 'upload' && (
+                <FileUpload name='audio_file' type={UploadType.AUDIO} />
+            )}
             <SelectInput
                 name='mode'
                 defaultValue='encode'

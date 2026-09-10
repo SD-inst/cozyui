@@ -3779,6 +3779,16 @@
                     "id": "handle",
                     "node_id": "1"
                 },
+                "audio_source": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "order": 101
+                },
+                "audio_file": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "order": 101
+                },
                 "refmod_output": {
                     "id": "handle",
                     "node_id": "3",
