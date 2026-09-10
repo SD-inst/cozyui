@@ -13,7 +13,7 @@ export const updateNoCache = () =>
 export const getFreeNodeId = (api: Workflow) =>
     Object.keys(api)
         .map((k) => parseInt(k.split(':')[0]))
-        .reduce((a, k) => Math.max(a, k)) + 1;
+        .reduce((a, k) => Math.max(a, k), 0) + 1;
 
 /**
  * Inserts a node between input_node and output_node(s),

@@ -27,6 +27,8 @@ import { Workflow } from '../../../api/graph';
 import { controlType } from '../../../redux/config';
 import { useMiniMaxH3PDDHandler } from '../../../hooks/useMiniMaxH3PDDHandler';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHandler';
+import { ModArrayInput } from '../../controls/ModArrayInput';
 import { useMiniMaxH3I2VFirstMessageTransform } from '../../../hooks/useMiniMaxH3I2VFirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ChatComponent } from '../../chat/ChatComponent';
@@ -67,22 +69,29 @@ const Content = () => {
     const transformFirstMessage = useMiniMaxH3I2VFirstMessageTransform();
     const length = useWatch({ name: 'length', defaultValue: 5 });
     const systemPrompt =
-        length === 0
-            ? miniMaxH3I2VImageSystemPrompt
-            : miniMaxH3I2VSystemPrompt;
+        length === 0 ? miniMaxH3I2VImageSystemPrompt : miniMaxH3I2VSystemPrompt;
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     useRegisterHandler({ name: 'pdd', handler: pddHandler });
+    const refModHandler = useMiniMaxH3RefModHandler();
+    useRegisterHandler({ name: 'refmods', handler: refModHandler });
     return (
         <Layout>
             <GridLeft>
                 <ImageFrameInput name='first_frame' />
                 <ImageFrameInput name='last_frame' />
-                <TextInput name='prompt' multiline />
+                <ModArrayInput name='refmods' max={8} />
+                <TextInput name='prompt' multiline sx={{ mt: 2 }} />
                 <ChatComponent
                     systemPrompt={systemPrompt}
                     mediaFields={[
                         { name: 'first_frame', kind: 'image' },
                         { name: 'last_frame', kind: 'image' },
+                        {
+                            name: 'refmods',
+                            kind: 'image',
+                            itemField: 'id',
+                            idbMod: true,
+                        },
                     ]}
                     transformFirstMessage={transformFirstMessage}
                 />

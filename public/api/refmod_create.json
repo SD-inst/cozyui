@@ -1,0 +1,63 @@
+{
+    "1": {
+        "inputs": {
+            "name": "my_concept",
+            "mode": "training",
+            "concept_type": "identity",
+            "vae": ["2", 0],
+            "audio_vae": ["4", 0],
+            "ref_resolution": 1024,
+            "latent_frames": 16,
+            "identity": 500,
+            "max_tokens": 5120,
+            "pool_h": 16,
+            "pool_w": 16,
+            "multiplier": 1,
+            "merge": false,
+            "motion_only": false,
+            "background_retention": 0.0,
+            "description": "",
+            "save": false,
+            "audio_max_seconds": 30,
+            "audio_max_tokens": 5120,
+            "audio_budget_policy": "error",
+            "audio_concept_type": "voice",
+            "max_total_tokens": 0
+        },
+        "class_type": "MiniMaxH3RefModMasterExtract",
+        "_meta": {
+            "title": "Create H3 RefMod Master"
+        }
+    },
+    "2": {
+        "inputs": {
+            "vae_name": "minimax_h3_video_vae_int8_convrot.safetensors"
+        },
+        "class_type": "VAELoader",
+        "_meta": {
+            "title": "VAE Loader (Video)"
+        }
+    },
+    "4": {
+        "inputs": {
+            "vae_name": "minimax_h3_audio_vae_fp32.safetensors"
+        },
+        "class_type": "VAELoader",
+        "_meta": {
+            "title": "VAE Loader (Audio)"
+        }
+    },
+    "3": {
+        "inputs": {
+            "mods": ["1", 0],
+            "filename_prefix": "",
+            "subfolder": "",
+            "save_to_output": true,
+            "output_filename": ""
+        },
+        "class_type": "MiniMaxH3RefModSave",
+        "_meta": {
+            "title": "Save H3 RefMod"
+        }
+    }
+}

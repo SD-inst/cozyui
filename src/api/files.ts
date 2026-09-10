@@ -42,6 +42,22 @@ export const fileOnServer = async (
     }
 };
 
+/**
+ * Ensure `file` is available on the server and return the filename to use.
+ * If `filename` is given and still exists on the server, it is reused;
+ * otherwise `file` is (re-)uploaded and the new server name is returned.
+ */
+export const ensureFileOnServer = async (
+    file: File,
+    filename: string | undefined,
+    apiUrl: string,
+): Promise<string> => {
+    if (filename && (await fileOnServer(filename, apiUrl))) {
+        return filename;
+    }
+    return uploadFile(file, apiUrl);
+};
+
 export const getFileFromServer = async (
     filename: string,
     apiUrl: string,

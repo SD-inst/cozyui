@@ -44,6 +44,8 @@ const translation = {
         first_frame: 'First frame',
         last_frame: 'Last frame',
         no_audio: 'no audio',
+        audio_source: 'audio source',
+        audio_file: 'audio file',
         download: 'Download',
         download_png: 'Download PNG',
         download_jpg: 'Download JPG',
@@ -319,6 +321,17 @@ const translation = {
         ref_video_trim: 'trim video',
         ref_video_last: 'from the end',
         step: 'step',
+        refmods: 'reference mods',
+        mod_name: 'mod name',
+        mode: 'mode',
+        optimize_steps: 'optimize steps',
+        ref_resolution: 'reference resolution',
+        latent_frames: 'latent frames',
+        merge: 'merge',
+        motion_only: 'motion only',
+        max_tokens: 'max tokens',
+        audio_max_seconds: 'audio max seconds',
+        audio_max_tokens: 'audio max tokens',
         i2i: 'image-to-image',
         videos: 'videos',
         correct_brightness: 'correct brightness',
@@ -411,6 +424,26 @@ const translation = {
             "Increase if audio conditioning is too weak, i.e. the character doesn't follow the speech.",
         audio_cfg_scale:
             'Only has effect if main CFG is enabled. Does two passes per step, allows for more motion and detail at the cost of much slower rendering.',
+        mode_help:
+            'How the reference is encoded into the mod. "Full" encodes it in full — all source frames (up to the frame limit) at the target resolution: highest quality, most tokens. "Compressed" pools it into a smaller latent grid: far fewer tokens and less detail; it also unlocks the merge / motion-only / optimize-steps options below.',
+        ref_resolution_help:
+            'Target short edge in px (downscale only, never upscaled). "Full" stores at this resolution; "Compressed" encodes smaller. 512 halves the cost; 2048 is max fidelity (4x the tokens of 1024).',
+        latent_frames_help:
+            'Per-video temporal limit. "Full" samples up to this many source frames before encoding; "Compressed" pools to this many latent frames. Set at least the source frame count to avoid sampling. Images use 1.',
+        merge_help:
+            'Compressed mode only. Instead of stacking each ref, refines ONE shared grid jointly against every full encode — the mod lands on what is common across all views (one tiny consensus mod).',
+        motion_only_help:
+            'Experimental. Video refs are converted to per-frame temporal differences, so the mod carries where/how things move and not their appearance. Compressed mode only; stills keep their appearance.',
+        multiplier_help:
+            'Repeat the extracted ref N times along time so a short video/GIF is not drowned out by the main video\u2019s tokens. 1 = no repeat; file size grows with N.',
+        max_tokens_help:
+            'Hard cap on the total tokens the mod injects (0 = no cap; 5120 is a good default). If the refs exceed it, near-duplicate latent frames are dropped first, then frames are resampled to fit.',
+        optimize_steps_help:
+            'Compressed mode only. Gradient steps that refine the pooled latent to reduce its reconstruction error. 0 = pooling alone, no refinement. This is not identity strength and does not train H3; the mod still carries concept/motion, not fine identity. Default 500.',
+        audio_max_seconds_help:
+            'Max length of the audio reference in seconds; the node truncates longer clips to this.',
+        audio_max_tokens_help:
+            'Token budget for the audio reference (0 = no cap). The audio VAE encodes up to this many tokens.',
     },
     presets: {
         title: 'Presets',
@@ -471,6 +504,36 @@ const translation = {
         [statusEnum.ERROR]: 'Error',
         [statusEnum.INTERRUPTED]: 'Interrupted',
         [statusEnum.CANCELLED]: 'Cancelled',
+    },
+    refmods: {
+        select_mod: 'Select Reference Mod',
+        add: 'Add',
+        strength: 'Strength',
+        copies: 'Copies',
+        search: 'Search mods...',
+        all_kinds: 'All kinds',
+        video: 'Video',
+        image: 'Image',
+        audio: 'Audio',
+        video_n: 'Video %{n}',
+        no_audio: 'No audio',
+        upload_audio: 'Upload audio',
+        no_mods: 'No reference mods found',
+        delete: 'Delete mod',
+        create_panel: 'Create Reference Mod',
+        mod_name: 'Mod name (optional)',
+        extraction_mode: 'Mode',
+        compressed: 'Compressed',
+        full: 'Full',
+        delete_confirm: 'Delete ref mod "%{name}" and its stored files?',
+        import_result: 'Import Result',
+        import_failed: 'Failed to import the reference mod',
+        edit_metadata: 'Edit mod metadata',
+        name: 'Name',
+        save: 'Save',
+        thumb_horizontal: 'Horizontal offset',
+        thumb_vertical: 'Vertical offset',
+        no_thumbnail: 'No thumbnail for this mod',
     },
     errors: {
         missing_controls: 'Missing controls (present in API): %{list}',

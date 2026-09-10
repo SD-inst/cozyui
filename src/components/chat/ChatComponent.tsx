@@ -16,17 +16,15 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    SxProps,
     TextField,
     Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { useImageURLs } from '../../hooks/useImageURL';
-import {
-    ImagePart,
-    MediaRef,
-    useOpenAIChat,
-} from '../../hooks/useOpenAIChat';
+import { useImageURLs, useModThumbURLs } from '../../hooks/useImageURL';
+import { useRefModMeta } from '../../hooks/useRefMods';
+import { ImagePart, MediaRef, useOpenAIChat } from '../../hooks/useOpenAIChat';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useLLMConfig } from '../../hooks/useLLMConfig';
 import { ext } from '../controls/fileExts';
@@ -58,6 +56,8 @@ export type mediaFieldType = {
     name: string;
     kind: 'image' | 'video' | 'audio';
     itemField?: string;
+    /** When set, the item's id is a modId — resolve thumbnail from IndexedDB */
+    idbMod?: boolean;
 };
 
 export const ChatComponent = ({
@@ -65,11 +65,13 @@ export const ChatComponent = ({
     mediaFields,
     systemPrompt = 'You are a helpful assistant.',
     transformFirstMessage,
+    sx,
 }: {
     promptFieldName?: string;
     mediaFields?: mediaFieldType[];
     systemPrompt?: string;
     transformFirstMessage?: (text: string) => string;
+    sx?: SxProps;
 }) => {
     const tr = useTranslate();
     const llmConfig = useLLMConfig();
@@ -90,7 +92,7 @@ export const ChatComponent = ({
     const allMediaFields = mediaFields ?? [];
     const mediaNames = allMediaFields.map((f) => f.name);
     const mediaValues = (mediaNames.length ? watch(mediaNames) : []) as any[];
-    const mediaItems = mediaValues.flatMap((value: any, idx: number) => {
+    const rawItems = mediaValues.flatMap((value: any, idx: number) => {
         const field = allMediaFields[idx];
         if (!field) {
             return [];
@@ -115,13 +117,33 @@ export const ChatComponent = ({
                         (isVideo(filename) || isAudio(filename))
                     ),
             )
-            .map((filename: string) => ({ filename, kind: field.kind }));
+            .map((filename: string) => ({
+                filename,
+                kind: field.kind,
+                idbMod: !!field.idbMod,
+            }));
     });
-    const mediaURLs = useImageURLs(mediaItems.map((m) => m.filename));
-    const mediaRefs: MediaRef[] = mediaItems.map((m, i) => ({
-        url: mediaURLs[i],
-        kind: m.kind,
-    }));
+    // Drop audio-only ref mods: their thumbnail exists for the user, not the
+    // model, so it is never sent to the chat.
+    const rawModIds = rawItems.map((m) => (m.idbMod ? m.filename : undefined));
+    const refModMeta = useRefModMeta(rawModIds);
+    const mediaItems = rawItems.filter((m, i) => {
+        if (m.idbMod) {
+            return refModMeta[i]?.kind !== 'audio';
+        }
+        return true;
+    });
+    const serverFilenames = mediaItems.map((m) =>
+        m.idbMod ? undefined : m.filename,
+    );
+    const modIds = mediaItems.map((m) => (m.idbMod ? m.filename : undefined));
+    const serverURLs = useImageURLs(serverFilenames);
+    const modURLs = useModThumbURLs(modIds);
+    const mediaRefs: MediaRef[] = mediaItems.map((m, i) =>
+        m.idbMod
+            ? { url: modURLs[i] ?? '', kind: m.kind }
+            : { url: serverURLs[i] ?? '', kind: m.kind },
+    );
 
     const {
         messages,
@@ -189,9 +211,7 @@ export const ChatComponent = ({
         );
     };
 
-    const extractFirstMessageText = (
-        content: string | ImagePart[],
-    ): string => {
+    const extractFirstMessageText = (content: string | ImagePart[]): string => {
         const text = Array.isArray(content)
             ? content.find((m) => m.type === 'text')?.text || ''
             : content;
@@ -265,6 +285,7 @@ export const ChatComponent = ({
                 display: 'flex',
                 flexDirection: 'column',
                 mb: 2,
+                ...sx,
             }}
         >
             <Accordion
@@ -487,9 +508,7 @@ export const ChatComponent = ({
                 role='dialog'
                 aria-modal='true'
             >
-                <DialogTitle>
-                    {tr('controls.chat_refine_confirm')}
-                </DialogTitle>
+                <DialogTitle>{tr('controls.chat_refine_confirm')}</DialogTitle>
                 <DialogContent>
                     {tr('controls.chat_refine_confirm_content')}
                 </DialogContent>

@@ -3391,6 +3391,11 @@
                 },
                 "video_image_override": {
                     "id": "handle"
+                },
+                "refmods": {
+                    "id": "handle",
+                    "cond_node_id": "105:104",
+                    "cond_consumer_node_id": "105:16"
                 }
             },
             "handler_options": {
@@ -3548,6 +3553,11 @@
                 },
                 "video_image_override": {
                     "id": "handle"
+                },
+                "refmods": {
+                    "id": "handle",
+                    "cond_node_id": "105:104",
+                    "cond_consumer_node_id": "105:16"
                 }
             },
             "handler_options": {
@@ -3562,7 +3572,7 @@
                 }
             },
             "result": {
-                "id": "140",
+                "id": "138",
                 "type": "gifs",
                 "create_video_node_id": "105:121"
             },
@@ -3720,6 +3730,11 @@
                 },
                 "video_image_override": {
                     "id": "handle"
+                },
+                "refmods": {
+                    "id": "handle",
+                    "cond_node_id": "105:104",
+                    "cond_consumer_node_id": "105:16"
                 }
             },
             "handler_options": {
@@ -3747,6 +3762,92 @@
                 "turbo_lora.lora_name": "h3/minimax_h3_ref2v_turbo_8step_v1.0_768p_comfyui_lightx2v_bf16.safetensors",
                 "seed": 1024,
                 "prompt": "subject_definitions:\n<Subject 1> is the visual content (e.g. a character, background, or motion) in <Picture 1>, <Picture 2>, etc. \u2014 the primary visual reference.\n<Subject 2> is the visual content in <Video 1>, <Video 2>, etc. \u2014 the primary video reference.\n<Audio 1> is the voice-timbre reference for the target video.\n\nsummary:\n[reference generation + audio reference] The target video combines visual elements from the reference images and videos, with <Audio 1> as the voice-timbre reference.\n\nretention_analysis:\n<Subject 1> (appears in [Shot 1], [Shot 2], [Shot 3]): fully_preserved \u2014 describe the visual elements from the reference.\n<Subject 2> (appears in [Shot 1], [Shot 2]): fully_preserved \u2014 describe the visual elements from the reference.\n<Audio 1> is the voice-timbre reference for <Subject 1> (S1), containing a spoken English vocal layer.\n\ndetailed_description:\nThe target video uses a realistic multi-camera style.\n[Shot 1] A shot establishes the scene using visual elements from the reference images and videos. Characters and objects from the references appear and interact.\n\noverall_soundscape:\n\nnon_diegetic_music: N/A"
+            }
+        },
+        "RefMod Manager": {
+            "api": "api/refmod_create.json",
+            "controls": {
+                "mod_name": {
+                    "id": "1",
+                    "field": "name"
+                },
+                "ref_images": {
+                    "id": "handle",
+                    "node_id": "1"
+                },
+                "ref_videos": {
+                    "id": "handle",
+                    "node_id": "1"
+                },
+                "audio_source": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "order": 101
+                },
+                "audio_file": {
+                    "id": "skip",
+                    "order": 101
+                },
+                "refmod_output": {
+                    "id": "handle",
+                    "node_id": "3",
+                    "field": "output_filename"
+                },
+                "mode": {
+                    "id": "1",
+                    "field": "mode"
+                },
+                "optimize_steps": {
+                    "id": "1",
+                    "field": "identity"
+                },
+                "ref_resolution": {
+                    "id": "1",
+                    "field": "ref_resolution"
+                },
+                "latent_frames": {
+                    "id": "1",
+                    "field": "latent_frames"
+                },
+                "merge": {
+                    "id": "1",
+                    "field": "merge"
+                },
+                "motion_only": {
+                    "id": "1",
+                    "field": "motion_only"
+                },
+                "multiplier": {
+                    "id": "1",
+                    "field": "multiplier"
+                },
+                "max_tokens": {
+                    "id": "1",
+                    "field": "max_tokens"
+                },
+                "audio_max_seconds": {
+                    "id": "1",
+                    "field": "audio_max_seconds"
+                },
+                "audio_max_tokens": {
+                    "id": "1",
+                    "field": "audio_max_tokens"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": [],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "3",
+                "type": "text"
             }
         }
     },

@@ -19,9 +19,11 @@ import { TextInput } from '../../controls/TextInput';
 import { MiniMaxH3ImageOverride } from '../../controls/MiniMaxH3ImageOverride';
 import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { VideoImageResult } from '../../controls/VideoImageResult';
+import { ModArrayInput } from '../../controls/ModArrayInput';
 import { WFTab } from '../../WFTab';
 import { useMiniMaxH3PDDHandler } from '../../../hooks/useMiniMaxH3PDDHandler';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHandler';
 import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ChatComponent } from '../../chat/ChatComponent';
@@ -38,13 +40,26 @@ const Content = () => {
         length === 0 ? miniMaxH3T2VImageSystemPrompt : miniMaxH3T2VSystemPrompt;
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     useRegisterHandler({ name: 'pdd', handler: pddHandler });
+    const refModHandler = useMiniMaxH3RefModHandler();
+    useRegisterHandler({ name: 'refmods', handler: refModHandler });
+
     return (
         <Layout>
             <GridLeft>
                 <TextInput name='prompt' multiline />
+                <ModArrayInput name='refmods' max={8} />
                 <ChatComponent
                     systemPrompt={systemPrompt}
                     transformFirstMessage={transformFirstMessage}
+                    mediaFields={[
+                        {
+                            name: 'refmods',
+                            kind: 'image',
+                            itemField: 'id',
+                            idbMod: true,
+                        },
+                    ]}
+                    sx={{mt: 2}}
                 />
                 <MiniMaxH3ResolutionSelector
                     name='aspect_ratio'

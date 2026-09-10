@@ -21,6 +21,8 @@ import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
 import { useMiniMaxH3PDDHandler } from '../../../hooks/useMiniMaxH3PDDHandler';
 import { useMiniMaxH3TurboHandler } from '../../../hooks/useMiniMaxH3TurboHandler';
+import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHandler';
+import { ModArrayInput } from '../../controls/ModArrayInput';
 import { useTranslate } from '../../../i18n/I18nContext';
 import { controlType } from '../../../redux/config';
 import { ChatComponent } from '../../chat/ChatComponent';
@@ -80,7 +82,11 @@ const ReferenceImages = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
 
     const handler = useEventCallback(
-        (api: Workflow, value: Array<{ image: string }>, control: controlType) => {
+        (
+            api: Workflow,
+            value: Array<{ image: string }>,
+            control: controlType,
+        ) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
@@ -175,7 +181,11 @@ const ReferenceImages = ({ name }: { name: string }) => {
 
 const ReferenceAudio = ({ name }: { name: string }) => {
     const handler = useEventCallback(
-        (api: Workflow, value: Array<{ audio: string }>, control: controlType) => {
+        (
+            api: Workflow,
+            value: Array<{ audio: string }>,
+            control: controlType,
+        ) => {
             if (!value || !value.length || !control.node_id) {
                 return;
             }
@@ -505,6 +515,8 @@ const Content = () => {
         length === 0 ? miniMaxH3R2VImageSystemPrompt : miniMaxH3R2VSystemPrompt;
     useRegisterHandler({ name: 'turbo', handler: turboHandler });
     useRegisterHandler({ name: 'pdd', handler: pddHandler });
+    const refModHandler = useMiniMaxH3RefModHandler();
+    useRegisterHandler({ name: 'refmods', handler: refModHandler });
     return (
         <Layout>
             <GridLeft>
@@ -516,6 +528,7 @@ const Content = () => {
                     <Box display='flex' flexDirection='column' gap={3}>
                         <ReferenceImages name='ref_images' />
                         <ReferenceVideos name='ref_videos' />
+                        <ModArrayInput name='refmods' max={8} />
                         <ReferenceAudio name='ref_audio' />
                     </Box>
                 </SectionAccordion>
@@ -523,6 +536,12 @@ const Content = () => {
                 <ChatComponent
                     systemPrompt={systemPrompt}
                     mediaFields={[
+                        {
+                            name: 'refmods',
+                            kind: 'image',
+                            itemField: 'id',
+                            idbMod: true,
+                        },
                         {
                             name: 'ref_images',
                             kind: 'image',
