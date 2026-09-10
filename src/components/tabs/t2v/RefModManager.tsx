@@ -1,6 +1,10 @@
 import { Delete } from '@mui/icons-material';
 import {
     Box,
+    Button,
+    Dialog,
+    DialogActions,
+    DialogTitle,
     IconButton,
     MenuItem,
     Select,
@@ -37,6 +41,42 @@ import { genId } from '../../../utils/id';
 import { useRefModOutputHandler } from '../../../hooks/useRefModOutputHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 
+// Derives the preview thumbnail from the source media once. The bundle's mods
+// share the same look (only the kind differs), so this is extracted a single
+// time and reused across every RefMod created from the run.
+const extractThumbnail = async (
+    sourceName: string | null,
+    apiUrl: string,
+): Promise<Blob | null> => {
+    if (!sourceName || !apiUrl) return null;
+    const sourceUrl = `${apiUrl}/api/view?filename=${sourceName}&output_folder=output&type=input`;
+    const sourceResp = await fetch(sourceUrl);
+    const sourceBlob = await sourceResp.blob();
+    if (sourceBlob.type.startsWith('video/')) {
+        const videoUrl = URL.createObjectURL(sourceBlob);
+        const video = document.createElement('video');
+        video.src = videoUrl;
+        video.muted = true;
+        await new Promise<void>((resolve) => {
+            video.addEventListener(
+                'loadeddata',
+                () => resolve(),
+                { once: true },
+            );
+        });
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvas.getContext('2d')!.drawImage(video, 0, 0);
+        const png = await new Promise<Blob>((resolve) =>
+            canvas.toBlob((b) => resolve(b!), 'image/png'),
+        );
+        URL.revokeObjectURL(videoUrl);
+        return png;
+    }
+    return sourceBlob;
+};
+
 const LibraryPanel = () => {
     const tr = useTranslate();
     const [search, setSearch] = useState('');
@@ -55,8 +95,18 @@ const LibraryPanel = () => {
     }, [mods, search, filterKind]);
 
     return (
-        <Box display='flex' flexDirection='column' gap={2} height='100%'>
-            <Box display='flex' gap={1} alignItems='center'>
+        <Box
+            display='flex'
+            flexDirection='column'
+            gap={2}
+            sx={{ maxHeight: 'calc(100vh - 180px)' }}
+        >
+            <Box
+                display='flex'
+                gap={1}
+                alignItems='center'
+                sx={{ flexShrink: 0 }}
+            >
                 <TextField
                     size='small'
                     fullWidth
@@ -76,7 +126,12 @@ const LibraryPanel = () => {
                     <MenuItem value='audio'>{tr('refmods.audio')}</MenuItem>
                 </Select>
             </Box>
-            <Box display='flex' flexWrap='wrap' gap={1}>
+            <Box
+                display='flex'
+                flexWrap='wrap'
+                gap={1}
+                sx={{ overflowY: 'auto', flexGrow: 1 }}
+            >
                 {filteredMods.map((mod: RefMod) => (
                     <ModCard key={mod.id} mod={mod} />
                 ))}
@@ -94,6 +149,7 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
     const tr = useTranslate();
     const theme = useTheme();
     const [url, setUrl] = useState('');
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const file = useLiveQuery(
         async () =>
@@ -112,10 +168,13 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
         }
     }, [file]);
 
-    const handleDelete = async () => {
-        await db.refModFiles.where({ mod: mod.id }).delete();
-        await db.refMods.delete(mod.id);
-    };
+    const handleDelete = useEventCallback(async () => {
+        await db.transaction('rw', db.refMods, db.refModFiles, async () => {
+            await db.refModFiles.where({ mod: mod.id }).delete();
+            await db.refMods.delete(mod.id);
+        });
+        setConfirmDelete(false);
+    });
 
     return (
         <Box
@@ -170,7 +229,7 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                             color: 'white',
                             '&:hover': { bgcolor: 'rgba(200,0,0,0.8)' },
                         }}
-                        onClick={handleDelete}
+                        onClick={() => setConfirmDelete(true)}
                     >
                         <Delete fontSize='small' />
                     </IconButton>
@@ -184,6 +243,19 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                     {mod.kind} | {mod.tokens?.toLocaleString()} tok
                 </Typography>
             </Box>
+            <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+                <DialogTitle>
+                    {tr('refmods.delete_confirm', { name: mod.name })}
+                </DialogTitle>
+                <DialogActions>
+                    <Button onClick={handleDelete} color='error'>
+                        {tr('controls.ok')}
+                    </Button>
+                    <Button onClick={() => setConfirmDelete(false)}>
+                        {tr('controls.cancel')}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 };
@@ -211,9 +283,10 @@ const useRefModFilesHandler = (nodeField: string) => {
     );
 };
 
-// Reference videos are loaded as videos: each one's frames feed a
-// `ref_video_N` visual ref. The Master node has a single `audio` input, so
-// the audio source is chosen separately via `audio_source`:
+// `ref_videos` is video-only — the inner FileUpload and the ArrayInput DnD
+// both accept VIDEO (acceptedTypes), so every entry is a visual ref
+// (LoadVideo → GetVideoComponents → `ref_video_N`). Audio is chosen
+// separately via `audio_source`:
 //   - "video:<n>"  → the n-th uploaded video's own audio track
 //   - "upload"     → a standalone audio file loaded from `audio_file`
 //   - anything else ("none") → no audio
@@ -224,10 +297,11 @@ const useRefModVideoHandler = (
     return useEventCallback(
         (api: Workflow, value: any, control: controlType) => {
             if (!control.node_id) return;
-            if (!value || !value.length) return;
 
             const uploadedComponents: string[] = [];
-            value.forEach((v: { image?: string }, idx: number) => {
+            let videoIdx = 0;
+
+            (value ?? []).forEach((v: { image?: string }) => {
                 if (!v?.image) return;
 
                 const baseID = insertGraph(api, {
@@ -243,9 +317,9 @@ const useRefModVideoHandler = (
                     },
                 });
                 const componentsNodeID = baseID + ':components';
-
                 api[baseID + ':video'].inputs.file = v.image;
-                api[control.node_id].inputs['ref_video_' + (idx + 1)] = [
+                videoIdx += 1;
+                api[control.node_id].inputs['ref_video_' + videoIdx] = [
                     componentsNodeID,
                     0,
                 ];
@@ -256,7 +330,10 @@ const useRefModVideoHandler = (
                 const n = parseInt(audioSource.slice(6));
                 const componentsNodeID = uploadedComponents[n - 1];
                 if (componentsNodeID) {
-                    api[control.node_id].inputs.audio = [componentsNodeID, 1];
+                    api[control.node_id].inputs.audio = [
+                        componentsNodeID,
+                        1,
+                    ];
                 }
             } else if (audioSource === 'upload' && audioFile) {
                 const audioNodeID = getFreeNodeId(api) + '';
@@ -278,7 +355,6 @@ const CreateModPanel = () => {
     const results = useResult();
     const [isProcessing, setIsProcessing] = useState(false);
     const { setValue } = useFormContext();
-    const modName = useWatch({ name: 'mod_name' });
     const refModOutputHandler = useRefModOutputHandler();
     useRegisterHandler({ name: 'refmod_output', handler: refModOutputHandler });
     useController({ name: 'refmod_output', defaultValue: '' });
@@ -286,6 +362,7 @@ const CreateModPanel = () => {
     useRegisterHandler({ name: 'ref_images', handler: refImagesHandler });
     const audioSource = useWatch({ name: 'audio_source' });
     const audioFile = useWatch({ name: 'audio_file' });
+    const mode = useWatch({ name: 'mode' });
     // The audio connection is made by the ref_videos handler (it owns the
     // per-video components nodes); these two controls only keep the form
     // fields registered so the button can read their values.
@@ -299,9 +376,6 @@ const CreateModPanel = () => {
 
     const refImages = useWatch({ name: 'ref_images' });
     const refVideos = useWatch({ name: 'ref_videos' });
-    const hasVideos = (refVideos ?? []).some(
-        (v: { image?: string }) => !!v?.image,
-    );
     const videoCount = (refVideos ?? []).filter(
         (v: { image?: string }) => !!v?.image,
     ).length;
@@ -329,86 +403,69 @@ const CreateModPanel = () => {
         (async () => {
             setIsProcessing(true);
             try {
-                const modResult = results[0];
-                if (!modResult) throw new Error('No result found');
+                if (!results.length) throw new Error('No result found');
 
-                const filename =
-                    (typeof modResult === 'string'
-                        ? modResult
-                        : modResult.filename) + '.safetensors';
-                const resultUrl = `${apiUrl}/api/view?filename=${filename}&subfolder=&type=output`;
-                const response = await fetch(resultUrl);
-                const blob = await response.blob();
-                const file = new File([blob], filename);
-                const meta = await parseSafetensorsMeta(file);
-                const id = genId();
-
-                await db.refMods.add({
-                    id,
-                    name: modName || meta.name || `RefMod_${Date.now()}`,
-                    kind: (meta.kind as 'image' | 'video' | 'audio') || 'video',
-                    tokens: meta.tokens || 0,
-                    description: meta.description || '',
-                    conceptType: meta.concept_type || '',
-                    createdAt: Date.now(),
-                    updatedAt: Date.now(),
-                    shape: [meta.latent_t, meta.latent_h, meta.latent_w],
-                    mode: (meta.mode as 'encode' | 'training') || 'encode',
-                });
-
+                // Extract the shared preview once; the bundle's mods share the
+                // same look, only the kind differs per saved file.
                 const sourceName =
                     (refImages as any[])?.[0]?.image ||
                     (refVideos as any[])?.[0]?.image ||
                     null;
-                if (sourceName && apiUrl) {
-                    const sourceUrl = `${apiUrl}/api/view?filename=${sourceName}&output_folder=output&type=input`;
-                    const sourceResp = await fetch(sourceUrl);
-                    const sourceBlob = await sourceResp.blob();
-                    let thumbnailBlob: Blob;
-                    if (sourceBlob.type.startsWith('video/')) {
-                        const videoUrl = URL.createObjectURL(sourceBlob);
-                        const video = document.createElement('video');
-                        video.src = videoUrl;
-                        video.muted = true;
-                        await new Promise<void>((resolve) => {
-                            video.addEventListener(
-                                'loadeddata',
-                                () => resolve(),
-                                { once: true },
-                            );
-                        });
-                        const canvas = document.createElement('canvas');
-                        canvas.width = video.videoWidth;
-                        canvas.height = video.videoHeight;
-                        canvas.getContext('2d')!.drawImage(video, 0, 0);
-                        thumbnailBlob = await new Promise<Blob>((resolve) =>
-                            canvas.toBlob((b) => resolve(b!), 'image/png'),
+                const thumbnailBlob = await extractThumbnail(sourceName, apiUrl);
+
+                // One RefMod per saved file: the Master emits a mod per distinct
+                // reference (visual and/or audio), so each file becomes its own
+                // RefMod (same preview, kind from that file's metadata).
+                for (const entry of results) {
+                    const filename =
+                        (typeof entry === 'string' ? entry : entry.filename) +
+                        '.safetensors';
+                    const resultUrl = `${apiUrl}/api/view?filename=${filename}&subfolder=&type=output`;
+                    const response = await fetch(resultUrl);
+                    const blob = await response.blob();
+                    const file = new File([blob], filename);
+                    const meta = await parseSafetensorsMeta(file);
+                    const id = genId();
+                    // Per-file name from the safetensors (e.g. "Character_visual" /
+                    // "Character_audio") — distinct per mod, no random suffix.
+                    const baseName = filename.replace(/\.safetensors$/, '');
+
+                    await db.refMods.add({
+                        id,
+                        name: meta.name || baseName,
+                        kind: (meta.kind as 'image' | 'video' | 'audio') || 'video',
+                        tokens: meta.tokens || 0,
+                        description: meta.description || '',
+                        conceptType: meta.concept_type || '',
+                        createdAt: Date.now(),
+                        updatedAt: Date.now(),
+                        shape: [meta.latent_t, meta.latent_h, meta.latent_w],
+                        mode: (meta.mode as 'encode' | 'training') || 'encode',
+                    });
+
+                    if (thumbnailBlob) {
+                        const thumbFile = new File(
+                            [thumbnailBlob],
+                            'thumbnail.png',
+                            { type: 'image/png' },
                         );
-                        URL.revokeObjectURL(videoUrl);
-                    } else {
-                        thumbnailBlob = sourceBlob;
+                        await db.refModFiles.add({
+                            id: `${id}/thumbnail`,
+                            mod: id,
+                            filename: 'thumbnail.png',
+                            file: thumbFile,
+                            fileType: 'thumbnail',
+                        });
                     }
-                    const thumbFile = new File(
-                        [thumbnailBlob],
-                        'thumbnail.png',
-                        { type: 'image/png' },
-                    );
+
                     await db.refModFiles.add({
-                        id: `${id}/thumbnail`,
+                        id: `${id}/${file.name}`,
                         mod: id,
-                        filename: 'thumbnail.png',
-                        file: thumbFile,
-                        fileType: 'thumbnail',
+                        filename: file.name,
+                        file: file,
+                        fileType: 'safetensors',
                     });
                 }
-
-                await db.refModFiles.add({
-                    id: `${id}/${file.name}`,
-                    mod: id,
-                    filename: file.name,
-                    file: file,
-                    fileType: 'safetensors',
-                });
 
                 dispatch(clearPrompt());
                 dispatch(delResult({ tab_name: 'RefMod Manager', id: '3' }));
@@ -423,7 +480,6 @@ const CreateModPanel = () => {
         results,
         apiUrl,
         isProcessing,
-        modName,
         refImages,
         refVideos,
         setValue,
@@ -461,14 +517,13 @@ const CreateModPanel = () => {
                     type={UploadType.VIDEO}
                 />
             </ArrayInput>
-            {hasVideos && (
-                <SelectInput
-                    name='audio_source'
-                    label='audio_source'
-                    choices={audioSourceChoices}
-                    sx={{ width: 200 }}
-                />
-            )}
+            <SelectInput
+                name='audio_source'
+                label='audio_source'
+                choices={audioSourceChoices}
+                sx={{ width: 200 }}
+                defaultValue='upload'
+            />
             {audioSource === 'upload' && (
                 <FileUpload name='audio_file' type={UploadType.AUDIO} />
             )}
@@ -487,7 +542,7 @@ const CreateModPanel = () => {
                 min={256}
                 max={2048}
                 step={64}
-                tooltip={tr('refmods.ref_resolution_help')}
+                tooltip='ref_resolution_help'
                 sx={{ flexGrow: 1 }}
             />
             <SliderInput
@@ -496,26 +551,34 @@ const CreateModPanel = () => {
                 min={1}
                 max={64}
                 step={1}
-                tooltip={tr('refmods.latent_frames_help')}
+                tooltip='latent_frames_help'
                 sx={{ flexGrow: 1 }}
             />
-            <ToggleInput
-                name='merge'
-                defaultValue={false}
-                tooltip={tr('refmods.merge_help')}
-            />
-            <ToggleInput
-                name='motion_only'
-                defaultValue={false}
-                tooltip={tr('refmods.motion_only_help')}
-            />
+            <Box
+                sx={{
+                    display: mode === 'training' ? 'flex' : 'none',
+                    flexDirection: 'column',
+                    gap: 2,
+                }}
+            >
+                <ToggleInput
+                    name='merge'
+                    defaultValue={false}
+                    tooltip='merge_help'
+                />
+                <ToggleInput
+                    name='motion_only'
+                    defaultValue={false}
+                    tooltip='motion_only_help'
+                />
+            </Box>
             <SliderInput
                 name='multiplier'
                 defaultValue={1}
                 min={1}
                 max={10}
                 step={1}
-                tooltip={tr('refmods.multiplier_help')}
+                tooltip='multiplier_help'
                 sx={{ flexGrow: 1 }}
             />
             <SliderInput
@@ -524,15 +587,36 @@ const CreateModPanel = () => {
                 min={0}
                 max={20480}
                 step={512}
-                tooltip={tr('refmods.max_tokens_help')}
+                tooltip='max_tokens_help'
+                sx={{ flexGrow: 1 }}
+            />
+            <Box sx={{ display: mode === 'training' ? 'block' : 'none' }}>
+                <SliderInput
+                    name='optimize_steps'
+                    defaultValue={500}
+                    min={0}
+                    max={1000}
+                    step={1}
+                    tooltip='optimize_steps_help'
+                    sx={{ flexGrow: 1 }}
+                />
+            </Box>
+            <SliderInput
+                name='audio_max_seconds'
+                defaultValue={30}
+                min={0.025}
+                max={600}
+                step={0.5}
+                tooltip='audio_max_seconds_help'
                 sx={{ flexGrow: 1 }}
             />
             <SliderInput
-                name='optimize_steps'
-                defaultValue={500}
+                name='audio_max_tokens'
+                defaultValue={5120}
                 min={0}
-                max={1000}
-                step={1}
+                max={20480}
+                step={512}
+                tooltip='audio_max_tokens_help'
                 sx={{ flexGrow: 1 }}
             />
         </Box>

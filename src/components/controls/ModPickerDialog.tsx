@@ -6,13 +6,16 @@ import {
     DialogActions,
     DialogContent,
     DialogTitle,
+    MenuItem,
+    Select,
     Slider,
     Stack,
+    TextField,
     Typography,
     useTheme,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { db, RefMod } from '../history/db';
 import { useTranslate } from '../../i18n/I18nContext';
@@ -29,9 +32,22 @@ export const ModPickerDialog = ({
 }) => {
     const tr = useTranslate();
     const theme = useTheme();
-    const mods = useLiveQuery(async () => db.refMods.toArray(), []) ?? [];
+    const mods = useLiveQuery(async () => db.refMods.toArray(), []);
     const [selectedMod, setSelectedMod] = useState<RefMod | null>(null);
     const [strength, setStrength] = useState(1.0);
+    const [search, setSearch] = useState('');
+    const [filterKind, setFilterKind] = useState('');
+
+    const filteredMods = useMemo(() => {
+        return (mods ?? []).filter((mod: RefMod) => {
+            const q = search.toLowerCase();
+            const matchesSearch =
+                mod.name.toLowerCase().includes(q) ||
+                mod.description?.toLowerCase().includes(q);
+            const matchesKind = !filterKind || mod.kind === filterKind;
+            return matchesSearch && matchesKind;
+        });
+    }, [mods, search, filterKind]);
 
     const handleAdd = () => {
         if (!selectedMod) return;
@@ -46,8 +62,28 @@ export const ModPickerDialog = ({
             <DialogTitle>{tr('refmods.select_mod')}</DialogTitle>
             <DialogContent>
                 <Stack spacing={2} sx={{ minWidth: 300 }}>
+                    <Box display='flex' gap={1} alignItems='center'>
+                        <TextField
+                            size='small'
+                            fullWidth
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder={tr('refmods.search')}
+                        />
+                        <Select
+                            size='small'
+                            value={filterKind}
+                            onChange={(e) => setFilterKind(e.target.value)}
+                            sx={{ width: 120 }}
+                        >
+                            <MenuItem value=''>{tr('refmods.all_kinds')}</MenuItem>
+                            <MenuItem value='video'>{tr('refmods.video')}</MenuItem>
+                            <MenuItem value='image'>{tr('refmods.image')}</MenuItem>
+                            <MenuItem value='audio'>{tr('refmods.audio')}</MenuItem>
+                        </Select>
+                    </Box>
                     <Box display='flex' flexWrap='wrap' gap={1}>
-                        {mods.map((mod: RefMod) => (
+                        {filteredMods.map((mod: RefMod) => (
                             <Box
                                 key={mod.id}
                                 onClick={() => setSelectedMod(mod)}
@@ -83,13 +119,18 @@ export const ModPickerDialog = ({
                                         textOverflow: 'ellipsis',
                                         whiteSpace: 'nowrap',
                                     }}
-                                >
-                                    {mod.name}
-                                </Box>
-                            </Box>
-                        ))}
-                    </Box>
-                    <Stack spacing={1}>
+                                 >
+                                     {mod.name}
+                                 </Box>
+                             </Box>
+                         ))}
+                         {filteredMods.length === 0 && (
+                             <Typography color='grey' variant='body2'>
+                                 {tr('refmods.no_mods')}
+                             </Typography>
+                         )}
+                     </Box>
+                     <Stack spacing={1}>
                         <Typography variant='body2'>
                             {tr('refmods.strength')}: {strength.toFixed(2)}
                         </Typography>
