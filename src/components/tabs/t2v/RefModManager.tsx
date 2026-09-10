@@ -60,11 +60,9 @@ const extractThumbnail = async (
         video.src = videoUrl;
         video.muted = true;
         await new Promise<void>((resolve) => {
-            video.addEventListener(
-                'loadeddata',
-                () => resolve(),
-                { once: true },
-            );
+            video.addEventListener('loadeddata', () => resolve(), {
+                once: true,
+            });
         });
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth;
@@ -250,7 +248,10 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                     {mod.kind} | {mod.tokens?.toLocaleString()} tok
                 </Typography>
             </Box>
-            <Dialog open={confirmDelete} onClose={() => setConfirmDelete(false)}>
+            <Dialog
+                open={confirmDelete}
+                onClose={() => setConfirmDelete(false)}
+            >
                 <DialogTitle>
                     {tr('refmods.delete_confirm', { name: mod.name })}
                 </DialogTitle>
@@ -343,10 +344,7 @@ const useRefModVideoHandler = (
                 const n = parseInt(audioSource.slice(6));
                 const componentsNodeID = uploadedComponents[n - 1];
                 if (componentsNodeID) {
-                    api[control.node_id].inputs.audio = [
-                        componentsNodeID,
-                        1,
-                    ];
+                    api[control.node_id].inputs.audio = [componentsNodeID, 1];
                 }
             } else if (audioSource === 'upload' && audioFile) {
                 const audioNodeID = getFreeNodeId(api) + '';
@@ -382,7 +380,7 @@ const CreateModPanel = () => {
     const noopHandler = useEventCallback(() => {});
     useRegisterHandler({ name: 'audio_source', handler: noopHandler });
     useRegisterHandler({ name: 'audio_file', handler: noopHandler });
-    useController({ name: 'audio_source', defaultValue: 'video:1' });
+    useController({ name: 'audio_source', defaultValue: 'upload' });
     useController({ name: 'audio_file', defaultValue: '' });
     const refVideosHandler = useRefModVideoHandler(audioSource, audioFile);
     useRegisterHandler({ name: 'ref_videos', handler: refVideosHandler });
@@ -424,7 +422,10 @@ const CreateModPanel = () => {
                     (refImages as any[])?.[0]?.image ||
                     (refVideos as any[])?.[0]?.image ||
                     null;
-                const thumbnailBlob = await extractThumbnail(sourceName, apiUrl);
+                const thumbnailBlob = await extractThumbnail(
+                    sourceName,
+                    apiUrl,
+                );
 
                 // One RefMod per saved file: the Master emits a mod per distinct
                 // reference (visual and/or audio), so each file becomes its own
@@ -446,7 +447,9 @@ const CreateModPanel = () => {
                     await db.refMods.add({
                         id,
                         name: meta.name || baseName,
-                        kind: (meta.kind as 'image' | 'video' | 'audio') || 'video',
+                        kind:
+                            (meta.kind as 'image' | 'video' | 'audio') ||
+                            'video',
                         tokens: meta.tokens || 0,
                         description: meta.description || '',
                         conceptType: meta.concept_type || '',
@@ -535,7 +538,6 @@ const CreateModPanel = () => {
                 label='audio_source'
                 choices={audioSourceChoices}
                 sx={{ width: 200 }}
-                defaultValue='upload'
             />
             {audioSource === 'upload' && (
                 <FileUpload name='audio_file' type={UploadType.AUDIO} />
