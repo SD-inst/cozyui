@@ -5,7 +5,7 @@ import { useWatch } from 'react-hook-form';
 import Lightbox from 'yet-another-react-lightbox';
 import { ArrayInput } from './ArrayInput';
 import { SliderInput } from './SliderInput';
-import { useModPicker } from './ModPickerDialog';
+import { useModPicker } from '../../hooks/useModPicker';
 import { db } from '../history/db';
 import { useModThumbURLs } from '../../hooks/useImageURL';
 import { useRefModMeta, refModThumbStyle } from '../../hooks/useRefMods';
