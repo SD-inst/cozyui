@@ -537,6 +537,12 @@ const Content = () => {
                     systemPrompt={systemPrompt}
                     mediaFields={[
                         {
+                            name: 'refmods',
+                            kind: 'image',
+                            itemField: 'id',
+                            idbMod: true,
+                        },
+                        {
                             name: 'ref_images',
                             kind: 'image',
                             itemField: 'image',
@@ -550,12 +556,6 @@ const Content = () => {
                             name: 'ref_audio',
                             kind: 'audio',
                             itemField: 'audio',
-                        },
-                        {
-                            name: 'refmods',
-                            kind: 'image',
-                            itemField: 'id',
-                            idbMod: true,
                         },
                     ]}
                     transformFirstMessage={transformFirstMessage}

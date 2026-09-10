@@ -17,7 +17,12 @@
             "motion_only": false,
             "background_retention": 0.0,
             "description": "",
-            "save": false
+            "save": false,
+            "audio_max_seconds": 30,
+            "audio_max_tokens": 5120,
+            "audio_budget_policy": "error",
+            "audio_concept_type": "voice",
+            "max_total_tokens": 0
         },
         "class_type": "MiniMaxH3RefModMasterExtract",
         "_meta": {

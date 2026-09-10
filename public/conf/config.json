@@ -3785,8 +3785,7 @@
                     "order": 101
                 },
                 "audio_file": {
-                    "id": "handle",
-                    "node_id": "1",
+                    "id": "skip",
                     "order": 101
                 },
                 "refmod_output": {
@@ -3825,6 +3824,14 @@
                 "max_tokens": {
                     "id": "1",
                     "field": "max_tokens"
+                },
+                "audio_max_seconds": {
+                    "id": "1",
+                    "field": "audio_max_seconds"
+                },
+                "audio_max_tokens": {
+                    "id": "1",
+                    "field": "audio_max_tokens"
                 }
             },
             "handler_options": {
@@ -3840,7 +3847,7 @@
             },
             "result": {
                 "id": "3",
-                "type": "filename"
+                "type": "text"
             }
         }
     },

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApiURL } from './useApiURL';
 import { db } from '../components/history/db';
 
@@ -34,15 +34,19 @@ export const useModThumbURLs = (modIds: Array<string | undefined>) => {
         modIds.map(() => undefined),
     );
     const idsKey = modIds.join(',');
+    // Latest-ids ref so the effect can read the current ids without listing
+    // the (unstable) array as a dependency; the reactive key is idsKey.
+    const idsRef = useRef(modIds);
+    idsRef.current = modIds;
 
     useEffect(() => {
         let cancelled = false;
         if (!idsKey) {
-            setFiles(modIds.map(() => undefined));
+            setFiles(idsRef.current.map(() => undefined));
             return;
         }
         Promise.all(
-            modIds.map(async (id) => {
+            idsRef.current.map(async (id) => {
                 if (!id) return undefined;
                 const file = await db.refModFiles
                     .where({ mod: id })
@@ -58,7 +62,6 @@ export const useModThumbURLs = (modIds: Array<string | undefined>) => {
         return () => {
             cancelled = true;
         };
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [idsKey]);
 
     useEffect(() => {

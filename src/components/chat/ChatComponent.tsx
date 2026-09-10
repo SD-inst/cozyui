@@ -23,6 +23,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { useImageURLs, useModThumbURLs } from '../../hooks/useImageURL';
+import { useRefModMeta } from '../../hooks/useRefMods';
 import { ImagePart, MediaRef, useOpenAIChat } from '../../hooks/useOpenAIChat';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useLLMConfig } from '../../hooks/useLLMConfig';
@@ -91,7 +92,7 @@ export const ChatComponent = ({
     const allMediaFields = mediaFields ?? [];
     const mediaNames = allMediaFields.map((f) => f.name);
     const mediaValues = (mediaNames.length ? watch(mediaNames) : []) as any[];
-    const mediaItems = mediaValues.flatMap((value: any, idx: number) => {
+    const rawItems = mediaValues.flatMap((value: any, idx: number) => {
         const field = allMediaFields[idx];
         if (!field) {
             return [];
@@ -121,6 +122,16 @@ export const ChatComponent = ({
                 kind: field.kind,
                 idbMod: !!field.idbMod,
             }));
+    });
+    // Drop audio-only ref mods: their thumbnail exists for the user, not the
+    // model, so it is never sent to the chat.
+    const rawModIds = rawItems.map((m) => (m.idbMod ? m.filename : undefined));
+    const refModMeta = useRefModMeta(rawModIds);
+    const mediaItems = rawItems.filter((m, i) => {
+        if (m.idbMod) {
+            return refModMeta[i]?.kind !== 'audio';
+        }
+        return true;
     });
     const serverFilenames = mediaItems.map((m) =>
         m.idbMod ? undefined : m.filename,

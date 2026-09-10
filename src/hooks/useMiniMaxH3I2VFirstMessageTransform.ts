@@ -1,5 +1,9 @@
 import { useCallback } from 'react';
 import { useWatch } from 'react-hook-form';
+import {
+    formatRefModsLine,
+    useRefModsForChat,
+} from './useRefMods';
 
 export const useMiniMaxH3I2VFirstMessageTransform = () => {
     const length = useWatch({ name: 'length', defaultValue: 5 });
@@ -10,6 +14,7 @@ export const useMiniMaxH3I2VFirstMessageTransform = () => {
     const aspect = aspectRatio.split(' ')[0];
     const firstFrame = useWatch({ name: 'first_frame' });
     const lastFrame = useWatch({ name: 'last_frame' });
+    const refMods = useRefModsForChat('refmods');
 
     return useCallback(
         (text: string) => {
@@ -25,9 +30,13 @@ export const useMiniMaxH3I2VFirstMessageTransform = () => {
             if (lastFrame) {
                 lines.push(`last_image=Picture ${++picture}`);
             }
+            // The keyframes come first, so ref mods start after them.
+            if (refMods.length) {
+                lines.push(`refmods=${formatRefModsLine(refMods, picture)}`);
+            }
             lines.push(`description=${text}`);
             return lines.join('\n');
         },
-        [length, aspect, firstFrame, lastFrame],
+        [length, aspect, firstFrame, lastFrame, refMods],
     );
 };
