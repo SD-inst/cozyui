@@ -547,6 +547,7 @@ const CreateModPanel = () => {
                     { text: tr('refmods.compressed'), value: 'training' },
                     { text: tr('refmods.full'), value: 'encode' },
                 ]}
+                tooltip='mode_help'
                 sx={{ width: 180 }}
             />
             <SliderInput

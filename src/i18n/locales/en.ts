@@ -424,6 +424,8 @@ const translation = {
             "Increase if audio conditioning is too weak, i.e. the character doesn't follow the speech.",
         audio_cfg_scale:
             'Only has effect if main CFG is enabled. Does two passes per step, allows for more motion and detail at the cost of much slower rendering.',
+        mode_help:
+            'How the reference is encoded into the mod. "Full" encodes it in full — all source frames (up to the frame limit) at the target resolution: highest quality, most tokens. "Compressed" pools it into a smaller latent grid: far fewer tokens and less detail; it also unlocks the merge / motion-only / optimize-steps options below.',
         ref_resolution_help:
             'Target short edge in px (downscale only, never upscaled). "Full" stores at this resolution; "Compressed" encodes smaller. 512 halves the cost; 2048 is max fidelity (4x the tokens of 1024).',
         latent_frames_help:
