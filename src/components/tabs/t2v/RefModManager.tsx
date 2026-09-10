@@ -40,6 +40,8 @@ import { parseSafetensorsMeta } from '../../../utils/safetensors';
 import { genId } from '../../../utils/id';
 import { useRefModOutputHandler } from '../../../hooks/useRefModOutputHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
+import { ModEditDialog } from '../../controls/ModEditDialog';
+import { refModThumbStyle } from '../../../hooks/useRefMods';
 
 // Derives the preview thumbnail from the source media once. The bundle's mods
 // share the same look (only the kind differs), so this is extracted a single
@@ -150,6 +152,7 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
     const theme = useTheme();
     const [url, setUrl] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [editing, setEditing] = useState(false);
 
     const file = useLiveQuery(
         async () =>
@@ -192,17 +195,18 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                     height: 120,
                     bgcolor: theme.palette.grey[100],
                     position: 'relative',
+                    cursor: 'pointer',
                 }}
+                onClick={() => setEditing(true)}
             >
                 {url ? (
                     <img
                         src={url}
                         alt={mod.name}
-                        style={{
-                            width: '100%',
-                            height: '100%',
-                            objectFit: 'cover',
-                        }}
+                        style={refModThumbStyle(
+                            mod.thumbX ?? 50,
+                            mod.thumbY ?? 50,
+                        )}
                     />
                 ) : (
                     <Box
@@ -229,7 +233,10 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                             color: 'white',
                             '&:hover': { bgcolor: 'rgba(200,0,0,0.8)' },
                         }}
-                        onClick={() => setConfirmDelete(true)}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setConfirmDelete(true);
+                        }}
                     >
                         <Delete fontSize='small' />
                     </IconButton>
@@ -256,6 +263,12 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+            <ModEditDialog
+                modId={mod.id}
+                url={url}
+                open={editing}
+                onClose={() => setEditing(false)}
+            />
         </Box>
     );
 };

@@ -1,6 +1,16 @@
-import { useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { db, RefMod } from '../components/history/db';
+
+// Every ref-mod thumbnail is a `cover` crop of the source frame; the stored
+// (x, y) offsets pick the anchor via `object-position`. x: 0 = left, 100 =
+// right; y: 0 = top, 100 = bottom. 50/50 (the default) centers it.
+export const refModThumbStyle = (x: number, y: number): CSSProperties => ({
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+    objectPosition: `${x}% ${y}%`,
+});
 
 // A visual ref mod slot resolved for the chat: only the visual ones are
 // returned, in the order they were added. `index` is 1-based among the visual

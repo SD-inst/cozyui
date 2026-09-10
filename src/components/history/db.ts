@@ -77,6 +77,11 @@ export interface RefMod {
     createdAt: number;
     updatedAt: number;
     serverFilename?: string; // name of the file in the ComfyUI input folder
+    // Thumbnail crop offsets (percent, 0..100, default 50). Applied to every
+    // rendered thumbnail via CSS `object-position`. Horizontal: 0 = left,
+    // 100 = right. Vertical: 0 = top, 100 = bottom.
+    thumbX?: number;
+    thumbY?: number;
 }
 
 export interface RefModFile {

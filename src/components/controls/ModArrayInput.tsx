@@ -8,6 +8,7 @@ import { SliderInput } from './SliderInput';
 import { useModPicker } from './ModPickerDialog';
 import { db } from '../history/db';
 import { useModThumbURLs } from '../../hooks/useImageURL';
+import { useRefModMeta, refModThumbStyle } from '../../hooks/useRefMods';
 
 import 'yet-another-react-lightbox/styles.css';
 
@@ -23,6 +24,7 @@ export const ModThumbnail = memo(({ modId }: { modId: string }) => {
                 .first(),
         [modId],
     );
+    const mod = useLiveQuery(() => db.refMods.get(modId), [modId]);
     useEffect(() => {
         if (file?.file) {
             const u = URL.createObjectURL(file.file);
@@ -35,7 +37,7 @@ export const ModThumbnail = memo(({ modId }: { modId: string }) => {
         <img
             src={url}
             alt=''
-            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+            style={refModThumbStyle(mod?.thumbX ?? 50, mod?.thumbY ?? 50)}
             draggable={false}
         />
     );
@@ -44,10 +46,14 @@ export const ModThumbnail = memo(({ modId }: { modId: string }) => {
 const ModThumbContent = ({
     item,
     url,
+    thumbX,
+    thumbY,
     onClick,
 }: {
     item: any;
     url?: string;
+    thumbX?: number;
+    thumbY?: number;
     onClick?: () => void;
 }) => {
     const theme = useTheme();
@@ -71,7 +77,10 @@ const ModThumbContent = ({
                 <img
                     src={url}
                     alt=''
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    style={refModThumbStyle(
+                        thumbX ?? 50,
+                        thumbY ?? 50,
+                    )}
                     draggable={false}
                 />
             ) : !item?.id ? (
@@ -107,6 +116,9 @@ export const ModArrayInput = ({
     }) as Array<{ id?: string }> | undefined;
     const modIds = useMemo(() => (value ?? []).map((v) => v?.id), [value]);
     const thumbURLs = useModThumbURLs(modIds);
+    // Per-mod crop offsets, parallel to thumbURLs (used to anchor the cover
+    // crop so each thumbnail shows its stored focus region).
+    const modMetas = useRefModMeta(modIds);
 
     // Lightbox: one slide per mod that actually has a thumbnail. Audio-only
     // mods have no thumbnail, so they are skipped and the item→slide mapping
@@ -143,6 +155,8 @@ export const ModArrayInput = ({
         <ModThumbContent
             item={item}
             url={thumbURLs[index]}
+            thumbX={modMetas[index]?.thumbX}
+            thumbY={modMetas[index]?.thumbY}
             onClick={() => openLightbox(index)}
         />
     );
@@ -166,7 +180,10 @@ export const ModArrayInput = ({
                     <img
                         src={url}
                         alt=''
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        style={refModThumbStyle(
+                            modMetas[index]?.thumbX ?? 50,
+                            modMetas[index]?.thumbY ?? 50,
+                        )}
                     />
                 )}
             </Box>

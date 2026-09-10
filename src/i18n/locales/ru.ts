@@ -527,6 +527,12 @@ const translation = {
         delete_confirm: 'Удалить референс-мод "%{name}" вместе с его файлами?',
         import_result: 'Импортировать результат',
         import_failed: 'Не удалось импортировать референс-мод',
+        edit_metadata: 'Редактировать метаданные мода',
+        name: 'Имя',
+        save: 'Сохранить',
+        thumb_horizontal: 'Горизонтальное смещение',
+        thumb_vertical: 'Вертикальное смещение',
+        no_thumbnail: 'Нет миниатюры для этого мода',
     },
     errors: {
         missing_controls: 'Отсутствующие контролы (есть в API): %{list}',

@@ -526,6 +526,12 @@ const translation = {
         delete_confirm: 'Delete ref mod "%{name}" and its stored files?',
         import_result: 'Import Result',
         import_failed: 'Failed to import the reference mod',
+        edit_metadata: 'Edit mod metadata',
+        name: 'Name',
+        save: 'Save',
+        thumb_horizontal: 'Horizontal offset',
+        thumb_vertical: 'Vertical offset',
+        no_thumbnail: 'No thumbnail for this mod',
     },
     errors: {
         missing_controls: 'Missing controls (present in API): %{list}',
