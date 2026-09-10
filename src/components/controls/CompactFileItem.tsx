@@ -1,11 +1,19 @@
 import { CSS } from '@dnd-kit/utilities';
 import { useSortable } from '@dnd-kit/sortable';
-import { Badge, Box, IconButton, useMediaQuery, useTheme } from '@mui/material';
+import {
+    Badge,
+    Box,
+    IconButton,
+    Typography,
+    useMediaQuery,
+    useTheme,
+} from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { memo } from 'react';
 import { UploadType } from './UploadType';
 import { ext } from './fileExts';
 import { useImageURL } from '../../hooks/useImageURL';
+import { useTranslate } from '../../i18n/I18nContext';
 
 export const THUMBNAIL_SIZE = 128;
 export const AUDIO_ITEM_HEIGHT = 48;
@@ -32,6 +40,10 @@ export const CompactFileItem = memo(
         lightboxOpen,
         onOpenControls,
         onUploadLost,
+        isReplaceTarget = false,
+        onItemDragEnter,
+        onItemDragLeave,
+        onItemDrop,
     }: {
         id: string;
         index: number;
@@ -41,8 +53,13 @@ export const CompactFileItem = memo(
         lightboxOpen: (index: number) => void;
         onOpenControls: (index: number) => void;
         onUploadLost: (index: number) => void;
+        isReplaceTarget?: boolean;
+        onItemDragEnter: (index: number) => void;
+        onItemDragLeave: (index: number) => void;
+        onItemDrop: () => void;
     }) => {
         const theme = useTheme();
+        const tr = useTranslate();
         const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
         const fileType = getFileType(filename);
         const imageURL = useImageURL(filename);
@@ -74,6 +91,7 @@ export const CompactFileItem = memo(
         const handleDrop = (e: React.DragEvent) => {
             e.preventDefault();
             e.stopPropagation();
+            onItemDrop();
             const files = e.dataTransfer?.files;
             if (files && files.length > 0) {
                 onReplace(index, files[0]);
@@ -97,7 +115,26 @@ export const CompactFileItem = memo(
                 }}
                 onClick={handleClick}
                 onDrop={handleDrop}
-                onDragOver={(e) => e.preventDefault()}
+                onDragOver={(e) => {
+                    if (e.dataTransfer?.types?.includes('Files')) {
+                        e.preventDefault();
+                    }
+                }}
+                onDragEnter={(e) => {
+                    if (e.dataTransfer?.types?.includes('Files')) {
+                        onItemDragEnter(index);
+                    }
+                }}
+                onDragLeave={(e) => {
+                    if (
+                        (e.currentTarget as HTMLElement).contains(
+                            e.relatedTarget as Node,
+                        )
+                    ) {
+                        return;
+                    }
+                    onItemDragLeave(index);
+                }}
             >
                 {isAudio ? (
                     <Box
@@ -274,6 +311,38 @@ export const CompactFileItem = memo(
                         },
                     }}
                 />
+
+                {isReplaceTarget && (
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            inset: 0,
+                            borderRadius: 1,
+                            border: `2px dashed ${theme.palette.error.main}`,
+                            bgcolor: 'rgba(0,0,0,0.2)',
+                            pointerEvents: 'none',
+                            zIndex: 2,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Typography
+                            variant='caption'
+                            sx={{
+                                color: 'white',
+                                bgcolor: theme.palette.error.main,
+                                px: 0.5,
+                                py: 0.25,
+                                borderRadius: 0.5,
+                                fontSize: 10,
+                                fontWeight: 600,
+                            }}
+                        >
+                            {tr('controls.replace')}
+                        </Typography>
+                    </Box>
+                )}
             </Box>
         );
     },

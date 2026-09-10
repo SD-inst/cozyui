@@ -57,6 +57,7 @@ import {
 } from './CompactFileItem';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
+import { FileUpload } from './FileUpload';
 
 import 'yet-another-react-lightbox/styles.css';
 
@@ -301,6 +302,17 @@ export const ArrayInput = ({
         number | null
     >(null);
 
+    // File-drag feedback (compact media arrays): the index of the slot the
+    // dragged file is over (→ replace), or null (→ the container "adds").
+    const [fileDragOverIndex, setFileDragOverIndex] = useState<number | null>(
+        null,
+    );
+    const [isFileDragOver, setIsFileDragOver] = useState(false);
+    const resetFileDrag = useCallback(() => {
+        setFileDragOverIndex(null);
+        setIsFileDragOver(false);
+    }, []);
+
     // dnd-kit sensors
     const sensors = useSensors(
         useSensor(MouseSensor, {
@@ -383,7 +395,22 @@ export const ArrayInput = ({
     // replaced.
     const isCurrentTab = useIsCurrentTab();
     const acceptsMedia = !listMode;
-    const acceptedTypes = useMemo(() => {
+
+    // The FileUpload child declares the media kind each slot accepts. Compact
+    // mode ignores the FileUpload dropzone, so paste routes clipboard media to
+    // the slot whose declared `type` matches — a video only lands in a video
+    // slot, an image only in an image slot — restoring the FileUpload paste
+    // semantics. Drops keep the broad keyField accept for flexibility.
+    const uploadType = useMemo(() => {
+        for (const c of React.Children.toArray(props.children)) {
+            if (React.isValidElement(c) && c.type === FileUpload) {
+                return (c.props as { type?: UploadType }).type;
+            }
+        }
+        return undefined;
+    }, [props.children]);
+
+    const keyFieldAccept = useMemo<UploadType[]>(() => {
         if (keyField === 'audio') {
             return [UploadType.AUDIO];
         }
@@ -392,6 +419,29 @@ export const ArrayInput = ({
         }
         return [UploadType.IMAGE, UploadType.VIDEO];
     }, [keyField]);
+
+    // Strict slot accept: the FileUpload child's declared `type` (image/video/
+    // audio) decides which media this slot takes, so a dropped or pasted video
+    // only ever lands in a video slot (and an image only in an image slot).
+    // Falls back to the keyField-derived accept when there is no FileUpload
+    // child.
+    const acceptedTypes = useMemo<UploadType[]>(() => {
+        if (uploadType) {
+            switch (uploadType) {
+                case UploadType.IMAGE:
+                    return [UploadType.IMAGE];
+                case UploadType.VIDEO:
+                    return [UploadType.VIDEO];
+                case UploadType.AUDIO:
+                    return [UploadType.AUDIO];
+                case UploadType.IMAGEORVIDEO:
+                    return [UploadType.IMAGE, UploadType.VIDEO];
+                default:
+                    return keyFieldAccept;
+            }
+        }
+        return keyFieldAccept;
+    }, [uploadType, keyFieldAccept]);
 
     const isAcceptedFile = useCallback(
         (file: File): boolean =>
@@ -422,7 +472,22 @@ export const ArrayInput = ({
     const handleContainerDrop = useCallback(
         async (e: React.DragEvent) => {
             e.preventDefault();
-            const files = e.dataTransfer?.files;
+            resetFileDrag();
+            const dt = e.dataTransfer;
+            if (!dt) {
+                return;
+            }
+            // A dropped folder isn't a usable media file; without this check the
+            // folder itself gets uploaded and ends up as a blank thumbnail.
+            if (
+                Array.from(dt.items).some(
+                    (it) => it.webkitGetAsEntry()?.isDirectory,
+                )
+            ) {
+                toast.error(tr('toasts.folders_not_supported'));
+                return;
+            }
+            const files = dt.files;
             if (!files || !files.length) {
                 return;
             }
@@ -431,7 +496,47 @@ export const ArrayInput = ({
                 await appendFiles(accepted);
             }
         },
-        [isAcceptedFile, appendFiles],
+        [isAcceptedFile, appendFiles, resetFileDrag, tr],
+    );
+
+    // Feedback state for file drags: entering/leaving the array shows the "add"
+    // highlight; entering/leaving a slot shows which one would be replaced.
+    // Handlers are stable so the memoized CompactFileItem skips re-render.
+    const handleContainerDragEnter = useCallback(
+        (e: React.DragEvent) => {
+            if (e.dataTransfer?.types?.includes('Files')) {
+                setIsFileDragOver(true);
+            }
+        },
+        [],
+    );
+    const handleContainerDragOver = useCallback(
+        (e: React.DragEvent) => {
+            // Only allow dropping real file drags; this also gives the
+            // "not-allowed" cursor for text/URL drags and keeps the frame off.
+            if (e.dataTransfer?.types?.includes('Files')) {
+                e.preventDefault();
+            }
+        },
+        [],
+    );
+    const handleContainerDragLeave = useCallback(
+        (e: React.DragEvent) => {
+            if ((e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) {
+                return;
+            }
+            resetFileDrag();
+        },
+        [resetFileDrag],
+    );
+    const handleItemDragEnter = useCallback(
+        (index: number) => setFileDragOverIndex(index),
+        [],
+    );
+    const handleItemDragLeave = useCallback(
+        (index: number) =>
+            setFileDragOverIndex((prev) => (prev === index ? null : prev)),
+        [],
     );
 
     const handlePaste = useCallback(
@@ -549,13 +654,23 @@ export const ArrayInput = ({
                             flexWrap='wrap'
                             gap={0.5}
                             alignItems='center'
+                            position='relative'
                             onDrop={
                                 acceptsMedia ? handleContainerDrop : undefined
                             }
                             onDragOver={
                                 acceptsMedia
-                                    ? (e: React.DragEvent) =>
-                                          e.preventDefault()
+                                    ? handleContainerDragOver
+                                    : undefined
+                            }
+                            onDragEnter={
+                                acceptsMedia
+                                    ? handleContainerDragEnter
+                                    : undefined
+                            }
+                            onDragLeave={
+                                acceptsMedia
+                                    ? handleContainerDragLeave
                                     : undefined
                             }
                         >
@@ -588,8 +703,45 @@ export const ArrayInput = ({
                                         setControlsDialogIndex(i)
                                     }
                                     onUploadLost={handleUploadLost}
+                                    isReplaceTarget={
+                                        fileDragOverIndex === index
+                                    }
+                                    onItemDragEnter={handleItemDragEnter}
+                                    onItemDragLeave={handleItemDragLeave}
+                                    onItemDrop={resetFileDrag}
                                 />
                             ))}
+                            {(value.length < max || max === -1) &&
+                                isFileDragOver &&
+                                fileDragOverIndex === null && (
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            inset: 0,
+                                            borderRadius: 2,
+                                            border: `2px dashed ${
+                                                theme.palette.primary.main
+                                            }`,
+                                            pointerEvents: 'none',
+                                            zIndex: 1,
+                                            display: 'flex',
+                                            alignItems: 'flex-end',
+                                            justifyContent: 'center',
+                                            pb: 0.5,
+                                        }}
+                                    >
+                                        <Typography
+                                            variant='caption'
+                                            sx={{
+                                                color:
+                                                    theme.palette.primary.main,
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            {tr('controls.drop_to_add')}
+                                        </Typography>
+                                    </Box>
+                                )}
                             {(value.length < max || max === -1) && (
                                 <Box
                                     onClick={handleCompactAdd}
