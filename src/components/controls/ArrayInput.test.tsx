@@ -38,6 +38,18 @@ vi.mock('../../hooks/useBackupUpload', () => ({
 vi.mock('react-hot-toast', () => ({
     default: { error: vi.fn() },
 }));
+// Compact mode gates its paste listener on the active tab; keep the real
+// TabContext (the harness renders its Provider) but stub the redux-backed hook.
+vi.mock(
+    '../contexts/TabContext',
+    async (importOriginal) => {
+        const actual =
+            await importOriginal<
+                typeof import('../contexts/TabContext')
+            >();
+        return { ...actual, useIsCurrentTab: () => true };
+    },
+);
 
 let control: Control | undefined;
 

@@ -30,9 +30,11 @@ import Video from 'yet-another-react-lightbox/plugins/video';
 import { clone } from 'lodash';
 import React, {
     cloneElement,
+    useCallback,
     PropsWithChildren,
     ReactNode,
     useEffect,
+    useMemo,
     useRef,
     useState,
 } from 'react';
@@ -42,7 +44,7 @@ import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useUploadBackupGuard } from '../../hooks/useUploadBackupGuard';
 import { useReuploadLost } from '../../hooks/useBackupUpload';
-import { useTabName } from '../contexts/TabContext';
+import { useIsCurrentTab, useTabName } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 import { roomForNewSlots } from '../../utils/arraySlots';
 import { UploadType } from './UploadType';
@@ -375,6 +377,109 @@ export const ArrayInput = ({
         }
     };
 
+    // Media arrays (compact thumbnails, not mod pickers, not list mode) support
+    // dropping new files onto the array and pasting from the clipboard to append
+    // them — mirroring the FileUpload dropzone + paste the compact layout
+    // replaced.
+    const isCurrentTab = useIsCurrentTab();
+    const acceptsMedia = !listMode;
+    const acceptedTypes = useMemo(() => {
+        if (keyField === 'audio') {
+            return [UploadType.AUDIO];
+        }
+        if (keyField === 'video') {
+            return [UploadType.VIDEO];
+        }
+        return [UploadType.IMAGE, UploadType.VIDEO];
+    }, [keyField]);
+
+    const isAcceptedFile = useCallback(
+        (file: File): boolean =>
+            acceptedTypes.includes(getFileType(file.name)),
+        [acceptedTypes],
+    );
+
+    const appendFiles = useCallback(
+        async (files: File[]): Promise<number> => {
+            const room = roomForNewSlots(value.length, max, files.length);
+            const toUpload = files.slice(0, room);
+            if (toUpload.length < files.length) {
+                toast.error(tr('toasts.array_overflow'));
+            }
+            try {
+                for (const file of toUpload) {
+                    const filename = await uploadFile(file);
+                    append({ ...clone(newValue), [keyField]: filename });
+                }
+            } catch (err) {
+                toast.error(tr('toasts.error_uploading', { err: err }));
+            }
+            return toUpload.length;
+        },
+        [value.length, max, keyField, newValue, uploadFile, append, tr],
+    );
+
+    const handleContainerDrop = useCallback(
+        async (e: React.DragEvent) => {
+            e.preventDefault();
+            const files = e.dataTransfer?.files;
+            if (!files || !files.length) {
+                return;
+            }
+            const accepted = Array.from(files).filter(isAcceptedFile);
+            if (accepted.length) {
+                await appendFiles(accepted);
+            }
+        },
+        [isAcceptedFile, appendFiles],
+    );
+
+    const handlePaste = useCallback(
+        (e: ClipboardEvent) => {
+            const items = e.clipboardData?.items;
+            if (!items) {
+                return;
+            }
+            const files: File[] = [];
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.kind !== 'file') {
+                    continue;
+                }
+                const file = item.getAsFile();
+                if (!file) {
+                    continue;
+                }
+                // Clipboard images arrive with an empty name; give them a real
+                // extension so ComfyUI's upload handler can classify the type.
+                if (!file.name) {
+                    const extName = file.type.split('/')[1] || 'png';
+                    const named = new File(
+                        [file],
+                        'pasted_' + new Date().getTime() + '.' + extName,
+                        { type: file.type },
+                    );
+                    if (isAcceptedFile(named)) {
+                        files.push(named);
+                    }
+                } else if (isAcceptedFile(file)) {
+                    files.push(file);
+                }
+            }
+            if (files.length) {
+                appendFiles(files);
+            }
+        },
+        [isAcceptedFile, appendFiles],
+    );
+
+    useEffect(() => {
+        if (isCurrentTab && acceptsMedia) {
+            document.addEventListener('paste', handlePaste);
+        }
+        return () => document.removeEventListener('paste', handlePaste);
+    }, [isCurrentTab, acceptsMedia, handlePaste]);
+
     const handleDragEnd = (event: DragEndEvent) => {
         const { active, over } = event;
         if (over && active.id !== over.id) {
@@ -444,6 +549,15 @@ export const ArrayInput = ({
                             flexWrap='wrap'
                             gap={0.5}
                             alignItems='center'
+                            onDrop={
+                                acceptsMedia ? handleContainerDrop : undefined
+                            }
+                            onDragOver={
+                                acceptsMedia
+                                    ? (e: React.DragEvent) =>
+                                          e.preventDefault()
+                                    : undefined
+                            }
                         >
                             {fields.map((field, index) => (
                                 <CompactFileItem
