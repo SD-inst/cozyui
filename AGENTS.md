@@ -973,6 +973,8 @@ yarn lint --fix      # runs eslint . --fix
 
 `yarn lint` combines linting and typecheck in one command. TypeScript uses `tsc -b` (project references mode) to correctly resolve all files and catch module errors.
 
+**`eslint-disable-next-line react-hooks/exhaustive-deps` is strictly prohibited.** Never silence `react-hooks/exhaustive-deps` — no `eslint-disable-next-line`, `eslint-disable`, or any inline suppression. The rule catches real stale-closure bugs; suppressing it hides them. If an effect/hook references a reactive value that isn't in the dependency array, fix the code instead: add the dependency, or restructure so the referenced value is genuinely stable — e.g. a `useMemo`-derived array, or a latest-ref (a `useRef` whose `.current` is updated each render) to read the current value inside the effect while keeping the dependency array on a stable key (e.g. the joined id string, as in `useModThumbURLs` / `useRefModMeta`). Do not suppress the rule to make lint pass.
+
 ### Testing (mandatory before deploy)
 
 Tests run with **Vitest** (config in [`vitest.config.ts`](vitest.config.ts), jsdom environment, `@testing-library/react` for components). **`yarn build` runs the full test suite and fails if any test fails** — a deployable build cannot be produced with a red suite:
