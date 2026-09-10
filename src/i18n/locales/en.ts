@@ -80,6 +80,7 @@ const translation = {
         drop_files_here: 'Drop the files here...',
         drop_files_desc:
             "Drag'n'drop some files here, or click to select files",
+        drop_to_add: 'Drop to add',
         merge_type: 'merge type',
         merge_type_single: 'Single blocks only',
         merge_type_double: 'Double blocks only',
@@ -469,6 +470,8 @@ const translation = {
         error_uploading: 'Error uploading image: %{err}',
         array_overflow:
             "Can't add more elements. Please reset or remove one of the references.",
+        folders_not_supported:
+            'Folders are not supported. Drop individual files instead.',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',

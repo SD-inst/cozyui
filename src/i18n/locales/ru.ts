@@ -79,6 +79,7 @@ const translation = {
         image_end: 'конечное изображение',
         drop_files_here: 'Перетащите файлы сюда...',
         drop_files_desc: 'Перетащите файлы сюда или кликните для выбора файлов',
+        drop_to_add: 'Отпустите, чтобы добавить',
         merge_type: 'тип слияния',
         merge_type_single: 'Только единые блоки',
         merge_type_double: 'Только двойные блоки',
@@ -470,6 +471,8 @@ const translation = {
         error_uploading: 'Ошибка при загрузке изображения: %{err}',
         array_overflow:
             'Нельзя добавить больше изображений. Удалите или сбросьте одно из существующих.',
+        folders_not_supported:
+            'Папки не поддерживаются. Перетащите отдельные файлы.',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',
