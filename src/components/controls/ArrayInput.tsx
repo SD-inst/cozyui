@@ -471,7 +471,12 @@ export const ArrayInput = ({
 
     const handleContainerDrop = useCallback(
         async (e: React.DragEvent) => {
+            // Always preventDefault so the browser never navigates to a dropped
+            // file (e.g. opening an image dropped on a ref-mods picker).
             e.preventDefault();
+            if (!acceptsMedia) {
+                return;
+            }
             resetFileDrag();
             const dt = e.dataTransfer;
             if (!dt) {
@@ -496,38 +501,51 @@ export const ArrayInput = ({
                 await appendFiles(accepted);
             }
         },
-        [isAcceptedFile, appendFiles, resetFileDrag, tr],
+        [isAcceptedFile, appendFiles, resetFileDrag, acceptsMedia, tr],
     );
 
     // Feedback state for file drags: entering/leaving the array shows the "add"
     // highlight; entering/leaving a slot shows which one would be replaced.
     // Handlers are stable so the memoized CompactFileItem skips re-render.
+    // All four are attached even to non-media arrays (mod pickers, list mode) —
+    // the handlers guard on `acceptsMedia`, but the `preventDefault()` in
+    // `handleContainerDrop`/`handleContainerDragOver` must always run so the
+    // browser never opens a dropped file instead of the app.
     const handleContainerDragEnter = useCallback(
         (e: React.DragEvent) => {
-            if (e.dataTransfer?.types?.includes('Files')) {
+            if (acceptsMedia && e.dataTransfer?.types?.includes('Files')) {
                 setIsFileDragOver(true);
             }
         },
-        [],
+        [acceptsMedia],
     );
     const handleContainerDragOver = useCallback(
         (e: React.DragEvent) => {
-            // Only allow dropping real file drags; this also gives the
-            // "not-allowed" cursor for text/URL drags and keeps the frame off.
-            if (e.dataTransfer?.types?.includes('Files')) {
-                e.preventDefault();
+            // Always preventDefault so the browser treats the array as a drop
+            // target and never navigates to a dropped file. Only track the
+            // "add" highlight for media arrays.
+            e.preventDefault();
+            if (acceptsMedia && e.dataTransfer?.types?.includes('Files')) {
+                setIsFileDragOver(true);
             }
         },
-        [],
+        [acceptsMedia],
     );
     const handleContainerDragLeave = useCallback(
         (e: React.DragEvent) => {
-            if ((e.currentTarget as HTMLElement).contains(e.relatedTarget as Node)) {
+            if (!acceptsMedia) {
+                return;
+            }
+            if (
+                (e.currentTarget as HTMLElement).contains(
+                    e.relatedTarget as Node,
+                )
+            ) {
                 return;
             }
             resetFileDrag();
         },
-        [resetFileDrag],
+        [acceptsMedia, resetFileDrag],
     );
     const handleItemDragEnter = useCallback(
         (index: number) => setFileDragOverIndex(index),
@@ -655,24 +673,10 @@ export const ArrayInput = ({
                             gap={0.5}
                             alignItems='center'
                             position='relative'
-                            onDrop={
-                                acceptsMedia ? handleContainerDrop : undefined
-                            }
-                            onDragOver={
-                                acceptsMedia
-                                    ? handleContainerDragOver
-                                    : undefined
-                            }
-                            onDragEnter={
-                                acceptsMedia
-                                    ? handleContainerDragEnter
-                                    : undefined
-                            }
-                            onDragLeave={
-                                acceptsMedia
-                                    ? handleContainerDragLeave
-                                    : undefined
-                            }
+                             onDrop={handleContainerDrop}
+                             onDragOver={handleContainerDragOver}
+                             onDragEnter={handleContainerDragEnter}
+                             onDragLeave={handleContainerDragLeave}
                         >
                             {fields.map((field, index) => (
                                 <CompactFileItem
