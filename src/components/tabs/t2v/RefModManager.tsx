@@ -385,6 +385,7 @@ const CreateModPanel = () => {
     const refVideosHandler = useRefModVideoHandler(audioSource, audioFile);
     useRegisterHandler({ name: 'ref_videos', handler: refVideosHandler });
 
+    const modName = useWatch({ name: 'mod_name' });
     const refImages = useWatch({ name: 'ref_images' });
     const refVideos = useWatch({ name: 'ref_videos' });
     const videoCount = (refVideos ?? []).filter(
@@ -430,6 +431,10 @@ const CreateModPanel = () => {
                 // One RefMod per saved file: the Master emits a mod per distinct
                 // reference (visual and/or audio), so each file becomes its own
                 // RefMod (same preview, kind from that file's metadata).
+                // With a single result there is no visual/audio split, so the
+                // mod keeps the clean name the user typed; with multiple results
+                // the server disambiguates with the per-kind suffix.
+                const isSingle = results.length === 1;
                 for (const entry of results) {
                     const filename =
                         (typeof entry === 'string' ? entry : entry.filename) +
@@ -443,10 +448,13 @@ const CreateModPanel = () => {
                     // Per-file name from the safetensors (e.g. "Character_visual" /
                     // "Character_audio") — distinct per mod, no random suffix.
                     const baseName = filename.replace(/\.safetensors$/, '');
+                    const displayName = isSingle
+                        ? modName || meta.name || baseName
+                        : meta.name || baseName;
 
                     await db.refMods.add({
                         id,
-                        name: meta.name || baseName,
+                        name: displayName,
                         kind:
                             (meta.kind as 'image' | 'video' | 'audio') ||
                             'video',
@@ -498,6 +506,7 @@ const CreateModPanel = () => {
         isProcessing,
         refImages,
         refVideos,
+        modName,
         setValue,
         dispatch,
         tr,
