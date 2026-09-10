@@ -41,6 +41,7 @@ import { genId } from '../../../utils/id';
 import { useRefModOutputHandler } from '../../../hooks/useRefModOutputHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ModEditDialog } from '../../controls/ModEditDialog';
+import { ModKindIcon } from '../../controls/ModArrayInput';
 import { refModThumbStyle } from '../../../hooks/useRefMods';
 
 // Derives the preview thumbnail from the source media once. The bundle's mods
@@ -239,13 +240,14 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                         <Delete fontSize='small' />
                     </IconButton>
                 </Tooltip>
+                <ModKindIcon kind={mod.kind} />
             </Box>
             <Box sx={{ p: 1 }}>
                 <Typography variant='body2' fontWeight='bold' noWrap>
                     {mod.name}
                 </Typography>
                 <Typography variant='caption' color='grey'>
-                    {mod.kind} | {mod.tokens?.toLocaleString()} tok
+                    {mod.tokens?.toLocaleString()} tok
                 </Typography>
             </Box>
             <Dialog

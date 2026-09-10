@@ -18,7 +18,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
 import { db, RefMod } from '../history/db';
 import { useTranslate } from '../../i18n/I18nContext';
-import { ModThumbnail } from './ModArrayInput';
+import { ModKindIcon, ModThumbLabel, ModThumbnail } from './ModArrayInput';
 
 export const ModPickerDialog = ({
     open,
@@ -102,26 +102,9 @@ export const ModPickerDialog = ({
                                 }}
                             >
                                 <ModThumbnail modId={mod.id} />
-                                <Box
-                                    sx={{
-                                        position: 'absolute',
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                        bgcolor: 'rgba(0,0,0,0.6)',
-                                        px: 0.5,
-                                        py: 0.25,
-                                        fontSize: '0.6rem',
-                                        color: 'white',
-                                        textAlign: 'center',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                    }}
-                                 >
-                                     {mod.name}
-                                 </Box>
-                             </Box>
+                                <ModThumbLabel text={mod.name} />
+                                <ModKindIcon kind={mod.kind} />
+                            </Box>
                          ))}
                          {filteredMods.length === 0 && (
                              <Typography color='grey' variant='body2'>

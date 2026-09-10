@@ -1,4 +1,5 @@
 import { Box, useTheme } from '@mui/material';
+import { Image as ImageIcon, MusicNote, Videocam } from '@mui/icons-material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { memo, useEffect, useMemo, useState } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -43,17 +44,90 @@ export const ModThumbnail = memo(({ modId }: { modId: string }) => {
     );
 });
 
+// Small type badge (video/image/audio) anchored to the bottom-right corner of
+// a mod thumbnail. Bottom-right is used because the top-right holds the remove
+// button and the top-left the index badge (see CustomItemShell).
+export const ModKindIcon = ({
+    kind,
+}: {
+    kind?: 'image' | 'video' | 'audio';
+}) => {
+    if (!kind) {
+        return null;
+    }
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                zIndex: 1,
+                display: 'flex',
+                alignItems: 'center',
+                bgcolor: 'rgba(0,0,0,0.6)',
+                color: 'white',
+                px: 0.5,
+                py: 0.25,
+                borderRadius: '4px 0 0 0',
+            }}
+        >
+            {kind === 'audio' ? (
+                <MusicNote sx={{ fontSize: 14 }} />
+            ) : kind === 'image' ? (
+                <ImageIcon sx={{ fontSize: 14 }} />
+            ) : (
+                <Videocam sx={{ fontSize: 14 }} />
+            )}
+        </Box>
+    );
+};
+
+// Mod name bar anchored to the bottom of a mod thumbnail (mirrors the library
+// card and the picker). Centered, ellipsized; the kind badge sits on top of its
+// right end.
+export const ModThumbLabel = ({ text }: { text?: string }) => {
+    if (!text) {
+        return null;
+    }
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                zIndex: 1,
+                bgcolor: 'rgba(0,0,0,0.6)',
+                px: 0.5,
+                py: 0.25,
+                fontSize: '0.6rem',
+                color: 'white',
+                textAlign: 'center',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+            }}
+        >
+            {text}
+        </Box>
+    );
+};
+
 const ModThumbContent = ({
     item,
     url,
     thumbX,
     thumbY,
+    name,
+    kind,
     onClick,
 }: {
     item: any;
     url?: string;
     thumbX?: number;
     thumbY?: number;
+    name?: string;
+    kind?: 'image' | 'video' | 'audio';
     onClick?: () => void;
 }) => {
     const theme = useTheme();
@@ -97,6 +171,8 @@ const ModThumbContent = ({
                     🎨
                 </Box>
             ) : null}
+            <ModThumbLabel text={name} />
+            <ModKindIcon kind={kind} />
         </Box>
     );
 };
@@ -157,12 +233,15 @@ export const ModArrayInput = ({
             url={thumbURLs[index]}
             thumbX={modMetas[index]?.thumbX}
             thumbY={modMetas[index]?.thumbY}
+            name={modMetas[index]?.name}
+            kind={modMetas[index]?.kind}
             onClick={() => openLightbox(index)}
         />
     );
 
     const renderPreview = (item: any, index: number) => {
         const url = thumbURLs[index];
+        const meta = modMetas[index];
         return (
             <Box
                 sx={{
@@ -172,6 +251,7 @@ export const ModArrayInput = ({
                     overflow: 'hidden',
                     bgcolor: 'grey.100',
                     marginBottom: 16,
+                    position: 'relative',
                     cursor: url ? 'pointer' : undefined,
                 }}
                 onClick={url ? () => openLightbox(index) : undefined}
@@ -181,11 +261,13 @@ export const ModArrayInput = ({
                         src={url}
                         alt=''
                         style={refModThumbStyle(
-                            modMetas[index]?.thumbX ?? 50,
-                            modMetas[index]?.thumbY ?? 50,
+                            meta?.thumbX ?? 50,
+                            meta?.thumbY ?? 50,
                         )}
                     />
                 )}
+                <ModThumbLabel text={meta?.name} />
+                <ModKindIcon kind={meta?.kind} />
             </Box>
         );
     };
