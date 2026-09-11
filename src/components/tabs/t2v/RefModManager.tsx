@@ -45,6 +45,7 @@ import { ModEditDialog } from '../../controls/ModEditDialog';
 import { ModKindIcon } from '../../controls/ModArrayInput';
 import { RefModCropDialog } from '../../controls/RefModCropDialog';
 import { refModThumbStyle } from '../../../hooks/useRefMods';
+import { useMaxResolutionIndex } from '../../../hooks/useMaxResolutionIndex';
 
 // Derives the preview thumbnail from the source media once. The bundle's mods
 // share the same look (only the kind differs), so this is extracted a single
@@ -403,6 +404,12 @@ const CreateModPanel = () => {
         (v: { image?: string }) => !!v?.image,
     ).length;
 
+    const refImageFilenames = useMemo(
+        () => (refImages ?? []).map((e: { image?: string }) => e?.image),
+        [refImages],
+    );
+    const maxResIndex = useMaxResolutionIndex(refImageFilenames);
+
     // Images for the crop tool: only the image refs that actually hold a file,
     // with their position in `ref_images` (so a crop can replace the right slot).
     const [cropOpen, setCropOpen] = useState(false);
@@ -557,6 +564,7 @@ const CreateModPanel = () => {
                 newValue={{ image: '' }}
                 max={128}
                 targetFieldName='image'
+                highlightIndex={maxResIndex ?? undefined}
             >
                 <FileUpload
                     name='image'

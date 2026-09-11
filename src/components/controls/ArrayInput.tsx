@@ -295,6 +295,7 @@ export const ArrayInput = ({
     onAddClick,
     onReplaceClick,
     renderPreview,
+    highlightIndex,
     ...props
 }: {
     name: string;
@@ -310,6 +311,7 @@ export const ArrayInput = ({
     onAddClick?: () => void;
     onReplaceClick?: (index: number) => void;
     renderPreview?: (item: any, index: number) => ReactNode;
+    highlightIndex?: number;
 } & PropsWithChildren) => {
     const tr = useTranslate();
     const theme = useTheme();
@@ -840,6 +842,9 @@ export const ArrayInput = ({
                                                 handleItemDragLeave
                                             }
                                             onItemDrop={resetFileDrag}
+                                            isHighlighted={
+                                                highlightIndex === index
+                                            }
                                         />
                                     )}
                                 </Flipped>

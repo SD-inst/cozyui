@@ -44,6 +44,7 @@ export const CompactFileItem = memo(
         onItemDragEnter,
         onItemDragLeave,
         onItemDrop,
+        isHighlighted = false,
     }: {
         id: string;
         index: number;
@@ -57,6 +58,7 @@ export const CompactFileItem = memo(
         onItemDragEnter: (index: number) => void;
         onItemDragLeave: (index: number) => void;
         onItemDrop: () => void;
+        isHighlighted?: boolean;
     }) => {
         const theme = useTheme();
         const tr = useTranslate();
@@ -300,14 +302,16 @@ export const CompactFileItem = memo(
                         onOpenControls(index);
                     }}
                     badgeContent={index + 1}
-                    color='primary'
+                    color={isHighlighted ? 'success' : 'primary'}
                     sx={{
                         position: 'absolute',
                         top: isAudio ? 0 : 15,
                         left: isAudio ? 10 : 15,
                         cursor: 'pointer',
                         '&:hover': {
-                            bgcolor: theme.palette.primary.dark,
+                            bgcolor: isHighlighted
+                                ? theme.palette.success.dark
+                                : theme.palette.primary.dark,
                         },
                     }}
                 />
