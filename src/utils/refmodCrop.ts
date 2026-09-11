@@ -37,22 +37,23 @@ export const modTokenCount = (canvas: ImageSize, nImages: number) => {
     return { perFrame, totalT: nImages, tokens: nImages * perFrame };
 };
 
-// Effective token count of the mod, mirroring the server-side limits:
-//   1. `latent_frames` caps how many stacked refs become latent frames;
-//   2. `max_tokens` is a hard budget — the server resamples down to the
-//      largest frame count that fits (`max(1, floor(budget / per_frame))`;
-//      temporal dedup can only reduce it further, so this is the ceiling).
-// Returns the raw (uncapped) count too so the UI can explain a shortfall.
+// Effective token count of the IMAGE stack, mirroring the server-side limit.
+// Images are stacked 1:1 — one latent frame each — with NO per-ref frame cap
+// (`latent_frames` only limits VIDEO refs, see nodes.py `pool_t = ... if
+// is_video else 1`). The only limit is the token budget: the server resamples
+// the stack down to the largest frame count that fits (`max(1, floor(budget /
+// per_frame))`; temporal dedup can only reduce it further, so this is the
+// ceiling). Returns the raw (uncapped) count too so the UI can explain a
+// shortfall.
 export const effectiveTokenCount = (
     canvas: ImageSize,
     nImages: number,
     maxTokens: number,
-    latentFrames: number,
 ) => {
     const perFrame =
         Math.floor(canvas.height / 32) * Math.floor(canvas.width / 32);
     const rawTokens = perFrame * nImages;
-    let frames = latentFrames > 0 ? Math.min(nImages, latentFrames) : nImages;
+    let frames = nImages;
     let capped = false;
     if (maxTokens > 0) {
         const fitT = Math.max(1, Math.floor(maxTokens / perFrame));

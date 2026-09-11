@@ -399,10 +399,6 @@ const CreateModPanel = () => {
         name: 'max_tokens',
         defaultValue: 5120,
     });
-    const latentFrames = useWatch({
-        name: 'latent_frames',
-        defaultValue: 16,
-    });
     const videoCount = (refVideos ?? []).filter(
         (v: { image?: string }) => !!v?.image,
     ).length;
@@ -701,7 +697,6 @@ const CreateModPanel = () => {
                 images={cropImages}
                 refResolution={refResolution}
                 maxTokens={maxTokens}
-                latentFrames={latentFrames}
                 onCropSlot={handleCropSlot}
             />
         </Box>

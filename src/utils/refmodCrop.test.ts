@@ -67,7 +67,7 @@ describe('effectiveTokenCount', () => {
 
     it('applies no cap when the raw count fits the budget', () => {
         // 4 images * 1269 = 5076 <= 5120
-        const t = effectiveTokenCount(canvas, 4, 5120, 16);
+        const t = effectiveTokenCount(canvas, 4, 5120);
         expect(t.perFrame).toBe(1269);
         expect(t.frames).toBe(4);
         expect(t.tokens).toBe(5076);
@@ -77,7 +77,7 @@ describe('effectiveTokenCount', () => {
 
     it('resamples down to the largest frame count that fits max_tokens', () => {
         // 6 images * 1269 = 7614 > 5120 -> floor(5120/1269) = 4 frames
-        const t = effectiveTokenCount(canvas, 6, 5120, 16);
+        const t = effectiveTokenCount(canvas, 6, 5120);
         expect(t.rawTokens).toBe(7614);
         expect(t.frames).toBe(4);
         expect(t.tokens).toBe(5076);
@@ -85,25 +85,25 @@ describe('effectiveTokenCount', () => {
         expect(t.overBudget).toBe(false);
     });
 
-    it('caps the frame count at latent_frames before the token budget', () => {
-        // 20 images, latent_frames 16 -> 16 frames; 16*1269 = 20304 > 5120 -> 4
-        const t = effectiveTokenCount(canvas, 20, 5120, 16);
-        expect(t.frames).toBe(4);
-        expect(t.tokens).toBe(5076);
-        expect(t.capped).toBe(true);
+    it('stacks every image 1:1 (latent_frames does NOT cap images)', () => {
+        // 22 images, no budget (max_tokens 0) -> all 22 frames kept
+        const t = effectiveTokenCount(canvas, 22, 0);
+        expect(t.frames).toBe(22);
+        expect(t.tokens).toBe(22 * 1269);
+        expect(t.capped).toBe(false);
     });
 
-    it('honours latent_frames when max_tokens is disabled (0)', () => {
-        // no budget; latent_frames caps 20 -> 16
-        const t = effectiveTokenCount(canvas, 20, 0, 16);
-        expect(t.frames).toBe(16);
-        expect(t.tokens).toBe(16 * 1269);
-        expect(t.capped).toBe(false);
+    it('matches the real 512x928 canvas (22 images -> 10208 tokens)', () => {
+        // (928/32)*(512/32) = 29*16 = 464 per frame; 22 * 464 = 10208
+        const t = effectiveTokenCount({ width: 512, height: 928 }, 22, 0);
+        expect(t.perFrame).toBe(464);
+        expect(t.frames).toBe(22);
+        expect(t.tokens).toBe(10208);
     });
 
     it('flags when a single frame alone exceeds the budget', () => {
         // 2048x2048 -> per_frame 64*64 = 4096 > 3000
-        const t = effectiveTokenCount({ width: 2048, height: 2048 }, 1, 3000, 16);
+        const t = effectiveTokenCount({ width: 2048, height: 2048 }, 1, 3000);
         expect(t.perFrame).toBe(4096);
         expect(t.overBudget).toBe(true);
     });

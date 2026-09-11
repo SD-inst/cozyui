@@ -310,7 +310,6 @@ export const RefModCropDialog = ({
     images,
     refResolution,
     maxTokens,
-    latentFrames,
     onCropSlot,
 }: {
     open: boolean;
@@ -318,7 +317,6 @@ export const RefModCropDialog = ({
     images: CropImage[];
     refResolution: number;
     maxTokens: number;
-    latentFrames: number;
     onCropSlot: (slotIndex: number, newFilename: string) => void;
 }) => {
     const tr = useTranslate();
@@ -366,15 +364,8 @@ export const RefModCropDialog = ({
     );
     const tokens = useMemo(
         () =>
-            canvas
-                ? effectiveTokenCount(
-                      canvas,
-                      images.length,
-                      maxTokens,
-                      latentFrames,
-                  )
-                : null,
-        [canvas, images.length, maxTokens, latentFrames],
+            canvas ? effectiveTokenCount(canvas, images.length, maxTokens) : null,
+        [canvas, images.length, maxTokens],
     );
 
     // Size the crop view to the selected aspect within a capped height, so the
