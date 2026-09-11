@@ -32,6 +32,7 @@ import {
 } from 'react';
 import { useApiURL } from '../../hooks/useApiURL';
 import { saveUploadBackup } from '../../hooks/useBackupUpload';
+import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useTabName } from '../contexts/TabContext';
 import { ASPECT_LABELS, aspectRatio, closestAspect } from '../../utils/aspect';
@@ -322,6 +323,7 @@ export const RefModCropDialog = ({
 }) => {
     const tr = useTranslate();
     const theme = useTheme();
+    const isPhone = useIsPhone();
     const apiUrl = useApiURL();
     const tabName = useTabName();
 
@@ -390,7 +392,9 @@ export const RefModCropDialog = ({
 
     const aspectNum = aspect ? aspectRatio(aspect) : 1;
     const maxW = Math.min(480, (window.innerWidth || 480) - 64);
-    const maxH = Math.max(160, vh - 380);
+    // Fullscreen on a phone frees up vertical space, so loosen the height
+    // offset there; keep the tighter cap in the centered desktop dialog.
+    const maxH = Math.max(160, vh - (isPhone ? 340 : 380));
     const cvH = Math.min(maxH, maxW / aspectNum);
     const cvW = cvH * aspectNum;
 
@@ -480,9 +484,10 @@ export const RefModCropDialog = ({
             onClose={onClose}
             maxWidth='sm'
             fullWidth
+            fullScreen={isPhone}
         >
             <DialogTitle>{tr('refmods.crop_title')}</DialogTitle>
-            <DialogContent sx={{ minWidth: 300 }}>
+            <DialogContent sx={{ minWidth: 300, overflowY: 'auto' }}>
                 <Stack spacing={2}>
                     <Box>
                         <Typography
