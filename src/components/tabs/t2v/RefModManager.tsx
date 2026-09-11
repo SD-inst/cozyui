@@ -22,6 +22,7 @@ import { useTranslate } from '../../../i18n/I18nContext';
 import { WFTab } from '../../WFTab';
 import { GridLeft, GridRight, GridBottom, Layout } from '../../controls/Layout';
 import { SelectInput } from '../../controls/SelectInput';
+import { HelpButton } from '../../controls/HelpButton';
 import { TextInput } from '../../controls/TextInput';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { FileUpload } from '../../controls/FileUpload';
@@ -568,13 +569,16 @@ const CreateModPanel = () => {
                 />
             </ArrayInput>
             {cropImages.length > 0 && (
-                <Button
-                    variant='outlined'
-                    startIcon={<ContentCut />}
-                    onClick={() => setCropOpen(true)}
-                >
-                    {tr('refmods.crop_images')}
-                </Button>
+                <Box display='flex' alignItems='center' gap={1} justifyContent='center'>
+                    <Button
+                        variant='outlined'
+                        startIcon={<ContentCut />}
+                        onClick={() => setCropOpen(true)}
+                    >
+                        {tr('refmods.crop_images')}
+                    </Button>
+                    <HelpButton title='crop_images_help' sx={{ position: 'static' }} />
+                </Box>
             )}
             <ArrayInput
                 name='ref_videos'

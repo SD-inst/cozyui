@@ -438,6 +438,8 @@ const translation = {
             'Repeat the extracted ref N times along time so a short video/GIF is not drowned out by the main video\u2019s tokens. 1 = no repeat; file size grows with N.',
         max_tokens_help:
             'Hard cap on the total tokens the mod injects (0 = no cap; 5120 is a good default). If the refs exceed it, near-duplicate latent frames are dropped first, then frames are resampled to fit.',
+        crop_images_help:
+            'Crops every reference image to a single target aspect. Without it the server center-crops each ref to the first image\u2019s canvas — convenient for consistent framing, but it can clip off-center detail such as a face. Use this to pick the aspect and pan each crop so the important content stays in frame.',
         optimize_steps_help:
             'Compressed mode only. Gradient steps that refine the pooled latent to reduce its reconstruction error. 0 = pooling alone, no refinement. This is not identity strength and does not train H3; the mod still carries concept/motion, not fine identity. Default 500.',
         audio_max_seconds_help:
