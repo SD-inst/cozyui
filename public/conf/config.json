@@ -3780,13 +3780,10 @@
                     "node_id": "1"
                 },
                 "audio_source": {
-                    "id": "handle",
-                    "node_id": "1",
-                    "order": 101
+                    "id": "skip"
                 },
                 "audio_file": {
-                    "id": "skip",
-                    "order": 101
+                    "id": "skip"
                 },
                 "refmod_output": {
                     "id": "handle",

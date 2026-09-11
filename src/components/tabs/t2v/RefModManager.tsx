@@ -1,4 +1,4 @@
-import { Delete } from '@mui/icons-material';
+import { ContentCut, Delete } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -42,6 +42,7 @@ import { useRefModOutputHandler } from '../../../hooks/useRefModOutputHandler';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ModEditDialog } from '../../controls/ModEditDialog';
 import { ModKindIcon } from '../../controls/ModArrayInput';
+import { RefModCropDialog } from '../../controls/RefModCropDialog';
 import { refModThumbStyle } from '../../../hooks/useRefMods';
 
 // Derives the preview thumbnail from the source media once. The bundle's mods
@@ -83,7 +84,7 @@ const LibraryPanel = () => {
     const [search, setSearch] = useState('');
     const [filterKind, setFilterKind] = useState('');
 
-    const mods = useLiveQuery(async () => db.refMods.toArray(), []);
+    const mods = useLiveQuery(async () => db.refMods.orderBy('name').toArray(), []);
 
     const filteredMods = useMemo(() => {
         return (mods ?? []).filter((mod: RefMod) => {
@@ -367,7 +368,7 @@ const CreateModPanel = () => {
     const dispatch = useAppDispatch();
     const results = useResult();
     const [isProcessing, setIsProcessing] = useState(false);
-    const { setValue } = useFormContext();
+    const { setValue, getValues } = useFormContext();
     // The only headless field on this tab — the generation result has no input
     // control, so register it here for the handler to read/write. Every other
     // field is registered by its own input (SelectInput / TextInput /
@@ -389,9 +390,44 @@ const CreateModPanel = () => {
     const modName = useWatch({ name: 'mod_name' });
     const refImages = useWatch({ name: 'ref_images' });
     const refVideos = useWatch({ name: 'ref_videos' });
+    const refResolution = useWatch({
+        name: 'ref_resolution',
+        defaultValue: 1024,
+    });
+    const maxTokens = useWatch({
+        name: 'max_tokens',
+        defaultValue: 5120,
+    });
+    const latentFrames = useWatch({
+        name: 'latent_frames',
+        defaultValue: 16,
+    });
     const videoCount = (refVideos ?? []).filter(
         (v: { image?: string }) => !!v?.image,
     ).length;
+
+    // Images for the crop tool: only the image refs that actually hold a file,
+    // with their position in `ref_images` (so a crop can replace the right slot).
+    const [cropOpen, setCropOpen] = useState(false);
+    const cropImages = useMemo<Array<{ index: number; filename: string }>>(
+        () => {
+            const list: Array<{ index: number; filename: string }> = [];
+            (refImages ?? []).forEach((e: { image?: string }, i: number) => {
+                if (e?.image) {
+                    list.push({ index: i, filename: e.image });
+                }
+            });
+            return list;
+        },
+        [refImages],
+    );
+    const handleCropSlot = (slotIndex: number, newFilename: string) => {
+        const current = (getValues('ref_images') ?? []) as any[];
+        const next = current.map((e, i) =>
+            i === slotIndex ? { ...e, image: newFilename } : e,
+        );
+        setValue('ref_images', next, { shouldDirty: true });
+    };
     const audioSourceChoices = useMemo(
         () => [
             ...Array.from({ length: videoCount }, (_, i) => ({
@@ -531,6 +567,15 @@ const CreateModPanel = () => {
                     type={UploadType.IMAGE}
                 />
             </ArrayInput>
+            {cropImages.length > 0 && (
+                <Button
+                    variant='outlined'
+                    startIcon={<ContentCut />}
+                    onClick={() => setCropOpen(true)}
+                >
+                    {tr('refmods.crop_images')}
+                </Button>
+            )}
             <ArrayInput
                 name='ref_videos'
                 newValue={{ image: '' }}
@@ -643,8 +688,17 @@ const CreateModPanel = () => {
                 min={0}
                 max={20480}
                 step={512}
-                tooltip='audio_max_tokens_help'
+                tooltip='max_tokens_help'
                 sx={{ flexGrow: 1 }}
+            />
+            <RefModCropDialog
+                open={cropOpen}
+                onClose={() => setCropOpen(false)}
+                images={cropImages}
+                refResolution={refResolution}
+                maxTokens={maxTokens}
+                latentFrames={latentFrames}
+                onCropSlot={handleCropSlot}
             />
         </Box>
     );
