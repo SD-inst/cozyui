@@ -65,6 +65,21 @@ export interface PresetFile {
     file: File;
 }
 
+export interface Session {
+    id: string;
+    name: string;
+    tab: string;
+    values: string; // serialized form values (subset of tab controls)
+    timestamp: number;
+}
+
+export interface SessionFile {
+    id: string; // `${sessionId}/${filename}`
+    session: string;
+    filename: string;
+    file: File;
+}
+
 export interface RefMod {
     id: string;
     name: string;
@@ -101,6 +116,8 @@ export const db = new Dexie('task_results') as Dexie & {
     chatLogs: Table<ChatLog, string>;
     presets: Table<Preset, string>;
     presetFiles: Table<PresetFile, string>;
+    sessions: Table<Session, string>;
+    sessionFiles: Table<SessionFile, string>;
     refMods: Table<RefMod, string>;
     refModFiles: Table<RefModFile, string>;
 };
@@ -172,6 +189,11 @@ db.version(10)
 db.version(11).stores({
     refMods: 'id, name, kind, conceptType, createdAt',
     refModFiles: 'id, mod, filename',
+});
+
+db.version(12).stores({
+    sessions: 'id, tab, timestamp',
+    sessionFiles: 'id, session',
 });
 
 const indexPrompt = (obj: TaskResult) => {

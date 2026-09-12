@@ -1,5 +1,4 @@
 import {
-    AudioFile,
     Delete,
     Edit,
     PlayArrow,
@@ -17,12 +16,12 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useTranslate } from '../../i18n/I18nContext';
+import { MediaThumb } from '../controls/MediaThumb';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
 import { db, Preset } from '../history/db';
-import { kindOf } from '../../utils/mediaFields';
 import {
     draftFromPreset,
     formatBytes,
@@ -31,60 +30,6 @@ import {
 } from './draft';
 import { SavePresetDialog } from './SavePresetDialog';
 import { useApplyPreset } from './useApplyPreset';
-
-const Preview = ({ file }: { file: File }) => {
-    const [url, setUrl] = useState('');
-    useEffect(() => {
-        const u = URL.createObjectURL(file);
-        setUrl(u);
-        return () => URL.revokeObjectURL(u);
-    }, [file]);
-    const kind = kindOf(file.name);
-    if (kind === 'image') {
-        return (
-            <img
-                src={url}
-                alt=''
-                style={{
-                    width: 64,
-                    height: 64,
-                    objectFit: 'cover',
-                    borderRadius: 4,
-                }}
-            />
-        );
-    }
-    if (kind === 'video') {
-        return (
-            <video
-                src={url}
-                preload='metadata'
-                muted
-                style={{
-                    width: 64,
-                    height: 64,
-                    objectFit: 'cover',
-                    borderRadius: 4,
-                }}
-            />
-        );
-    }
-    return (
-        <div
-            style={{
-                width: 64,
-                height: 64,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: 4,
-                background: 'rgba(0,0,0,0.05)',
-            }}
-        >
-            <AudioFile />
-        </div>
-    );
-};
 
 export const PresetCard = ({ preset }: { preset: Preset }) => {
     const tr = useTranslate();
@@ -158,7 +103,7 @@ export const PresetCard = ({ preset }: { preset: Preset }) => {
                     sx={{ flexWrap: 'wrap', alignItems: 'center' }}
                 >
                     {files.slice(0, 5).map((f) => (
-                        <Preview key={f.filename} file={f.file} />
+                        <MediaThumb key={f.filename} file={f.file} />
                     ))}
                     {files.length > 5 && (
                         <div

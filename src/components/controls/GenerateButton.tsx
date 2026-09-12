@@ -35,6 +35,7 @@ import {
 } from '../../redux/tab';
 import { TabContext, useHandlers, useTabName } from '../contexts/TabContext';
 import { ResetButton } from './ResetButton';
+import { SaveSessionButton } from '../sessions/SaveSessionButton';
 import { controlType } from '../../redux/config';
 import { Workflow } from '../../api/graph';
 import { ConnectionIndicator } from './ConnectionIndicator';
@@ -378,7 +379,12 @@ export const GenerateButton = ({
                     })}
                 </FormHelperText>
             ) : null}
-            {!noreset && <ResetButton sx={{ mt: 2 }} />}
+            {!noreset && (
+                <>
+                    <SaveSessionButton sx={{ mt: 2 }} />
+                    <ResetButton sx={{ mt: 2 }} />
+                </>
+            )}
         </FormControl>
     );
 };

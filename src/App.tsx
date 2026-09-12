@@ -15,6 +15,7 @@ import { TagLoader } from './components/controls/TagAutocomplete';
 import { ThemedToaster } from './components/controls/ThemedToaster';
 import { HistoryPanel } from './components/history/HistoryPanel';
 import { PresetPanel } from './components/presets/PresetPanel';
+import { SessionsPanel } from './components/sessions/SessionsPanel';
 import { AppSettings } from './components/settings/AppSettings';
 import { ACEStepTab } from './components/tabs/audio/ACEStep';
 import { ChatterboxTab } from './components/tabs/audio/ChatterboxTTS';
@@ -122,6 +123,7 @@ function App() {
                             <InterruptButton />
                             <FilterContextProvider>
                                 <HistoryPanel />
+                                <SessionsPanel />
                                 <PresetPanel />
                                 <AppSettings />
                             </FilterContextProvider>

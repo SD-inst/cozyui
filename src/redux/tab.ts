@@ -6,6 +6,7 @@ export enum actionEnum {
     STORE,
     RESTORE,
     APPLY_PRESET,
+    RESTORE_SESSION,
 }
 
 type paramsType = {
@@ -13,6 +14,8 @@ type paramsType = {
     values?: any;
     action?: actionEnum;
     presetId?: string;
+    sessionId?: string;
+    deleteAfter?: boolean;
 };
 
 type resultType = {

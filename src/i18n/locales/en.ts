@@ -108,6 +108,7 @@ const translation = {
         skip: 'Skip',
         skip_chat: 'Skip for chat',
         reset_form: 'Reset form',
+        save_session: 'Save as session',
         confirm_reset: 'Confirm reset',
         confirm_reset_content:
             'Are you sure you want to reset the fields in this tab to their default values?',
@@ -477,6 +478,20 @@ const translation = {
         overflow: '%{n} file(s) not added: limit of %{field} reached',
         undo: 'Undo',
         delete_confirm: 'Delete preset "%{name}" and its stored media files?',
+    },
+    sessions: {
+        title: 'Sessions',
+        empty: 'No sessions in this tab',
+        saved_reset: 'Session saved, form reset',
+        file_collect_failed: 'Could not back up: %{file}',
+        restore: 'Restore',
+        restore_title: 'Restore session "%{name}"?',
+        restore_delete: 'Restore + delete',
+        restored: 'Session restored',
+        rename: 'Rename session',
+        delete_confirm:
+            'Delete session "%{name}" and its stored media files?',
+        file_lost: 'Files not found: %{files}',
     },
     toasts: {
         error_saving_preset: 'Error saving preset: %{err}',

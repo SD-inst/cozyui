@@ -27,7 +27,7 @@ import { TabContextProvider } from './contexts/TabContextProvider';
 import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { db } from './history/db';
 import { VerticalBox } from './VerticalBox';
-import { PresetApplier } from './presets/PresetApplier';
+import { SnapshotApplier } from './snapshot/SnapshotApplier';
 import { registerForm, unregisterForm } from './presets/formRegistry';
 
 const ValuesRestore = ({
@@ -117,7 +117,7 @@ const TabContent = ({ ...props }) => {
     const form = useForm();
     const { value, content } = (props.children.props as any) ?? {};
     // true once ValuesRestore has finished initializing this tab's form;
-    // PresetApplier must only run after that
+    // SnapshotApplier must only run after that
     const [formInitialized, setFormInitialized] = useState(false);
     // Expose this tab's form values to the global presets panel
     useEffect(() => {
@@ -153,7 +153,7 @@ const TabContent = ({ ...props }) => {
                         />
                     )}
                     {current_tab === value && (
-                        <PresetApplier formInitialized={formInitialized} />
+                        <SnapshotApplier formInitialized={formInitialized} />
                     )}
                     {content}
                 </FormProvider>

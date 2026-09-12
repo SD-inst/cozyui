@@ -107,6 +107,7 @@ const translation = {
         skip: 'Пропустить',
         skip_chat: 'Пропустить для чата',
         reset_form: 'Сброс формы',
+        save_session: 'Сохранить как сессию',
         confirm_reset: 'Подтвердите сброс',
         confirm_reset_content:
             'Вы уверены, что хотите сбросить поля на этой вкладке на значения по умолчанию?',
@@ -477,6 +478,20 @@ const translation = {
         undo: 'Отменить',
         delete_confirm:
             'Удалить пресет «%{name}» вместе с сохранёнными медиафайлами?',
+    },
+    sessions: {
+        title: 'Сессии',
+        empty: 'В этой вкладке нет сессий',
+        saved_reset: 'Сессия сохранена, форма сброшена',
+        file_collect_failed: 'Не удалось сохранить: %{file}',
+        restore: 'Восстановить',
+        restore_title: 'Восстановить сессию «%{name}»?',
+        restore_delete: 'Восстановить + удалить',
+        restored: 'Сессия восстановлена',
+        rename: 'Переименовать сессию',
+        delete_confirm:
+            'Удалить сессию «%{name}» вместе с её медиафайлами?',
+        file_lost: 'Файлы не найдены: %{files}',
     },
     toasts: {
         error_saving_preset: 'Ошибка сохранения пресета: %{err}',
