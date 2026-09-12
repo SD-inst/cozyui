@@ -56,6 +56,15 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - ACE Step
         - SongBloom
 
+- Reference mods (MiniMax H3):
+    - Create reusable reference "mods" (a character, scene, or style) from uploaded images/videos/audio in the RefMod Manager tab — each mod is a `.safetensors` file stored locally with a thumbnail, name, description, and type badge (image/video/audio)
+    - Interactive crop dialog to reframe reference images before creating a mod
+    - Apply mods to T2V/I2V/R2V from a searchable library with lightbox preview; per-mod strength and copy-count sliders
+    - Choose a mod's audio source: reuse a reference video's own track, upload a separate file, or none
+- LLM prompt assistant (optional chat):
+    - Generate and refine prompts with an OpenAI-compatible LLM, with vision support for attached reference media (images/videos)
+    - Audio input support; the API key and model are configured in settings
+    - Chat history persists with sessions and survives reloads
 - Lora support with weights and blocks to merge
 - Animated/batch latent preview (if supported by ComfyUI)
 - Config overrides to tune defaults for your system
@@ -69,6 +78,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - History management:
     - Store/restore generation data and images/video/audio locally in your browser (IndexedDB), including timestamp and total generation time
     - Search (filter) by prompt/content type
+    - Advanced filters: by model, date range, workflow group, and tab
     - Pin generations to prevent accidental deletion
     - Collection cleanup by time (before/after N seconds/minutes/hours/etc.), prompt, file type
     - Compare any two results side by side, generation data and videos, to see how changes affect the result
@@ -77,12 +87,20 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
     - Save the current tab's parameters and media (images/video/audio) as a named preset locally in your browser (IndexedDB)
     - Apply presets from a shared panel; media is merged (deduplicated) and parameters overwritten
     - Re-uploads files that were deleted in ComfyUI when applying a preset
+- Sessions:
+    - Save the current tab's full state — parameters, media files, and chat history — as a named session locally in your browser (IndexedDB)
+    - Restore a session from a shared panel to bring back the exact parameters, media, and conversation
+    - Rename and delete sessions; listed per tab
 - Send results to other tabs if content type allows it (generate image => send to I2V for example)
 - Customizable audio notification when task completes
 - Localization support (English/Russian currently)
 - Many controls have tips and explanation (can be disabled in settings)
 - VRAM and speed optimizations: TeaCache, EasyCache, MultiGPU, H3 sparse attention
 - Video preview scrubbing by pointer drag
+- Media inputs: drag-and-drop, clipboard paste, and multi-file drop into arrays; compact sortable thumbnails with lightbox preview and per-slot replace
+    - Per-item toggles to skip an item from generation (skip) or from the chat prompt (skip_chat)
+- Drag to reorder tabs (and groups); the order persists, with a reset option in settings
+- MiniMax H3: single-frame image mode (set length to 0 to produce a still image), an optional PDD acceleration path, and sigma-shift controls for video/audio
 - Hide any model tabs you don't need
 - Danbooru tag completion
 - Optionally save uploaded files in your browser and automatically reupload them if they were deleted in ComfyUI
