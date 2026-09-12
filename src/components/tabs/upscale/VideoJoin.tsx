@@ -160,7 +160,7 @@ const Videos = ({ name }: { name: string }) => {
             name={name}
             newValue={videoValue}
             keyField='video'
-            min={2}
+            min={0}
             max={10}
             receiverFieldName='video'
             targetFieldName='video'
