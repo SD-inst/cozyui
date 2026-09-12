@@ -5,7 +5,7 @@ import { Box } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import type { Control } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
-import Polyglot from 'node-polyglot';
+import { polyglot } from '../../testUtils';
 
 import { ArrayInput } from './ArrayInput';
 import { TabContext, TabContextValueType } from '../contexts/TabContext';
@@ -53,24 +53,6 @@ vi.mock(
 
 let control: Control | undefined;
 
-const createPolyglot = () => {
-    const polyglot = new Polyglot({ locale: 'en' });
-    polyglot.extend({
-        controls: {
-            ref_videos: 'reference videos',
-            ref_images: 'reference images',
-            remove: 'Remove',
-            replace: 'Replace',
-            close: 'Close',
-        },
-        toasts: {
-            error_uploading: 'Error uploading image: %{err}',
-            array_overflow: 'Can\'t add more elements.',
-        },
-    });
-    return polyglot;
-};
-
 const makeCtx = (tabName = 'T2V'): TabContextValueType => ({
     tab_name: tabName,
     api: tabName,
@@ -105,7 +87,6 @@ const Harness = ({
     }, [form.control]);
 
     const ctx = makeCtx('R2V');
-    const polyglot = createPolyglot();
 
     return (
         <TabContext.Provider value={ctx}>
@@ -275,7 +256,6 @@ describe('ArrayInput list mode', () => {
             }, [form.control]);
 
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -324,7 +304,6 @@ describe('ArrayInput list mode', () => {
             }, [form.control]);
 
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -370,7 +349,6 @@ describe('ArrayInput list mode', () => {
                 },
             });
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -411,7 +389,6 @@ describe('ArrayInput list mode', () => {
                 },
             });
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -459,7 +436,6 @@ describe('ArrayInput min/max constraints', () => {
             }, [form.control]);
 
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -502,7 +478,6 @@ describe('ArrayInput min/max constraints', () => {
                 },
             });
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -546,7 +521,6 @@ describe('ArrayInput min/max constraints', () => {
                 },
             });
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -596,7 +570,6 @@ describe('ArrayInput move buttons', () => {
                 },
             });
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>
@@ -647,7 +620,6 @@ describe('ArrayInput receiver fields', () => {
             }, [form.control]);
 
             const ctx = makeCtx('T2V');
-            const polyglot = createPolyglot();
 
             return (
                 <TabContext.Provider value={ctx}>

@@ -11,7 +11,7 @@ import { tab } from '../../redux/tab';
 import { config } from '../../redux/config';
 import { preview } from '../../redux/preview';
 import { I18nContext, defaultValue } from '../../i18n/I18nContext';
-import Polyglot from 'node-polyglot';
+import { polyglot } from '../../testUtils';
 
 vi.mock('../../hooks/useGet', () => ({
     useGet: () => ({
@@ -93,15 +93,6 @@ const renderButton = (
     storeOverrides: any = {},
 ) => {
     const store = makeStore(storeOverrides);
-    const polyglot = new Polyglot({ locale: 'en' });
-    polyglot.extend({
-        'controls.generate': 'Generate',
-        'controls.reset_form': 'Reset',
-        'controls.confirm_reset': 'Confirm reset',
-        'controls.confirm_reset_content': 'Reset all values?',
-        'controls.ok': 'OK',
-        'controls.cancel': 'Cancel',
-    });
 
     const Inner = () => {
         const form = useForm({ defaultValues: values });

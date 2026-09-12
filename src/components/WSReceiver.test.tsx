@@ -9,7 +9,7 @@ import { tab } from '../redux/tab';
 import { config } from '../redux/config';
 import { preview } from '../redux/preview';
 import { I18nContext, defaultValue } from '../i18n/I18nContext';
-import Polyglot from 'node-polyglot';
+import { polyglot } from '../testUtils';
 import { setStatus, statusEnum } from '../redux/progress';
 import { clearPrompt, setPrompt } from '../redux/tab';
 
@@ -84,8 +84,6 @@ const makeStore = (overrides: any = {}) =>
     } as any);
 
 const renderReceiver = (store: ReturnType<typeof makeStore>) => {
-    const polyglot = new Polyglot({ locale: 'en' });
-    polyglot.extend({ 'toasts.connected': 'Connected' });
     return render(
         <Provider store={store}>
             <I18nContext.Provider
