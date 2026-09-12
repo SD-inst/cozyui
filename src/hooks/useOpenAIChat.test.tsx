@@ -36,6 +36,11 @@ vi.mock('../components/contexts/TabContext', () => ({
     useTabName: () => 'T2V',
 }));
 
+vi.mock('../redux/hooks', () => ({
+    useAppSelector: () => 0,
+    useAppDispatch: () => () => {},
+}));
+
 vi.mock('../components/history/db', () => ({
     db: {
         chatLogs: {

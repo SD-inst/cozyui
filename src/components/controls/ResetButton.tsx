@@ -10,21 +10,28 @@ import { useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { useSetDefaults } from '../../hooks/useSetDefaults';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useAppDispatch } from '../../redux/hooks';
+import { reloadChat } from '../../redux/chat';
 import { db } from '../history/db';
 import { useTabName } from '../contexts/TabContext';
 
 export const ResetButton = ({ ...props }: ButtonProps) => {
     const { reset } = useFormContext();
     const tr = useTranslate();
+    const dispatch = useAppDispatch();
     const [open, setOpen] = useState(false);
     const { isLoaded, setDefaults } = useSetDefaults();
     const tab_name = useTabName();
     const handleOK = () => {
         setOpen(false);
-        db.formState.delete(tab_name).finally(() => {
-            reset();
-            setDefaults();
-        });
+        db.formState
+            .delete(tab_name)
+            .then(() => db.chatLogs.where({ tab: tab_name, id: 'main' }).delete())
+            .finally(() => {
+                reset();
+                setDefaults();
+                dispatch(reloadChat(tab_name));
+            });
     };
     return (
         <>

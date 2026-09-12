@@ -3,13 +3,15 @@ import { config } from './config';
 import { progress } from './progress';
 import { tab } from './tab';
 import { preview } from './preview';
+import { chat } from './chat';
 
 export const store = configureStore({
     reducer: {
         progress,
         config,
         tab,
-        preview
+        preview,
+        chat
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({ serializableCheck: false }),

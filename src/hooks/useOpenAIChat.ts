@@ -5,6 +5,7 @@ import { settings } from './settings';
 import { useLLMConfig } from './useLLMConfig';
 import { db } from '../components/history/db';
 import { useTabName } from '../components/contexts/TabContext';
+import { useAppSelector } from '../redux/hooks';
 
 export interface ImagePart {
     type: 'text' | 'image_url' | 'input_video' | 'input_audio';
@@ -70,10 +71,19 @@ export function useOpenAIChat({
     const [isConnecting, setIsConnecting] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
-    const messagesLoaded = useRef<boolean>(false);
+    const loadedNonce = useRef<number>(-1);
     const stream = useBooleanSetting(settings.chat_stream);
 
     const tab = useTabName();
+    // Per-tab reload signal (Redux nonce). Bumped by `useSaveSession` / `ResetButton`
+    // / `SnapshotApplier` to make the chat re-read its `db.chatLogs` record. The DB
+    // record is the single source of truth — resetting deletes it, restoring a
+    // session writes it back, and in both cases we just re-read and follow.
+    const nonce = useAppSelector((s) => s.chat.nonce[tab] ?? 0);
+    // Latest-ref for `initialMessages` so the load effect's identity stays stable
+    // across system-prompt (mode) changes — we only want to re-load on nonce bumps.
+    const initialMessagesRef = useRef(initialMessages);
+    initialMessagesRef.current = initialMessages;
     const reset = useCallback(() => {
         setMessagesState(initialMessages);
         setIsComplete(false);
@@ -95,6 +105,43 @@ export function useOpenAIChat({
     }, []);
 
     const { processUserMessage } = useMessageProcessor();
+
+    // Load: re-read the `db.chatLogs` record whenever the reload nonce changes
+    // (initial load included). Restores a stored chat, or clears the message list
+    // when the record was deleted (reset). The `loadedNonce` guard prevents a
+    // re-load within the same nonce value (e.g. mid-generation, where isComplete
+    // is briefly false).
+    useEffect(() => {
+        if (loadedNonce.current === nonce) {
+            return;
+        }
+        // The first run (initial mount) only restores a saved chat; it must not
+        // force-reset the (already-initial) state, which would race an in-flight
+        // `sendMessage`. A later nonce bump with no record means the chat was
+        // reset externally (reset form / save session), so we clear it then.
+        const isFirstLoad = loadedNonce.current === -1;
+        loadedNonce.current = nonce;
+        db.chatLogs
+            .where({ tab, id })
+            .first()
+            .then((m) => (m?.messages ? JSON.parse(m.messages) : null))
+            .then((messages) => {
+                if (messages && messages.length > 0) {
+                    setMessagesState(messages);
+                    setIsComplete(true);
+                } else if (!isFirstLoad) {
+                    setMessagesState(initialMessagesRef.current);
+                    setIsComplete(false);
+                    setError(null);
+                }
+            })
+            .catch((e) => {
+                console.log('Failed to load messages from IDB:', e);
+            });
+    }, [nonce, tab, id]);
+
+    // Save: persist the current chat whenever a generation completes. Idempotent
+    // re-saves after a restore are harmless (the record already holds this state).
     useEffect(() => {
         if (isComplete) {
             db.chatLogs.put({
@@ -102,23 +149,6 @@ export function useOpenAIChat({
                 id,
                 messages: JSON.stringify(messagesState),
             });
-        } else {
-            if (!messagesLoaded.current) {
-                db.chatLogs
-                    .where({ tab, id })
-                    .first()
-                    .then((m) => (m?.messages ? JSON.parse(m.messages) : []))
-                    .then((messages) => {
-                        if (messages && messages.length > 0) {
-                            setMessagesState(messages);
-                            setIsComplete(true);
-                        }
-                    })
-                    .catch((e) => {
-                        console.log('Failed to load messages from IDB:', e);
-                    });
-                messagesLoaded.current = true;
-            }
         }
     }, [id, isComplete, messagesState, tab]);
 

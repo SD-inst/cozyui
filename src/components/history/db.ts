@@ -70,6 +70,7 @@ export interface Session {
     name: string;
     tab: string;
     values: string; // serialized form values (subset of tab controls)
+    chat?: string; // serialized chat messages (db.chatLogs content), optional
     timestamp: number;
 }
 

@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { actionEnum, setParams } from '../../redux/tab';
+import { reloadChat } from '../../redux/chat';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useRestoreValues } from '../../hooks/useRestoreValues';
@@ -83,6 +84,20 @@ const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
             // replace. Preset: snapshot the current form for the Undo toast.
             if (isSession) {
                 doReset();
+                // Restore the session's chat: write it back, or clear it when the
+                // saved session had none. The nonce makes the chat re-read the
+                // record (it is the single source of truth).
+                await db.chatLogs
+                    .where({ tab: tab_name, id: 'main' })
+                    .delete();
+                if (record.chat) {
+                    await db.chatLogs.put({
+                        tab: tab_name,
+                        id: 'main',
+                        messages: record.chat,
+                    });
+                }
+                dispatch(reloadChat(tab_name));
             }
             const snapshot = isPreset
                 ? stripNulls(filterFormValues(getValues()))

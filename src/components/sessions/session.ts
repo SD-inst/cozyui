@@ -1,13 +1,15 @@
 import { db } from '../history/db';
 import { genId } from '../../utils/id';
 
-// Save a session (snapshot record + its media files). Returns the new id.
+// Save a session (snapshot record + its media files + its chat, if any).
+// Returns the new id.
 export const saveSession = async (
     session: {
         name: string;
         tab: string;
         values: any;
         files: { filename: string; file: File }[];
+        chat?: string; // serialized chat messages (db.chatLogs content)
     },
 ): Promise<string> => {
     const id = genId();
@@ -17,6 +19,7 @@ export const saveSession = async (
             name: session.name,
             tab: session.tab,
             values: JSON.stringify(session.values),
+            chat: session.chat,
             timestamp: Date.now(),
         });
         if (session.files.length) {

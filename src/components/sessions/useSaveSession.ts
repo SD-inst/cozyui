@@ -7,16 +7,19 @@ import { useSetDefaults } from '../../hooks/useSetDefaults';
 import { useTabName } from '../contexts/TabContext';
 import { db } from '../history/db';
 import { useTranslate } from '../../i18n/I18nContext';
+import { useAppDispatch } from '../../redux/hooks';
+import { reloadChat } from '../../redux/chat';
 import { filterFormValues } from '../../utils/filterFormValues';
 import { EXCLUDE_FIELDS, walkMediaFields } from '../../utils/mediaFields';
 import { defaultSessionName, saveSession } from './session';
 
-// Creates a session: snapshots the current form values and backs up its media
-// files (fetched from the server), then resets the form so the user can
-// experiment with a different set of settings.
+// Creates a session: snapshots the current form values, its chat, and backs up
+// its media files (fetched from the server), then resets the form and chat so
+// the user can experiment with a different set of settings.
 export const useSaveSession = () => {
     const apiUrl = useApiURL();
     const tr = useTranslate();
+    const dispatch = useAppDispatch();
     const tab_name = useTabName();
     const { getValues, reset } = useFormContext();
     const { setDefaults, isLoaded } = useSetDefaults();
@@ -32,6 +35,10 @@ export const useSaveSession = () => {
             for (const f of EXCLUDE_FIELDS) {
                 delete values[f];
             }
+            const chat = await db.chatLogs
+                .where({ tab: tab_name, id: 'main' })
+                .first()
+                .then((r) => r?.messages);
             const refs = walkMediaFields(values);
             const files: { filename: string; file: File }[] = [];
             const failed: string[] = [];
@@ -57,11 +64,14 @@ export const useSaveSession = () => {
                 tab: tab_name,
                 values,
                 files,
+                chat,
             });
-            // Reset the form so the user can experiment (like RESET).
+            // Reset the form and chat so the user can experiment (like RESET).
             await db.formState.delete(tab_name);
+            await db.chatLogs.where({ tab: tab_name, id: 'main' }).delete();
             reset();
             setDefaults();
+            dispatch(reloadChat(tab_name));
             toast.success(tr('sessions.saved_reset'));
             if (failed.length) {
                 toast.error(
