@@ -104,8 +104,7 @@
             "result": [
                 {
                     "id": "20",
-                    "type": "gifs",
-                    "create_video_node_id": "16"
+                    "type": "gifs"
                 },
                 {
                     "id": "20",
@@ -200,8 +199,7 @@
             "result": [
                 {
                     "id": "128",
-                    "type": "gifs",
-                    "create_video_node_id": "102"
+                    "type": "gifs"
                 }
             ]
         },
@@ -292,8 +290,7 @@
             "result": [
                 {
                     "id": "131",
-                    "type": "gifs",
-                    "create_video_node_id": "128"
+                    "type": "gifs"
                 }
             ]
         },
@@ -362,8 +359,7 @@
             },
             "result": {
                 "id": "31",
-                "type": "gifs",
-                "create_video_node_id": "20"
+                "type": "gifs"
             },
             "handler_options": {
                 "lora_params": {
@@ -459,8 +455,7 @@
             },
             "result": {
                 "id": "54",
-                "type": "gifs",
-                "create_video_node_id": "34"
+                "type": "gifs"
             }
         },
         "LTX I2V": {
@@ -531,8 +526,7 @@
             },
             "result": {
                 "id": "195",
-                "type": "gifs",
-                "create_video_node_id": "60"
+                "type": "gifs"
             }
         },
         "Describe image": {
@@ -655,8 +649,7 @@
             },
             "result": {
                 "id": "108",
-                "type": "gifs",
-                "create_video_node_id": "103"
+                "type": "gifs"
             }
         },
         "LTX-2 I2V": {
@@ -770,8 +763,7 @@
             },
             "result": {
                 "id": "109",
-                "type": "gifs",
-                "create_video_node_id": "103"
+                "type": "gifs"
             }
         },
         "LTX-2.3 T2V": {
@@ -875,8 +867,7 @@
             },
             "result": {
                 "id": "108",
-                "type": "gifs",
-                "create_video_node_id": "103"
+                "type": "gifs"
             }
         },
         "LTX-2.3 I2V": {
@@ -1007,8 +998,7 @@
             },
             "result": {
                 "id": "109",
-                "type": "gifs",
-                "create_video_node_id": "103"
+                "type": "gifs"
             }
         },
         "LTX-2.3 V2V": {
@@ -1069,8 +1059,7 @@
             },
             "result": {
                 "id": "120",
-                "type": "gifs",
-                "create_video_node_id": "103"
+                "type": "gifs"
             }
         },
         "Hunyuan I2V KJ": {
@@ -1162,8 +1151,7 @@
             },
             "result": {
                 "id": "58",
-                "type": "gifs",
-                "create_video_node_id": "34"
+                "type": "gifs"
             }
         },
         "Hunyuan I2V": {
@@ -1263,8 +1251,7 @@
             "result": [
                 {
                     "id": "93",
-                    "type": "gifs",
-                    "create_video_node_id": "50"
+                    "type": "gifs"
                 },
                 {
                     "id": "93",
@@ -1454,8 +1441,7 @@
             "result": [
                 {
                     "id": "103",
-                    "type": "gifs",
-                    "create_video_node_id": "97"
+                    "type": "gifs"
                 },
                 {
                     "id": "98",
@@ -2725,8 +2711,7 @@
             },
             "result": {
                 "id": "118",
-                "type": "gifs",
-                "create_video_node_id": "30"
+                "type": "gifs"
             },
             "defaults": {
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
@@ -2831,8 +2816,7 @@
             },
             "result": {
                 "id": "131",
-                "type": "gifs",
-                "create_video_node_id": "30"
+                "type": "gifs"
             },
             "defaults": {
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors",
@@ -2920,8 +2904,7 @@
             },
             "result": {
                 "id": "73",
-                "type": "gifs",
-                "create_video_node_id": "56"
+                "type": "gifs"
             },
             "defaults": {
                 "model": "wan/Wan2_1-I2V-14B-480P_fp8_e4m3fn.safetensors"
@@ -3033,8 +3016,7 @@
             },
             "result": {
                 "id": "114",
-                "type": "gifs",
-                "create_video_node_id": "30"
+                "type": "gifs"
             },
             "defaults": {
                 "model": "wan/Wan2_1-T2V-14B_fp8_e4m3fn.safetensors"
@@ -3243,8 +3225,7 @@
             },
             "result": {
                 "id": "12",
-                "type": "gifs",
-                "create_video_node_id": "5"
+                "type": "gifs"
             }
         },
         "Video join": {
@@ -3271,8 +3252,7 @@
             },
             "result": {
                 "id": "2",
-                "type": "gifs",
-                "create_video_node_id": "1"
+                "type": "gifs"
             }
         },
         "MiniMax H3 T2V": {
@@ -3411,8 +3391,7 @@
             },
             "result": {
                 "id": "138",
-                "type": "gifs",
-                "create_video_node_id": "105:121"
+                "type": "gifs"
             },
             "defaults": {
                 "aspect_ratio": "16:9 (Widescreen)",
@@ -3572,9 +3551,8 @@
                 }
             },
             "result": {
-                "id": "138",
-                "type": "gifs",
-                "create_video_node_id": "105:121"
+                "id": "140",
+                "type": "gifs"
             },
             "defaults": {
                 "aspect_ratio": "16:9 (Widescreen)",
@@ -3750,8 +3728,7 @@
             },
             "result": {
                 "id": "138",
-                "type": "gifs",
-                "create_video_node_id": "105:121"
+                "type": "gifs"
             },
             "defaults": {
                 "aspect_ratio": "16:9 (Widescreen)",

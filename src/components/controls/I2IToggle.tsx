@@ -2,7 +2,7 @@ import { Box, useEventCallback } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
-import { insertGraph } from '../../api/utils';
+import { getCreateVideoNodeId, insertGraph } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useImageURL } from '../../hooks/useImageURL';
 import { useRestoreValues } from '../../hooks/useRestoreValues';
@@ -325,7 +325,7 @@ export const I2IToggle = ({
                     };
 
                     // Find VAEDecode ID from result node (before insertGraph)
-                    const resultNodeId = resultParam.create_video_node_id || resultParam.id;
+                    const resultNodeId = getCreateVideoNodeId(api, resultParam.id);
                     const resultNode = api[resultNodeId];
                     const imagesInput = resultNode?.inputs?.images;
                     const vaeDecodeNodeId = Array.isArray(imagesInput)

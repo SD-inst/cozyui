@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { Workflow } from './graph';
 import {
+    getCreateVideoNodeId,
     getFreeNodeId,
     insertGraph,
     insertNode,
@@ -22,6 +23,26 @@ describe('getFreeNodeId', () => {
 
     it('ignores non-numeric base parts', () => {
         expect(getFreeNodeId({ '42:main': { inputs: {} } })).toBe(43);
+    });
+});
+
+describe('getCreateVideoNodeId', () => {
+    it('follows the SaveVideo video ref to the CreateVideo node', () => {
+        const api: Workflow = {
+            '121': { inputs: { images: ['120', 0] }, class_type: 'CreateVideo' },
+            '140': {
+                inputs: { filename_prefix: 'x', video: ['121', 0] },
+                class_type: 'SaveVideo',
+            },
+        };
+        expect(getCreateVideoNodeId(api, '140')).toBe('121');
+    });
+
+    it('falls back to the SaveVideo node id when no video ref exists', () => {
+        const api: Workflow = {
+            '5': { inputs: { filename_prefix: 'x' }, class_type: 'SaveVideo' },
+        };
+        expect(getCreateVideoNodeId(api, '5')).toBe('5');
     });
 });
 

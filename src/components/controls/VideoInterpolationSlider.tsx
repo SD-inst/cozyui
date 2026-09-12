@@ -1,6 +1,6 @@
 import { useEventCallback } from '@mui/material';
 import { isNodeRef, Workflow } from '../../api/graph';
-import { insertNode } from '../../api/utils';
+import { getCreateVideoNodeId, insertNode } from '../../api/utils';
 import { useResultParam } from '../../hooks/useResult';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { SliderInput } from './SliderInput';
@@ -13,13 +13,13 @@ export const VideoInterpolationSlider = ({
     sx,
     ...props
 }: Optional<SliderInputProps, 'name'>) => {
-    const { id, create_video_node_id } = useResultParam();
+    const { id } = useResultParam();
     const { getValues } = useFormContext();
     const handler = useEventCallback((api: Workflow, value: number) => {
         if (value === 1 || getValues('length') < 2) {
             return;
         }
-        const videoNodeId = create_video_node_id || id;
+        const videoNodeId = getCreateVideoNodeId(api, id);
         const rifeNode = {
             inputs: {
                 ckpt_name: 'rife_v4.26.safetensors',

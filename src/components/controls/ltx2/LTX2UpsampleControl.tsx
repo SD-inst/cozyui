@@ -1,7 +1,7 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../../api/graph';
-import { insertGraph } from '../../../api/utils';
+import { getCreateVideoNodeId, insertGraph } from '../../../api/utils';
 import { useResultParam } from '../../../hooks/useResult';
 import { useWatchForm } from '../../../hooks/useWatchForm';
 import { controlType } from '../../../redux/config';
@@ -43,7 +43,7 @@ export const LTX2UpsampleControl = ({
     i2v?: boolean;
 } & BoxProps) => {
     const fps = useWatchForm('fps');
-    const { id: resultNodeID, create_video_node_id } = useResultParam();
+    const { id: resultNodeID } = useResultParam();
     const keyframes: TKeyframe[] = useWatch({ name: 'keyframes' });
     const referenceAudio: TReferenceAudio = useWatch({
         name: 'reference_audio',
@@ -140,7 +140,7 @@ export const LTX2UpsampleControl = ({
                 const newNodeID = insertGraph(api, temporalUpscale);
                 samplesNode = [newNodeID + ':2', 0];
                 condNodeID = newNodeID + ':3';
-                const videoNodeId = create_video_node_id || resultNodeID;
+                const videoNodeId = getCreateVideoNodeId(api, resultNodeID);
                 api[videoNodeId].inputs.fps = fps * 2;
             }
             if (value.spatial) {

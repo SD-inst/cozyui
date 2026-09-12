@@ -2,6 +2,7 @@ import {
     Workflow,
     WorkflowNode,
     InputValue,
+    NodeId,
     isNodeRef,
 } from './graph';
 
@@ -14,6 +15,20 @@ export const getFreeNodeId = (api: Workflow) =>
     Object.keys(api)
         .map((k) => parseInt(k.split(':')[0]))
         .reduce((a, k) => Math.max(a, k), 0) + 1;
+
+/**
+ * Returns the id of the node that feeds a `SaveVideo` node — i.e. the
+ * `CreateVideo` node it references via its `video` input. Follows the actual
+ * link in the workflow rather than relying on a hardcoded id. Falls back to
+ * the `SaveVideo` node id itself if no `video` reference is found.
+ */
+export const getCreateVideoNodeId = (
+    api: Workflow,
+    saveVideoNodeId: NodeId,
+): NodeId => {
+    const video = api[saveVideoNodeId]?.inputs?.video;
+    return isNodeRef(video) ? video[0] : saveVideoNodeId;
+};
 
 /**
  * Inserts a node between input_node and output_node(s),

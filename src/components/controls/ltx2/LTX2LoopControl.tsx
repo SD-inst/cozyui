@@ -2,7 +2,7 @@ import { Box, useEventCallback } from '@mui/material';
 import { useEffect } from 'react';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Workflow } from '../../../api/graph';
-import { insertGraph } from '../../../api/utils';
+import { getCreateVideoNodeId, insertGraph } from '../../../api/utils';
 import { useControl } from '../../../hooks/useAPI';
 import { useResultParam } from '../../../hooks/useResult';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -21,7 +21,7 @@ const defaultValue: TValue = {
 };
 
 export const LTX2LoopControl = ({ name }: { name: string }) => {
-    const { id, create_video_node_id } = useResultParam();
+    const { id } = useResultParam();
     const lengthCtl = useControl('length');
     const enabled = useWatch({
         name: name + '.enabled',
@@ -41,7 +41,7 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
         if (!value || !value.enabled) {
             return;
         }
-        const videoNodeId = create_video_node_id || id;
+        const videoNodeId = getCreateVideoNodeId(api, id);
         const graph = {
             ':1': {
                 inputs: {

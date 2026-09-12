@@ -1,7 +1,11 @@
 import { Box, BoxProps, useEventCallback } from '@mui/material';
 import { useController } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../../api/graph';
-import { insertNode, replaceNodeConnection } from '../../../api/utils';
+import {
+    getCreateVideoNodeId,
+    insertNode,
+    replaceNodeConnection,
+} from '../../../api/utils';
 import { useResultParam } from '../../../hooks/useResult';
 import { controlType } from '../../../redux/config';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -21,7 +25,7 @@ export const KJWanLoopInput = ({
     name,
     ...props
 }: BoxProps & { name: string }) => {
-    const { id, create_video_node_id } = useResultParam();
+    const { id } = useResultParam();
     const handler = useEventCallback(
         (api: Workflow, value: valueType, control: controlType) => {
             const { enabled, color_correction, ...inputs } = value;
@@ -29,7 +33,7 @@ export const KJWanLoopInput = ({
                 return;
             }
             if (color_correction != 'off') {
-                const videoNodeId = create_video_node_id || id;
+                const videoNodeId = getCreateVideoNodeId(api, id);
                 const decode_node_id = (api[videoNodeId].inputs['images'] as NodeRef)[0];
                 const selectNode = {
                     inputs: {

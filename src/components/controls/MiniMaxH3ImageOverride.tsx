@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useResultParam } from '../../hooks/useResult';
 import { Workflow } from '../../api/graph';
-import { insertGraph } from '../../api/utils';
+import { getCreateVideoNodeId, insertGraph } from '../../api/utils';
 import { useRegisterHandler } from '../contexts/TabContext';
 
 /**
@@ -23,14 +23,14 @@ export const MiniMaxH3ImageOverride = ({
     name?: string;
     imageThreshold?: number;
 }) => {
-    const { id, create_video_node_id } = useResultParam();
+    const { id } = useResultParam();
     const { setValue } = useFormContext();
     const length = useWatch({ name: 'length' });
     const handler = useEventCallback((api: Workflow, value: boolean) => {
         if (!value) {
             return;
         }
-        const videoNodeId = create_video_node_id || id;
+        const videoNodeId = getCreateVideoNodeId(api, id);
         const extractBaseId = insertGraph(api, {
             ':extract_frame': {
                 inputs: {
