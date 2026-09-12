@@ -25,11 +25,12 @@ import { useRestoreSession } from './useRestoreSession';
 export const SessionCard = ({ session }: { session: Session }) => {
     const tr = useTranslate();
     const restore = useRestoreSession();
-    const files = useLiveQuery(
-        async () =>
-            db.sessionFiles.where({ session: session.id }).toArray(),
-        [session.id],
-    ) ?? [];
+    const files =
+        useLiveQuery(
+            async () =>
+                db.sessionFiles.where({ session: session.id }).toArray(),
+            [session.id],
+        ) ?? [];
     const totalSize = files.reduce((s, f) => s + f.file.size, 0);
     const [restoreOpen, setRestoreOpen] = useState(false);
     const [renameOpen, setRenameOpen] = useState(false);
@@ -136,7 +137,9 @@ export const SessionCard = ({ session }: { session: Session }) => {
             <Dialog
                 open={restoreOpen}
                 onClose={() => setRestoreOpen(false)}
-                aria-label={tr('sessions.restore_title', { name: session.name })}
+                aria-label={tr('sessions.restore_title', {
+                    name: session.name,
+                })}
             >
                 <DialogTitle>
                     {tr('sessions.restore_title', { name: session.name })}
@@ -171,14 +174,18 @@ export const SessionCard = ({ session }: { session: Session }) => {
                         fullWidth
                         value={renameValue}
                         onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                saveRename();
+                            }
+                        }}
                         sx={{ mt: 1 }}
                     />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={saveRename}>{tr('controls.ok')}</Button>
-                    <Button
-                        onClick={() => setRenameOpen(false)}
-                    >
+                    <Button onClick={() => setRenameOpen(false)}>
                         {tr('controls.cancel')}
                     </Button>
                 </DialogActions>
@@ -196,9 +203,7 @@ export const SessionCard = ({ session }: { session: Session }) => {
                     <Button onClick={handleDelete} color='error'>
                         {tr('controls.ok')}
                     </Button>
-                    <Button
-                        onClick={() => setConfirmDelete(false)}
-                    >
+                    <Button onClick={() => setConfirmDelete(false)}>
                         {tr('controls.cancel')}
                     </Button>
                 </DialogActions>
