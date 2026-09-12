@@ -62,7 +62,7 @@ export const useRefModMeta = (modIds: Array<string | undefined>) => {
 export const useRefModsForChat = (name: string) => {
     const entries = useWatch({
         name,
-    }) as Array<{ id?: string }> | undefined;
+    }) as Array<{ id?: string; skip_chat?: boolean }> | undefined;
     const modIds = (entries ?? []).map((e) =>
         typeof e?.id === 'string' ? e.id : undefined,
     );
@@ -70,9 +70,13 @@ export const useRefModsForChat = (name: string) => {
 
     const result: ChatRefMod[] = [];
     let index = 0;
-    (entries ?? []).forEach((_entry, i) => {
+    (entries ?? []).forEach((entry, i) => {
         const id = modIds[i];
         if (!id) return;
+        // Skipped-for-chat assets are dropped here too, so the 1-based index
+        // (used to build the `refmods=` line) stays aligned with the attached
+        // thumbnails, which ChatComponent filters the same way.
+        if (entry?.skip_chat) return;
         const mod = mods[i];
         if (mod?.kind === 'audio') return;
         index += 1;

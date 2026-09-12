@@ -5,6 +5,7 @@ import { Workflow, NodeRef } from '../api/graph';
 import { controlType } from '../redux/config';
 import { useApiURL } from './useApiURL';
 import { insertGraph } from '../api/utils';
+import { activeEntries } from '../utils/arraySlots';
 
 const MAX_SLOTS = 8;
 const NONE = '(none)';
@@ -16,11 +17,24 @@ export const useMiniMaxH3RefModHandler = () => {
             if (!value || !value.length || !control.cond_node_id || !apiUrl)
                 return;
 
-            // Resolve each mod to a filename in the server's input folder:
-            // reuse the stored name if the file is still there, otherwise
-            // (re-)upload it and remember the new name for next time.
-            const uploadedNames: string[] = [];
-            for (const { id } of value) {
+            // Resolve the active mods to filenames in the server's input
+            // folder: reuse the stored name if the file is still there,
+            // otherwise (re-)upload it and remember the new name for next
+            // time. Skipped entries are treated as absent, so the active mods
+            // fill the slots in order (no gaps).
+            type RefModEntry = {
+                id: string;
+                strength?: number;
+                copies?: number;
+                skip?: boolean;
+            };
+            const resolved: Array<{
+                name: string;
+                strength: number;
+                copies: number;
+            }> = [];
+            for (const entry of activeEntries(value as RefModEntry[])) {
+                const { id } = entry;
                 const file = await db.refModFiles
                     .where({ mod: id })
                     .and((f: any) => f.fileType === 'safetensors')
@@ -39,24 +53,29 @@ export const useMiniMaxH3RefModHandler = () => {
                 if (mod && mod.serverFilename !== name) {
                     await db.refMods.update(id, { serverFilename: name });
                 }
-                uploadedNames.push(name);
+                resolved.push({
+                    name,
+                    strength: entry?.strength ?? 1.0,
+                    copies: entry?.copies ?? 1,
+                });
             }
-            if (!uploadedNames.length) return;
+            if (!resolved.length) return;
 
             // Build a sub-graph: loader → apply
             const loaderInputs: Record<string, any> = {
                 show_info: false,
             };
             for (let i = 1; i <= MAX_SLOTS; i++) {
-                if (i <= uploadedNames.length) {
-                    loaderInputs[`mod_${i}`] = uploadedNames[i - 1];
-                    loaderInputs[`strength_${i}`] =
-                        value[i - 1]?.strength ?? 1.0;
+                const r = resolved[i - 1];
+                if (r) {
+                    loaderInputs[`mod_${i}`] = r.name;
+                    loaderInputs[`strength_${i}`] = r.strength;
+                    loaderInputs[`copies_${i}`] = r.copies;
                 } else {
                     loaderInputs[`mod_${i}`] = NONE;
                     loaderInputs[`strength_${i}`] = 1.0;
+                    loaderInputs[`copies_${i}`] = 1;
                 }
-                loaderInputs[`copies_${i}`] = value[i - 1]?.copies ?? 1;
             }
 
             const graph: Workflow = {

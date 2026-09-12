@@ -103,7 +103,12 @@ export const ChatComponent = ({
         ) {
             return [];
         }
-        const entries = Array.isArray(value) ? value : [value];
+        // Array items carry a universal `skip_chat` flag; drop them so the
+        // asset is never attached to the first message (single-value fields
+        // are strings without the flag, so they pass through unchanged).
+        const entries = (Array.isArray(value) ? value : [value]).filter(
+            (entry: any) => !entry?.skip_chat,
+        );
         const filenames = entries.map((entry: any) =>
             field.itemField ? entry?.[field.itemField] : entry,
         );

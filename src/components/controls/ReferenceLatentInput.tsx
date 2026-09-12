@@ -12,6 +12,7 @@ type ReferenceType = {
     image: string;
     size: number;
     enabled: boolean;
+    skip?: boolean;
 }[];
 
 const newValue = { size: 1, enabled: true };
@@ -36,7 +37,7 @@ export const ReferenceLatentInput = ({
             const srcNode = api[control.guider_node_id].inputs.conditioning;
             let prevNode = (srcNode as NodeRef)[0];
             value.forEach((v) => {
-                if (!v.size || !v.image || !v.enabled) {
+                if (!v.size || !v.image || !v.enabled || v.skip) {
                     return;
                 }
                 const graph = {

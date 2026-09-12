@@ -105,6 +105,8 @@ const translation = {
         reset: 'Reset',
         remove: 'Remove',
         replace: 'Replace',
+        skip: 'Skip',
+        skip_chat: 'Skip for chat',
         reset_form: 'Reset form',
         confirm_reset: 'Confirm reset',
         confirm_reset_content:

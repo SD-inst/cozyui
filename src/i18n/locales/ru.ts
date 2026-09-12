@@ -104,6 +104,8 @@ const translation = {
         reset: 'Сброс',
         remove: 'Удалить',
         replace: 'Заменить',
+        skip: 'Пропустить',
+        skip_chat: 'Пропустить для чата',
         reset_form: 'Сброс формы',
         confirm_reset: 'Подтвердите сброс',
         confirm_reset_content:

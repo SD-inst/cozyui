@@ -61,6 +61,7 @@ import {
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
 import { FileUpload } from './FileUpload';
+import { ToggleInput } from './ToggleInput';
 
 import 'yet-another-react-lightbox/styles.css';
 
@@ -321,6 +322,24 @@ export const ArrayInput = ({
     const value = React.useMemo(() => rawValue ?? [], [rawValue]);
     const { fields, append, update, swap, remove, replace, move } =
         useFieldArray({ name });
+    // Universal per-item toggles. Injected into the per-item children so every
+    // item exposes a `skip` (generation) and a `skip_chat` (chat) field. They
+    // flow through the same name-remapping as the tab-supplied children, so
+    // they register as `name.<index>.skip` / `.skip_chat` in both the compact
+    // dialog and list mode.
+    const perItemToggles = [
+        <ToggleInput key='skip' name='skip' label='skip' defaultValue={false} />,
+        <ToggleInput
+            key='skip_chat'
+            name='skip_chat'
+            label='skip_chat'
+            defaultValue={false}
+        />,
+    ];
+    const effectiveChildren = [
+        ...React.Children.toArray(props.children),
+        ...perItemToggles,
+    ];
     useUploadBackupGuard(name, value, keyField);
     useEffect(() => {
         if (rawValue === undefined || rawValue === null) {
@@ -758,8 +777,9 @@ export const ArrayInput = ({
             validIndices.push(i);
         });
 
-        // Render non-file children per item (skip first child = FileUpload)
-        const childrenArray = React.Children.toArray(props.children);
+        // Render non-file children per item (skip first child = FileUpload);
+        // effectiveChildren appends the universal skip/skip_chat toggles.
+        const childrenArray = effectiveChildren;
 
         return (
             <Box display='flex' flexDirection='column' gap={1}>
@@ -844,6 +864,9 @@ export const ArrayInput = ({
                                             onItemDrop={resetFileDrag}
                                             isHighlighted={
                                                 highlightIndex === index
+                                            }
+                                            isSkipped={
+                                                (value as any[])[index]?.skip
                                             }
                                         />
                                     )}
@@ -1126,7 +1149,7 @@ export const ArrayInput = ({
                                     }}
                                 >
                                     {cloneChildren({
-                                        children: props.children,
+                                        children: effectiveChildren,
                                         name,
                                         index,
                                         min,

@@ -9,6 +9,7 @@ export type TKeyframe = {
     trim: number;
     enabled: boolean;
     last: boolean;
+    skip?: boolean;
 };
 
 export const keyframeHandler = (
@@ -28,7 +29,7 @@ export const keyframeHandler = (
         latent: api[concat_node_id].inputs.video_latent,
     };
     value.forEach((v) => {
-        if (!v.enabled) {
+        if (!v.enabled || v.skip) {
             return;
         }
         const graph: any = {

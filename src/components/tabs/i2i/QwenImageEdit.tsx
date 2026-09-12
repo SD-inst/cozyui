@@ -29,6 +29,7 @@ type ReferenceType = {
     image: string;
     size: number;
     enabled: boolean;
+    skip?: boolean;
 }[];
 
 const newValue = { size: 1, enabled: true };
@@ -46,7 +47,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
                 return;
             }
             value.forEach((v, idx) => {
-                if (!v.enabled) {
+                if (!v.enabled || v.skip) {
                     return;
                 }
                 const graph = {

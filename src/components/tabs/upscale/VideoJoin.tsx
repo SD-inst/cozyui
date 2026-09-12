@@ -43,13 +43,17 @@ const buildLoad = (api: Workflow, filename: string): string => {
 const Videos = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
-        (api: Workflow, value: Array<{ video: string }>, control: controlType) => {
+        (
+            api: Workflow,
+            value: Array<{ video: string; skip?: boolean }>,
+            control: controlType,
+        ) => {
             if (!control.node_id) {
                 return;
             }
             const overlap = getValues('overlap') ?? 48;
             const correct = getValues('correct_brightness') ?? false;
-            const videos = (value || []).filter((v) => v.video);
+            const videos = (value || []).filter((v) => v.video && !v.skip);
             if (!videos.length) {
                 return;
             }

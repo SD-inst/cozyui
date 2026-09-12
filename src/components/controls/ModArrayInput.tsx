@@ -121,6 +121,7 @@ const ModThumbContent = ({
     name,
     kind,
     onClick,
+    isSkipped = false,
 }: {
     item: any;
     url?: string;
@@ -129,6 +130,7 @@ const ModThumbContent = ({
     name?: string;
     kind?: 'image' | 'video' | 'audio';
     onClick?: () => void;
+    isSkipped?: boolean;
 }) => {
     const theme = useTheme();
     const clickable = !!item?.id && !!url;
@@ -144,6 +146,8 @@ const ModThumbContent = ({
                 borderColor: theme.palette.grey[300],
                 position: 'relative',
                 cursor: clickable ? 'pointer' : undefined,
+                opacity: isSkipped ? 0.4 : 1,
+                filter: isSkipped ? 'grayscale(0.7)' : undefined,
             }}
             onClick={clickable ? onClick : undefined}
         >
@@ -236,6 +240,7 @@ export const ModArrayInput = ({
             name={modMetas[index]?.name}
             kind={modMetas[index]?.kind}
             onClick={() => openLightbox(index)}
+            isSkipped={item?.skip}
         />
     );
 

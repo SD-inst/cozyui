@@ -907,6 +907,23 @@ const useModelHandler = () => {
 
 The `control` object contains extra fields from config.json (e.g., `model_loader_id`, `sampler_id`). **CRITICAL**: never hardcode node IDs, they should be either passed via config.json control fields or collected from the other known nodes (by tracking inputs backwards).
 
+### ArrayInput `skip` / `skip_chat` (per-item) — IMPORTANT
+
+Every `ArrayInput` item carries two **universal** per-item toggles (no opt-in), injected centrally in `ArrayInput.tsx` and flowing through the same per-item name-remapping as the tab-supplied children, so they register as `name.<index>.skip` / `name.<index>.skip_chat` (compact dialog and list mode alike). Skipped items render dimmed.
+
+- **`skip`** — the item is excluded from **generation** ("as if it doesn't exist").
+- **`skip_chat`** — the item is excluded from the **first chat message** (asset needed for generation but that would confuse the chat, e.g. a drift-fighting keyframe).
+
+The two flags are **independent** — each consumer reads only its own flag. The full array always stays in the form; the "effective value" is a **pure derivation at the read boundary, never a second stored copy** (a filtered copy + sync effect would be fragile and is deliberately avoided).
+
+Where it's honored:
+- **Generation handlers** filter to the active entries before numbering slots or building nodes — use `activeEntries(entries)` from [`src/utils/arraySlots.ts`](src/utils/arraySlots.ts) (canonical, tested). Handlers that already gate on a per-item `enabled` toggle add `|| v.skip` to that check (`enabled` = permanent state, `skip` = temporary).
+- **Chat** filters `skip_chat` in two places that must stay aligned: `ChatComponent` drops `skip_chat` items from the attached media (generic over `mediaFields`), and `useRefModsForChat` ([`src/hooks/useRefMods.ts`](src/hooks/useRefMods.ts)) skips them when computing the 1-based index for the `refmods=` line, so `Picture N` positions match the attached thumbnails.
+
+**Compact vs. positional renumbering — pick per consumer and keep it internally consistent:**
+- **`refmods`** uses **compact** renumbering: `useMiniMaxH3RefModHandler` resolves the active mods to a list and fills loader slots `mod_1..mod_N` in order (no gaps), matching the compact `refmods=` line in chat.
+- **R2V reference arrays** (`ref_images`/`ref_videos`/`ref_audio`) use **positional** skip: the handler does `if (!v.image || v.skip) return;` keeping the original index and leaving the skipped slot unassigned. `collectKeyframeEntries` in [`src/components/controls/MiniMaxH3KeyframeHandler.ts`](src/components/controls/MiniMaxH3KeyframeHandler.ts) reads node inputs by **original** index, so positional is what keeps the keyframe collector aligned — do not switch these to compact renumbering without updating the collector.
+
 ---
 
 ## Common File Locations

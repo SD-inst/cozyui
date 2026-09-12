@@ -84,7 +84,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
         (
             api: Workflow,
-            value: Array<{ image: string }>,
+            value: Array<{ image: string; skip?: boolean }>,
             control: controlType,
         ) => {
             if (!value || !value.length || !control.node_id) {
@@ -94,7 +94,10 @@ const ReferenceImages = ({ name }: { name: string }) => {
             const scaleMode = getValues('ref_image_size') === 'scale';
 
             value.forEach((v, idx) => {
-                if (!v.image) {
+                // Skipped items keep their original slot index (the reference
+                // node leaves that slot unassigned), which keeps the keyframe
+                // collector aligned with the outputs that were actually built.
+                if (!v.image || v.skip) {
                     return;
                 }
                 const imageNodeID = getFreeNodeId(api) + '';
@@ -183,7 +186,7 @@ const ReferenceAudio = ({ name }: { name: string }) => {
     const handler = useEventCallback(
         (
             api: Workflow,
-            value: Array<{ audio: string }>,
+            value: Array<{ audio: string; skip?: boolean }>,
             control: controlType,
         ) => {
             if (!value || !value.length || !control.node_id) {
@@ -191,7 +194,7 @@ const ReferenceAudio = ({ name }: { name: string }) => {
             }
 
             value.forEach((v, idx) => {
-                if (!v.audio) {
+                if (!v.audio || v.skip) {
                     return;
                 }
                 const audioNodeID = getFreeNodeId(api) + '';
@@ -233,6 +236,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 no_audio: boolean;
                 trim: number;
                 last: boolean;
+                skip?: boolean;
             }>,
             control: controlType,
         ) => {
@@ -243,7 +247,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
             const scaleMode = getValues('ref_image_size') === 'scale';
 
             (value || []).forEach((v, idx) => {
-                if (!v.video) {
+                if (!v.video || v.skip) {
                     return;
                 }
 

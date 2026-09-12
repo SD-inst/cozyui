@@ -239,6 +239,20 @@ describe('ArrayInput compact-mode controls dialog', () => {
         const addBtn = document.querySelector('[d*="M19 13"]');
         expect(addBtn).not.toBeNull();
     });
+
+    it('registers universal skip/skip_chat fields per item, not top-level', async () => {
+        render(<Harness />);
+
+        fireEvent.click(screen.getByText('1'));
+
+        await waitFor(() => {
+            expect(hasRegisteredField(control, 'ref_videos.0.skip')).toBe(true);
+        });
+        expect(hasRegisteredField(control, 'ref_videos.0.skip_chat')).toBe(true);
+        // The universal toggles are nested per-item, never top-level.
+        expect(hasRegisteredField(control, 'skip')).toBe(false);
+        expect(hasRegisteredField(control, 'skip_chat')).toBe(false);
+    });
 });
 
 // ============================================================================

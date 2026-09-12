@@ -27,7 +27,10 @@ export const collectKeyframeEntries = (
 ): TKeyframeEntry[] => {
     const keyframes: TKeyframeEntry[] = [];
     (images || []).forEach((v, idx) => {
-        if (v.keyframe && v.image) {
+        // Skipped items have no node built by the ReferenceImages handler, so
+        // their slot is left at the API default; guard on `skip` too so the
+        // keyframe is never collected regardless of that default.
+        if (v.keyframe && v.image && !v.skip) {
             const imageOutput = api[refNodeID].inputs[
                 'ref_images.ref_image_' + idx
             ];
@@ -40,7 +43,7 @@ export const collectKeyframeEntries = (
         }
     });
     (videos || []).forEach((v, idx) => {
-        if (v.keyframe && v.video) {
+        if (v.keyframe && v.video && !v.skip) {
             const videoOutput = api[refNodeID].inputs[
                 'ref_videos.ref_video_' + idx
             ];

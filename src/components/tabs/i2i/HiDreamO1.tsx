@@ -22,6 +22,7 @@ import { WFTab } from '../../WFTab';
 type ReferenceType = {
     image: string;
     enabled: boolean;
+    skip?: boolean;
 }[];
 
 const newValue = { enabled: true };
@@ -48,7 +49,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
             const refNodeID = refBaseID + ':reference';
 
             value.forEach((v, idx) => {
-                if (!v.enabled) {
+                if (!v.enabled || v.skip) {
                     return;
                 }
                 const imageNodeID = getFreeNodeId(api) + '';

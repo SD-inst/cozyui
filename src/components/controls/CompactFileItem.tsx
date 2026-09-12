@@ -45,6 +45,7 @@ export const CompactFileItem = memo(
         onItemDragLeave,
         onItemDrop,
         isHighlighted = false,
+        isSkipped = false,
     }: {
         id: string;
         index: number;
@@ -59,6 +60,7 @@ export const CompactFileItem = memo(
         onItemDragLeave: (index: number) => void;
         onItemDrop: () => void;
         isHighlighted?: boolean;
+        isSkipped?: boolean;
     }) => {
         const theme = useTheme();
         const tr = useTranslate();
@@ -78,7 +80,8 @@ export const CompactFileItem = memo(
         const style: React.CSSProperties = {
             transform: CSS.Transform.toString(transform),
             transition: transition || undefined,
-            opacity: isDragging ? 0.5 : undefined,
+            opacity: isDragging ? 0.5 : isSkipped ? 0.4 : undefined,
+            filter: isSkipped ? 'grayscale(0.7)' : undefined,
             position: 'relative',
         };
 
