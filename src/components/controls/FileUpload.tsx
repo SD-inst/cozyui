@@ -24,7 +24,7 @@ import {
     useTabName,
 } from '../contexts/TabContext';
 import { UploadType } from './UploadType';
-import { ext } from './fileExts';
+import { ext, getAudioDropzoneAccept } from './fileExts';
 import { useArrayFileContext } from './ArrayFileContext';
 
 const style = {
@@ -193,9 +193,7 @@ export const FileUpload = ({
                     'video/*': ext[UploadType.VIDEO],
                 };
             case UploadType.AUDIO:
-                return {
-                    'audio/*': ext[UploadType.AUDIO],
-                };
+                return getAudioDropzoneAccept();
             case UploadType.IMAGEORVIDEO:
                 return {
                     'image/*': ext[UploadType.IMAGE],

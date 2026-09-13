@@ -51,7 +51,7 @@ import { useIsCurrentTab, useTabName } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 import { roomForNewSlots } from '../../utils/arraySlots';
 import { UploadType } from './UploadType';
-import { ext } from './fileExts';
+import { ext, getAudioAcceptString } from './fileExts';
 import { ArrayFileContext } from './ArrayFileContext';
 import {
     CompactFileItem,
@@ -1067,7 +1067,7 @@ export const ArrayInput = ({
                                     input.type = 'file';
                                     input.accept =
                                         keyField === 'audio'
-                                            ? 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm'
+                                            ? getAudioAcceptString()
                                             : keyField === 'video'
                                               ? 'video/*'
                                               : 'image/*,video/*';
@@ -1105,7 +1105,7 @@ export const ArrayInput = ({
                     onChange={handleCompactFileSelect}
                     accept={
                         keyField === 'audio'
-                            ? 'audio/mpeg,audio/wav,audio/x-wav,audio/aac,audio/ogg,audio/flac,audio/webm'
+                            ? getAudioAcceptString()
                             : keyField === 'video'
                               ? 'video/*'
                               : 'image/*,video/*'

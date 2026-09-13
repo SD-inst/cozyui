@@ -17,6 +17,7 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { getAudioAcceptString } from '../controls/fileExts';
 import { uploadFile } from '../../api/files';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useIsPhone } from '../../hooks/useIsPhone';
@@ -28,7 +29,7 @@ import { PresetDraft, MediaRow, ParamRow, formatBytes } from './draft';
 const kindAccept: Record<string, string> = {
     image: 'image/*',
     video: 'video/*',
-    audio: 'audio/*',
+    audio: getAudioAcceptString(),
 };
 
 const MediaRowView = ({

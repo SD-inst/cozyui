@@ -14,3 +14,23 @@ export const ext: { [type: string]: string[]; } = {
     ],
     [UploadType.AUDIO]: ['.mp3', '.ogg', '.wav', '.flac', '.wma', '.aac'],
 };
+
+// Explicit MIME types for audio — iOS Safari does not honor the "audio/*"
+// wildcard in <input accept>, so the full list must be enumerated.
+export const audioMimes = [
+    'audio/mpeg',
+    'audio/wav',
+    'audio/x-wav',
+    'audio/aac',
+    'audio/ogg',
+    'audio/flac',
+    'audio/webm',
+    'audio/x-ms-wma',
+] as const;
+
+/** Comma-separated string for a native `<input type="file" accept>` attribute. */
+export const getAudioAcceptString = (): string => audioMimes.join(',');
+
+/** `react-dropzone` `Accept` object for audio files. */
+export const getAudioDropzoneAccept = (): Record<string, string[]> =>
+    Object.fromEntries(audioMimes.map((m) => [m, ext[UploadType.AUDIO]]));
