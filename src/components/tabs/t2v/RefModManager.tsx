@@ -35,6 +35,8 @@ import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
 import { useResult } from '../../../hooks/useResult';
 import { useApiURL } from '../../../hooks/useApiURL';
+import { useBooleanSetting } from '../../../hooks/useSetting';
+import { settings } from '../../../hooks/settings';
 import { useAppDispatch } from '../../../redux/hooks';
 import { clearPrompt, delResult } from '../../../redux/tab';
 import { parseSafetensorsMeta } from '../../../utils/safetensors';
@@ -400,6 +402,9 @@ const CreateModPanel = () => {
         name: 'max_tokens',
         defaultValue: 5120,
     });
+    // Global setting (AppSettings): lets the crop zoom out past the image so
+    // the whole image fits with black bars on one axis, instead of a hard crop.
+    const letterbox = useBooleanSetting(settings.letterbox_crop) ?? false;
     const videoCount = (refVideos ?? []).filter(
         (v: { image?: string }) => !!v?.image,
     ).length;
@@ -705,6 +710,7 @@ const CreateModPanel = () => {
                 images={cropImages}
                 refResolution={refResolution}
                 maxTokens={maxTokens}
+                letterbox={letterbox}
                 onCropSlot={handleCropSlot}
             />
         </Box>

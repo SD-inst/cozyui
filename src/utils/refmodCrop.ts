@@ -89,19 +89,34 @@ export const defaultCrop = (img: ImageSize, aspect: number): Crop => {
 export const MIN_CROP_H = 64;
 
 // Clamp a crop (aspect-locked) so it fits the image. `h` is the primary size;
-// `w` follows from the aspect.
+// `w` follows from the aspect. Without letterbox the region always fits inside
+// the image (the largest cover crop). With letterbox it may ZOOM OUT past the
+// image: the region then covers the whole image and black bars fill the gap on
+// ONE axis only (the axis that overflows). That axis' pan is locked to the
+// image center; the other axis still pans within the image.
 export const clampCrop = (
     x: number,
     y: number,
     h: number,
     aspect: number,
     img: ImageSize,
+    letterbox = false,
 ): Crop => {
-    const maxH = maxCropH(img, aspect);
+    // Cover cap: the region fits the image. Letterbox cap: the image fits the
+    // region (zoom-out limit = whole image + bars on one axis).
+    const maxH = letterbox
+        ? Math.max(img.height, img.width / aspect)
+        : maxCropH(img, aspect);
     const ch = Math.min(maxH, Math.max(MIN_CROP_H, h));
     const w = ch * aspect;
-    const cx = Math.max(0, Math.min(img.width - w, x));
-    const cy = Math.max(0, Math.min(img.height - ch, y));
+    const cx =
+        w > img.width
+            ? (img.width - w) / 2
+            : Math.max(0, Math.min(img.width - w, x));
+    const cy =
+        ch > img.height
+            ? (img.height - ch) / 2
+            : Math.max(0, Math.min(img.height - ch, y));
     return { x: cx, y: cy, h: ch, w };
 };
 

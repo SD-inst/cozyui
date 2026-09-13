@@ -175,3 +175,56 @@ describe('snap32', () => {
         expect(snap32(200)).toBe(192); // round(6.25)*32 = 6*32
     });
 });
+
+describe('clampCrop — letterbox', () => {
+    // Tall image 400x800 (aspect 1:2), target 1:1 (crop is wider than image).
+    const tall = { width: 400, height: 800 };
+
+    it('keeps the cover crop when it fits the image (no letterbox)', () => {
+        // Within the cover limit the behavior is identical to before.
+        const c = clampCrop(50, 100, 400, 1.0, tall, true);
+        expect(c.h).toBe(400);
+        expect(c.w).toBe(400);
+        expect(c.x).toBe(0); // (400 - 400) / 2
+        expect(c.y).toBe(100); // clamped normally (room to pan)
+    });
+
+    it('zooms out to the whole image, bars on the width axis (left/right)', () => {
+        // At the letterbox limit the crop is as tall as the image; being
+        // 1:1 it is now WIDER than the 1:2 image -> bars land horizontally.
+        const c = clampCrop(-999, 0, 10000, 1.0, tall, true);
+        expect(c.h).toBe(800); // capped at the image height
+        expect(c.w).toBe(800); // 800 * 1.0 — wider than the image
+        expect(c.x).toBe(-200); // centered: (400 - 800) / 2
+        expect(c.y).toBe(0); // height fits, clamped to top
+    });
+
+    it('locks the pan on the axis that has bars, keeps the other free', () => {
+        // The crop is wider than the image, so x is centered no matter the
+        // requested pan; y still pans within the image.
+        const c = clampCrop(5000, 200, 700, 1.0, tall, true);
+        expect(c.w).toBe(700); // > 400, so the width axis has bars
+        expect(c.x).toBe((400 - 700) / 2); // locked to center (-150)
+        expect(c.y).toBe(100); // 200 - (700 - 700) -> 800 - 700 = 100 max
+    });
+
+    it('caps the height at the contain limit (whole image, no more)', () => {
+        // Even requesting a huge crop, the region never exceeds the contain
+        // size — the whole image plus bars on one axis is the max.
+        const c = clampCrop(0, 0, 100000, 1.0, tall, true);
+        expect(c.h).toBe(800);
+        expect(c.w).toBe(800);
+    });
+
+    it('puts bars on the height axis for a wide image (top/bottom)', () => {
+        // Wide image 800x400 (aspect 2:1), target 1:1 (crop is taller).
+        // Contain limit height = max(400, 800/1) = 800 -> crop 800x800: the
+        // width fits exactly (no side bars), the height overflows (top/bottom).
+        const wide = { width: 800, height: 400 };
+        const c = clampCrop(0, -999, 10000, 1.0, wide, true);
+        expect(c.h).toBe(800);
+        expect(c.w).toBe(800);
+        expect(c.y).toBe(-200); // (400 - 800) / 2, centered
+        expect(c.x).toBe(0); // width fits, clamped to left
+    });
+});

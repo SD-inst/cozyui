@@ -144,12 +144,14 @@ const CropView = ({
     aspect,
     crop,
     onCropChange,
+    letterbox = false,
 }: {
     url: string;
     size: ImageSize;
     aspect: number;
     crop: Crop;
     onCropChange: (c: Crop) => void;
+    letterbox?: boolean;
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const [boxW, setBoxW] = useState(0);
@@ -160,8 +162,8 @@ const CropView = ({
     }>({ pointers: new Map(), start: null, mode: null });
 
     // Latest values for the (once-attached) wheel listener.
-    const latest = useRef({ crop, aspect, size, onCropChange });
-    latest.current = { crop, aspect, size, onCropChange };
+    const latest = useRef({ crop, aspect, size, onCropChange, letterbox });
+    latest.current = { crop, aspect, size, onCropChange, letterbox };
 
     // Measure the container width (drives the display scale).
     useLayoutEffect(() => {
@@ -181,14 +183,14 @@ const CropView = ({
         if (!el) return;
         const handler = (e: WheelEvent) => {
             e.preventDefault();
-            const { crop: c, aspect: a, size: sz, onCropChange: f } = latest.current;
+            const { crop: c, aspect: a, size: sz, onCropChange: f, letterbox: lb } = latest.current;
             const factor = e.deltaY > 0 ? 1.12 : 1 / 1.12;
             const newH = c.h * factor;
             const cx = c.x + c.w / 2;
             const cy = c.y + c.h / 2;
             const ratio = newH / c.h;
             const newW = c.w * ratio;
-            f(clampCrop(cx - newW / 2, cy - newH / 2, newH, a, sz));
+            f(clampCrop(cx - newW / 2, cy - newH / 2, newH, a, sz, lb));
         };
         el.addEventListener('wheel', handler, { passive: false });
         return () => el.removeEventListener('wheel', handler);
@@ -234,6 +236,7 @@ const CropView = ({
                     start.crop.h,
                     aspect,
                     size,
+                    letterbox,
                 ),
             );
         } else if (g.mode === 'pinch' && pts.length === 2) {
@@ -251,7 +254,7 @@ const CropView = ({
             const cy = start.crop.y + start.crop.h / 2;
             const newW = start.crop.w * scale;
             onCropChange(
-                clampCrop(cx - newW / 2, cy - newH / 2, newH, aspect, size),
+                clampCrop(cx - newW / 2, cy - newH / 2, newH, aspect, size, letterbox),
             );
         }
     };
@@ -310,6 +313,7 @@ export const RefModCropDialog = ({
     images,
     refResolution,
     maxTokens,
+    letterbox,
     onCropSlot,
 }: {
     open: boolean;
@@ -317,6 +321,7 @@ export const RefModCropDialog = ({
     images: CropImage[];
     refResolution: number;
     maxTokens: number;
+    letterbox: boolean;
     onCropSlot: (slotIndex: number, newFilename: string) => void;
 }) => {
     const tr = useTranslate();
@@ -368,6 +373,15 @@ export const RefModCropDialog = ({
         [canvas, images.length, maxTokens],
     );
 
+    // The final output size: the aspect-locked crop region snapped to /32.
+    // With letterbox the region may be larger than the image (black bars), so
+    // the output is a bit bigger — but the aspect is always the selected one.
+    const output = useMemo(
+        () =>
+            crop ? { width: snap32(crop.w), height: snap32(crop.h) } : null,
+        [crop],
+    );
+
     // Size the crop view to the selected aspect within a capped height, so the
     // whole dialog fits without scrolling. The height cap comes from the
     // viewport; the width follows from the aspect (and is itself capped so the
@@ -394,14 +408,14 @@ export const RefModCropDialog = ({
     }, [images.length]);
 
     const handleCrop = useCallback(async () => {
-        if (!crop || !source.imgEl || !source.blob || !cur) return;
+        if (!crop || !output || !source.imgEl || !source.blob || !cur) return;
         setProcessing(true);
         try {
             const img = source.imgEl;
             const isJpeg = source.blob.type.includes('jpeg');
             const mime = isJpeg ? 'image/jpeg' : 'image/png';
-            const outW = snap32(crop.w);
-            const outH = snap32(crop.h);
+            const outW = output.width;
+            const outH = output.height;
             const canvasEl = document.createElement('canvas');
             canvasEl.width = outW;
             canvasEl.height = outH;
@@ -409,6 +423,14 @@ export const RefModCropDialog = ({
             if (!ctx) throw new Error('2d context unavailable');
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
+            // With letterbox the region can overflow the image on one axis —
+            // fill black first so the bars land, then draw the crop region
+            // (its overflow area simply keeps the black). Without letterbox
+            // the region always fits the image, so no fill is needed.
+            if (letterbox) {
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, outW, outH);
+            }
             ctx.drawImage(
                 img,
                 crop.x,
@@ -455,6 +477,8 @@ export const RefModCropDialog = ({
         }
     }, [
         crop,
+        output,
+        letterbox,
         source.imgEl,
         source.blob,
         cur,
@@ -466,8 +490,8 @@ export const RefModCropDialog = ({
         tr,
     ]);
 
-    const outW = crop ? snap32(crop.w) : 0;
-    const outH = crop ? snap32(crop.h) : 0;
+    const outW = output?.width ?? 0;
+    const outH = output?.height ?? 0;
 
     return (
         <Dialog
@@ -499,7 +523,7 @@ export const RefModCropDialog = ({
                                     {l}
                                 </MenuItem>
                             ))}
-                        </Select>
+                         </Select>
                     </Box>
 
                     <Box
@@ -550,6 +574,7 @@ export const RefModCropDialog = ({
                                     aspect={aspectNum}
                                     crop={crop}
                                     onCropChange={setCrop}
+                                    letterbox={letterbox}
                                 />
                             ) : (
                                 <Box
@@ -610,7 +635,7 @@ export const RefModCropDialog = ({
                 <Button
                     variant='contained'
                     startIcon={<ContentCut />}
-                    disabled={!crop || processing || !cur}
+                    disabled={!output || processing || !cur}
                     onClick={handleCrop}
                 >
                     {tr('refmods.crop_apply')}

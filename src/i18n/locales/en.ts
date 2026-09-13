@@ -352,6 +352,8 @@ const translation = {
         tag_enabled_tabs: 'Tags enabled on tabs',
         activation_tags_enabled_tabs: 'Activation tags enabled on tabs',
         chat_stream: 'Chat stream',
+        letterbox_crop:
+            'Letterbox ref-mod crops (allow black bars on one axis)',
         llm_url: 'LLM URL',
         llm_api_key: 'LLM API key',
         llm_model: 'LLM model',
