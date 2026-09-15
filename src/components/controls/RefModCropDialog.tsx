@@ -36,15 +36,7 @@ import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useTabName } from '../contexts/TabContext';
 import { ASPECT_LABELS, aspectRatio, closestAspect } from '../../utils/aspect';
-import {
-    clampCrop,
-    computeCanvas,
-    Crop,
-    defaultCrop,
-    effectiveTokenCount,
-    snap32,
-    ImageSize,
-} from '../../utils/refmodCrop';
+import { clampCrop, Crop, defaultCrop, snap32, ImageSize } from '../../utils/refmodCrop';
 
 type CropImage = { index: number; filename: string };
 
@@ -311,16 +303,12 @@ export const RefModCropDialog = ({
     open,
     onClose,
     images,
-    refResolution,
-    maxTokens,
     letterbox,
     onCropSlot,
 }: {
     open: boolean;
     onClose: () => void;
     images: CropImage[];
-    refResolution: number;
-    maxTokens: number;
     letterbox: boolean;
     onCropSlot: (slotIndex: number, newFilename: string) => void;
 }) => {
@@ -362,16 +350,6 @@ export const RefModCropDialog = ({
             setCrop(null);
         }
     }, [source.size, aspect, currentIndex]);
-
-    const canvas = useMemo(
-        () => (firstSize ? computeCanvas(firstSize, refResolution) : null),
-        [firstSize, refResolution],
-    );
-    const tokens = useMemo(
-        () =>
-            canvas ? effectiveTokenCount(canvas, images.length, maxTokens) : null,
-        [canvas, images.length, maxTokens],
-    );
 
     // The final output size: the aspect-locked crop region snapped to /32.
     // With letterbox the region may be larger than the image (black bars), so
@@ -526,27 +504,7 @@ export const RefModCropDialog = ({
                          </Select>
                     </Box>
 
-                    <Box
-                        display='flex'
-                        justifyContent='space-between'
-                        flexWrap='wrap'
-                        gap={1}
-                    >
-                        <Typography variant='body2'>
-                            {tr('refmods.crop_mod_res')}:{' '}
-                            {canvas
-                                ? `${canvas.width}×${canvas.height}`
-                                : '…'}{' '}
-                            {tokens
-                                ? tokens.overBudget
-                                    ? `(${tr('refmods.crop_over_budget')})`
-                                    : `(${tokens.tokens.toLocaleString()}` +
-                                      (tokens.capped
-                                          ? ` / ${tokens.rawTokens.toLocaleString()}`
-                                          : '') +
-                                      ' tok)'
-                                : '…'}
-                        </Typography>
+                    <Box>
                         <Typography variant='body2'>
                             {tr('refmods.crop_out')}: {outW}×{outH}
                         </Typography>

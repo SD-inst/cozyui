@@ -37,10 +37,14 @@ export const modTokenCount = (canvas: ImageSize, nImages: number) => {
     return { perFrame, totalT: nImages, tokens: nImages * perFrame };
 };
 
-// Effective token count of the IMAGE stack, mirroring the server-side limit.
-// Images are stacked 1:1 — one latent frame each — with NO per-ref frame cap
-// (`latent_frames` only limits VIDEO refs, see nodes.py `pool_t = ... if
-// is_video else 1`). The only limit is the token budget: the server resamples
+// Effective token count of the IMAGE stack, mirroring the server-side limit
+// (core.py `fit_token_budget`). Images stack 1:1 — one latent frame each —
+// with NO per-ref frame cap (`latent_frames` only limits VIDEO refs, see
+// nodes.py `pool_t = ... if is_video else 1`). The count below is for the
+// image stack only: video refs also draw from the same token budget, but their
+// frame count depends on the actual loaded video (the loader may read fewer
+// frames than `latent_frames`), so the UI notes them separately rather than
+// counting them here. The only limit is the token budget: the server resamples
 // the stack down to the largest frame count that fits (`max(1, floor(budget /
 // per_frame))`; temporal dedup can only reduce it further, so this is the
 // ceiling). Returns the raw (uncapped) count too so the UI can explain a

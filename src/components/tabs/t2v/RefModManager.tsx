@@ -32,6 +32,11 @@ import { ToggleInput } from '../../controls/ToggleInput';
 import { ArrayInput } from '../../controls/ArrayInput';
 import { Workflow } from '../../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../../api/utils';
+import { activeEntries } from '../../../utils/arraySlots';
+import {
+    computeCanvas,
+    effectiveTokenCount,
+} from '../../../utils/refmodCrop';
 import { controlType } from '../../../redux/config';
 import { useResult } from '../../../hooks/useResult';
 import { useApiURL } from '../../../hooks/useApiURL';
@@ -48,6 +53,7 @@ import { ModKindIcon } from '../../controls/ModArrayInput';
 import { RefModCropDialog } from '../../controls/RefModCropDialog';
 import { refModThumbStyle } from '../../../hooks/useRefMods';
 import { useMaxResolutionIndex } from '../../../hooks/useMaxResolutionIndex';
+import { useRefSize } from '../../../hooks/useRefSize';
 
 // Derives the preview thumbnail from the source media once. The bundle's mods
 // share the same look (only the kind differs), so this is extracted a single
@@ -285,8 +291,13 @@ const useRefModFilesHandler = (nodeField: string) => {
     return useEventCallback(
         (api: Workflow, value: any, control: controlType) => {
             if (!control.node_id) return;
-            if (!value || !value.length) return;
-            value.forEach((v: { image?: string }, idx: number) => {
+            // Skipped entries are treated as absent, so the active images fill
+            // the `ref_image_N` slots in order (no gaps).
+            const entries = activeEntries(
+                value as Array<{ image?: string; skip?: boolean }>,
+            );
+            if (!entries.length) return;
+            entries.forEach((v: { image?: string }, idx: number) => {
                 if (v?.image) {
                     const loadNodeId = getFreeNodeId(api) + '';
                     api[loadNodeId] = {
@@ -322,7 +333,12 @@ const useRefModVideoHandler = (
             const uploadedComponents: string[] = [];
             let videoIdx = 0;
 
-            (value ?? []).forEach((v: { image?: string }) => {
+            // Skipped entries are treated as absent, so the active videos fill
+            // the `ref_video_N` slots in order (no gaps) — the audio-source
+            // numbering below stays aligned with them.
+            activeEntries(
+                (value ?? []) as Array<{ image?: string; skip?: boolean }>,
+            ).forEach((v: { image?: string }) => {
                 if (!v?.image) return;
 
                 const baseID = insertGraph(api, {
@@ -405,27 +421,39 @@ const CreateModPanel = () => {
     // Global setting (AppSettings): lets the crop zoom out past the image so
     // the whole image fits with black bars on one axis, instead of a hard crop.
     const letterbox = useBooleanSetting(settings.letterbox_crop) ?? false;
+    // Number of active video refs — they also draw from the token budget, but
+    // their frame count depends on the actual loaded video, so the budget
+    // notes them separately instead of counting them exactly.
     const videoCount = (refVideos ?? []).filter(
-        (v: { image?: string }) => !!v?.image,
+        (v: { image?: string; skip?: boolean }) => !!v?.image && !v?.skip,
     ).length;
 
+    // Largest-image detection: skipped entries are masked out (undefined) so
+    // they never win the highlight; the index stays the original slot index.
     const refImageFilenames = useMemo(
-        () => (refImages ?? []).map((e: { image?: string }) => e?.image),
+        () =>
+            (refImages ?? []).map(
+                (e: { image?: string; skip?: boolean }) =>
+                    e?.image && !e?.skip ? e.image : undefined,
+            ),
         [refImages],
     );
     const maxResIndex = useMaxResolutionIndex(refImageFilenames);
 
-    // Images for the crop tool: only the image refs that actually hold a file,
-    // with their position in `ref_images` (so a crop can replace the right slot).
+    // Images for the crop tool: only the ACTIVE image refs that hold a file,
+    // with their position in `ref_images` (so a crop can replace the right
+    // slot). Skipped refs are excluded — they are not part of the mod.
     const [cropOpen, setCropOpen] = useState(false);
     const cropImages = useMemo<Array<{ index: number; filename: string }>>(
         () => {
             const list: Array<{ index: number; filename: string }> = [];
-            (refImages ?? []).forEach((e: { image?: string }, i: number) => {
-                if (e?.image) {
-                    list.push({ index: i, filename: e.image });
-                }
-            });
+            (refImages ?? []).forEach(
+                (e: { image?: string; skip?: boolean }, i: number) => {
+                    if (e?.image && !e?.skip) {
+                        list.push({ index: i, filename: e.image });
+                    }
+                },
+            );
             return list;
         },
         [refImages],
@@ -437,6 +465,46 @@ const CreateModPanel = () => {
         );
         setValue('ref_images', next, { shouldDirty: true });
     };
+
+    // Mod canvas + tokens, shown on the main page (moved out of the crop
+    // dialog). The canvas anchors on the FIRST active reference (the node's
+    // `sources[0]`): an image if any active image exists, else the first active
+    // video (mirroring the server). The token count is EXACT for the image
+    // stack (images 1:1); video refs also draw from the budget but are noted
+    // separately (their frame count depends on the actual loaded video).
+    // Skipped refs are excluded from both.
+    const firstActiveRef = useMemo(() => {
+        const img = (refImages ?? []).find(
+            (e: { image?: string; skip?: boolean }) => e?.image && !e?.skip,
+        );
+        if (img) return { filename: img.image as string, kind: 'image' as const };
+        const vid = (refVideos ?? []).find(
+            (e: { image?: string; skip?: boolean }) => e?.image && !e?.skip,
+        );
+        if (vid) return { filename: vid.image as string, kind: 'video' as const };
+        return null;
+    }, [refImages, refVideos]);
+    const firstRefSize = useRefSize(firstActiveRef?.filename, firstActiveRef?.kind);
+    const activeImagesCount = useMemo(
+        () =>
+            (refImages ?? []).filter(
+                (e: { image?: string; skip?: boolean }) =>
+                    e?.image && !e?.skip,
+            ).length,
+        [refImages],
+    );
+    const canvas = useMemo(
+        () => (firstRefSize ? computeCanvas(firstRefSize, refResolution) : null),
+        [firstRefSize, refResolution],
+    );
+    const tokens = useMemo(
+        () =>
+            canvas
+                ? effectiveTokenCount(canvas, activeImagesCount, maxTokens)
+                : null,
+        [canvas, activeImagesCount, maxTokens],
+    );
+
     const audioSourceChoices = useMemo(
         () => [
             ...Array.from({ length: videoCount }, (_, i) => ({
@@ -621,6 +689,43 @@ const CreateModPanel = () => {
                 tooltip='mode_help'
                 sx={{ width: 180 }}
             />
+            {cropImages.length > 0 && (
+                <Box
+                    display='flex'
+                    justifyContent='center'
+                    gap={2}
+                    sx={{
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        borderRadius: 1,
+                        px: 2,
+                        py: 0.75,
+                    }}
+                >
+                    <Typography variant='body2' noWrap>
+                        {tr('refmods.mod_resolution')}:{' '}
+                        {canvas
+                            ? `${canvas.width}×${canvas.height}`
+                            : '…'}
+                    </Typography>
+                    <Typography variant='body2' noWrap>
+                        {tokens
+                            ? tokens.overBudget
+                                ? `(${tr('refmods.over_budget')})`
+                                : `(${tokens.tokens.toLocaleString()}` +
+                                  (tokens.capped
+                                      ? ` / ${tokens.rawTokens.toLocaleString()}`
+                                      : '') +
+                                  ' tok)' +
+                                  (videoCount > 0
+                                      ? ` ${tr('refmods.video_note', {
+                                            n: videoCount,
+                                        })}`
+                                      : '')
+                            : '…'}
+                    </Typography>
+                </Box>
+            )}
             <SliderInput
                 name='ref_resolution'
                 defaultValue={1024}
@@ -708,8 +813,6 @@ const CreateModPanel = () => {
                 open={cropOpen}
                 onClose={() => setCropOpen(false)}
                 images={cropImages}
-                refResolution={refResolution}
-                maxTokens={maxTokens}
                 letterbox={letterbox}
                 onCropSlot={handleCropSlot}
             />
