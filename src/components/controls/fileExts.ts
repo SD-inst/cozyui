@@ -12,7 +12,7 @@ export const ext: { [type: string]: string[]; } = {
         '.flv',
         '.wmv',
     ],
-    [UploadType.AUDIO]: ['.mp3', '.ogg', '.wav', '.flac', '.wma', '.aac'],
+    [UploadType.AUDIO]: ['.mp3', '.m4a', '.ogg', '.wav', '.flac', '.wma', '.aac', '.opus'],
 };
 
 // Explicit MIME types for audio — iOS Safari does not honor the "audio/*"
