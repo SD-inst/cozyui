@@ -8,7 +8,6 @@ import {
     DialogTitle,
     MenuItem,
     Select,
-    Slider,
     Stack,
     TextField,
     Typography,
@@ -33,7 +32,6 @@ export const ModPickerDialog = ({
     const theme = useTheme();
     const mods = useLiveQuery(async () => db.refMods.toArray(), []);
     const [selectedMod, setSelectedMod] = useState<RefMod | null>(null);
-    const [strength, setStrength] = useState(1.0);
     const [search, setSearch] = useState('');
     const [filterKind, setFilterKind] = useState('');
 
@@ -50,9 +48,8 @@ export const ModPickerDialog = ({
 
     const handleAdd = () => {
         if (!selectedMod) return;
-        onAdd(selectedMod.id, strength);
+        onAdd(selectedMod.id, 1.0);
         setSelectedMod(null);
-        setStrength(1.0);
         onClose();
     };
 
@@ -81,7 +78,15 @@ export const ModPickerDialog = ({
                             <MenuItem value='audio'>{tr('refmods.audio')}</MenuItem>
                         </Select>
                     </Box>
-                    <Box display='flex' flexWrap='wrap' gap={1}>
+                    <Box
+                        display='flex'
+                        flexWrap='wrap'
+                        gap={1}
+                        sx={{
+                            maxHeight: '50vh',
+                            overflowY: 'auto',
+                        }}
+                    >
                         {filteredMods.map((mod: RefMod) => (
                             <Box
                                 key={mod.id}
@@ -110,21 +115,8 @@ export const ModPickerDialog = ({
                                  {tr('refmods.no_mods')}
                              </Typography>
                          )}
-                     </Box>
-                     <Stack spacing={1}>
-                        <Typography variant='body2'>
-                            {tr('refmods.strength')}: {strength.toFixed(2)}
-                        </Typography>
-                        <Slider
-                            value={strength}
-                            onChange={(_, v) => setStrength(v as number)}
-                            min={0}
-                            max={1}
-                            step={0.05}
-                            valueLabelDisplay='auto'
-                        />
-                    </Stack>
-                </Stack>
+                      </Box>
+                 </Stack>
             </DialogContent>
             <DialogActions>
                 <Button onClick={onClose}>{tr('controls.close')}</Button>
