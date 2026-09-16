@@ -112,6 +112,10 @@ const translation = {
         confirm_reset: 'Confirm reset',
         confirm_reset_content:
             'Are you sure you want to reset the fields in this tab to their default values?',
+        reset_array: 'Reset array',
+        confirm_reset_array: 'Confirm reset',
+        confirm_reset_array_content:
+            'Are you sure you want to remove all the elements from this array?',
         import_history: 'Import history',
         export_history: 'Export history',
         please_wait: 'Please wait...',

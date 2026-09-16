@@ -111,6 +111,10 @@ const translation = {
         confirm_reset: 'Подтвердите сброс',
         confirm_reset_content:
             'Вы уверены, что хотите сбросить поля на этой вкладке на значения по умолчанию?',
+        reset_array: 'Сброс массива',
+        confirm_reset_array: 'Подтвердите сброс',
+        confirm_reset_array_content:
+            'Вы уверены, что хотите удалить все элементы этого массива?',
         import_history: 'Импорт истории',
         export_history: 'Экспорт истории',
         please_wait: 'Пожалуйста, подождите...',

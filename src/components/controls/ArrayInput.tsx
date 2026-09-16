@@ -58,6 +58,7 @@ import {
     THUMBNAIL_SIZE,
     AUDIO_ITEM_HEIGHT,
 } from './CompactFileItem';
+import { ArrayInputResetButton } from './ArrayInputResetButton';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
 import { FileUpload } from './FileUpload';
@@ -372,6 +373,13 @@ export const ArrayInput = ({
         }
         return toAppend.length;
     };
+
+    // Clear the whole array. Removing all fields leaves the count at 0; the
+    // min-maintenance effect below re-appends up to `min`, so this respects the
+    // same floor as the per-item remove buttons without extra bookkeeping.
+    const handleReset = useCallback(() => {
+        remove();
+    }, [remove]);
 
     const receiverFieldValue = useWatch({
         name: receiverFieldName || '',
@@ -783,9 +791,21 @@ export const ArrayInput = ({
 
         return (
             <Box display='flex' flexDirection='column' gap={1}>
-                <Typography variant='body1'>
-                    {label ? tr(label) : tr('controls.' + name)}
-                </Typography>
+                <Box
+                    display='flex'
+                    alignItems='center'
+                    justifyContent='space-between'
+                    gap={1}
+                >
+                    <Typography variant='body1'>
+                        {label ? tr(label) : tr('controls.' + name)}
+                    </Typography>
+                    <ArrayInputResetButton
+                        name={name}
+                        min={min}
+                        onReset={handleReset}
+                    />
+                </Box>
                 <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
                     <SortableContext items={fields.map((f) => f.id)}>
                         <Flipper
@@ -1125,7 +1145,22 @@ export const ArrayInput = ({
     // List mode rendering
     return (
         <Box display='flex' flexDirection='column' alignItems='center' gap={2}>
-            {label ? tr(label) : tr('controls.' + name)}
+            <Box
+                width='100%'
+                display='flex'
+                alignItems='center'
+                justifyContent='space-between'
+                gap={1}
+            >
+                <Typography variant='body1'>
+                    {label ? tr(label) : tr('controls.' + name)}
+                </Typography>
+                <ArrayInputResetButton
+                    name={name}
+                    min={min}
+                    onReset={handleReset}
+                />
+            </Box>
             <Box width='100%'>
                 <Flipper flipKey={fields.map((f: any) => f.id).join(',')}>
                     {fields.map((field: any, index: number) => (

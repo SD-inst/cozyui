@@ -237,6 +237,56 @@ describe('ArrayInput compact-mode controls dialog', () => {
 });
 
 // ============================================================================
+// Reset button tests
+// ============================================================================
+
+describe('ArrayInput reset button', () => {
+    const twoVideos = {
+        ref_videos: [
+            { video: 'a.mp4', no_audio: false, trim: 0, last: false },
+            { video: 'b.mp4', no_audio: false, trim: 0, last: false },
+        ],
+    };
+
+    it('clears all items after confirming the reset', async () => {
+        render(<Harness defaultValues={twoVideos} />);
+
+        const resetBtn = screen.getByRole('button', { name: 'Reset array' });
+        fireEvent.click(resetBtn);
+
+        // The confirmation dialog opens.
+        expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+        fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+
+        await waitFor(() => {
+            // All items are gone, so the per-item index badges disappear.
+            expect(screen.queryByText('1')).toBeNull();
+            expect(screen.queryByText('2')).toBeNull();
+        });
+    });
+
+    it('does not clear the items when the reset is cancelled', () => {
+        render(<Harness defaultValues={twoVideos} />);
+
+        fireEvent.click(screen.getByRole('button', { name: 'Reset array' }));
+        fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+
+        expect(screen.getByText('1')).toBeInTheDocument();
+        expect(screen.getByText('2')).toBeInTheDocument();
+    });
+
+    it('hides the reset button when the array is already at min', () => {
+        render(<Harness min={2} defaultValues={twoVideos} />);
+
+        // At the minimum there is nothing to clear, so the button is absent.
+        expect(
+            screen.queryByRole('button', { name: 'Reset array' }),
+        ).toBeNull();
+    });
+});
+
+// ============================================================================
 // List-mode tests
 // ============================================================================
 
