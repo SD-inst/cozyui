@@ -10,6 +10,7 @@ import { useModPicker } from '../../hooks/useModPicker';
 import { db } from '../history/db';
 import { useModThumbURLs } from '../../hooks/useImageURL';
 import { useRefModMeta, refModThumbStyle } from '../../hooks/useRefMods';
+import { parseModVersion } from '../../utils/modVersion';
 
 import 'yet-another-react-lightbox/styles.css';
 
@@ -44,51 +45,75 @@ export const ModThumbnail = memo(({ modId }: { modId: string }) => {
     );
 });
 
-// Small type badge (video/image/audio) anchored to the bottom-right corner of
-// a mod thumbnail. Bottom-right is used because the top-right holds the remove
-// button and the top-left the index badge (see CustomItemShell).
-export const ModKindIcon = ({
+// Colored tag core for the mod kind icon (video/image/audio), no positioning.
+// `stretch` makes the tag fill its flex parent's cross-axis height — used in the
+// picker/array overlay so the tag's shade reaches the row's full height and no
+// hairline of the image shows through between the tag and the name bar below it
+// (the version badge's text line-height is a hair taller than the icon, so the
+// icon tag would otherwise stop short of the row's bottom edge).
+const KindIconTag = ({
     kind,
+    radius,
+    stretch = false,
 }: {
-    kind?: 'image' | 'video' | 'audio';
-}) => {
+    kind: 'image' | 'video' | 'audio';
+    radius?: string;
+    stretch?: boolean;
+}) => (
+    <Box
+        sx={{
+            display: 'flex',
+            alignItems: 'center',
+            alignSelf: stretch ? 'stretch' : undefined,
+            bgcolor: 'rgba(0,0,0,0.6)',
+            color: 'white',
+            px: 0.5,
+            py: 0.25,
+            borderRadius: radius,
+        }}
+    >
+        {kind === 'audio' ? (
+            <MusicNote sx={{ fontSize: 14 }} />
+        ) : kind === 'image' ? (
+            <ImageIcon sx={{ fontSize: 14 }} />
+        ) : (
+            <Videocam sx={{ fontSize: 14 }} />
+        )}
+    </Box>
+);
+
+// Standalone kind icon anchored to the bottom-right corner of a thumbnail, used
+// where the name is NOT overlaid on the image (e.g. the library card, whose
+// name lives in a separate box below the thumbnail).
+export const ModKindIcon = ({ kind }: { kind?: 'image' | 'video' | 'audio' }) => {
     if (!kind) {
         return null;
     }
     return (
-        <Box
-            sx={{
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                zIndex: 1,
-                display: 'flex',
-                alignItems: 'center',
-                bgcolor: 'rgba(0,0,0,0.6)',
-                color: 'white',
-                px: 0.5,
-                py: 0.25,
-                borderRadius: '4px 0 0 0',
-            }}
-        >
-            {kind === 'audio' ? (
-                <MusicNote sx={{ fontSize: 14 }} />
-            ) : kind === 'image' ? (
-                <ImageIcon sx={{ fontSize: 14 }} />
-            ) : (
-                <Videocam sx={{ fontSize: 14 }} />
-            )}
+        <Box sx={{ position: 'absolute', right: 0, bottom: 0, zIndex: 1 }}>
+            <KindIconTag kind={kind} radius='4px 0 0 0' />
         </Box>
     );
 };
 
-// Mod name bar anchored to the bottom of a mod thumbnail (mirrors the library
-// card and the picker). Centered, ellipsized; the kind badge sits on top of its
-// right end.
-export const ModThumbLabel = ({ text }: { text?: string }) => {
-    if (!text) {
-        return null;
-    }
+// Full overlay for a mod thumbnail, used wherever the name is drawn on top of
+// the image (picker, array items, array preview). A bottom-anchored block: a row
+// with the version badge on the LEFT (shown only when the name carries a
+// trailing version token — see parseModVersion) and the kind icon on the RIGHT,
+// sitting directly above the base name bar (full width). Keeping the version and
+// kind above the name — rather than in the top corners — leaves the index badge
+// (top-left) and remove button (top-right) that the array shell overlays on top
+// of the thumbnail unobstructed. The version is cosmetic — it is parsed from the
+// name, so the bar shows only the base (no version) and no extra data field is
+// needed.
+export const ModThumbMeta = ({
+    name,
+    kind,
+}: {
+    name?: string;
+    kind?: 'image' | 'video' | 'audio';
+}) => {
+    const { base, version } = parseModVersion(name ?? '');
     return (
         <Box
             sx={{
@@ -97,18 +122,53 @@ export const ModThumbLabel = ({ text }: { text?: string }) => {
                 left: 0,
                 right: 0,
                 zIndex: 1,
-                bgcolor: 'rgba(0,0,0,0.6)',
-                px: 0.5,
-                py: 0.25,
-                fontSize: '0.6rem',
-                color: 'white',
-                textAlign: 'center',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
             }}
         >
-            {text}
+            {/* Version (left) and kind icon (right), directly above the name. */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Box>
+                    {version && (
+                        <Box
+                            sx={{
+                                bgcolor: 'rgba(0,0,0,0.6)',
+                                color: 'white',
+                                px: 0.5,
+                                py: 0.25,
+                                borderRadius: '0 4px 0 0',
+                                fontSize: '0.6rem',
+                            }}
+                        >
+                            {version}
+                        </Box>
+                    )}
+                </Box>
+                <Box sx={{ display: 'flex' }}>
+                    {kind && (
+                        <KindIconTag kind={kind} radius='4px 0 0 0' stretch />
+                    )}
+                </Box>
+            </Box>
+            {/* Name label, full width, at the very bottom. */}
+            {base && (
+                <Box
+                    sx={{
+                        bgcolor: 'rgba(0,0,0,0.6)',
+                        px: 0.5,
+                        py: 0.25,
+                        fontSize: '0.6rem',
+                        color: 'white',
+                        textAlign: 'center',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    {base}
+                </Box>
+            )}
         </Box>
     );
 };
@@ -175,8 +235,7 @@ const ModThumbContent = ({
                     🎨
                 </Box>
             ) : null}
-            <ModThumbLabel text={name} />
-            <ModKindIcon kind={kind} />
+            <ModThumbMeta name={name} kind={kind} />
         </Box>
     );
 };
@@ -271,8 +330,7 @@ export const ModArrayInput = ({
                         )}
                     />
                 )}
-                <ModThumbLabel text={meta?.name} />
-                <ModKindIcon kind={meta?.kind} />
+                <ModThumbMeta name={meta?.name} kind={meta?.kind} />
             </Box>
         );
     };
