@@ -6,6 +6,7 @@ export const SamplerSelectInput = ({ ...props }: CustomSelectInputProps) => {
             choices={[
                 { text: 'Euler', value: 'euler' },
                 { text: 'Euler A', value: 'euler_ancestral' },
+                { text: 'DPM 2', value: 'dpm_2' },
                 { text: 'DPM++ 2M', value: 'dpmpp_2m' },
                 { text: 'DPM++ 2M SDE', value: 'dpmpp_2m_sde' },
                 { text: 'DPM++ 2M SDE GPU', value: 'dpmpp_2m_sde_gpu' },

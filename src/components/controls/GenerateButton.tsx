@@ -83,19 +83,32 @@ export const GenerateButton = ({
     requiredControls,
 }: GenerateButtonProps) => {
     // https://github.com/microsoft/TypeScript/issues/14107
-    const watchedControls: any | { [key: string]: any } = useWatch({
-        name: (requiredControls as any) ?? '',
-        disabled: !requiredControls,
+    const { getValues, control } = useFormContext();
+    const requiredNames = useMemo(() => {
+        if (!requiredControls) {
+            return [] as string[];
+        }
+        return Array.isArray(requiredControls)
+            ? [...requiredControls]
+            : [requiredControls];
+    }, [requiredControls]);
+    const watchedControls: any = useWatch({
+        name: requiredNames,
+        disabled: !requiredNames.length,
     });
     const missingValues = useMemo(() => {
-        if (!requiredControls) {
+        if (!requiredNames.length) {
             return false;
         }
-        if (!watchedControls) {
-            return true;
-        }
-        return Object.keys(watchedControls).some((k) => !watchedControls[k]);
-    }, [requiredControls, watchedControls]);
+        return requiredNames.some((name) => {
+            const watched = watchedControls?.[name];
+            // useWatch can report undefined for a control whose value only
+            // exists as a defaultValue registered via useController; read
+            // the live form state directly in that case.
+            const value = watched !== undefined ? watched : getValues(name);
+            return !value;
+        });
+    }, [requiredNames, watchedControls, getValues]);
     const dispatch = useAppDispatch();
     const tr = useTranslate();
     const client_id = useAppSelector((s) => s.config.client_id);
@@ -113,7 +126,6 @@ export const GenerateButton = ({
         disabled ||
         missingValues;
     const [errors, setErrors] = useState<error>(noErrors);
-    const { getValues, control } = useFormContext();
     const tab_name = useTabName();
     const { setValue } = useContext(TabContext);
     const { api, controls } = useAPI();

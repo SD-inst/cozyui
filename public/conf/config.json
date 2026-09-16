@@ -1410,6 +1410,191 @@
                 "type": "audio"
             }
         },
+        "YuE2": {
+            "api": "api/yue2_t2m.json",
+            "controls": {
+                "style": {
+                    "id": "33:36",
+                    "field": "value"
+                },
+                "lyrics": {
+                    "id": "33:37",
+                    "field": "value"
+                },
+                "abc_planning": {
+                    "id": "handle",
+                    "node_id": "33:31",
+                    "field": "value",
+                    "planner_node_id": "33:24",
+                    "preview_node_id": "14",
+                    "switch_node_id": "33:30",
+                    "empty_abc_node_id": "33:32"
+                },
+                "abc": {
+                    "id": "33:32",
+                    "field": "value"
+                },
+                "length": {
+                    "id": "33:25",
+                    "field": "max_duration"
+                },
+                "steps": {
+                    "id": "33:8",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "33:8",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "33:8",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "33:34",
+                    "field": "seed"
+                },
+                "temperature": {
+                    "id": "33:25",
+                    "field": "temperature"
+                },
+                "top_p": {
+                    "id": "33:25",
+                    "field": "top_p"
+                },
+                "top_k": {
+                    "id": "33:25",
+                    "field": "top_k"
+                },
+                "repetition_penalty": {
+                    "id": "33:25",
+                    "field": "repetition_penalty"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "33:15",
+                    "field": "ckpt_name"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": [
+                {
+                    "id": "10",
+                    "type": "audio"
+                },
+                {
+                    "id": "14",
+                    "type": "text"
+                }
+            ],
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "clip_input_name": "clip",
+                    "api_input_name": "model",
+                    "output_node_ids": ["33:8"],
+                    "output_idx": 0,
+                    "output_clip_ids": ["33:24", "33:25"],
+                    "class_name": "LoraLoader",
+                    "strength_field_name": "strength_model",
+                    "clip_strength_field_name": "strength_clip",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "defaults": {
+                "model": "yue2/yue2_3b_bf16.safetensors"
+            }
+        },
+        "YuE2 Cover": {
+            "api": "api/yue2_cover.json",
+            "controls": {
+                "audio": {
+                    "id": "45",
+                    "field": "audio"
+                },
+                "style": {
+                    "id": "33:25",
+                    "field": "style"
+                },
+                "lyrics": {
+                    "id": "33:25",
+                    "field": "lyrics"
+                },
+                "length": {
+                    "id": "33:25",
+                    "field": "max_duration"
+                },
+                "steps": {
+                    "id": "33:8",
+                    "field": "steps"
+                },
+                "sampler": {
+                    "id": "33:8",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "33:8",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "33:34",
+                    "field": "seed"
+                },
+                "temperature": {
+                    "id": "33:25",
+                    "field": "temperature"
+                },
+                "top_p": {
+                    "id": "33:25",
+                    "field": "top_p"
+                },
+                "top_k": {
+                    "id": "33:25",
+                    "field": "top_k"
+                },
+                "repetition_penalty": {
+                    "id": "33:25",
+                    "field": "repetition_penalty"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "33:15",
+                    "field": "ckpt_name"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": [
+                {
+                    "id": "10",
+                    "type": "audio"
+                },
+                {
+                    "id": "46",
+                    "type": "text"
+                }
+            ],
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "clip_input_name": "clip",
+                    "api_input_name": "model",
+                    "output_node_ids": ["33:8"],
+                    "output_idx": 0,
+                    "output_clip_ids": ["33:25"],
+                    "class_name": "LoraLoader",
+                    "strength_field_name": "strength_model",
+                    "clip_strength_field_name": "strength_clip",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "defaults": {
+                "model": "yue2/yue2_3b_bf16.safetensors"
+            }
+        },
         "MM Audio": {
             "api": "api/mmaudio.json",
             "controls": {
@@ -3888,6 +4073,9 @@
         },
         "minimax_h3_vae": {
             "filter": "minimax_h3_video_vae"
+        },
+        "yue2": {
+            "filter": "yue2"
         }
     },
     "api": "/cui",

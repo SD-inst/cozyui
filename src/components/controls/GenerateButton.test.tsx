@@ -91,6 +91,7 @@ const makeStore = (overrides: any = {}) =>
 const renderButton = (
     values: Record<string, any>,
     storeOverrides: any = {},
+    requiredControls?: string | readonly string[],
 ) => {
     const store = makeStore(storeOverrides);
 
@@ -106,7 +107,7 @@ const renderButton = (
         return (
             <TabContext.Provider value={ctx}>
                 <FormProvider {...form}>
-                    <GenerateButton />
+                    <GenerateButton requiredControls={requiredControls} />
                 </FormProvider>
             </TabContext.Provider>
         );
@@ -156,6 +157,30 @@ describe('GenerateButton pipeline', () => {
 
     it('is enabled when connected and IDLE', () => {
         renderButton({ prompt: 'hi', steps: 10 });
+        const btn = screen.getByRole('button', { name: 'Generate' });
+        expect(btn).not.toBeDisabled();
+    });
+
+    it('is disabled when a required array control is empty', () => {
+        renderButton({ prompt: '', steps: 5 }, {}, ['prompt']);
+        const btn = screen.getByRole('button', { name: 'Generate' });
+        expect(btn).toBeDisabled();
+    });
+
+    it('is enabled when a required array control has a value', () => {
+        renderButton({ prompt: 'hi', steps: 5 }, {}, ['prompt']);
+        const btn = screen.getByRole('button', { name: 'Generate' });
+        expect(btn).not.toBeDisabled();
+    });
+
+    it('is disabled when a required string control is empty', () => {
+        renderButton({ prompt: '', steps: 5 }, {}, 'prompt');
+        const btn = screen.getByRole('button', { name: 'Generate' });
+        expect(btn).toBeDisabled();
+    });
+
+    it('is enabled when a required string control has a value', () => {
+        renderButton({ prompt: 'hi', steps: 5 }, {}, 'prompt');
         const btn = screen.getByRole('button', { name: 'Generate' });
         expect(btn).not.toBeDisabled();
     });

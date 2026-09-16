@@ -46,6 +46,8 @@ import { SongBloomTab } from './components/tabs/audio/SongBloom';
 import { StableAudioTab } from './components/tabs/audio/StableAudio';
 import { VibeVoiceTab } from './components/tabs/audio/VibeVoiceTTS';
 import { VibeVoiceDialogTab } from './components/tabs/audio/VibeVoiceTTSDialog';
+import { YuE2Tab } from './components/tabs/audio/YuE2';
+import { YuE2CoverTab } from './components/tabs/audio/YuE2Cover';
 import { VideoInterpolationTab } from './components/tabs/upscale/VideoInterpolation';
 import { VideoJoinTab } from './components/tabs/upscale/VideoJoin';
 import { WanI2VTab } from './components/tabs/i2v/WanI2V';
@@ -113,6 +115,8 @@ function App() {
                                 {VibeVoiceDialogTab}
                                 {ACEStepTab}
                                 {SongBloomTab}
+                                {YuE2Tab}
+                                {YuE2CoverTab}
                                 {SDUpscaleTab}
                                 {HunyanUpscale}
                                 {ChromaUpscaleTab}
