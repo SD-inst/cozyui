@@ -387,15 +387,20 @@ export const LoraInput = ({
             });
         }
         output_node_ids.forEach(
-            (id) =>
-                (api[id].inputs[api_input_name] = [
+            (id) => {
+                if (!api[id]) return;
+                api[id].inputs[api_input_name] = [
                     '' + last_node_id,
                     output_idx,
-                ] as NodeRef)
+                ] as NodeRef;
+            }
         );
         if (output_clip_ids) {
             output_clip_ids.forEach(
-                (id) => (api[id].inputs['clip'] = ['' + last_node_id, 1])
+                (id) => {
+                    if (!api[id]) return;
+                    api[id].inputs['clip'] = ['' + last_node_id, 1];
+                }
             );
         }
         loraNodes.forEach((n, i) => {
