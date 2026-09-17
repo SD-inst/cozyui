@@ -8,7 +8,7 @@ import {
     Typography,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { get } from 'lodash';
 import { SelectInputBase } from '../controls/SelectInputBase';
 import { autoscrollSlotProps } from '../controls/utils';
@@ -17,8 +17,10 @@ import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { useTranslate } from '../../i18n/I18nContext';
 import { db } from '../history/db';
 import { useAppSelector } from '../../redux/hooks';
+import { collectPresets } from '../../utils/export/domain';
 import { PresetCard } from './PresetCard';
 import { SavePresetButton } from './SavePresetButton';
+import { ExportImport } from '../export/ExportImport';
 
 export const PresetPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
@@ -30,19 +32,32 @@ export const PresetPanel = ({ ...props }: ListProps) => {
     useEffect(() => {
         setTabFilter(currentTab);
     }, [currentTab]);
-    const presets = useLiveQuery(async () => {
+    const presetsRaw = useLiveQuery(async () => {
         const all = await db.presets.orderBy('timestamp').reverse().toArray();
         return all.filter(
             (p) =>
                 (!tabFilter || p.tab === tabFilter) &&
                 p.name.toLowerCase().includes(search.toLowerCase()),
         );
-    }, [tabFilter, search]) ?? [];
+    }, [tabFilter, search]);
+    const presets = useMemo(() => presetsRaw ?? [], [presetsRaw]);
     const tabs = useAppSelector((s) => get(s, ['config', 'tabs'], {})) ?? {};
+    const collect = useCallback(
+        async () => collectPresets(presets.map((p) => p.id)),
+        [presets],
+    );
     const ref = useRef<HTMLElement>(null);
     return (
         <SectionAccordion
             label='presets.title'
+            summaryActions={
+                <ExportImport
+                    domain='presets'
+                    collect={collect}
+                    filtered={tabFilter !== '' || search !== ''}
+                    count={presets.length}
+                />
+            }
             sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
             slotProps={autoscrollSlotProps(ref)}
             detailsRef={ref}

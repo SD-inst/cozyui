@@ -15,10 +15,13 @@ import {
     useTheme,
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { db, RefMod } from '../../history/db';
 import { useTranslate } from '../../../i18n/I18nContext';
+import { collectRefMods } from '../../../utils/export/domain';
+import { ExportImport } from '../../export/ExportImport';
+import { ExportItemButton } from '../../export/ExportItemButton';
 import { WFTab } from '../../WFTab';
 import { GridLeft, GridRight, GridBottom, Layout } from '../../controls/Layout';
 import { SelectInput } from '../../controls/SelectInput';
@@ -106,6 +109,11 @@ const LibraryPanel = () => {
         });
     }, [mods, search, filterKind]);
 
+    const collect = useCallback(
+        async () => collectRefMods(filteredMods.map((m) => m.id)),
+        [filteredMods],
+    );
+
     return (
         <Box
             display='flex'
@@ -121,7 +129,7 @@ const LibraryPanel = () => {
             >
                 <TextField
                     size='small'
-                    fullWidth
+                    sx={{ flex: 1 }}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder={tr('refmods.search')}
@@ -137,6 +145,12 @@ const LibraryPanel = () => {
                     <MenuItem value='image'>{tr('refmods.image')}</MenuItem>
                     <MenuItem value='audio'>{tr('refmods.audio')}</MenuItem>
                 </Select>
+                <ExportImport
+                    domain='refmods'
+                    collect={collect}
+                    filtered={search !== '' || filterKind !== ''}
+                    count={filteredMods.length}
+                />
             </Box>
             <Box
                 display='flex'
@@ -251,6 +265,20 @@ const ModCard = ({ mod }: { mod: RefMod }) => {
                         <Delete fontSize='small' />
                     </IconButton>
                 </Tooltip>
+                <ExportItemButton
+                    domain='refmods'
+                    iconOnly
+                    collect={() => collectRefMods([mod.id])}
+                    name={mod.name}
+                    sx={{
+                        position: 'absolute',
+                        top: 5,
+                        right: 40,
+                        bgcolor: 'rgba(0,0,0,0.6)',
+                        color: 'white',
+                        '&:hover': { bgcolor: 'rgba(0,100,200,0.8)' },
+                    }}
+                />
                 <ModKindIcon kind={mod.kind} />
             </Box>
             <Box sx={{ p: 1 }}>

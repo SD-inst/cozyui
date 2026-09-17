@@ -10,7 +10,6 @@ import { LanguageSelect } from './LanguageSelect';
 import { LLMSettings } from './LLMSettings';
 import { NotificationSetting } from './NotificationSetting';
 import { SettingCheckbox } from './SettingCheckbox';
-import { ImportExport } from '../history/ImportExport';
 import { Version } from './Version';
 import { HiddenTabs } from './HiddenTabs';
 import { ResetTabOrderButton } from './ResetTabOrderButton';
@@ -87,7 +86,6 @@ export const AppSettings = () => {
                 <NotificationSetting />
                 <LanguageSelect />
                 <ClearHistoryButton sx={{ mt: 5 }} />
-                <ImportExport />
                 <HiddenTabs />
                 <ResetTabOrderButton />
                 <Version />

@@ -117,6 +117,10 @@ const translation = {
             'Вы уверены, что хотите удалить все элементы этого массива?',
         import_history: 'Импорт истории',
         export_history: 'Экспорт истории',
+        export: 'Экспорт',
+        import: 'Импорт',
+        export_item: 'Экспорт',
+        export_import: 'Экспорт / импорт',
         please_wait: 'Пожалуйста, подождите...',
         denoise: 'денойз',
         upscale: 'увеличение',
@@ -513,6 +517,16 @@ const translation = {
             'Удалить сессию «%{name}» вместе с её медиафайлами?',
         file_lost: 'Файлы не найдены: %{files}',
     },
+    export: {
+        confirm_title: 'Экспорт',
+        confirm_count: 'Будет экспортировано: %{n}.',
+        confirm_filtered:
+            'Применён текущий фильтр — будет выгружена только отфильтрованная часть.',
+        exported: 'Экспортировано: %{n}',
+    },
+    import: {
+        imported: 'Импортировано: %{n}',
+    },
     toasts: {
         error_saving_preset: 'Ошибка сохранения пресета: %{err}',
         disconnected: 'Отключен',
@@ -531,6 +545,9 @@ const translation = {
         error_saving_history: 'Ошибка сохранения истории: %{err}',
         error_importing_database: 'Ошибка при импорте истории: %{err}',
         error_exporting_database: 'Ошибка при экспорте истории: %{err}',
+        error_exporting: 'Ошибка экспорта: %{err}',
+        error_importing: 'Ошибка импорта: %{err}',
+        import_domain_mismatch: 'Архив для «%{got}», не для «%{want}»',
         error_uploading: 'Ошибка при загрузке изображения: %{err}',
         array_overflow:
             'Нельзя добавить больше изображений. Удалите или сбросьте одно из существующих.',

@@ -21,6 +21,8 @@ import { db, Session } from '../history/db';
 import { formatBytes } from '../presets/draft';
 import { deleteSession } from './session';
 import { useRestoreSession } from './useRestoreSession';
+import { collectSessions } from '../../utils/export/domain';
+import { ExportItemButton } from '../export/ExportItemButton';
 
 export const SessionCard = ({ session }: { session: Session }) => {
     const tr = useTranslate();
@@ -104,14 +106,21 @@ export const SessionCard = ({ session }: { session: Session }) => {
                 </Stack>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button
-                    size='small'
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => setRestoreOpen(true)}
-                >
-                    {tr('sessions.restore')}
-                </Button>
+                <Stack direction='row' gap={1}>
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='primary'
+                        onClick={() => setRestoreOpen(true)}
+                    >
+                        {tr('sessions.restore')}
+                    </Button>
+                    <ExportItemButton
+                        domain='sessions'
+                        collect={() => collectSessions([session.id])}
+                        name={session.name}
+                    />
+                </Stack>
                 <Stack direction='row' gap={1}>
                     <Button
                         size='small'

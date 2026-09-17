@@ -30,6 +30,8 @@ import {
 } from './draft';
 import { SavePresetDialog } from './SavePresetDialog';
 import { useApplyPreset } from './useApplyPreset';
+import { collectPresets } from '../../utils/export/domain';
+import { ExportItemButton } from '../export/ExportItemButton';
 
 export const PresetCard = ({ preset }: { preset: Preset }) => {
     const tr = useTranslate();
@@ -137,14 +139,21 @@ export const PresetCard = ({ preset }: { preset: Preset }) => {
                 </Stack>
             </CardContent>
             <CardActions sx={{ justifyContent: 'space-between' }}>
-                <Button
-                    size='small'
-                    variant='outlined'
-                    color='primary'
-                    onClick={() => apply(preset)}
-                >
-                    {tr('presets.apply')}
-                </Button>
+                <Stack direction='row' gap={1}>
+                    <Button
+                        size='small'
+                        variant='outlined'
+                        color='primary'
+                        onClick={() => apply(preset)}
+                    >
+                        {tr('presets.apply')}
+                    </Button>
+                    <ExportItemButton
+                        domain='presets'
+                        collect={() => collectPresets([preset.id])}
+                        name={preset.name}
+                    />
+                </Stack>
                 <Stack direction='row' gap={1}>
                     <Button
                         size='small'

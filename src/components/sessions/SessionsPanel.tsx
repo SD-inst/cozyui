@@ -1,34 +1,48 @@
 import { History } from '@mui/icons-material';
 import { List, Typography } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { SectionAccordion } from '../controls/SectionAccordion';
 import { autoscrollSlotProps } from '../controls/utils';
 import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { useTranslate } from '../../i18n/I18nContext';
 import { db, Session } from '../history/db';
+import { collectSessions } from '../../utils/export/domain';
 import { SessionCard } from './SessionCard';
+import { ExportImport } from '../export/ExportImport';
 
 // Global accordion listing the current tab's sessions (restore / rename /
 // delete). Creation lives in the tab's GridBottom (SaveSessionButton).
 export const SessionsPanel = () => {
     const tr = useTranslate();
     const currentTab = useCurrentTab();
-    const sessions =
-        useLiveQuery(async (): Promise<Session[]> => {
-            if (!currentTab) {
-                return [];
-            }
-            const all = await db.sessions
-                .where('tab')
-                .equals(currentTab)
-                .toArray();
-            return [...all].sort((a, b) => b.timestamp - a.timestamp);
-        }, [currentTab]) ?? [];
+    const sessionsRaw = useLiveQuery(async (): Promise<Session[]> => {
+        if (!currentTab) {
+            return [];
+        }
+        const all = await db.sessions
+            .where('tab')
+            .equals(currentTab)
+            .toArray();
+        return [...all].sort((a, b) => b.timestamp - a.timestamp);
+    }, [currentTab]);
+    const sessions = useMemo(() => sessionsRaw ?? [], [sessionsRaw]);
+    const collect = useCallback(
+        async () => collectSessions(sessions.map((s) => s.id)),
+        [sessions],
+    );
     const ref = useRef<HTMLElement>(null);
     return (
         <SectionAccordion
             label='sessions.title'
+            summaryActions={
+                <ExportImport
+                    domain='sessions'
+                    collect={collect}
+                    filtered
+                    count={sessions.length}
+                />
+            }
             sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
             slotProps={autoscrollSlotProps(ref)}
             detailsRef={ref}

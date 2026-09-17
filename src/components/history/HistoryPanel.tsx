@@ -21,6 +21,7 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import {
     Dispatch,
     SetStateAction,
+    useCallback,
     useContext,
     useEffect,
     useMemo,
@@ -35,10 +36,12 @@ import { SelectInputBase } from '../controls/SelectInputBase';
 import { autoscrollSlotProps } from '../controls/utils';
 import { SectionAccordion } from '../controls/SectionAccordion';
 import { VerticalBox } from '../VerticalBox';
+import { collectHistory } from '../../utils/export/domain';
 import { db } from './db';
 import { DiffViewer } from './DiffViewer';
 import { pkFromFilter } from './filter';
 import { HistoryCard } from './HistoryCard';
+import { ExportImport } from '../export/ExportImport';
 
 const page_size = 10;
 
@@ -181,10 +184,66 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
         workflowTabGroups,
         page,
     ]);
+    // Export selection: respects the current filter; reports its count for the
+    // confirm dialog and to disable the button when empty.
+    const exportCount =
+        useLiveQuery(async () => {
+            if (isEmpty()) {
+                return db.taskResults.count();
+            }
+            const pk_x = await pkFromFilter(
+                { prompt, pinned, type, model, dateFrom, dateTo, group, tab },
+                workflowTabGroups,
+            );
+            return db.taskResults.where(':id').anyOf(pk_x).count();
+        }, [
+            isEmpty,
+            prompt,
+            pinned,
+            type,
+            model,
+            dateFrom,
+            dateTo,
+            group,
+            tab,
+            workflowTabGroups,
+        ]) ?? 0;
+    const collect = useCallback(
+        async () => {
+            if (isEmpty()) {
+                return collectHistory();
+            }
+            const pk_x = await pkFromFilter(
+                { prompt, pinned, type, model, dateFrom, dateTo, group, tab },
+                workflowTabGroups,
+            );
+            return collectHistory(pk_x);
+        },
+        [
+            isEmpty,
+            prompt,
+            pinned,
+            type,
+            model,
+            dateFrom,
+            dateTo,
+            group,
+            tab,
+            workflowTabGroups,
+        ],
+    );
     const ref = useRef<HTMLElement>(null);
     return (
         <SectionAccordion
             label='controls.history'
+            summaryActions={
+                <ExportImport
+                    domain='history'
+                    collect={collect}
+                    filtered={!isEmpty()}
+                    count={exportCount}
+                />
+            }
             sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
             slotProps={autoscrollSlotProps(ref)}
             detailsRef={ref}

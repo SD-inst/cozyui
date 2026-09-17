@@ -118,6 +118,10 @@ const translation = {
             'Are you sure you want to remove all the elements from this array?',
         import_history: 'Import history',
         export_history: 'Export history',
+        export: 'Export',
+        import: 'Import',
+        export_item: 'Export',
+        export_import: 'Export / import',
         please_wait: 'Please wait...',
         denoise: 'denoise',
         upscale: 'upscale',
@@ -514,6 +518,16 @@ const translation = {
             'Delete session "%{name}" and its stored media files?',
         file_lost: 'Files not found: %{files}',
     },
+    export: {
+        confirm_title: 'Export',
+        confirm_count: '%{n} item(s) will be exported.',
+        confirm_filtered:
+            'The current filter is applied — only the filtered subset will be exported.',
+        exported: 'Exported %{n} item(s)',
+    },
+    import: {
+        imported: 'Imported %{n} item(s)',
+    },
     toasts: {
         error_saving_preset: 'Error saving preset: %{err}',
         disconnected: 'Disconnected',
@@ -531,6 +545,10 @@ const translation = {
         error_saving_history: 'Error saving history: %{err}',
         error_importing_database: 'Error importing history: %{err}',
         error_exporting_database: 'Error exporting history: %{err}',
+        error_exporting: 'Error exporting: %{err}',
+        error_importing: 'Error importing: %{err}',
+        import_domain_mismatch:
+            'This archive is for %{got}, not %{want}',
         error_uploading: 'Error uploading image: %{err}',
         array_overflow:
             "Can't add more elements. Please reset or remove one of the references.",
