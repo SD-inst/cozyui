@@ -10,12 +10,15 @@ import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete'
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
+import { SelectInput } from '../../controls/SelectInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { UploadType } from '../../controls/UploadType';
 import { WFTab } from '../../WFTab';
+import { useTranslate } from '../../../i18n/I18nContext';
 
 const Content = () => {
+    const tr = useTranslate();
     return (
         <Layout>
             <GridLeft>
@@ -81,6 +84,22 @@ const Content = () => {
                         min={1}
                         max={2}
                         step={0.01}
+                    />
+                    <SelectInput
+                        name='abc_mode'
+                        defaultValue='melody'
+                        choices={[
+                            { text: tr('controls.mode_full'), value: 'full' },
+                            { text: tr('controls.mode_melody'), value: 'melody' },
+                        ]}
+                    />
+                    <SelectInput
+                        name='music_mode'
+                        defaultValue='melody'
+                        choices={[
+                            { text: tr('controls.mode_full'), value: 'full' },
+                            { text: tr('controls.mode_melody'), value: 'melody' },
+                        ]}
                     />
                 </AdvancedSettings>
                 <LoraInput name='lora' type='yue2' sx={{ mb: 2 }} />

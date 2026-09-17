@@ -12,6 +12,7 @@ import {
     AccordionSummary,
     Box,
     Button,
+    ButtonGroup,
     Dialog,
     DialogActions,
     DialogContent,
@@ -60,18 +61,33 @@ export type mediaFieldType = {
     idbMod?: boolean;
 };
 
+export type chatModeType = {
+    id: string;
+    label: string;
+    systemPrompt: string;
+    /** Build the first user message (e.g. inject the current field values). */
+    transformFirstMessage?: (text: string) => string;
+    /** Recover the user's raw text from a transformed first message. */
+    extractText?: (content: string) => string;
+};
+
 export const ChatComponent = ({
     promptFieldName = 'prompt',
     mediaFields,
     systemPrompt = 'You are a helpful assistant.',
     transformFirstMessage,
     sx,
+    modes,
+    defaultMode,
 }: {
     promptFieldName?: string;
     mediaFields?: mediaFieldType[];
     systemPrompt?: string;
     transformFirstMessage?: (text: string) => string;
     sx?: SxProps;
+    /** When present, the chat shows a mode selector and uses the selected mode. */
+    modes?: chatModeType[];
+    defaultMode?: string;
 }) => {
     const tr = useTranslate();
     const llmConfig = useLLMConfig();
@@ -89,6 +105,14 @@ export const ChatComponent = ({
     const inputRef = useRef<HTMLInputElement>(null);
     const [isExpanded, setIsExpanded] = useState(false);
     const [refineDialogOpen, setRefineDialogOpen] = useState(false);
+    const hasModes = !!modes?.length;
+    const [mode, setMode] = useState(defaultMode ?? modes?.[0]?.id ?? '');
+    const currentMode = hasModes
+        ? modes!.find((m) => m.id === mode) ?? modes![0]
+        : undefined;
+    const effectiveSystemPrompt = currentMode?.systemPrompt ?? systemPrompt;
+    const effectiveTransform =
+        currentMode?.transformFirstMessage ?? transformFirstMessage;
     const allMediaFields = mediaFields ?? [];
     const mediaNames = allMediaFields.map((f) => f.name);
     const mediaValues = (mediaNames.length ? watch(mediaNames) : []) as any[];
@@ -165,7 +189,7 @@ export const ChatComponent = ({
         initialMessages: [
             {
                 role: 'system',
-                content: systemPrompt,
+                content: effectiveSystemPrompt,
             },
         ],
     });
@@ -208,8 +232,8 @@ export const ChatComponent = ({
         const media =
             firstMessage && mediaRefs.length > 0 ? mediaRefs : undefined;
         await sendMessage(
-            firstMessage && transformFirstMessage
-                ? transformFirstMessage(rawInput)
+            firstMessage && effectiveTransform
+                ? effectiveTransform(rawInput)
                 : rawInput,
             undefined,
             media,
@@ -220,7 +244,10 @@ export const ChatComponent = ({
         const text = Array.isArray(content)
             ? content.find((m) => m.type === 'text')?.text || ''
             : content;
-        if (!transformFirstMessage) {
+        if (currentMode?.extractText) {
+            return currentMode.extractText(text);
+        }
+        if (!effectiveTransform) {
             return text;
         }
         const marker = 'description=';
@@ -314,6 +341,27 @@ export const ChatComponent = ({
                         p: { xs: 0, md: 2 },
                     }}
                 >
+                    {hasModes && modes && (
+                        <Box sx={{ mb: 1.5 }}>
+                            <ButtonGroup
+                                size='small'
+                                aria-label={tr('controls.chat_mode')}
+                            >
+                                {modes.map((m) => (
+                                    <Button
+                                        key={m.id}
+                                        variant={
+                                            mode === m.id ? 'contained' : 'outlined'
+                                        }
+                                        color='primary'
+                                        onClick={() => setMode(m.id)}
+                                    >
+                                        {m.label}
+                                    </Button>
+                                ))}
+                            </ButtonGroup>
+                        </Box>
+                    )}
                     <Box
                         ref={messagesBoxRef}
                         sx={{ maxHeight: 500, overflowY: 'auto' }}

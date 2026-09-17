@@ -1470,6 +1470,14 @@
                     "id": "33:25",
                     "field": "repetition_penalty"
                 },
+                "abc_mode": {
+                    "id": "33:24",
+                    "field": "mode"
+                },
+                "music_mode": {
+                    "id": "33:25",
+                    "field": "mode"
+                },
                 "model": {
                     "id": "handle",
                     "node_id": "33:15",
@@ -1557,6 +1565,14 @@
                 "repetition_penalty": {
                     "id": "33:25",
                     "field": "repetition_penalty"
+                },
+                "abc_mode": {
+                    "id": "33:41",
+                    "field": "mode"
+                },
+                "music_mode": {
+                    "id": "33:25",
+                    "field": "mode"
                 },
                 "model": {
                     "id": "handle",
