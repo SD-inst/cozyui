@@ -39,7 +39,6 @@ export const SessionsPanel = () => {
                 <ExportImport
                     domain='sessions'
                     collect={collect}
-                    filtered
                     count={sessions.length}
                 />
             }

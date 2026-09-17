@@ -54,7 +54,7 @@ export const PresetPanel = ({ ...props }: ListProps) => {
                 <ExportImport
                     domain='presets'
                     collect={collect}
-                    filtered={tabFilter !== '' || search !== ''}
+                    filtered={search !== ''}
                     count={presets.length}
                 />
             }
