@@ -15,9 +15,9 @@ import {
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useMemo, useState } from 'react';
-import { db, RefMod } from '../history/db';
 import { useTranslate } from '../../i18n/I18nContext';
-import { ModThumbnail, ModThumbMeta } from './ModArrayInput';
+import { db, RefMod } from '../history/db';
+import { ModThumbMeta, ModThumbnail } from './ModArrayInput';
 
 export const ModPickerDialog = ({
     open,
@@ -30,11 +30,10 @@ export const ModPickerDialog = ({
 }) => {
     const tr = useTranslate();
     const theme = useTheme();
-    const mods = useLiveQuery(async () => db.refMods.toArray(), []);
+    const mods = useLiveQuery(async () => db.refMods.orderBy('name').toArray(), []);
     const [selectedMod, setSelectedMod] = useState<RefMod | null>(null);
     const [search, setSearch] = useState('');
     const [filterKind, setFilterKind] = useState('');
-
     const filteredMods = useMemo(() => {
         return (mods ?? []).filter((mod: RefMod) => {
             const q = search.toLowerCase();
@@ -62,6 +61,7 @@ export const ModPickerDialog = ({
                         <TextField
                             size='small'
                             fullWidth
+                            autoFocus
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder={tr('refmods.search')}
