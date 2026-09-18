@@ -1,6 +1,9 @@
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { db, RefMod } from '../components/history/db';
+import { ensureFileOnServer, fileOnServer } from '../api/files';
+import { activeEntries } from '../utils/arraySlots';
+import { useApiURL } from './useApiURL';
 
 // Every ref-mod thumbnail is a `cover` crop of the source frame; the stored
 // (x, y) offsets pick the anchor via `object-position`. x: 0 = left, 100 =
@@ -97,3 +100,74 @@ export const formatRefModsLine = (
     refMods: ChatRefMod[],
     offset = 0,
 ): string => refMods.map((m) => offset + m.index).join(', ');
+
+// Bring a ref mod's safetensors back onto the server: reuse the stored name if
+// the file is still there, otherwise re-upload the local IndexedDB backup and
+// remember the new name. Returns the filename to use, or undefined if there is
+// no local backup to restore from.
+export const ensureRefModOnServer = async (
+    id: string,
+    apiUrl: string,
+): Promise<string | undefined> => {
+    const file = await db.refModFiles
+        .where({ mod: id })
+        .and((f: any) => f.fileType === 'safetensors')
+        .first();
+    if (!file) return undefined;
+    const mod = await db.refMods.get(id);
+    const name = await ensureFileOnServer(
+        new File([file.file], file.filename, { type: 'application/octet-stream' }),
+        mod?.serverFilename,
+        apiUrl,
+    );
+    if (mod && mod.serverFilename !== name) {
+        await db.refMods.update(id, { serverFilename: name });
+    }
+    return name;
+};
+
+// Proactively restore the field's ref mods to the server on load, mirroring
+// FileUpload's auto-recovery. A ref mod's thumbnail is a local IndexedDB
+// backup, so it never fails to render and the server file would otherwise stay
+// missing until the next generation. Keyed on the ids, so it runs on mount and
+// whenever the active set changes. Skipped entries are ignored (the generation
+// handler treats them as absent too).
+export const useRefModReupload = (name: string) => {
+    const apiUrl = useApiURL();
+    const entries = useWatch({
+        name,
+    }) as Array<{ id?: string; skip?: boolean }> | undefined;
+    const modIds = activeEntries(entries).map((e) =>
+        typeof e?.id === 'string' ? e.id : undefined,
+    );
+    const idsKey = modIds.map((id) => id ?? '').join(',');
+    // Latest-ids ref so the effect can read the current ids without listing the
+    // (unstable) array as a dependency; the reactive key is idsKey.
+    const idsRef = useRef(modIds);
+    idsRef.current = modIds;
+    // Cap re-upload attempts per mod so a persistently failing upload (e.g. the
+    // server rejecting it) cannot loop — mirrors the useReuploadLost guard.
+    const attempts = useRef<Record<string, number>>({});
+
+    useEffect(() => {
+        if (!idsKey || !apiUrl) return;
+        (async () => {
+            for (const id of idsRef.current) {
+                if (!id) continue;
+                if ((attempts.current[id] || 0) > 2) continue;
+                const mod = await db.refMods.get(id);
+                if (!mod?.serverFilename) continue;
+                // Still on the server: nothing to do (and we avoid loading the
+                // potentially large local backup for no reason).
+                if (await fileOnServer(mod.serverFilename, apiUrl)) continue;
+                // Gone (e.g. the server was cleared): re-upload the backup.
+                attempts.current[id] = (attempts.current[id] || 0) + 1;
+                try {
+                    await ensureRefModOnServer(id, apiUrl);
+                } catch {
+                    // The attempt cap above stops a re-running loop.
+                }
+            }
+        })();
+    }, [idsKey, apiUrl]);
+};

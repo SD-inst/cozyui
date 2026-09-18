@@ -9,7 +9,11 @@ import { SliderInput } from './SliderInput';
 import { useModPicker } from '../../hooks/useModPicker';
 import { db } from '../history/db';
 import { useModThumbURLs } from '../../hooks/useImageURL';
-import { useRefModMeta, refModThumbStyle } from '../../hooks/useRefMods';
+import {
+    useRefModMeta,
+    useRefModReupload,
+    refModThumbStyle,
+} from '../../hooks/useRefMods';
 import { parseModVersion } from '../../utils/modVersion';
 
 import 'yet-another-react-lightbox/styles.css';
@@ -254,6 +258,9 @@ export const ModArrayInput = ({
         name,
     }) as Array<{ id?: string }> | undefined;
     const modIds = useMemo(() => (value ?? []).map((v) => v?.id), [value]);
+    // Re-upload any mod whose server file was cleared (e.g. after a refresh):
+    // the thumbnail is a local backup, so nothing else restores it.
+    useRefModReupload(name);
     const thumbURLs = useModThumbURLs(modIds);
     // Per-mod crop offsets, parallel to thumbURLs (used to anchor the cover
     // crop so each thumbnail shows its stored focus region).

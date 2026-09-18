@@ -1,11 +1,10 @@
 import { useEventCallback } from '@mui/material';
-import { db } from '../components/history/db';
-import { ensureFileOnServer } from '../api/files';
 import { Workflow, NodeRef } from '../api/graph';
 import { controlType } from '../redux/config';
 import { useApiURL } from './useApiURL';
 import { insertGraph } from '../api/utils';
 import { activeEntries } from '../utils/arraySlots';
+import { ensureRefModOnServer } from './useRefMods';
 
 const MAX_SLOTS = 8;
 const NONE = '(none)';
@@ -35,24 +34,11 @@ export const useMiniMaxH3RefModHandler = () => {
             }> = [];
             for (const entry of activeEntries(value as RefModEntry[])) {
                 const { id } = entry;
-                const file = await db.refModFiles
-                    .where({ mod: id })
-                    .and((f: any) => f.fileType === 'safetensors')
-                    .first();
-                if (!file) continue;
-                const mod = await db.refMods.get(id);
-                const name = await ensureFileOnServer(
-                    new File(
-                        [file.file],
-                        file.filename,
-                        { type: 'application/octet-stream' },
-                    ),
-                    mod?.serverFilename,
-                    apiUrl,
-                );
-                if (mod && mod.serverFilename !== name) {
-                    await db.refMods.update(id, { serverFilename: name });
-                }
+                // Reuse the stored filename if the file is still on the server,
+                // otherwise (re-)upload the local backup and remember the new
+                // name for next time.
+                const name = await ensureRefModOnServer(id, apiUrl);
+                if (!name) continue;
                 resolved.push({
                     name,
                     strength: entry?.strength ?? 1.0,
