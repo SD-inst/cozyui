@@ -279,7 +279,7 @@ const translation = {
         mode_melody: 'Только мелодия',
         repetition_penalty: 'штраф за повторы',
         multiplier: 'множитель',
-        interpolation_multiplier: 'множитель сглаживания',
+        interpolation_multiplier: 'множитель уплавнения',
         size_mp: 'размер в мегапикселах',
         megapixels: 'размер в мегапикселах',
         noise_scale: 'шкала шума',
