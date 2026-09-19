@@ -145,6 +145,7 @@ export const HistoryCardContent = ({
                             carousel={{ finite: allSlides.length === 1 }}
                             plugins={[Counter, Zoom, Fullscreen]}
                             zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+                            animation={{ navigation: 0 }}
                             toolbar={{
                                 buttons: [
                                     <LightboxSendResultButton icon />,
