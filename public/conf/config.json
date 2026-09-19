@@ -2052,10 +2052,18 @@
                     "vae_node_id": "6",
                     "positive_field": "positive",
                     "negative_field": "negative",
-                    "size_node_id": "2",
-                    "size_field": "image",
+                    "empty_latent_node_id": "3",
+                    "scheduler_node_id": "4",
                     "set_field": "image",
                     "max": 10
+                },
+                "width": {
+                    "id": "1",
+                    "field": "value"
+                },
+                "height": {
+                    "id": "2",
+                    "field": "value"
                 },
                 "steps": {
                     "id": "4",
@@ -2068,6 +2076,10 @@
                 "sampler": {
                     "id": "13",
                     "field": "sampler_name"
+                },
+                "batch_size": {
+                    "id": "3",
+                    "field": "batch_size"
                 },
                 "seed": {
                     "id": "11",

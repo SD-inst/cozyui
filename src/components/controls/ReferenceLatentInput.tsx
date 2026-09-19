@@ -38,8 +38,10 @@ export const ReferenceLatentInput = ({
             }
             const positiveField = control.positive_field || 'conditioning';
             const negativeField = control.negative_field;
-            const sizeNodeId = control.size_node_id;
-            const sizeField = control.size_field || 'image';
+            const sizeNodeIds = [
+                control.empty_latent_node_id,
+                control.scheduler_node_id,
+            ].filter(Boolean);
             const cfg = getValues('cfg') ?? 1;
             const useNegative = !!negativeField && (cfg as number) > 1;
 
@@ -91,9 +93,22 @@ export const ReferenceLatentInput = ({
                 return;
             }
 
-            // Output size follows the first reference (the lazy way: no manual W/H).
-            if (sizeNodeId) {
-                api[sizeNodeId].inputs[sizeField] = [encodes[0].scaleNode, 0];
+            // Output size follows the first reference (the lazy way: no manual W/H):
+            // insert a GetImageSize wired to the first ref's scaled image and repoint
+            // the empty latent + scheduler to read from it (instead of the W/H controls).
+            if (sizeNodeIds.length) {
+                const getSizeBase = insertGraph(api, {
+                    ':get_size': {
+                        inputs: { image: [encodes[0].scaleNode, 0] },
+                        class_type: 'GetImageSize',
+                        _meta: { title: 'Get Image Size' },
+                    },
+                });
+                const getSizeId = getSizeBase + ':get_size';
+                sizeNodeIds.forEach((nodeId) => {
+                    api[nodeId].inputs.width = [getSizeId, 0];
+                    api[nodeId].inputs.height = [getSizeId, 1];
+                });
             }
 
             // Positive chain: ReferenceLatent nodes chained from the positive
