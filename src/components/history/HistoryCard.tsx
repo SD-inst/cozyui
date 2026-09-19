@@ -1,6 +1,7 @@
 import {
     AudioFile,
     Download,
+    EmojiEvents,
     Image,
     PushPin,
     TextSnippet,
@@ -8,11 +9,13 @@ import {
 } from '@mui/icons-material';
 import {
     Badge,
+    Box,
     Button,
     Card,
     CardActions,
     CardContent,
     CardHeader,
+    Checkbox,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { formatDuration } from '../../hooks/useTaskDuration';
@@ -27,9 +30,14 @@ import { DeleteButton } from './DeleteButton';
 import { SendResultButton } from '../controls/SendResultButton';
 import { ResultOverrideContextProvider } from '../contexts/ResultOverrideContextProvider';
 import { useTranslate } from '../../i18n/I18nContext';
+import { ArenaCardContent } from './arena/ArenaCardContent';
+import { useArena } from './arena/ArenaContext';
 
 export const HistoryCard = ({ output }: { output: TaskResult }) => {
     const tr = useTranslate();
+    const { selectMode, rosterIds, toggleParticipant } = useArena();
+    const isElo = output.type === 'elo';
+    const inArena = !isElo && rosterIds.has(output.id);
     const avatar = (type: string) => {
         switch (type) {
             case 'gifs':
@@ -38,6 +46,8 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                 return <TextSnippet />;
             case 'audio':
                 return <AudioFile />;
+            case 'elo':
+                return <EmojiEvents />;
             case 'images':
                 return <Image />;
             default:
@@ -78,6 +88,23 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
     }, [output.timings]);
     const params = JSON.parse(output.params || '');
     const tab = params.tab;
+    const headerAction = isElo ? (
+        <HistoryCardMenu output={output} />
+    ) : (
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            {selectMode ? (
+                <Checkbox
+                    checked={inArena}
+                    onChange={() => toggleParticipant(output)}
+                    size='small'
+                    aria-label={tr('arena.select')}
+                />
+            ) : inArena ? (
+                <EmojiEvents fontSize='small' sx={{ color: 'primary.main' }} />
+            ) : null}
+            <HistoryCardMenu output={output} />
+        </Box>
+    );
     return (
         <Card
             variant='outlined'
@@ -101,7 +128,7 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                         )}
                     </span>
                 }
-                subheader={tab}
+                subheader={isElo ? tr('arena.title') : tab}
                 avatar={
                     batchCount > 0 ? (
                         <Badge badgeContent={batchCount} color='primary'>
@@ -111,40 +138,52 @@ export const HistoryCard = ({ output }: { output: TaskResult }) => {
                         avatar(output.type)
                     )
                 }
-                action={<HistoryCardMenu output={output} />}
+                action={headerAction}
             />
             <CardContent sx={{ p: 0 }}>
                 <VerticalBox>
                     {timings?.length ? (
                         <NodeTimingsBar timings={timings} totalMs={output.duration} />
                     ) : null}
-                    <HistoryCardContent
-                        params={output.params}
-                        type={output.type}
-                        url={output.url}
-                        filename={filename}
-                        data={output.data}
-                    />
+                    {isElo ? (
+                        <ArenaCardContent rec={output} />
+                    ) : (
+                        <HistoryCardContent
+                            params={output.params}
+                            type={output.type}
+                            url={output.url}
+                            filename={filename}
+                            data={output.data}
+                        />
+                    )}
                 </VerticalBox>
             </CardContent>
-            <CardActions sx={{ justifyContent: 'space-between' }}>
-                <a download={filename} href={cacheUrl}>
-                    <Button variant='outlined' color='success' size='small' aria-label={tr('controls.download')}>
-                        <Download />
-                    </Button>
-                </a>
-                <ResultOverrideContextProvider
-                    value={{
-                        id: 'history',
-                        type: output.type,
-                        url: cacheUrl,
-                        filename,
-                    }}
-                >
-                    <SendResultButton icon />
-                </ResultOverrideContextProvider>
-                <LoadParamsButton params={output.params} />
-                <DeleteButton id={output.id} />
+            <CardActions sx={{ justifyContent: isElo ? 'flex-end' : 'space-between' }}>
+                {isElo ? (
+                    <>
+                        <DeleteButton id={output.id} />
+                    </>
+                ) : (
+                    <>
+                        <a download={filename} href={cacheUrl}>
+                            <Button variant='outlined' color='success' size='small' aria-label={tr('controls.download')}>
+                                <Download />
+                            </Button>
+                        </a>
+                        <ResultOverrideContextProvider
+                            value={{
+                                id: 'history',
+                                type: output.type,
+                                url: cacheUrl,
+                                filename,
+                            }}
+                        >
+                            <SendResultButton icon />
+                        </ResultOverrideContextProvider>
+                        <LoadParamsButton params={output.params} />
+                        <DeleteButton id={output.id} />
+                    </>
+                )}
             </CardActions>
         </Card>
     );

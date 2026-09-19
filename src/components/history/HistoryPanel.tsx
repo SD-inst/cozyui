@@ -42,6 +42,9 @@ import { DiffViewer } from './DiffViewer';
 import { pkFromFilter } from './filter';
 import { HistoryCard } from './HistoryCard';
 import { ExportImport } from '../export/ExportImport';
+import { ArenaContextProvider } from './arena/ArenaContextProvider';
+import { ArenaDialog } from './arena/ArenaDialog';
+import { ArenaMenu } from './arena/ArenaMenu';
 
 const page_size = 10;
 
@@ -234,15 +237,19 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
     );
     const ref = useRef<HTMLElement>(null);
     return (
-        <SectionAccordion
+        <ArenaContextProvider>
+            <SectionAccordion
             label='controls.history'
             summaryActions={
-                <ExportImport
-                    domain='history'
-                    collect={collect}
-                    filtered={!isEmpty()}
-                    count={exportCount}
-                />
+                <>
+                    <ArenaMenu />
+                    <ExportImport
+                        domain='history'
+                        collect={collect}
+                        filtered={!isEmpty()}
+                        count={exportCount}
+                    />
+                </>
             }
             sx={{ width: { xs: '100%', sm: '75%', md: '50%' } }}
             slotProps={autoscrollSlotProps(ref)}
@@ -429,7 +436,9 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                         <HistoryPagination page={page} setPage={setPage} />
                         <DiffViewer />
                     </VerticalBox>
+                    <ArenaDialog />
                 </CompareContextProvider>
             </SectionAccordion>
+        </ArenaContextProvider>
     );
 };

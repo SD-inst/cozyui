@@ -19,6 +19,7 @@ export interface TaskResult {
     words?: string[];
     model?: string;
     tab?: string;
+    arena?: string; // serialized ArenaState (for records of type 'elo')
 }
 
 export interface Settings {
