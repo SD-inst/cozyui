@@ -24,6 +24,7 @@ import { ChromaTab } from './components/tabs/t2i/Chroma';
 import { ChromaUpscaleTab } from './components/tabs/upscale/ChromaUpscale';
 import { FluxTab } from './components/tabs/t2i/Flux';
 import { Flux2Tab } from './components/tabs/t2i/Flux2';
+import { Flux2KleinImageEditTab } from './components/tabs/i2i/Flux2KleinImageEdit';
 import { FluxKontextTab } from './components/tabs/i2i/FluxKontext';
 import { HiDreamTab } from './components/tabs/t2i/HiDream';
 import { Krea2Tab } from './components/tabs/t2i/Krea2';
@@ -92,6 +93,7 @@ function App() {
                                 {QwenImageTab}
                                 {FluxKontextTab}
                                 {QwenImageEditTab}
+                                {Flux2KleinImageEditTab}
                                 {WanI2VITTab}
                                 {LTX2I2VTab}
                                 {LTX23I2VTab}

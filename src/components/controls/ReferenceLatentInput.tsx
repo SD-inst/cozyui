@@ -1,6 +1,7 @@
 import { useEventCallback } from '@mui/material';
+import { useFormContext } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
-import { insertGraph } from '../../api/utils';
+import { getFreeNodeId, insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { ArrayInput } from './ArrayInput';
@@ -24,6 +25,7 @@ export const ReferenceLatentInput = ({
     name: string;
     receiverFieldName?: string;
 }) => {
+    const { getValues } = useFormContext();
     const handler = useEventCallback(
         (api: Workflow, value: ReferenceType, control: controlType) => {
             if (
@@ -34,8 +36,17 @@ export const ReferenceLatentInput = ({
             ) {
                 return;
             }
-            const srcNode = api[control.guider_node_id].inputs.conditioning;
-            let prevNode = (srcNode as NodeRef)[0];
+            const positiveField = control.positive_field || 'conditioning';
+            const negativeField = control.negative_field;
+            const sizeNodeId = control.size_node_id;
+            const sizeField = control.size_field || 'image';
+            const cfg = getValues('cfg') ?? 1;
+            const useNegative = !!negativeField && (cfg as number) > 1;
+
+            // Shared encodes: every reference is LoadImage -> scale -> VAEEncode
+            // once, so both the positive and negative chains can reuse the same
+            // latent (encoding the reference is the expensive part).
+            const encodes: { scaleNode: string; encodeNode: string }[] = [];
             value.forEach((v) => {
                 if (!v.size || !v.image || !v.enabled || v.skip) {
                     return;
@@ -72,22 +83,44 @@ export const ReferenceLatentInput = ({
                             title: 'VAE Encode',
                         },
                     },
-                    ':4': {
+                };
+                const base = insertGraph(api, graph);
+                encodes.push({ scaleNode: base + ':2', encodeNode: base + ':3' });
+            });
+            if (!encodes.length) {
+                return;
+            }
+
+            // Output size follows the first reference (the lazy way: no manual W/H).
+            if (sizeNodeId) {
+                api[sizeNodeId].inputs[sizeField] = [encodes[0].scaleNode, 0];
+            }
+
+            // Positive chain: ReferenceLatent nodes chained from the positive
+            // conditioning, each adding one reference latent.
+            const chain = (field: string) => {
+                let prev = api[control.guider_node_id].inputs[field] as NodeRef;
+                encodes.forEach((enc) => {
+                    const id = getFreeNodeId(api) + '';
+                    api[id] = {
                         inputs: {
-                            conditioning: [prevNode, 0],
-                            latent: [':3', 0],
+                            conditioning: [prev[0], 0],
+                            latent: [enc.encodeNode, 0],
                         },
                         class_type: 'ReferenceLatent',
                         _meta: {
                             title: 'ReferenceLatent',
                         },
-                    },
-                };
-                const newNodeID = insertGraph(api, graph);
-                prevNode = newNodeID + ':4';
-            });
-            api[control.guider_node_id].inputs.conditioning = [prevNode, 0];
-        }
+                    };
+                    prev = [id, 0];
+                });
+                api[control.guider_node_id].inputs[field] = prev;
+            };
+            chain(positiveField);
+            if (useNegative) {
+                chain(negativeField);
+            }
+        },
     );
     useRegisterHandler({ name, handler });
     return (

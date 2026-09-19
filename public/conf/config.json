@@ -2035,6 +2035,69 @@
                 "type": "images"
             }
         },
+        "Flux 2 Klein": {
+            "api": "api/flux2_klein_image_edit.json",
+            "controls": {
+                "prompt": {
+                    "id": "8",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "9",
+                    "field": "text"
+                },
+                "reference_images": {
+                    "id": "handle",
+                    "guider_node_id": "10",
+                    "vae_node_id": "6",
+                    "positive_field": "positive",
+                    "negative_field": "negative",
+                    "size_node_id": "2",
+                    "size_field": "image",
+                    "set_field": "image",
+                    "max": 10
+                },
+                "steps": {
+                    "id": "4",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "10",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "13",
+                    "field": "sampler_name"
+                },
+                "seed": {
+                    "id": "11",
+                    "field": "value"
+                },
+                "lora": {
+                    "id": "handle"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "7",
+                    "field": "unet_name"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["10"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "17",
+                "type": "images"
+            }
+        },
         "Chroma": {
             "api": "api/chroma_native.json",
             "controls": {
@@ -4050,6 +4113,9 @@
         },
         "flux2": {
             "filter": "flux2/"
+        },
+        "flux2_klein": {
+            "filter": "flux2_klein/"
         },
         "hidream": {
             "filter": "hidream/"
