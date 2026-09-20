@@ -132,10 +132,15 @@ const TabContent = ({ ...props }) => {
     // get lost
     useEffect(() => {
         if (current_tab !== value) {
+            if (formInitialized) {
+                const vals = form.getValues();
+                const filtered = filterFormValues(vals);
+                db.formState.put({ tab: value, state: JSON.stringify(filtered) });
+            }
             form.reset();
             setFormInitialized(false);
         }
-    }, [current_tab, form, value]);
+    }, [current_tab, form, value, formInitialized]);
     if (!React.isValidElement(props.children)) {
         return;
     }
