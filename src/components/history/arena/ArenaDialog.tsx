@@ -1,5 +1,5 @@
 import { OpenInFull } from '@mui/icons-material';
-import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, Switch, Tooltip, Typography } from '@mui/material';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import toast from 'react-hot-toast';
@@ -26,6 +26,21 @@ const BLANK_SRC = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5TAwAAAAD';
 // Whether a resolved source type is a zoomable image (as opposed to video/audio).
 const isImageType = (type?: string) =>
     !!type && type !== 'gifs' && type !== 'audio';
+
+// The events ParticipantAsset forwards from its <video> when playback sync is
+// on. Used to mirror play/pause + seek between the two A/B candidates, and to
+// feed the shared playhead the lightbox reuses on slide switch.
+type VideoSyncHandlers = {
+    onPlay?: () => void;
+    onPause?: () => void;
+    onTimeUpdate?: () => void;
+    onSeeking?: () => void;
+};
+
+// The shared comparison playhead: "where we are in the current A/B pair." Both
+// the A/B view and the lightbox read/write it (only while sync is enabled), so
+// switching between the two candidates keeps the same position + play state.
+type PlaybackClock = { time: number; playing: boolean };
 
 // Resolves one participant's media and reports it to the ArenaLightbox. Renders
 // nothing. It drives the slide `src` so image slides carry the REAL url (which
@@ -60,6 +75,8 @@ const ParticipantAsset = ({
     display,
     height = 260,
     fill = true,
+    videoRef,
+    videoHandlers,
 }: {
     participant: ArenaParticipant;
     source?: TaskResult;
@@ -71,6 +88,11 @@ const ParticipantAsset = ({
     // overlay (the "view full" icon in the voting view) lands on the image,
     // not on the empty letterbox `objectFit:contain` would otherwise leave.
     fill?: boolean;
+    // Optional: when playback sync is on, ArenaDialog wires a ref + event
+    // handlers to the video so it can mirror the other candidate and feed the
+    // shared playhead. Omitted everywhere else (standings, winner thumb).
+    videoRef?: React.RefObject<HTMLVideoElement>;
+    videoHandlers?: VideoSyncHandlers;
 }) => {
     const tr = useTranslate();
     const mediaStyle = fill
@@ -99,12 +121,17 @@ const ParticipantAsset = ({
         case 'gifs':
             return (
                 <video
+                    ref={videoRef}
                     src={display}
                     controls
                     muted
                     loop
                     playsInline
                     preload='auto'
+                    onPlay={videoHandlers?.onPlay}
+                    onPause={videoHandlers?.onPause}
+                    onTimeUpdate={videoHandlers?.onTimeUpdate}
+                    onSeeking={videoHandlers?.onSeeking}
                     style={mediaStyle}
                 />
             );
@@ -134,9 +161,35 @@ const ParticipantAsset = ({
 // Renders one participant's media inside the lightbox, filling the slide
 // container. Used by the lightbox's `render.slide` (both the A/B voting view
 // and the finished-arena standings view), so images/videos/audio all work.
-const LightboxSlide = ({ participant }: { participant?: ArenaParticipant }) => {
+// When `sync` is on, the ACTIVE slide's video follows the shared playhead: on
+// becoming active it seeks to `clock.time` and resumes if it was playing, and
+// while active it records its time/state back into the clock — so switching
+// A↔B (or opening the lightbox from the A/B view) keeps the same position.
+const LightboxSlide = ({
+    participant,
+    active,
+    sync,
+    clock,
+}: {
+    participant?: ArenaParticipant;
+    active: boolean;
+    sync: boolean;
+    clock: React.MutableRefObject<PlaybackClock>;
+}) => {
     const tr = useTranslate();
     const { source, display, loading } = useParticipantDisplay(participant);
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const applyClock = useCallback(() => {
+        const v = videoRef.current;
+        if (!v || v.readyState < 1) return;
+        v.currentTime = clock.current.time;
+        if (clock.current.playing) v.play().catch(() => {});
+    }, [clock]);
+    useEffect(() => {
+        if (!sync) return;
+        if (active) applyClock();
+        else videoRef.current?.pause();
+    }, [active, display, sync, applyClock]);
     if (loading) {
         return (
             <Box
@@ -170,12 +223,49 @@ const LightboxSlide = ({ participant }: { participant?: ArenaParticipant }) => {
         case 'gifs':
             return (
                 <video
+                    ref={videoRef}
                     src={display}
                     controls
                     muted
                     loop
                     playsInline
                     preload='auto'
+                    onLoadedMetadata={sync ? applyClock : undefined}
+                    onTimeUpdate={
+                        sync
+                            ? () => {
+                                  if (active)
+                                      clock.current.time =
+                                          videoRef.current?.currentTime ?? 0;
+                              }
+                            : undefined
+                    }
+                    // `timeupdate` only fires while playing, so also record the
+                    // position after a seek (covers scrubbing while paused) to
+                    // keep the playhead accurate across a slide switch.
+                    onSeeked={
+                        sync
+                            ? () => {
+                                  if (active)
+                                      clock.current.time =
+                                          videoRef.current?.currentTime ?? 0;
+                              }
+                            : undefined
+                    }
+                    onPlay={
+                        sync
+                            ? () => {
+                                  if (active) clock.current.playing = true;
+                              }
+                            : undefined
+                    }
+                    onPause={
+                        sync
+                            ? () => {
+                                  if (active) clock.current.playing = false;
+                              }
+                            : undefined
+                    }
                     style={{
                         width: '100%',
                         height: '100%',
@@ -230,6 +320,8 @@ const ArenaLightbox = ({
     currentId,
     onVote,
     voteLabel,
+    clock,
+    sync,
 }: {
     participants: (ArenaParticipant | undefined)[];
     open: boolean;
@@ -241,6 +333,8 @@ const ArenaLightbox = ({
     currentId: string;
     onVote: (winnerId: string) => void;
     voteLabel: string;
+    clock: React.MutableRefObject<PlaybackClock>;
+    sync: boolean;
 }) => {
     const [media, setMedia] = useState<
         Record<number, { display: string; type?: string }>
@@ -290,8 +384,17 @@ const ArenaLightbox = ({
                         // renders the real `src` (above) — this is what the Zoom
                         // plugin hooks into to enable wheel / double-click zoom.
                         if (isImageType(m?.type)) return null;
-                        // Video / audio: draw the media directly.
-                        return <LightboxSlide participant={participants[i]} />;
+                        // Video / audio: draw the media directly. `active` marks
+                        // the visible slide so playback sync follows the one you
+                        // are actually looking at.
+                        return (
+                            <LightboxSlide
+                                participant={participants[i]}
+                                active={i === index}
+                                sync={sync}
+                                clock={clock}
+                            />
+                        );
                     },
                     controls: () =>
                         canVote ? (
@@ -367,6 +470,8 @@ const CandidateView = ({
     onOpen,
     onVote,
     disabled,
+    videoRef,
+    videoHandlers,
 }: {
     participant: ArenaParticipant;
     source?: TaskResult;
@@ -375,6 +480,8 @@ const CandidateView = ({
     onOpen: () => void;
     onVote: () => void;
     disabled?: boolean;
+    videoRef?: React.RefObject<HTMLVideoElement>;
+    videoHandlers?: VideoSyncHandlers;
 }) => {
     const tr = useTranslate();
     return (
@@ -406,6 +513,8 @@ const CandidateView = ({
                     source={source}
                     display={display}
                     fill={false}
+                    videoRef={videoRef}
+                    videoHandlers={videoHandlers}
                 />
                 <OpenInFull
                     fontSize='small'
@@ -472,6 +581,16 @@ export const ArenaDialog = () => {
     // Enter votes for the current slide (native button activation) and the
     // lightbox's arrow-key navigation (on the focused controller) keeps working.
     const voteButtonRef = useRef<HTMLButtonElement>(null);
+    // Playback sync (opt-in, off by default): mirror play/pause + seek between
+    // the two A/B candidates and carry the position/play-state across lightbox
+    // slides, so you can compare the same moment. Off by default because videos
+    // of different lengths would otherwise fight for the playhead.
+    const [syncEnabled, setSyncEnabled] = useState(false);
+    const clock = useRef<PlaybackClock>({ time: 0, playing: false });
+    const aVideo = useRef<HTMLVideoElement>(null);
+    const bVideo = useRef<HTMLVideoElement>(null);
+    const seekBreak = useRef([false, false]);
+    const videos = [aVideo, bVideo];
     const entry = arenas.find((e) => e.rec.id === openArenaId);
     // Compute the A/B display URLs before the early return: the
     // useParticipantDisplay hooks must be called unconditionally. The lightbox
@@ -518,6 +637,41 @@ export const ArenaDialog = () => {
             voteButtonRef.current?.focus({ preventScroll: true });
         }
     }, [lightboxOpen, canVote, lbIndex, pairKey]);
+    // Each new pair is a fresh comparison: reset the shared playhead so the
+    // lightbox opens at 0, then carries the position as you scrub/switch.
+    useEffect(() => {
+        clock.current = { time: 0, playing: false };
+    }, [pairKey]);
+    // Mirrors the DiffViewer pattern: play/pause + seek on one candidate are
+    // replayed on the other (with a feedback breaker so the programmatic seek
+    // doesn't loop back), and the shared playhead is kept at the current
+    // position so the lightbox can reuse it.
+    const makeVideoHandlers = (i: number): VideoSyncHandlers => ({
+        onPlay: () => {
+            clock.current.playing = true;
+            videos[1 - i].current?.play();
+        },
+        onPause: () => {
+            clock.current.playing = false;
+            videos[1 - i].current?.pause();
+        },
+        onTimeUpdate: () => {
+            const t = videos[i].current?.currentTime;
+            if (t !== undefined) clock.current.time = t;
+        },
+        onSeeking: () => {
+            if (seekBreak.current[i]) {
+                seekBreak.current[i] = false;
+                return;
+            }
+            const self = videos[i].current;
+            const other = videos[1 - i].current;
+            if (!self || !other) return;
+            seekBreak.current[1 - i] = true;
+            other.currentTime = self.currentTime;
+            clock.current.time = self.currentTime;
+        },
+    });
     if (!entry || !openArenaId) {
         return null;
     }
@@ -575,12 +729,38 @@ export const ArenaDialog = () => {
                 {!showStandings && (
                     <>
                         <Box sx={{ mb: 1 }}>
-                            <Typography variant='body2' color='textSecondary'>
-                                {tr('arena.progress', {
-                                    done: summary.matchesPlayed,
-                                    total: target,
-                                })}
-                            </Typography>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    gap: 1,
+                                }}
+                            >
+                                <Typography variant='body2' color='textSecondary'>
+                                    {tr('arena.progress', {
+                                        done: summary.matchesPlayed,
+                                        total: target,
+                                    })}
+                                </Typography>
+                                <Tooltip title={tr('arena.sync_hint')}>
+                                    <FormControlLabel
+                                        sx={{ mx: 0, '& .MuiTypography-root': { fontSize: 12 } }}
+                                        control={
+                                            <Switch
+                                                size='small'
+                                                checked={syncEnabled}
+                                                onChange={(e) =>
+                                                    setSyncEnabled(
+                                                        e.target.checked,
+                                                    )
+                                                }
+                                            />
+                                        }
+                                        label={tr('arena.sync')}
+                                    />
+                                </Tooltip>
+                            </Box>
                             <CircularProgress
                                 variant='determinate'
                                 value={progressPct}
@@ -599,6 +779,12 @@ export const ArenaDialog = () => {
                                     onOpen={() => setLbIndex(0)}
                                     onVote={() => handleVote(pair[0])}
                                     disabled={voting}
+                                    videoRef={syncEnabled ? aVideo : undefined}
+                                    videoHandlers={
+                                        syncEnabled
+                                            ? makeVideoHandlers(0)
+                                            : undefined
+                                    }
                                 />
                                 <CandidateView
                                     participant={bParticipant!}
@@ -608,6 +794,12 @@ export const ArenaDialog = () => {
                                     onOpen={() => setLbIndex(1)}
                                     onVote={() => handleVote(pair[1])}
                                     disabled={voting}
+                                    videoRef={syncEnabled ? bVideo : undefined}
+                                    videoHandlers={
+                                        syncEnabled
+                                            ? makeVideoHandlers(1)
+                                            : undefined
+                                    }
                                 />
                             </Box>
                         ) : (
@@ -688,6 +880,8 @@ export const ArenaDialog = () => {
                     currentId={currentId}
                     onVote={handleVote}
                     voteLabel={tr('arena.vote_this')}
+                    clock={clock}
+                    sync={syncEnabled}
                 />
             </DialogContent>
             <DialogActions>

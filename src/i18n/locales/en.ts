@@ -541,6 +541,9 @@ const translation = {
         wl: '%{w} wins – %{l} losses',
         missing: 'Original asset deleted',
         standings_hint: '%{n} competitors — click for standings',
+        sync: 'Sync video',
+        sync_hint:
+            'Keep both videos at the same playback position (and play/pause) so you can compare the same moment',
     },
     export: {
         confirm_title: 'Export',
