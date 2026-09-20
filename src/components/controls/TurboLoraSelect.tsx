@@ -3,7 +3,10 @@ import { useListChoices } from '../../hooks/useListChoices';
 import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
 
-const DEFAULT_TURBO_LORA = 'h3/minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_lightx2v_bf16.safetensors';
+const DEFAULT_TURBO_LORA =
+    'h3/minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_lightx2v_bf16.safetensors';
+
+const TURBO_VENDORS = ['turbo', 'lightx2v', 'hyperflow', 'taomate'];
 
 export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
     const loras = useListChoices({
@@ -12,14 +15,30 @@ export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
         index: 0,
     });
     const choices = loras
-        .filter((l) => l.includes('h3') && (l.includes('h3_turbo') || l.includes('lightx2v')))
+        .filter(
+            (l) =>
+                l.includes('minimax_h3') &&
+                TURBO_VENDORS.some((v) => l.includes(v)),
+        )
         .map((l) => ({
-            text: l.slice(l.lastIndexOf('/') + 1, l.lastIndexOf('.safetensors')),
+            text: l.slice(
+                l.lastIndexOf('/') + 1,
+                l.lastIndexOf('.safetensors'),
+            ),
             value: l,
         }));
 
     return (
-        <Box sx={{ mt: 2, ...sx, display: 'flex', flexWrap: { xs: 'wrap', md: 'nowrap' }, gap: 3, alignItems: 'center' }}>
+        <Box
+            sx={{
+                mt: 2,
+                ...sx,
+                display: 'flex',
+                flexWrap: { xs: 'wrap', md: 'nowrap' },
+                gap: 3,
+                alignItems: 'center',
+            }}
+        >
             <Box sx={{ flex: 1, maxWidth: '100%' }}>
                 <SelectInput
                     name='turbo_lora.lora_name'

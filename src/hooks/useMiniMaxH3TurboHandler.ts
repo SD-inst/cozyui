@@ -50,10 +50,11 @@ export const useMiniMaxH3TurboHandler = () => {
             return;
         }
 
+        const isH3Turbo = turboLoraName.includes('h3_turbo');
         const isLightX2V = turboLoraName.includes('lightx2v');
         const is4Step = isLightX2V && turboLoraName.includes('4step');
 
-        if (isLightX2V) {
+        if (!isH3Turbo) {
             const inputNodeId = (
                 api[output_node_ids[0]]?.inputs?.[api_input_name] as
                     | NodeRef
