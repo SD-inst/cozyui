@@ -394,9 +394,9 @@ const CandidateView = ({
                     cursor: 'pointer',
                     position: 'relative',
                     // Shrink-wrap the natural-size media (ParticipantAsset
-                    // `fill={false}`) so the "view full" icon below lands on the
-                    // image's corner, not on the empty letterbox the media used
-                    // to leave when stretched to the full column width.
+                    // `fill={false}`) so the "view full" icon lands on the media's
+                    // corner, not on the empty letterbox the media used to leave
+                    // when stretched to the full column width.
                     width: 'fit-content',
                     maxWidth: '100%',
                 }}
@@ -412,7 +412,10 @@ const CandidateView = ({
                     aria-label={tr('arena.view_full')}
                     sx={{
                         position: 'absolute',
-                        bottom: 4,
+                        // Top-right, not bottom-right: the bottom-right corner is
+                        // taken by the native <video controls> fullscreen button,
+                        // which would otherwise collide with this overlay icon.
+                        top: 4,
                         right: 4,
                         color: 'white',
                         bgcolor: 'rgba(0, 0, 0, 0.55)',

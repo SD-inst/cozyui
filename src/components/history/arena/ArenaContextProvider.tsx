@@ -6,11 +6,9 @@ import {
     addParticipants,
     ArenaState,
     newArena,
-    removeParticipants,
     rosterTaskResultIds,
     recordVote,
     standings,
-    summarize,
 } from '../../../utils/arena';
 import { useTranslate } from '../../../i18n/I18nContext';
 import {
@@ -62,10 +60,17 @@ const persist = (rec: TaskResult, state: ArenaState) =>
         url: topUrl(state),
     });
 
+// In-memory participant selection: a source record's urls/labels captured when
+// the user picks it, keyed by taskResultId so a re-pick is a no-op. The arena
+// record is only written to IndexedDB on "Start arena", so picking participants
+// never re-renders the history list or jumps the scroll.
+type Draft = Map<number, { urls: string[]; labels: string[] }>;
+
 export const ArenaContextProvider = ({ children }: PropsWithChildren) => {
     const tr = useTranslate();
     const [selectMode, setSelectMode] = useState(false);
     const [openArenaId, setOpenArenaId] = useState<number | null>(null);
+    const [draft, setDraft] = useState<Draft>(new Map());
 
     const arenas = useLiveQuery(async (): Promise<Entry[]> => {
         const all = await db.taskResults.where('type').equals('elo').toArray();
@@ -77,10 +82,25 @@ export const ArenaContextProvider = ({ children }: PropsWithChildren) => {
 
     const arenaList = useMemo(() => arenas ?? [], [arenas]);
     const working = findWorking(arenaList);
-    const rosterIds = useMemo(
-        () => (working ? rosterTaskResultIds(working.state) : new Set<number>()),
-        [working],
-    );
+
+    // Checkbox state in the history list. In selection mode it reflects the
+    // in-memory draft (a pure staging roster — it never touches existing
+    // arenas). Outside it, show the trophy on assets belonging to the
+    // in-progress arena.
+    const rosterIds = useMemo(() => {
+        if (selectMode) return new Set(draft.keys());
+        return working ? rosterTaskResultIds(working.state) : new Set<number>();
+    }, [selectMode, draft, working]);
+
+    // Current selection size in participants (a batch card counts one per
+    // asset). Always from the in-memory draft — the selection is a pure
+    // staging roster, never the existing arena's roster. Enables "Start arena"
+    // (needs >= 2).
+    const participantCount = useMemo(() => {
+        let n = 0;
+        for (const e of draft.values()) n += e.urls.length;
+        return n;
+    }, [draft]);
 
     // Latest arena list, read at action time so memoized actions (stable
     // callbacks) never act on a stale first-render snapshot. The live query
@@ -89,54 +109,32 @@ export const ArenaContextProvider = ({ children }: PropsWithChildren) => {
     useEffect(() => {
         arenaListRef.current = arenaList;
     }, [arenaList]);
+    const draftRef = useRef(draft);
+    useEffect(() => {
+        draftRef.current = draft;
+    }, [draft]);
+    // Entering selection mode always starts a FRESH empty draft: the selection
+    // is a pure staging roster, independent of any existing arena.
+    useEffect(() => {
+        if (selectMode) setDraft(new Map());
+    }, [selectMode]);
 
     const loadWorking = (): Working => findWorking(arenaListRef.current);
 
-    const addParticipant = useCallback(async (rec: TaskResult) => {
+    // Selection always edits the in-memory draft — it never touches existing
+    // arenas. The arena record is created on "Start arena", so selecting never
+    // touches IndexedDB (no history-list re-render / scroll jump).
+    const toggleParticipant = useCallback((rec: TaskResult) => {
         const urls = urlsOf(rec);
         if (!urls.length) return;
         const labels = urls.map((u, i) => assetLabel(u, `${rec.id}:${i}`));
-        const working = await loadWorking();
-        if (working) {
-            await persist(
-                working.rec,
-                addParticipants(working.state, rec.id, urls, labels),
-            );
-        } else {
-            const state = addParticipants(newArena(), rec.id, urls, labels);
-            await db.taskResults.add({
-                timestamp: Date.now(),
-                duration: 0,
-                type: 'elo',
-                node_id: 'arena',
-                tab: 'arena',
-                params: '{}',
-                url: topUrl(state),
-                mark: markEnum.NONE,
-                arena: JSON.stringify(state),
-            } as TaskResult);
-        }
+        setDraft((prev) => {
+            const next = new Map(prev);
+            if (next.has(rec.id)) next.delete(rec.id);
+            else next.set(rec.id, { urls, labels });
+            return next;
+        });
     }, []);
-
-    const toggleParticipant = useCallback(async (rec: TaskResult) => {
-        const urls = urlsOf(rec);
-        if (!urls.length) return;
-        const labels = urls.map((u, i) => assetLabel(u, `${rec.id}:${i}`));
-        const working = await loadWorking();
-        if (!working) {
-            await addParticipant(rec);
-            return;
-        }
-        const inArena = working.state.participants.some(
-            (p) => p.taskResultId === rec.id,
-        );
-        await persist(
-            working.rec,
-            inArena
-                ? removeParticipants(working.state, rec.id)
-                : addParticipants(working.state, rec.id, urls, labels),
-        );
-    }, [addParticipant]);
 
     const openArena = useCallback((id: number) => {
         // Opening an arena means leaving participant selection: the arena is
@@ -150,14 +148,40 @@ export const ArenaContextProvider = ({ children }: PropsWithChildren) => {
 
     const closeArena = useCallback(() => setOpenArenaId(null), []);
 
-    const start = useCallback(() => {
-        if (!working) return;
-        if (summarize(working.state).standings.length < 2) {
+    const start = useCallback(async () => {
+        if (participantCount < 2) {
             toast(tr('arena.start_min'));
             return;
         }
-        openArena(working.rec.id);
-    }, [working, openArena, tr]);
+        // Starting a new arena ends any in-progress one: it's preserved in
+        // history as finished (browsable via its card) so only one arena is
+        // ever "working" at a time.
+        const working = loadWorking();
+        if (working) {
+            await db.taskResults.update(working.rec.id, {
+                arena: JSON.stringify({ ...working.state, status: 'finished' }),
+                timestamp: Date.now(),
+            });
+        }
+        // Build the new arena from the in-memory draft.
+        let state = newArena();
+        for (const [id, entry] of draftRef.current) {
+            state = addParticipants(state, id, entry.urls, entry.labels);
+        }
+        const id = await db.taskResults.add({
+            timestamp: Date.now(),
+            duration: 0,
+            type: 'elo',
+            node_id: 'arena',
+            tab: 'arena',
+            params: '{}',
+            url: topUrl(state),
+            mark: markEnum.NONE,
+            arena: JSON.stringify(state),
+        } as TaskResult);
+        setDraft(new Map());
+        openArena(id);
+    }, [participantCount, openArena, tr]);
 
     const vote = useCallback(
         async (arenaId: number, aKey: string, bKey: string, winner: string) => {
@@ -220,7 +244,7 @@ export const ArenaContextProvider = ({ children }: PropsWithChildren) => {
         openArenaId,
         toggleSelectMode: () => setSelectMode((v) => !v),
         exitSelectMode: () => setSelectMode(false),
-        addParticipant,
+        participantCount,
         toggleParticipant,
         start,
         openArena,

@@ -2,7 +2,6 @@ import { EmojiEvents } from '@mui/icons-material';
 import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
 import { useState } from 'react';
 import { useTranslate } from '../../../i18n/I18nContext';
-import { standings } from '../../../utils/arena';
 import { useArena } from './ArenaContext';
 
 // Panel-level arena menu, tucked behind a small swords button (these are used
@@ -13,11 +12,15 @@ import { useArena } from './ArenaContext';
 export const ArenaMenu = () => {
     const tr = useTranslate();
     const [anchor, setAnchor] = useState<null | HTMLElement>(null);
-    const { working, selectMode, toggleSelectMode, exitSelectMode, start } =
-        useArena();
+    const {
+        selectMode,
+        toggleSelectMode,
+        exitSelectMode,
+        start,
+        participantCount,
+    } = useArena();
 
-    const count = working ? standings(working.state).length : 0;
-    const canStart = !!working && count >= 2;
+    const canStart = participantCount >= 2;
 
     return (
         <div onClick={(e) => e.stopPropagation()}>

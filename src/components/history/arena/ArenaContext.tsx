@@ -15,9 +15,11 @@ export type ArenaContextType = {
     openArenaId: number | null;
     toggleSelectMode: () => void;
     exitSelectMode: () => void;
-    addParticipant: (tr: TaskResult) => Promise<void>;
-    toggleParticipant: (tr: TaskResult) => Promise<void>;
-    start: () => void;
+    // number of participants in the current selection (the persisted arena's, or
+    // the in-memory draft's) — enables "Start arena" at >= 2.
+    participantCount: number;
+    toggleParticipant: (tr: TaskResult) => void;
+    start: () => Promise<void>;
     openArena: (id: number) => void;
     closeArena: () => void;
     vote: (arenaId: number, aKey: string, bKey: string, winner: string) => Promise<void>;
