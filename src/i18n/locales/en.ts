@@ -283,6 +283,8 @@ const translation = {
         interpolation_multiplier: 'interpolation multiplier',
         size_mp: 'size in megapixels',
         megapixels: 'size in megapixels',
+        custom_output_resolution: 'custom output resolution',
+        reference_resolution: 'reference resolution',
         noise_scale: 'noise scale',
         audio_neg_prompt: 'negative audio prompt',
         audio_cfg: 'audio CFG',

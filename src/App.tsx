@@ -41,6 +41,7 @@ import { LTX2T2VTab } from './components/tabs/t2v/LTX2T2V';
 import { MMAudioTab } from './components/tabs/audio/MMAudio';
 import { QwenImageTab } from './components/tabs/t2i/QwenImage';
 import { QwenImageEditTab } from './components/tabs/i2i/QwenImageEdit';
+import { QwenImage21Tab } from './components/tabs/i2i/QwenImage21';
 import { SDTab } from './components/tabs/t2i/SD';
 import { SDUpscaleTab } from './components/tabs/upscale/SDUpscale';
 import { SongBloomTab } from './components/tabs/audio/SongBloom';
@@ -93,6 +94,7 @@ function App() {
                                 {QwenImageTab}
                                 {FluxKontextTab}
                                 {QwenImageEditTab}
+                                {QwenImage21Tab}
                                 {Flux2KleinImageEditTab}
                                 {WanI2VITTab}
                                 {LTX2I2VTab}

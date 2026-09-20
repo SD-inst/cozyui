@@ -2110,6 +2110,87 @@
                 "type": "images"
             }
         },
+        "Qwen Image 2.1": {
+            "api": "api/qwen_image_2_1_image_edit.json",
+            "controls": {
+                "reference_images": {
+                    "id": "handle",
+                    "node_id": "6",
+                    "max": 10
+                },
+                "prompt": {
+                    "id": "6",
+                    "field": "prompt"
+                },
+                "neg_prompt": {
+                    "id": "6",
+                    "field": "negative_prompt"
+                },
+                "reference_resolution": {
+                    "id": "6",
+                    "field": "resolution"
+                },
+                "custom_output_resolution": {
+                    "id": "11",
+                    "field": "switch"
+                },
+                "width": {
+                    "id": "10",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "10",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "3",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "3",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "3",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "3",
+                    "field": "scheduler"
+                },
+                "batch_size": {
+                    "id": "10",
+                    "field": "batch_size"
+                },
+                "seed": {
+                    "id": "69",
+                    "field": "value"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "7",
+                    "field": "unet_name"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["12"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": {
+                "id": "17",
+                "type": "images"
+            }
+        },
         "Chroma": {
             "api": "api/chroma_native.json",
             "controls": {
@@ -4143,6 +4224,9 @@
         },
         "qwen": {
             "filter": "qwen/"
+        },
+        "qwen21": {
+            "filter": "qwen21/"
         },
         "infinitetalk": {
             "filter": "infinitetalk/"

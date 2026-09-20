@@ -282,6 +282,8 @@ const translation = {
         interpolation_multiplier: 'множитель уплавнения',
         size_mp: 'размер в мегапикселах',
         megapixels: 'размер в мегапикселах',
+        custom_output_resolution: 'кастомное выходное разрешение',
+        reference_resolution: 'референс-разрешение',
         noise_scale: 'шкала шума',
         audio_neg_prompt: 'негативный аудио-промпт',
         audio_cfg: 'аудио CFG',
