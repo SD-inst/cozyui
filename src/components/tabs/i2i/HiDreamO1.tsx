@@ -15,17 +15,15 @@ import { PromptInput } from '../../controls/PromptInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
-import { ToggleInput } from '../../controls/ToggleInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
 
 type ReferenceType = {
     image: string;
-    enabled: boolean;
     skip?: boolean;
 }[];
 
-const newValue = { enabled: true };
+const newValue = {};
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
@@ -49,7 +47,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
             const refNodeID = refBaseID + ':reference';
 
             value.forEach((v, idx) => {
-                if (!v.enabled || v.skip) {
+                if (!v.image || v.skip) {
                     return;
                 }
                 const imageNodeID = getFreeNodeId(api) + '';
@@ -78,7 +76,6 @@ const ReferenceImages = ({ name }: { name: string }) => {
             targetFieldName='image'
         >
             <FileUpload name='image' label='image' />
-            <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>
     );
 };

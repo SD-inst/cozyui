@@ -9,7 +9,7 @@ import { ToggleInput } from '../ToggleInput';
 import { UploadType } from '../UploadType';
 import { Box } from '@mui/material';
 
-const newValue = { pos: 0, enabled: true };
+const newValue = { pos: 0 };
 
 export const LTX2KeyframesControl = ({
     name = 'keyframes',
@@ -60,7 +60,6 @@ export const LTX2KeyframesControl = ({
                 />
                 <ToggleInput name='last' label='keyframe_last' sx={{ mt: 1 }} />
             </Box>
-            <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>
     );
 };

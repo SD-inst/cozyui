@@ -301,7 +301,6 @@ const translation = {
         scale_match: 'подогнать',
         scale_max: 'макс',
         scale_scale: 'масштаб',
-        enabled: 'разрешено',
         upsample_spatial: 'два прохода',
         upsample_temporal: 'удвоить FPS',
         upsample_audio: 'улучшить аудио',

@@ -21,18 +21,16 @@ import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TeaCacheInput } from '../../controls/TeaCacheInput';
-import { ToggleInput } from '../../controls/ToggleInput';
 import { WFTab } from '../../WFTab';
 import { useWatchForm } from '../../../hooks/useWatchForm';
 
 type ReferenceType = {
     image: string;
     size: number;
-    enabled: boolean;
     skip?: boolean;
 }[];
 
-const newValue = { size: 1, enabled: true };
+const newValue = { size: 1 };
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
@@ -47,7 +45,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
                 return;
             }
             value.forEach((v, idx) => {
-                if (!v.enabled || v.skip) {
+                if (!v.image || v.skip) {
                     return;
                 }
                 const graph = {
@@ -104,7 +102,6 @@ const ReferenceImages = ({ name }: { name: string }) => {
                 defaultValue={1}
                 step={0.01}
             />
-            <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>
     );
 };
@@ -163,9 +160,7 @@ const Content = () => {
             </GridRight>
             <GridBottom>
                 <GenerateButton
-                    disabled={
-                        !images || images.every((i) => !i.image || !i.enabled)
-                    }
+                    disabled={!images || images.every((i) => !i.image)}
                 />
             </GridBottom>
         </Layout>

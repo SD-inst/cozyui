@@ -7,16 +7,14 @@ import { useRegisterHandler } from '../contexts/TabContext';
 import { ArrayInput } from './ArrayInput';
 import { FileUpload } from './FileUpload';
 import { SliderInput } from './SliderInput';
-import { ToggleInput } from './ToggleInput';
 
 type ReferenceType = {
     image: string;
     size: number;
-    enabled: boolean;
     skip?: boolean;
 }[];
 
-const newValue = { size: 1, enabled: true };
+const newValue = { size: 1 };
 
 export const ReferenceLatentInput = ({
     name,
@@ -50,7 +48,7 @@ export const ReferenceLatentInput = ({
             // latent (encoding the reference is the expensive part).
             const encodes: { scaleNode: string; encodeNode: string }[] = [];
             value.forEach((v) => {
-                if (!v.size || !v.image || !v.enabled || v.skip) {
+                if (!v.size || !v.image || v.skip) {
                     return;
                 }
                 const graph = {
@@ -155,7 +153,6 @@ export const ReferenceLatentInput = ({
                 defaultValue={1}
                 step={0.01}
             />
-            <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>
     );
 };

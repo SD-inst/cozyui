@@ -17,13 +17,12 @@ import { useWatchForm } from '../../../hooks/useWatchForm';
 type ReferenceType = {
     image: string;
     size: number;
-    enabled: boolean;
     skip?: boolean;
 }[];
 
 const Content = () => {
     const images: ReferenceType = useWatchForm('reference_images');
-    const hasRefs = !!images && images.some((i) => i.image && i.enabled && !i.skip);
+    const hasRefs = !!images && images.some((i) => i.image && !i.skip);
     return (
         <Layout>
             <GridLeft>

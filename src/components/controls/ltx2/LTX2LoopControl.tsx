@@ -95,7 +95,6 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             }
             if (kf.position !== length || kf.trim !== overlap) {
                 setValue(`keyframes.${idx}.position`, length);
-                setValue(`keyframes.${idx}.enabled`, true);
                 setValue(`keyframes.${idx}.trim`, overlap);
             }
             found = true;
@@ -104,7 +103,6 @@ export const LTX2LoopControl = ({ name }: { name: string }) => {
             return;
         }
         append({
-            enabled: true,
             image,
             position: length,
             strength: 0.5,

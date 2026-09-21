@@ -25,11 +25,10 @@ import { qwenImage21SystemPrompt } from '../../chat/prompts/qwenImage21';
 
 type ReferenceType = {
     image: string;
-    enabled: boolean;
     skip?: boolean;
 }[];
 
-const newValue = { enabled: true };
+const newValue = {};
 
 const ReferenceImages = ({ name }: { name: string }) => {
     const handler = useEventCallback(
@@ -39,7 +38,7 @@ const ReferenceImages = ({ name }: { name: string }) => {
             }
             const node = api[control.node_id];
             value.forEach((v, idx) => {
-                if (!v.image || !v.enabled || v.skip) {
+                if (!v.image || v.skip) {
                     return;
                 }
                 const imageNodeID = getFreeNodeId(api) + '';
@@ -62,7 +61,6 @@ const ReferenceImages = ({ name }: { name: string }) => {
             targetFieldName='image'
         >
             <FileUpload name='image' label='image' />
-            <ToggleInput name='enabled' label='enabled' />
         </ArrayInput>
     );
 };

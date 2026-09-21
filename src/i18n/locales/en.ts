@@ -302,7 +302,6 @@ const translation = {
         scale_match: 'match',
         scale_max: 'max',
         scale_scale: 'scale',
-        enabled: 'enabled',
         upsample_spatial: '2-pass sampling',
         upsample_temporal: 'double FPS',
         upsample_audio: 'upsample audio',
