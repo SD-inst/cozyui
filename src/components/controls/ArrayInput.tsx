@@ -1,18 +1,5 @@
 import { Add } from '@mui/icons-material';
-import {
-    DndContext,
-    DragEndEvent,
-    KeyboardSensor,
-    MouseSensor,
-    TouchSensor,
-    useSensor,
-    useSensors,
-} from '@dnd-kit/core';
-import {
-    SortableContext,
-    sortableKeyboardCoordinates,
-    useSortable,
-} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
     Badge,
@@ -63,6 +50,7 @@ import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
 import { FileUpload } from './FileUpload';
 import { ToggleInput } from './ToggleInput';
+import { SortableList } from './SortableList';
 
 import 'yet-another-react-lightbox/styles.css';
 
@@ -321,6 +309,11 @@ export const ArrayInput = ({
     const { unregister, getValues, setValue } = useFormContext();
     const rawValue = useWatch({ name });
     const value = React.useMemo(() => rawValue ?? [], [rawValue]);
+    // The per-item content is read synchronously from `getValues` (not the
+    // `useWatch` value above) so it is always in the same order as `fields`.
+    // The watched value can lag one render behind `fields` after a `move`,
+    // which would briefly show the old order for the rendered items.
+    const items = (getValues(name) ?? []) as any[];
     const { fields, append, update, swap, remove, replace, move } =
         useFieldArray({ name });
     // Universal per-item toggles. Injected into the per-item children so every
@@ -440,18 +433,6 @@ export const ArrayInput = ({
         setIsFileDragOver(false);
     }, []);
 
-    // dnd-kit sensors
-    const sensors = useSensors(
-        useSensor(MouseSensor, {
-            activationConstraint: { distance: 8 },
-        }),
-        useSensor(TouchSensor, {
-            activationConstraint: { delay: 150, tolerance: 8 },
-        }),
-        useSensor(KeyboardSensor, {
-            coordinateGetter: sortableKeyboardCoordinates,
-        }),
-    );
     // File input ref ("+")
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -730,20 +711,16 @@ export const ArrayInput = ({
         return () => document.removeEventListener('paste', handlePaste);
     }, [isCurrentTab, acceptsMedia, handlePaste]);
 
-    const handleDragEnd = (event: DragEndEvent) => {
-        const { active, over } = event;
-        if (over && active.id !== over.id) {
-            const oldIndex = fields.findIndex((f) => f.id === active.id);
-            const newIndex = fields.findIndex((f) => f.id === over.id);
-            if (oldIndex !== -1 && newIndex !== -1) {
-                // `move` reorders both the values and the per-item field ids in
-                // place, so the stable `field.id` React keys survive the reorder.
-                // A raw `setValue(arrayMove(...))` would emit the array subject
-                // and regenerate every id, remounting all items (flicker).
-                move(oldIndex, newIndex);
-            }
-        }
-    };
+    const handleMove = useCallback(
+        (oldIndex: number, newIndex: number) => {
+            // `move` reorders both the values and the per-item field ids in
+            // place, so the stable `field.id` React keys survive the reorder.
+            // A raw `setValue(arrayMove(...))` would emit the array subject
+            // and regenerate every id, remounting all items (flicker).
+            move(oldIndex, newIndex);
+        },
+        [move],
+    );
 
     const tabName = useTabName();
     const handleUploadLost = useReuploadLost(
@@ -806,92 +783,22 @@ export const ArrayInput = ({
                         onReset={handleReset}
                     />
                 </Box>
-                <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-                    <SortableContext items={fields.map((f) => f.id)}>
-                        <Flipper
-                            flipKey={fields.map((f: any) => f.id).join(',')}
-                        >
-                        <Box
-                            display='flex'
-                            flexWrap='wrap'
-                            gap={0.5}
-                            alignItems='center'
-                            position='relative'
-                             onDrop={handleContainerDrop}
-                             onDragOver={handleContainerDragOver}
-                             onDragEnter={handleContainerDragEnter}
-                             onDragLeave={handleContainerDragLeave}
-                        >
-                            {fields.map((field, index) => (
-                                <Flipped
-                                    key={field.id}
-                                    flipId={field.id}
-                                >
-                                    {renderItem ? (
-                                        <CustomItemShell
-                                            id={field.id}
-                                            index={index}
-                                            onRemove={(i) => {
-                                                if (value.length <= min) return;
-                                                remove(i);
-                                            }}
-                                            onOpenControls={(i) =>
-                                                setControlsDialogIndex(i)
-                                            }
-                                        >
-                                            {renderItem(
-                                                (value as any[])[index],
-                                                index,
-                                            )}
-                                        </CustomItemShell>
-                                    ) : (
-                                        <CompactFileItem
-                                            id={field.id}
-                                            index={index}
-                                            filename={
-                                                (value as any[])[index]?.[
-                                                    keyField
-                                                ]
-                                            }
-                                            onRemove={(i) => {
-                                                if (value.length <= min) {
-                                                    return;
-                                                }
-                                                remove(i);
-                                            }}
-                                            onReplace={handleCompactReplace}
-                                            lightboxOpen={(i) => {
-                                                const idx =
-                                                    validIndices.indexOf(i);
-                                                if (idx >= 0) {
-                                                    setLightboxIndex(idx);
-                                                    setLightboxOpen(true);
-                                                }
-                                            }}
-                                            onOpenControls={(i) =>
-                                                setControlsDialogIndex(i)
-                                            }
-                                            onUploadLost={handleUploadLost}
-                                            isReplaceTarget={
-                                                fileDragOverIndex === index
-                                            }
-                                            onItemDragEnter={
-                                                handleItemDragEnter
-                                            }
-                                            onItemDragLeave={
-                                                handleItemDragLeave
-                                            }
-                                            onItemDrop={resetFileDrag}
-                                            isHighlighted={
-                                                highlightIndex === index
-                                            }
-                                            isSkipped={
-                                                (value as any[])[index]?.skip
-                                            }
-                                        />
-                                    )}
-                                </Flipped>
-                            ))}
+                <SortableList
+                    items={fields}
+                    onMove={handleMove}
+                    containerProps={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        gap: 0.5,
+                        alignItems: 'center',
+                        position: 'relative',
+                        onDrop: handleContainerDrop,
+                        onDragOver: handleContainerDragOver,
+                        onDragEnter: handleContainerDragEnter,
+                        onDragLeave: handleContainerDragLeave,
+                    }}
+                    trailing={
+                        <>
                             {(value.length < max || max === -1) &&
                                 isFileDragOver &&
                                 fileDragOverIndex === null && (
@@ -954,10 +861,51 @@ export const ArrayInput = ({
                                     <Add fontSize='small' />
                                 </Box>
                             )}
-                        </Box>
-                        </Flipper>
-                    </SortableContext>
-                </DndContext>
+                        </>
+                    }
+                >
+                    {(field, index) =>
+                        renderItem ? (
+                            <CustomItemShell
+                                id={field.id}
+                                index={index}
+                                onRemove={(i) => {
+                                    if (items.length <= min) return;
+                                    remove(i);
+                                }}
+                                onOpenControls={(i) => setControlsDialogIndex(i)}
+                            >
+                                {renderItem(items[index], index)}
+                            </CustomItemShell>
+                        ) : (
+                            <CompactFileItem
+                                id={field.id}
+                                index={index}
+                                filename={items[index]?.[keyField]}
+                                onRemove={(i) => {
+                                    if (items.length <= min) return;
+                                    remove(i);
+                                }}
+                                onReplace={handleCompactReplace}
+                                lightboxOpen={(i) => {
+                                    const idx = validIndices.indexOf(i);
+                                    if (idx >= 0) {
+                                        setLightboxIndex(idx);
+                                        setLightboxOpen(true);
+                                    }
+                                }}
+                                onOpenControls={(i) => setControlsDialogIndex(i)}
+                                onUploadLost={handleUploadLost}
+                                isReplaceTarget={fileDragOverIndex === index}
+                                onItemDragEnter={handleItemDragEnter}
+                                onItemDragLeave={handleItemDragLeave}
+                                onItemDrop={resetFileDrag}
+                                isHighlighted={highlightIndex === index}
+                                isSkipped={items[index]?.skip}
+                            />
+                        )
+                    }
+                </SortableList>
                 {/* Controls dialog for per-item extra controls */}
                 <Dialog
                     open={controlsDialogIndex !== null}

@@ -156,9 +156,9 @@ export const ChatComponent = ({
     // model, so it is never sent to the chat.
     const rawModIds = rawItems.map((m) => (m.idbMod ? m.filename : undefined));
     const refModMeta = useRefModMeta(rawModIds);
-    const mediaItems = rawItems.filter((m, i) => {
+    const mediaItems = rawItems.filter((m) => {
         if (m.idbMod) {
-            return refModMeta[i]?.kind !== 'audio';
+            return refModMeta[m.filename]?.kind !== 'audio';
         }
         return true;
     });
@@ -170,7 +170,10 @@ export const ChatComponent = ({
     const modURLs = useModThumbURLs(modIds);
     const mediaRefs: MediaRef[] = mediaItems.map((m, i) =>
         m.idbMod
-            ? { url: modURLs[i] ?? '', kind: m.kind }
+            ? {
+                  url: m.filename ? (modURLs[m.filename] ?? '') : '',
+                  kind: m.kind,
+              }
             : { url: serverURLs[i] ?? '', kind: m.kind },
     );
 

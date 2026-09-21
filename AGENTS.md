@@ -924,6 +924,17 @@ Where it's honored:
 - **`refmods`** uses **compact** renumbering: `useMiniMaxH3RefModHandler` resolves the active mods to a list and fills loader slots `mod_1..mod_N` in order (no gaps), matching the compact `refmods=` line in chat.
 - **R2V reference arrays** (`ref_images`/`ref_videos`/`ref_audio`) use **positional** skip: the handler does `if (!v.image || v.skip) return;` keeping the original index and leaving the skipped slot unassigned. `collectKeyframeEntries` in [`src/components/controls/MiniMaxH3KeyframeHandler.ts`](src/components/controls/MiniMaxH3KeyframeHandler.ts) reads node inputs by **original** index, so positional is what keeps the keyframe collector aligned — do not switch these to compact renumbering without updating the collector.
 
+### Drag-to-reorder list items (dnd-kit) — IMPORTANT
+
+Asset arrays (`ArrayInput`) and the LoRA chips (`LoraInput`) both let the user drag items to reorder them. Both are `@dnd-kit/core` (`DndContext` + `MouseSensor`) + `@dnd-kit/sortable` (`SortableContext` + `useSortable`) + `react-flip-toolkit`, and the combination has one non-obvious requirement. Break it and you get the classic **"item springs back to its old position, then jumps to the new one"** glitch on drop:
+
+- **The same stable item id must be the React key AND the `useSortable` id AND the `SortableContext` `items`** — all three the same id. Index-based keys (an array index, or MUI Autocomplete's `getTagProps({ index }).key`) mis-associate the DOM nodes across a reorder, so the item snaps back home before settling.
+- **Wrap the list in `Flipper`/`Flipped` keyed by that same id** (`Flipper flipKey={ids.join(',')}`, `Flipped key={id} flipId={id}`). The FLIP layer is what animates each item smoothly from its old slot to its new one on drop — without it the reorder looks jumpy.
+- **`MouseSensor` with `activationConstraint: { distance: 8 }`** so a plain click on an item (e.g. a LoRA chip, which opens the strength dialog) does not start a drag.
+- The reorder itself is a pure `arrayMove(values, oldIndex, newIndex)`: `LoraInput` keys it on the id via [`reorderById`](src/utils/lora.ts) (tested in `lora.test.ts`); `ArrayInput` uses `useFieldArray.move(old, new)`.
+
+Both are tested: `ArrayInput.test.tsx` and `LoraInput.test.tsx` (the latter asserts the chips carry `aria-roledescription="sortable"` and that a click still opens the dialog).
+
 ---
 
 ## Common File Locations

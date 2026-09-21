@@ -28,51 +28,67 @@ export const useImageURLs = (filenames: Array<string | undefined>) => {
     );
 };
 
+// Returns a cache keyed by mod id (stable) instead of a position-based array.
+// A mod's thumbnail never changes, so the only thing that should re-fetch is a
+// change to the SET of mods — not their order. The old code keyed on
+// `modIds.join(',')` (order-sensitive), so every reorder re-ran the async
+// IndexedDB refill and the thumbnails briefly showed the old order before
+// settling. Keying on the sorted set + a mod-id cache removes that flash: a
+// reorder leaves the cache untouched, so each item always reads its own
+// thumbnail by id.
 export const useModThumbURLs = (modIds: Array<string | undefined>) => {
-    const [urls, setUrls] = useState<string[]>(() => modIds.map(() => ''));
-    const [files, setFiles] = useState<Array<Blob | undefined>>(() =>
-        modIds.map(() => undefined),
+    const [filesById, setFilesById] = useState<Record<string, Blob>>({});
+    const [urls, setUrls] = useState<Record<string, string>>({});
+    // Order-insensitive set of the active mod ids (the reorder trigger guard).
+    const setKey = useMemo(
+        () => modIds.filter(Boolean).sort().join(','),
+        [modIds],
     );
-    const idsKey = modIds.join(',');
-    // Latest-ids ref so the effect can read the current ids without listing
-    // the (unstable) array as a dependency; the reactive key is idsKey.
+    // Latest-ids ref so the effect can read the current ids without listing the
+    // (unstable) array as a dependency; the reactive key is setKey.
     const idsRef = useRef(modIds);
     idsRef.current = modIds;
 
     useEffect(() => {
         let cancelled = false;
-        if (!idsKey) {
-            setFiles(idsRef.current.map(() => undefined));
+        const active = idsRef.current.filter((id): id is string => !!id);
+        if (!active.length) {
+            setFilesById({});
             return;
         }
         Promise.all(
-            idsRef.current.map(async (id) => {
-                if (!id) return undefined;
+            active.map(async (id) => {
                 const file = await db.refModFiles
                     .where({ mod: id })
                     .and((f: any) => f.fileType === 'thumbnail')
                     .first();
-                return file?.file;
+                return [id, file?.file] as const;
             }),
         ).then((result) => {
-            if (!cancelled) {
-                setFiles(result);
+            if (cancelled) return;
+            const map: Record<string, Blob> = {};
+            for (const [id, f] of result) {
+                if (f) map[id] = f;
             }
+            setFilesById(map);
         });
         return () => {
             cancelled = true;
         };
-    }, [idsKey]);
+    }, [setKey]);
 
     useEffect(() => {
-        const newUrls = files.map((f) => (f ? URL.createObjectURL(f) : ''));
-        setUrls(newUrls);
+        const map: Record<string, string> = {};
+        for (const [id, f] of Object.entries(filesById)) {
+            map[id] = URL.createObjectURL(f);
+        }
+        setUrls(map);
         return () => {
-            newUrls.forEach((u) => {
+            for (const u of Object.values(map)) {
                 if (u) URL.revokeObjectURL(u);
-            });
+            }
         };
-    }, [files]);
+    }, [filesById]);
 
     return urls;
 };

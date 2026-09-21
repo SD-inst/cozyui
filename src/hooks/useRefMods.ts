@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { db, RefMod } from '../components/history/db';
 import { ensureFileOnServer, fileOnServer } from '../api/files';
@@ -27,36 +27,46 @@ export type ChatRefMod = {
     kind: 'image' | 'video';
 };
 
-// Returns RefMod[] parallel to `modIds` (each entry RefMod | undefined).
-// The reactive dependency is idsKey (a stable string derived from the ids), so
-// the query only re-runs when the set/order of ids changes — mirroring
-// useModThumbURLs. The latest-ids ref lets the effect read the current values
-// without listing the (unstable) array as a dependency.
+// Returns a cache keyed by mod id (stable) instead of a position-based array.
+// A mod's meta (name/kind/crop) never changes, so only a change to the SET of
+// mods should re-fetch — not their order. Keying on the sorted set + a mod-id
+// cache is the same reorder-flash guard as useModThumbURLs: a reorder leaves
+// the cache untouched, so each item reads its own meta by id.
 export const useRefModMeta = (modIds: Array<string | undefined>) => {
-    const idsKey = modIds.map((id) => id ?? '').join(',');
-    const [mods, setMods] = useState<Array<RefMod | undefined>>([]);
+    const setKey = useMemo(
+        () => modIds.filter(Boolean).sort().join(','),
+        [modIds],
+    );
+    const [modsById, setModsById] = useState<Record<string, RefMod>>({});
     const idsRef = useRef(modIds);
     idsRef.current = modIds;
 
     useEffect(() => {
         let cancelled = false;
-        if (!idsKey) {
-            setMods([]);
+        const active = idsRef.current.filter((id): id is string => !!id);
+        if (!active.length) {
+            setModsById({});
             return;
         }
         Promise.all(
-            idsRef.current.map((id) => (id ? db.refMods.get(id) : undefined)),
+            active.map(async (id) => {
+                const mod = await db.refMods.get(id);
+                return [id, mod] as const;
+            }),
         ).then((result) => {
-            if (!cancelled) {
-                setMods(result);
+            if (cancelled) return;
+            const map: Record<string, RefMod> = {};
+            for (const [id, mod] of result) {
+                if (mod) map[id] = mod;
             }
+            setModsById(map);
         });
         return () => {
             cancelled = true;
         };
-    }, [idsKey]);
+    }, [setKey]);
 
-    return mods;
+    return modsById;
 };
 
 // Reads the `name` form field (an array of { id, strength, copies }) and
@@ -69,18 +79,18 @@ export const useRefModsForChat = (name: string) => {
     const modIds = (entries ?? []).map((e) =>
         typeof e?.id === 'string' ? e.id : undefined,
     );
-    const mods = useRefModMeta(modIds);
+    const modsById = useRefModMeta(modIds);
 
     const result: ChatRefMod[] = [];
     let index = 0;
-    (entries ?? []).forEach((entry, i) => {
-        const id = modIds[i];
+    (entries ?? []).forEach((entry) => {
+        const id = typeof entry?.id === 'string' ? entry.id : undefined;
         if (!id) return;
         // Skipped-for-chat assets are dropped here too, so the 1-based index
         // (used to build the `refmods=` line) stays aligned with the attached
         // thumbnails, which ChatComponent filters the same way.
         if (entry?.skip_chat) return;
-        const mod = mods[i];
+        const mod = modsById[id];
         if (mod?.kind === 'audio') return;
         index += 1;
         result.push({

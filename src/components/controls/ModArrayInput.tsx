@@ -274,8 +274,8 @@ export const ModArrayInput = ({
     const { slides, slideIndexByItem } = useMemo(() => {
         const slideList: Array<{ src: string }> = [];
         const map: Array<number> = [];
-        (value ?? []).forEach((_item, index) => {
-            const url = thumbURLs[index];
+        (value ?? []).forEach((item, index) => {
+            const url = item?.id ? thumbURLs[item.id] : undefined;
             if (url) {
                 slideList.push({ src: url });
                 map[index] = slideList.length - 1;
@@ -297,22 +297,27 @@ export const ModArrayInput = ({
         picker.openPicker(index);
     };
 
-    const renderItem = (item: any, index: number) => (
-        <ModThumbContent
-            item={item}
-            url={thumbURLs[index]}
-            thumbX={modMetas[index]?.thumbX}
-            thumbY={modMetas[index]?.thumbY}
-            name={modMetas[index]?.name}
-            kind={modMetas[index]?.kind}
-            onClick={() => openLightbox(index)}
-            isSkipped={item?.skip}
-        />
-    );
+    const renderItem = (item: any, index: number) => {
+        const id = item?.id;
+        const meta = id ? modMetas[id] : undefined;
+        return (
+            <ModThumbContent
+                item={item}
+                url={id ? thumbURLs[id] : undefined}
+                thumbX={meta?.thumbX}
+                thumbY={meta?.thumbY}
+                name={meta?.name}
+                kind={meta?.kind}
+                onClick={() => openLightbox(index)}
+                isSkipped={item?.skip}
+            />
+        );
+    };
 
     const renderPreview = (item: any, index: number) => {
-        const url = thumbURLs[index];
-        const meta = modMetas[index];
+        const id = item?.id;
+        const url = id ? thumbURLs[id] : undefined;
+        const meta = id ? modMetas[id] : undefined;
         return (
             <Box
                 sx={{
@@ -327,7 +332,7 @@ export const ModArrayInput = ({
                 }}
                 onClick={url ? () => openLightbox(index) : undefined}
             >
-                {item?.id && url && (
+                {id && url && (
                     <img
                         src={url}
                         alt=''

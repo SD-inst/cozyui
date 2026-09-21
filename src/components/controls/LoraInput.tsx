@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import {
     Autocomplete,
     AutocompleteProps,
@@ -15,7 +17,7 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { get } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';
 import { NodeRef, Workflow } from '../../api/graph';
@@ -28,12 +30,14 @@ import { useMultiSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { loraDefaults } from '../../redux/config';
 import { useAppSelector } from '../../redux/hooks';
+import { reorderById } from '../../utils/lora';
 import { useCtrlEnter, useRegisterHandler } from '../contexts/TabContext';
 import { useFilteredTabs } from '../contexts/WorkflowTabsContext';
 import { HelpButton } from './HelpButton';
 import { ModelOption } from './ModelOption';
 import { ObjectReloadButton } from './ObjectReloadButton';
 import { SelectControl } from './SelectControl';
+import { SortableList } from './SortableList';
 
 type valueType = {
     id: string;
@@ -103,21 +107,41 @@ const LoraChip = ({
             cancelled = true;
         };
     }, [open, preview_root, value.id]);
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: value.id });
+    const style: CSSProperties = {
+        transform: CSS.Transform.toString(transform),
+        transition: transition || undefined,
+        opacity: isDragging ? 0.5 : undefined,
+        cursor: 'grab',
+    };
     return (
         <>
             <Chip
+                ref={setNodeRef}
                 variant='outlined'
                 label={`${value.label}:${value.strength}`}
                 key={key}
                 onClick={() => setOpen(true)}
                 sx={{
                     height: 'auto',
+                    cursor: 'grab',
+                    '&:active': { cursor: 'grabbing' },
                     '& .MuiChip-label': {
                         display: 'block',
                         whiteSpace: 'normal',
                         wordBreak: 'break-all',
                     },
                 }}
+                {...listeners}
+                {...attributes}
+                style={style}
                 {...tagProps}
             />
             <Dialog open={open} onClose={() => setOpen(false)}>
@@ -506,27 +530,48 @@ export const LoraInput = ({
         >
             <Autocomplete
                 onKeyUp={ceHanler}
-                renderTags={(values, getTagProps) =>
-                    values.map((v, i) => (
-                        <LoraChip
-                            key={getTagProps({ index: i }).key}
-                            getTagProps={getTagProps}
-                            index={i}
-                            value={v}
-                            onOK={(strength: number, merge: mergeType) => {
-                                setValue(props.name, [
-                                    ...values.slice(0, i),
-                                    { ...values[i], strength, merge },
-                                    ...values.slice(i + 1),
-                                ]);
-                            }}
-                            hideMergeType={
-                                effectiveClassName !== 'HunyuanVideoLoraLoader' &&
-                                effectiveClassName !== 'HyVideoLoraSelect'
+                renderTags={(values, getTagProps) => (
+                    <SortableList
+                        items={values}
+                        onMove={(oldIndex, newIndex) => {
+                            const current = getValues(props.name) as valueType[];
+                            const reordered = reorderById(
+                                current,
+                                current[oldIndex].id,
+                                current[newIndex].id,
+                            );
+                            if (reordered !== current) {
+                                setValue(props.name, reordered);
                             }
-                        />
-                    ))
-                }
+                        }}
+                        containerProps={{
+                            display: 'inline-flex',
+                            flexWrap: 'wrap',
+                            gap: 0.5,
+                        }}
+                    >
+                        {(v, i) => (
+                            <LoraChip
+                                getTagProps={getTagProps}
+                                index={i}
+                                value={v}
+                                onOK={(strength: number, merge: mergeType) => {
+                                    setValue(props.name, [
+                                        ...values.slice(0, i),
+                                        { ...values[i], strength, merge },
+                                        ...values.slice(i + 1),
+                                    ]);
+                                }}
+                                hideMergeType={
+                                    effectiveClassName !==
+                                        'HunyuanVideoLoraLoader' &&
+                                    effectiveClassName !==
+                                        'HyVideoLoraSelect'
+                                }
+                            />
+                        )}
+                    </SortableList>
+                )}
                 fullWidth
                 {...ctl.field}
                 onChange={async (_, v) => {
