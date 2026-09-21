@@ -112,7 +112,7 @@ const Content = () => {
                 <ModelSelectAutocomplete
                     name='model'
                     type='qwen21'
-                    defaultValue='qwen21/qwen_image_2.1_bf16.safetensors'
+                    defaultValue='qwen21/qwen_image_2.1_int8_convrot.safetensors'
                     sx={{ mb: 2 }}
                 />
                 <SliderInput

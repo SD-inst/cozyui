@@ -53,7 +53,7 @@
   },
   "7": {
     "inputs": {
-      "unet_name": "qwen21/qwen_image_2.1_bf16.safetensors",
+      "unet_name": "qwen21/qwen_image_2.1_int8_convrot.safetensors",
       "weight_dtype": "default"
     },
     "class_type": "UNETLoader",
