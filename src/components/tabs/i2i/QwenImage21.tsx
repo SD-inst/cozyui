@@ -20,6 +20,8 @@ import { ToggleInput } from '../../controls/ToggleInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
 import { useWatchForm } from '../../../hooks/useWatchForm';
+import { ChatComponent } from '../../chat/ChatComponent';
+import { qwenImage21SystemPrompt } from '../../chat/prompts/qwenImage21';
 
 type ReferenceType = {
     image: string;
@@ -92,6 +94,16 @@ const Content = () => {
                     />
                 </Box>
                 <PromptInput name='prompt' sx={{ mt: 2 }} />
+                <ChatComponent
+                    systemPrompt={qwenImage21SystemPrompt}
+                    mediaFields={[
+                        {
+                            name: 'reference_images',
+                            kind: 'image',
+                            itemField: 'image',
+                        },
+                    ]}
+                />
                 <PromptInput name='neg_prompt' defaultValue='' />
                 <SliderInput name='steps' defaultValue={25} min={1} max={50} />
                 <CFGInput defaultValue={1} max={10} />
