@@ -122,7 +122,9 @@ const LoraChip = ({
             />
             <Dialog open={open} onClose={() => setOpen(false)}>
                 <DialogTitle>
-                    {tr('controls.change_lora_merge_params')}
+                    {tr('controls.change_lora_merge_params', {
+                        name: value.label,
+                    })}
                 </DialogTitle>
                 <DialogContent
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}

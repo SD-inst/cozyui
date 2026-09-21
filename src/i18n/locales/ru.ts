@@ -89,7 +89,7 @@ const translation = {
         strength: 'сила',
         model_page: 'оригинальная модель',
         model_page_civitai_red: 'civitai.red',
-        change_lora_merge_params: 'Изменить параметры слияния лоры',
+        change_lora_merge_params: 'Изменить параметры лоры «%{name}»',
         delete_result: 'Удалить результат',
         confirm_delete_result: 'Вы уверены, что хотите удалить этот результат?',
         send_result: 'Отправить результат',

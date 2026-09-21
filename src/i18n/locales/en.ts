@@ -90,7 +90,7 @@ const translation = {
         strength: 'strength',
         model_page: 'original model',
         model_page_civitai_red: 'civitai.red',
-        change_lora_merge_params: 'Change lora merge params',
+        change_lora_merge_params: 'Change params for lora "%{name}"',
         delete_result: 'Delete result',
         confirm_delete_result: 'Are you sure you want to delete this result?',
         send_result: 'Send result',
