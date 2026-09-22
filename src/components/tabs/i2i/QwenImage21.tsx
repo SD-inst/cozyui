@@ -104,7 +104,7 @@ const Content = () => {
                 />
                 <PromptInput name='neg_prompt' defaultValue='' />
                 <SliderInput name='steps' defaultValue={25} min={1} max={50} />
-                <CFGInput defaultValue={1} max={10} />
+                <CFGInput defaultValue={3.5} max={10} />
                 <SamplerSelectInput name='sampler' defaultValue='er_sde' />
                 <SchedulerSelectInput name='scheduler' defaultValue='sgm_uniform' />
                 <ModelSelectAutocomplete
