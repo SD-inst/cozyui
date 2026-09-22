@@ -3,7 +3,7 @@ import { useTranslate } from '../../i18n/I18nContext';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import { StickyZoom } from '../controls/StickyZoom';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import { DownloadImageButtonLightbox } from '../controls/DownloadImageButton';
 import { LightboxSendResultButton } from '../controls/LightboxSendResultButton';
@@ -143,7 +143,7 @@ export const HistoryCardContent = ({
                             close={() => setOpen(false)}
                             slides={allSlides}
                             carousel={{ finite: allSlides.length === 1 }}
-                            plugins={[Counter, Zoom, Fullscreen]}
+                            plugins={[Counter, StickyZoom, Fullscreen]}
                             zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                             animation={{ navigation: 0 }}
                             toolbar={{

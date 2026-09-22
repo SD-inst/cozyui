@@ -15,8 +15,8 @@ import { CompareContext } from '../../contexts/CompareContext';
 import { LoadParamsButton } from '../LoadParamsButton';
 import { useArena } from './ArenaContext';
 import { useParticipantDisplay } from './useParticipantDisplay';
+import { StickyZoom } from '../../controls/StickyZoom';
 import Lightbox from 'yet-another-react-lightbox';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 
 // 1×1 transparent GIF: the Lightbox needs a valid `src` per slide to open, and
@@ -372,7 +372,7 @@ const ArenaLightbox = ({
                 slides={slides}
                 carousel={{ finite: true }}
                 animation={{ navigation: 0 }}
-                plugins={[Zoom, Fullscreen]}
+                plugins={[StickyZoom, Fullscreen]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                 render={{
                     slide: (props) => {

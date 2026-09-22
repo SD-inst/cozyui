@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import { StickyZoom } from './StickyZoom';
 import { makeOutputUrl } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useResult } from '../../hooks/useResult';
@@ -90,7 +90,7 @@ export const ImageResult = ({
                 open={open}
                 close={() => setOpen(false)}
                 slides={urls.map((url: string) => ({ src: url }))}
-                plugins={[Zoom, Fullscreen, Counter]}
+                plugins={[StickyZoom, Fullscreen, Counter]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
                 index={idx}
                 animation={{ navigation: 0 }}

@@ -33,7 +33,7 @@ import { CompareContext } from '../contexts/CompareContext';
 import { TaskResult } from './db';
 import { db } from './db';
 import Lightbox from 'yet-another-react-lightbox';
-import Zoom from 'yet-another-react-lightbox/plugins/zoom';
+import { StickyZoom } from '../controls/StickyZoom';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 
 const VideoCompare = () => {
@@ -194,7 +194,7 @@ const VideoCompare = () => {
                     .map((u) => ({ src: u }))}
                 carousel={{ finite: true }}
                 animation={{ navigation: 0 }}
-                plugins={[Zoom, Fullscreen]}
+                plugins={[StickyZoom, Fullscreen]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
             />
         </Box>
