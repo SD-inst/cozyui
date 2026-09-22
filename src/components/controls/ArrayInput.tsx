@@ -14,7 +14,7 @@ import {
     Typography,
     useTheme,
 } from '@mui/material';
-import { Close, Delete, Refresh } from '@mui/icons-material';
+import { Close, ContentCut, Delete, Refresh } from '@mui/icons-material';
 import Lightbox from 'yet-another-react-lightbox';
 import Video from 'yet-another-react-lightbox/plugins/video';
 import { clone } from 'lodash';
@@ -34,6 +34,8 @@ import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useUploadBackupGuard } from '../../hooks/useUploadBackupGuard';
 import { useReuploadLost } from '../../hooks/useBackupUpload';
+import { useBooleanSetting } from '../../hooks/useSetting';
+import { settings } from '../../hooks/settings';
 import { useIsCurrentTab, useTabName } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 import { roomForNewSlots } from '../../utils/arraySlots';
@@ -49,6 +51,7 @@ import { ArrayInputResetButton } from './ArrayInputResetButton';
 import { DeleteArrayInputButton } from './DeleteArrayInputButton';
 import { MoveArrayInputButton } from './MoveArrayInputButton';
 import { FileUpload } from './FileUpload';
+import { RefModCropDialog } from './RefModCropDialog';
 import { ToggleInput } from './ToggleInput';
 import { SortableList } from './SortableList';
 
@@ -421,6 +424,28 @@ export const ArrayInput = ({
     const [controlsDialogIndex, setControlsDialogIndex] = useState<
         number | null
     >(null);
+
+    // Crop/rotate dialog state: the item whose image the user wants to crop.
+    // The dialog lists every IMAGE entry of the array (videos/audio are not
+    // croppable) so the user can work through several at once.
+    const [cropIndex, setCropIndex] = useState<number | null>(null);
+    const letterbox = useBooleanSetting(settings.letterbox_crop) ?? false;
+    const cropImages = useMemo(
+        () =>
+            (value as any[]).flatMap((e, i): Array<{ index: number; filename: string }> =>
+                e?.[keyField] &&
+                getFileType(e[keyField]) === UploadType.IMAGE
+                    ? [{ index: i, filename: e[keyField] as string }]
+                    : [],
+            ),
+        [value, keyField],
+    );
+    const canCropInControls =
+        !renderItem &&
+        controlsDialogIndex !== null &&
+        !!((value as any[])[controlsDialogIndex]?.[keyField]) &&
+        getFileType((value as any[])[controlsDialogIndex][keyField]) ===
+            UploadType.IMAGE;
 
     // File-drag feedback (compact media arrays): the index of the slot the
     // dragged file is over (→ replace), or null (→ the container "adds").
@@ -1023,6 +1048,14 @@ export const ArrayInput = ({
                         >
                             {tr('controls.remove')}
                         </Button>
+                        {canCropInControls && (
+                            <Button
+                                startIcon={<ContentCut />}
+                                onClick={() => setCropIndex(controlsDialogIndex)}
+                            >
+                                {tr('controls.crop')}
+                            </Button>
+                        )}
                         <Button
                             startIcon={<Refresh />}
                             onClick={() => {
@@ -1065,6 +1098,25 @@ export const ArrayInput = ({
                         </Button>
                     </DialogActions>
                 </Dialog>
+                {/* Crop/rotate dialog for image items */}
+                <RefModCropDialog
+                    open={cropIndex !== null}
+                    onClose={() => setCropIndex(null)}
+                    images={cropImages}
+                    letterbox={letterbox}
+                    title={tr('controls.crop')}
+                    initialIndex={cropImages.findIndex(
+                        (c) => c.index === cropIndex,
+                    )}
+                    backupField={(i) => `${name}.${i}.${keyField}`}
+                    onCropSlot={(slotIndex, newFilename) => {
+                        const current = getValues(name);
+                        update(slotIndex, {
+                            ...current[slotIndex],
+                            [keyField]: newFilename,
+                        });
+                    }}
+                />
                 <input
                     ref={fileInputRef}
                     type='file'

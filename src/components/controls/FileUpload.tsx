@@ -1,3 +1,4 @@
+import { ContentCut } from '@mui/icons-material';
 import {
     Box,
     Button,
@@ -16,6 +17,8 @@ import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useBackupUpload, useReuploadLost } from '../../hooks/useBackupUpload';
 import { useImageURL } from '../../hooks/useImageURL';
+import { useBooleanSetting } from '../../hooks/useSetting';
+import { settings } from '../../hooks/settings';
 import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
 import {
@@ -26,6 +29,7 @@ import {
 import { UploadType } from './UploadType';
 import { ext, getAudioDropzoneAccept } from './fileExts';
 import { useArrayFileContext } from './ArrayFileContext';
+import { RefModCropDialog } from './RefModCropDialog';
 
 const style = {
     maxWidth: 200,
@@ -110,6 +114,18 @@ export const FileUpload = ({
     );
     useRegisterHandler({ name: props.name, handler });
     const tabName = useTabName();
+    // Crop/rotate the current image (images only): opens the shared crop
+    // dialog, which re-uploads the result and swaps it into the field.
+    const [cropOpen, setCropOpen] = useState(false);
+    const letterbox = useBooleanSetting(settings.letterbox_crop) ?? false;
+    const handleCropSlot = useEventCallback(
+        (_slotIndex: number, newFilename: string, file: File) => {
+            field.onChange(newFilename);
+            if (onUpload) {
+                onUpload(file);
+            }
+        },
+    );
     const uploadKey = tabName + '/' + props.name;
     const arrayCtx = useArrayFileContext();
     // Upload a single file to ComfyUI's input dir; returns its filename and
@@ -327,6 +343,16 @@ export const FileUpload = ({
                     </>
                 )}
             </Box>
+            {field.value && filetype === UploadType.IMAGE && (
+                <Button
+                    size='small'
+                    startIcon={<ContentCut />}
+                    onClick={() => setCropOpen(true)}
+                    sx={{ mt: 2, width: 100, alignSelf: 'center' }}
+                >
+                    {tr('controls.crop')}
+                </Button>
+            )}
             {field.value && (
                 <Button
                     size='small'
@@ -336,6 +362,19 @@ export const FileUpload = ({
                     {tr('controls.reset')}
                 </Button>
             )}
+            <RefModCropDialog
+                open={cropOpen}
+                onClose={() => setCropOpen(false)}
+                images={
+                    field.value
+                        ? [{ index: 0, filename: field.value }]
+                        : []
+                }
+                letterbox={letterbox}
+                title={tr('controls.crop')}
+                backupField={() => props.name}
+                onCropSlot={handleCropSlot}
+            />
         </Box>
     );
 };

@@ -4,6 +4,8 @@ import {
     ContentCut,
     FirstPage,
     LastPage,
+    RotateLeft,
+    RotateRight,
 } from '@mui/icons-material';
 import {
     Box,
@@ -122,6 +124,74 @@ const useImageSource = (filename?: string): SourceState => {
             if (objUrl) URL.revokeObjectURL(objUrl);
         };
     }, [filename, apiUrl]);
+
+    return state;
+};
+
+// Rasterizes the loaded source image into a canvas with a 90° rotation,
+// exposing the preview object URL, the output canvas and the DISPLAYED size.
+// Rotation 0 short-circuits (the caller keeps the original source). The
+// rotated canvas is what the final crop draws from, so the output matches the
+// preview exactly.
+const useRotatedImage = (
+    imgEl: HTMLImageElement | null,
+    size: ImageSize | null,
+    blob: Blob | null,
+    rotation: number,
+): { url: string; canvas: HTMLCanvasElement | null; size: ImageSize | null } => {
+    const [state, setState] = useState<{
+        url: string;
+        canvas: HTMLCanvasElement | null;
+        size: ImageSize | null;
+    }>({ url: '', canvas: null, size: null });
+
+    useEffect(() => {
+        let cancelled = false;
+        let objUrl = '';
+        setState({ url: '', canvas: null, size: null });
+        if (!imgEl || !size || rotation === 0) {
+            return () => {
+                cancelled = true;
+            };
+        }
+        const isJpeg = blob?.type.includes('jpeg');
+        const mime = isJpeg ? 'image/jpeg' : 'image/png';
+        const swapped = rotation === 90 || rotation === 270;
+        const eff: ImageSize = swapped
+            ? { width: size.height, height: size.width }
+            : size;
+        const canvas = document.createElement('canvas');
+        canvas.width = eff.width;
+        canvas.height = eff.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            return () => {
+                cancelled = true;
+            };
+        }
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        if (rotation === 90) {
+            ctx.translate(eff.width, 0);
+            ctx.rotate(Math.PI / 2);
+        } else if (rotation === 180) {
+            ctx.translate(eff.width, eff.height);
+            ctx.rotate(Math.PI);
+        } else {
+            ctx.translate(0, eff.height);
+            ctx.rotate(-Math.PI / 2);
+        }
+        ctx.drawImage(imgEl, 0, 0);
+        canvas.toBlob((b) => {
+            if (cancelled || !b) return;
+            objUrl = URL.createObjectURL(b);
+            setState({ url: objUrl, canvas, size: eff });
+        }, mime, 0.95);
+        return () => {
+            cancelled = true;
+            if (objUrl) URL.revokeObjectURL(objUrl);
+        };
+    }, [imgEl, size, blob, rotation]);
 
     return state;
 };
@@ -305,12 +375,18 @@ export const RefModCropDialog = ({
     images,
     letterbox,
     onCropSlot,
+    initialIndex = 0,
+    title,
+    backupField,
 }: {
     open: boolean;
     onClose: () => void;
     images: CropImage[];
     letterbox: boolean;
-    onCropSlot: (slotIndex: number, newFilename: string) => void;
+    onCropSlot: (slotIndex: number, newFilename: string, file: File) => void;
+    initialIndex?: number;
+    title?: string;
+    backupField?: (slotIndex: number) => string;
 }) => {
     const tr = useTranslate();
     const theme = useTheme();
@@ -322,18 +398,35 @@ export const RefModCropDialog = ({
     const [aspect, setAspect] = useState('');
     const [crop, setCrop] = useState<Crop | null>(null);
     const [processing, setProcessing] = useState(false);
+    const [rotation, setRotation] = useState(0);
 
     const cur = images[currentIndex] ?? null;
     const source = useImageSource(open ? cur?.filename : undefined);
     const firstSource = useImageSource(open ? images[0]?.filename : undefined);
     const firstSize = firstSource.size;
+    const rotated = useRotatedImage(source.imgEl, source.size, source.blob, rotation);
+    // What the crop math, the viewport and the final output use: the original
+    // source when rotation is 0, the rotated raster otherwise. `size` is the
+    // DISPLAYED size (swapped at 90° / 270°).
+    const display =
+        rotation === 0
+            ? { url: source.url, canvas: null, size: source.size }
+            : { url: rotated.url, canvas: rotated.canvas, size: rotated.size };
 
-    // Start at the first image each time the dialog opens (aspect is kept).
+    // Start at the requested image each time the dialog opens (aspect kept).
     useEffect(() => {
         if (open) {
-            setCurrentIndex(0);
+            setCurrentIndex(
+                Math.max(0, Math.min(images.length - 1, initialIndex)),
+            );
+            setRotation(0);
         }
-    }, [open]);
+    }, [open, initialIndex, images.length]);
+
+    // Rotation resets with the image (each image keeps its own orientation).
+    useEffect(() => {
+        setRotation(0);
+    }, [currentIndex]);
 
     // Default the aspect to the first image's ratio (once known, untouched).
     useEffect(() => {
@@ -344,12 +437,12 @@ export const RefModCropDialog = ({
 
     // Reset the crop to the center-crop base when the image / aspect changes.
     useEffect(() => {
-        if (source.size && aspect) {
-            setCrop(defaultCrop(source.size, aspectRatio(aspect)));
+        if (display.size && aspect) {
+            setCrop(defaultCrop(display.size, aspectRatio(aspect)));
         } else {
             setCrop(null);
         }
-    }, [source.size, aspect, currentIndex]);
+    }, [display.size, aspect, currentIndex]);
 
     // The final output size: the aspect-locked crop region snapped to /32.
     // With letterbox the region may be larger than the image (black bars), so
@@ -386,10 +479,13 @@ export const RefModCropDialog = ({
     }, [images.length]);
 
     const handleCrop = useCallback(async () => {
-        if (!crop || !output || !source.imgEl || !source.blob || !cur) return;
+        if (!crop || !output || !source.blob || !cur) return;
+        // The crop region is expressed in the DISPLAYED space, so draw from
+        // the rotated canvas (or the original image at rotation 0).
+        const drawSrc = display.canvas ?? source.imgEl;
+        if (!drawSrc) return;
         setProcessing(true);
         try {
-            const img = source.imgEl;
             const isJpeg = source.blob.type.includes('jpeg');
             const mime = isJpeg ? 'image/jpeg' : 'image/png';
             const outW = output.width;
@@ -410,7 +506,7 @@ export const RefModCropDialog = ({
                 ctx.fillRect(0, 0, outW, outH);
             }
             ctx.drawImage(
-                img,
+                drawSrc,
                 crop.x,
                 crop.y,
                 crop.w,
@@ -438,15 +534,22 @@ export const RefModCropDialog = ({
             });
             const j = await r.json();
             const newFilename: string = j.name;
-            onCropSlot(cur.index, newFilename);
+            onCropSlot(cur.index, newFilename, file);
             // Keep the slot's backup in sync (re-upload-on-lost uses it).
+            const fieldName = backupField
+                ? backupField(cur.index)
+                : `ref_images.${cur.index}.image`;
             await saveUploadBackup(
                 new File([blob], newFilename, { type: mime }),
-                `ref_images.${cur.index}.image`,
+                fieldName,
                 tabName,
             );
+            // Advance to the next image, or close the dialog once the last
+            // one (or the only one) is cropped — nothing left to do here.
             if (currentIndex < images.length - 1) {
                 setCurrentIndex(currentIndex + 1);
+            } else {
+                onClose();
             }
         } catch (e) {
             toast(tr('refmods.crop_failed', { err: String(e) }));
@@ -459,6 +562,7 @@ export const RefModCropDialog = ({
         letterbox,
         source.imgEl,
         source.blob,
+        display.canvas,
         cur,
         apiUrl,
         onCropSlot,
@@ -466,6 +570,8 @@ export const RefModCropDialog = ({
         currentIndex,
         images.length,
         tr,
+        backupField,
+        onClose,
     ]);
 
     const outW = output?.width ?? 0;
@@ -479,7 +585,7 @@ export const RefModCropDialog = ({
             fullWidth
             fullScreen={isPhone}
         >
-            <DialogTitle>{tr('refmods.crop_title')}</DialogTitle>
+            <DialogTitle>{title ?? tr('refmods.crop_title')}</DialogTitle>
             <DialogContent sx={{ minWidth: 300, overflowY: 'auto' }}>
                 <Stack spacing={2}>
                     <Box>
@@ -504,10 +610,38 @@ export const RefModCropDialog = ({
                          </Select>
                     </Box>
 
-                    <Box>
+                    <Box sx={{ position: 'relative' }} display='flex' alignItems='center'>
                         <Typography variant='body2'>
                             {tr('refmods.crop_out')}: {outW}×{outH}
                         </Typography>
+                        {/* Rotation controls, centered above the image (the
+                            image is centered in the full-width row below). */}
+                        <Box
+                            sx={{
+                                position: 'absolute',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                            }}
+                            display='flex'
+                            gap={1}
+                        >
+                            <IconButton
+                                size='small'
+                                title={tr('controls.rotate_ccw')}
+                                disabled={processing}
+                                onClick={() => setRotation((r) => (r + 270) % 360)}
+                            >
+                                <RotateLeft fontSize='small' />
+                            </IconButton>
+                            <IconButton
+                                size='small'
+                                title={tr('controls.rotate_cw')}
+                                disabled={processing}
+                                onClick={() => setRotation((r) => (r + 90) % 360)}
+                            >
+                                <RotateRight fontSize='small' />
+                            </IconButton>
+                        </Box>
                     </Box>
 
                     <Box
@@ -525,10 +659,10 @@ export const RefModCropDialog = ({
                                 overflow: 'hidden',
                             }}
                         >
-                            {crop && source.size ? (
+                            {crop && display.size ? (
                                 <CropView
-                                    url={source.url}
-                                    size={source.size}
+                                    url={display.url}
+                                    size={display.size}
                                     aspect={aspectNum}
                                     crop={crop}
                                     onCropChange={setCrop}
@@ -561,31 +695,33 @@ export const RefModCropDialog = ({
                         </Box>
                     </Box>
 
-                    <Box display='flex' alignItems='center' justifyContent='center' gap={0.5}>
-                        <IconButton size='small' disabled={currentIndex === 0} onClick={() => resetCursor(0)}>
-                            <FirstPage />
-                        </IconButton>
-                        <IconButton size='small' disabled={currentIndex === 0} onClick={() => resetCursor(currentIndex - 1)}>
-                            <ChevronLeft />
-                        </IconButton>
-                        <Typography variant='body2' sx={{ minWidth: 48, textAlign: 'center' }}>
-                            {currentIndex + 1} / {images.length}
-                        </Typography>
-                        <IconButton
-                            size='small'
-                            disabled={currentIndex >= images.length - 1}
-                            onClick={() => resetCursor(currentIndex + 1)}
-                        >
-                            <ChevronRight />
-                        </IconButton>
-                        <IconButton
-                            size='small'
-                            disabled={currentIndex >= images.length - 1}
-                            onClick={() => resetCursor(images.length - 1)}
-                        >
-                            <LastPage />
-                        </IconButton>
-                    </Box>
+                    {images.length > 1 && (
+                        <Box display='flex' alignItems='center' justifyContent='center' gap={0.5}>
+                            <IconButton size='small' disabled={currentIndex === 0} onClick={() => resetCursor(0)}>
+                                <FirstPage />
+                            </IconButton>
+                            <IconButton size='small' disabled={currentIndex === 0} onClick={() => resetCursor(currentIndex - 1)}>
+                                <ChevronLeft />
+                            </IconButton>
+                            <Typography variant='body2' sx={{ minWidth: 48, textAlign: 'center' }}>
+                                {currentIndex + 1} / {images.length}
+                            </Typography>
+                            <IconButton
+                                size='small'
+                                disabled={currentIndex >= images.length - 1}
+                                onClick={() => resetCursor(currentIndex + 1)}
+                            >
+                                <ChevronRight />
+                            </IconButton>
+                            <IconButton
+                                size='small'
+                                disabled={currentIndex >= images.length - 1}
+                                onClick={() => resetCursor(images.length - 1)}
+                            >
+                                <LastPage />
+                            </IconButton>
+                        </Box>
+                    )}
                 </Stack>
             </DialogContent>
             <DialogActions>
