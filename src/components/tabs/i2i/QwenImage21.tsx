@@ -106,7 +106,7 @@ const Content = () => {
                 <SliderInput name='steps' defaultValue={25} min={1} max={50} />
                 <CFGInput defaultValue={1} max={10} />
                 <SamplerSelectInput name='sampler' defaultValue='er_sde' />
-                <SchedulerSelectInput name='scheduler' defaultValue='simple' />
+                <SchedulerSelectInput name='scheduler' defaultValue='sgm_uniform' />
                 <ModelSelectAutocomplete
                     name='model'
                     type='qwen21'
