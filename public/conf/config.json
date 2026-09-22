@@ -4068,6 +4068,7 @@
                 },
                 "refmods": {
                     "id": "handle",
+                    "order": 50,
                     "cond_node_id": "105:104",
                     "cond_consumer_node_id": "105:16"
                 }
