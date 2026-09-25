@@ -4,6 +4,21 @@ export class FileMissingError extends Error {
     }
 }
 
+// A cold container can take ~1 minute to start up. Any network probe that may
+// have to wait for it (the refmod HEAD check, the warm-up) gets a generous
+// timeout: long enough to survive a cold start, short enough that a dead server
+// can't freeze a generation in WAITING forever.
+export const FETCH_TIMEOUT_MS = 90_000;
+
+// An AbortSignal that aborts after `ms`, so a stalled request fails instead of
+// hanging indefinitely.
+export const timedSignal = (ms = FETCH_TIMEOUT_MS): AbortSignal => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ms);
+    controller.signal.addEventListener('abort', () => clearTimeout(id));
+    return controller.signal;
+};
+
 const viewUrl = (apiUrl: string, filename: string): string => {
     const params = new URLSearchParams();
     params.set('subfolder', '');
@@ -22,6 +37,7 @@ export const uploadFile = async (
     const r = await fetch(apiUrl + '/api/upload/image', {
         method: 'POST',
         body: formData,
+        signal: timedSignal(),
     });
     const j = await r.json();
     if (!j.name) {
@@ -35,7 +51,10 @@ export const fileOnServer = async (
     apiUrl: string,
 ): Promise<boolean> => {
     try {
-        const r = await fetch(viewUrl(apiUrl, filename), { method: 'HEAD' });
+        const r = await fetch(viewUrl(apiUrl, filename), {
+            method: 'HEAD',
+            signal: timedSignal(),
+        });
         return r.ok;
     } catch {
         return false;
@@ -62,7 +81,7 @@ export const getFileFromServer = async (
     filename: string,
     apiUrl: string,
 ): Promise<File> => {
-    const r = await fetch(viewUrl(apiUrl, filename));
+    const r = await fetch(viewUrl(apiUrl, filename), { signal: timedSignal() });
     if (r.status === 404) {
         throw new FileMissingError(filename);
     }

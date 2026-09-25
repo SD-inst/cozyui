@@ -568,6 +568,7 @@ const translation = {
         execution_skipped: 'Выполнение пропущено',
         error_processing_handler:
             'Ошибка выполнения обработчика %{name}: %{err}',
+        error_sending_generation: 'Ошибка отправки генерации: %{err}',
         reloaded_objects: 'Объекты перезагружены',
         no_prev_result: 'Предыдущий результат не найден',
         no_base: 'Не выбран базовый результат для сравнения',

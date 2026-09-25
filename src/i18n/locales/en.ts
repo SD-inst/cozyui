@@ -568,6 +568,7 @@ const translation = {
         objects_updated: 'Objects updated',
         execution_skipped: 'Execution skipped',
         error_processing_handler: 'Error processing handler of %{name}: %{err}',
+        error_sending_generation: 'Error sending generation: %{err}',
         reloaded_objects: 'Reloaded objects',
         no_prev_result: 'Previous result was not found',
         no_base: 'No base result chosen for comparison',

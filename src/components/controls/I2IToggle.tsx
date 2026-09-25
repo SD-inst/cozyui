@@ -2,6 +2,7 @@ import { Box, useEventCallback } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
+import { timedSignal } from '../../api/files';
 import { getCreateVideoNodeId, insertGraph } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useImageURL } from '../../hooks/useImageURL';
@@ -96,6 +97,7 @@ const uploadMaskImage = async (
                 const r = await fetch(`${apiUrl}/api/upload/image`, {
                     method: 'POST',
                     body: formData,
+                    signal: timedSignal(),
                 });
                 const j = await r.json();
                 resolve(j.name);
@@ -223,13 +225,20 @@ export const I2IToggle = ({
                 // Load image to get dimensions
                 const img = new Image();
                 img.src = imageURL;
-                await new Promise<void>((resolve) => {
-                    if (img.complete && img.naturalWidth > 0) {
-                        resolve();
-                    } else {
-                        img.onload = () => resolve();
-                        img.onerror = () => resolve();
+                await new Promise<void>((resolve, reject) => {
+                    if (img.complete) {
+                        // Finished loading (cached or failed): settle at once so
+                        // a broken image (naturalWidth 0) can't hang the handler
+                        // waiting for onerror to fire again.
+                        if (img.naturalWidth > 0) {
+                            resolve();
+                        } else {
+                            reject(new Error('Image failed to load'));
+                        }
+                        return;
                     }
+                    img.onload = () => resolve();
+                    img.onerror = () => reject(new Error('Image failed to load'));
                 });
 
                 // Create mask canvas

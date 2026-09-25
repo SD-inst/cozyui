@@ -38,6 +38,7 @@ import { ResetButton } from './ResetButton';
 import { SaveSessionButton } from '../sessions/SaveSessionButton';
 import { controlType } from '../../redux/config';
 import { Workflow } from '../../api/graph';
+import { timedSignal } from '../../api/files';
 import { ConnectionIndicator } from './ConnectionIndicator';
 import { hasRegisteredField } from '../../utils/registeredFields';
 
@@ -73,6 +74,31 @@ const order = (c: controlType): number => {
     }
     return 0;
 };
+
+// A handler that awaits network work (a refmod re-upload, a mask upload, an
+// image decode) can stall if the server is wedged. The per-request timeouts in
+// files.ts bound most of these, but to guarantee WAITING can never stick
+// forever, the awaited handler gets a coarse overall timeout as a safety net.
+const HANDLER_TIMEOUT_MS = 5 * 60_000;
+
+function withTimeout<T>(p: Promise<T>, ms: number): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+        const timer = setTimeout(
+            () => reject(new Error('Handler timed out')),
+            ms,
+        );
+        p.then(
+            (v) => {
+                clearTimeout(timer);
+                resolve(v);
+            },
+            (e) => {
+                clearTimeout(timer);
+                reject(e);
+            },
+        );
+    });
+}
 
 export const GenerateButton = ({
     text = 'generate',
@@ -140,6 +166,17 @@ export const GenerateButton = ({
     const sendPrompt = useEventCallback(async () => {
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
+        // Reset the timer first so a stall before the request is sent doesn't
+        // leave the previous generation's duration frozen on screen.
+        dispatch(clearGenerationTS());
+        // Warm up a cold container before any handler does network I/O (the
+        // refmod HEAD check would otherwise wait for the start-up itself).
+        // Bounded so a dead container can't freeze the generation in WAITING.
+        try {
+            await fetch(apiUrl + '/api/queue', { signal: timedSignal() });
+        } catch {
+            // ignore — browsers drop the connection on container start-up
+        }
 
         const params = {
             client_id,
@@ -184,7 +221,9 @@ export const GenerateButton = ({
                         controls[name],
                     ); // modify api request
                     if (handlerResult instanceof Promise) {
-                        await handlerResult;
+                        // Coarse safety net: a handler that never settles (a
+                        // wedged network call) can't leave WAITING stuck.
+                        await withTimeout(handlerResult, HANDLER_TIMEOUT_MS);
                     }
                 } catch (e) {
                     console.log(e);
@@ -192,7 +231,7 @@ export const GenerateButton = ({
                         tr('toasts.error_processing_handler', { name, err: e }),
                     );
                     dispatch(setStatus(statusEnum.ERROR));
-                    return Promise.reject();
+                    return;
                 }
                 continue;
             }
@@ -244,12 +283,6 @@ export const GenerateButton = ({
             dispatch(setStatus(statusEnum.FINISHED));
             return Promise.resolve();
         }
-        dispatch(clearGenerationTS());
-        try {
-            await fetch(apiUrl + '/api/queue'); // warm up the container
-        } catch {
-            // ignore errors, browsers drop connections on container start up
-        }
         return fetch(apiUrl + '/api/prompt', {
             method: 'POST',
             body: JSON.stringify(params),
@@ -279,16 +312,25 @@ export const GenerateButton = ({
                 return;
             }
             const j = await r.json();
-            if (j?.error?.message) {
-                toast.error(j.error.message);
+            const message = j?.error?.message;
+            if (message) {
+                toast.error(message);
                 dispatch(clearPrompt());
                 dispatch(
                     setStatusMessage({
                         status: statusEnum.ERROR,
-                        message: j.error.message,
+                        message,
                     }),
                 );
+            } else {
+                // No error detail in the response — still fail out so the
+                // button can be retried instead of sticking on WAITING.
+                dispatch(setStatus(statusEnum.ERROR));
             }
+        }).catch((e) => {
+            console.log(e);
+            toast.error(tr('toasts.error_sending_generation', { err: e }));
+            dispatch(setStatus(statusEnum.ERROR));
         });
     });
     const handleCtrlEnter = useEventCallback((e: KeyboardEvent) => {
