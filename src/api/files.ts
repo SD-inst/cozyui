@@ -53,6 +53,9 @@ export const fileOnServer = async (
     try {
         const r = await fetch(viewUrl(apiUrl, filename), {
             method: 'HEAD',
+            // Bypass the HTTP cache: a cached 200 would make us believe a file
+            // still exists right after the server deleted it.
+            cache: 'no-store',
             signal: timedSignal(),
         });
         return r.ok;

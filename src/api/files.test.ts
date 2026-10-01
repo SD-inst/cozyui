@@ -7,7 +7,7 @@ const file = new File(['x'], 'mod.safetensors', { type: 'application/octet-strea
 // fetch mock that routes by request method, like the ComfyUI server:
 // HEAD /api/view? -> whether the file exists; POST /api/upload/image -> name
 const makeFetch = (exists: boolean) =>
-    vi.fn((_url: string, init?: { method?: string }) => {
+    vi.fn((_url: string, init?: { method?: string; cache?: string }) => {
         if (init?.method === 'HEAD') {
             return Promise.resolve({ ok: exists });
         }
@@ -30,6 +30,18 @@ describe('ensureFileOnServer', () => {
         expect(name).toBe('existing.safetensors');
         // only the HEAD check, no upload
         expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('HEAD existence check bypasses the HTTP cache', async () => {
+        const fetchMock = makeFetch(false);
+        vi.stubGlobal('fetch', fetchMock);
+
+        await ensureFileOnServer(file, 'gone.safetensors', apiUrl);
+
+        // The HEAD request (first call) must not be served from, nor update,
+        // the browser cache — otherwise a stale 200 outlives server deletion.
+        const [, headInit] = fetchMock.mock.calls[0] as [string, { cache?: string }];
+        expect(headInit.cache).toBe('no-store');
     });
 
     it('uploads when the stored filename is no longer on the server', async () => {
