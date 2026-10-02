@@ -14,6 +14,7 @@ export const DOMAIN_TABLES: Record<Domain, string[]> = {
     presets: ['presets', 'presetFiles'],
     sessions: ['sessions', 'sessionFiles'],
     refmods: ['refMods', 'refModFiles'],
+    settings: ['settings'],
 };
 
 const getTable = (name: string): Table<any, any> => {
@@ -32,6 +33,8 @@ const getTable = (name: string): Table<any, any> => {
             return db.refMods;
         case 'refModFiles':
             return db.refModFiles;
+        case 'settings':
+            return db.settings;
         default:
             throw new Error(`Unknown table: ${name}`);
     }
@@ -110,6 +113,11 @@ export const collectRefMods = async (ids?: string[]): Promise<RawRecord[]> => {
         ...files.map((f) => ({ table: 'refModFiles', key: f.id, value: f })),
     );
     return out;
+};
+
+export const collectSettings = async (): Promise<RawRecord[]> => {
+    const recs = await db.settings.toArray();
+    return recs.map((r) => ({ table: 'settings', key: r.name, value: r }));
 };
 
 // ---- Restore (write an incoming archive's records into the DB) ----

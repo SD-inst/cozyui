@@ -5,6 +5,8 @@ import { settings } from '../../hooks/settings';
 import { useBooleanSetting } from '../../hooks/useSetting';
 import { autoscrollSlotProps } from '../controls/utils';
 import { SectionAccordion } from '../controls/SectionAccordion';
+import { ExportImport } from '../export/ExportImport';
+import { collectSettings } from '../../utils/export/domain';
 import { ClearHistoryButton } from '../history/ClearHistoryButton';
 import { LanguageSelect } from './LanguageSelect';
 import { LLMSettings } from './LLMSettings';
@@ -29,6 +31,9 @@ export const AppSettings = () => {
     return (
         <SectionAccordion
             label='controls.settings'
+            summaryActions={
+                <ExportImport domain='settings' collect={collectSettings} />
+            }
             slotProps={autoscrollSlotProps(ref)}
             detailsRef={ref}
             icon={<Settings sx={{ mr: 1 }} />}

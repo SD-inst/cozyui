@@ -1,6 +1,6 @@
 import { genId } from '../id';
 
-export type Domain = 'history' | 'presets' | 'sessions' | 'refmods';
+export type Domain = 'history' | 'presets' | 'sessions' | 'refmods' | 'settings';
 
 // A de-serialized table row: which table it belongs to, its primary key, and
 // its value. While collecting, blob fields in `value` are live Blob/File
