@@ -1,13 +1,9 @@
-import { Download } from '@mui/icons-material';
+import { Upload } from '@mui/icons-material';
 import { Button, IconButton, Tooltip } from '@mui/material';
 import { MouseEvent } from 'react';
-import { useTranslate } from '../../i18n/I18nContext';
 import { useExportImport } from '../../hooks/useExportImport';
-import {
-    Domain,
-    RawRecord,
-    archiveFilename,
-} from '../../utils/export/format';
+import { useTranslate } from '../../i18n/I18nContext';
+import { Domain, RawRecord, archiveFilename } from '../../utils/export/format';
 
 // Single-item export (presets / sessions / refmods). Fire-and-forget with a
 // toast (no progress UI) — one item exports quickly. `iconOnly` renders a
@@ -42,7 +38,7 @@ export const ExportItemButton = ({
         return (
             <Tooltip title={text}>
                 <IconButton size='small' sx={sx} onClick={onClick}>
-                    <Download fontSize='small' />
+                    <Upload fontSize='small' />
                 </IconButton>
             </Tooltip>
         );
@@ -51,7 +47,7 @@ export const ExportItemButton = ({
         <Button
             size='small'
             variant='outlined'
-            startIcon={<Download />}
+            startIcon={<Upload />}
             sx={sx}
             onClick={onClick}
         >
