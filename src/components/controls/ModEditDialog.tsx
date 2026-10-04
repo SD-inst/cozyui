@@ -10,16 +10,18 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
+import { PhotoLibrary } from '@mui/icons-material';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { db } from '../history/db';
 import { useTranslate } from '../../i18n/I18nContext';
 import { refModThumbStyle } from '../../hooks/useRefMods';
 
-// Metadata editor for a reference mod: rename it and adjust the thumbnail crop
-// (horizontal/vertical offset). The preview is the real thumbnail with the
-// `object-position` crop applied live, so it always matches what is rendered
-// everywhere else.
+// Metadata editor for a reference mod: rename it, adjust the thumbnail crop
+// (horizontal/vertical offset) and replace the thumbnail image. The chosen
+// thumbnail file is held locally (pending) and only written to IndexedDB when
+// the user presses Save — so an accidental file pick can be discarded by
+// closing the dialog without saving.
 export const ModEditDialog = ({
     modId,
     url,
@@ -39,29 +41,85 @@ export const ModEditDialog = ({
     const [name, setName] = useState('');
     const [x, setX] = useState(50);
     const [y, setY] = useState(50);
+    // Local preview URL for the pending thumbnail — updated immediately on
+    // file pick so the user sees the new image without committing it to DB.
+    const [thumbUrl, setThumbUrl] = useState<string | null>(null);
+    // The File object to persist on Save (null = no thumbnail change).
+    const [pendingThumbFile, setPendingThumbFile] = useState<File | null>(null);
+    const [saving, setSaving] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
-    // Reset the form to the stored values whenever the dialog (re)opens. Local
-    // edits don't touch the DB, so `mod` (and this effect) stay stable while
-    // the user is adjusting; after a save `mod` updates and the reset is a
-    // no-op (the values are already what was saved).
+    // Reset the form to the stored values whenever the dialog (re)opens.
     useEffect(() => {
         if (!open || !mod) return;
         setName(mod.name);
         setX(mod.thumbX ?? 50);
         setY(mod.thumbY ?? 50);
+        setThumbUrl(null);
+        setPendingThumbFile(null);
     }, [open, mod]);
 
-    const hasThumb = !!url;
+    // Revoke the object URL when it changes or the component unmounts.
+    useEffect(() => {
+        return () => {
+            if (thumbUrl) {
+                URL.revokeObjectURL(thumbUrl);
+            }
+        };
+    }, [thumbUrl]);
+
+    const displayUrl = thumbUrl ?? url;
+    const hasThumb = !!displayUrl;
     const ready = !!mod && name.trim().length > 0;
 
+    // Update the local preview only — the file is persisted in handleSave.
+    const handleReplaceThumbnail = useCallback((file: File) => {
+        setThumbUrl(URL.createObjectURL(file));
+        setPendingThumbFile(file);
+    }, []);
+
     const handleSave = async () => {
-        await db.refMods.update(modId, {
-            name: name.trim(),
-            thumbX: x,
-            thumbY: y,
-            updatedAt: Date.now(),
-        });
-        onClose();
+        setSaving(true);
+        try {
+            await db.transaction('rw', db.refMods, db.refModFiles, async () => {
+                await db.refMods.update(modId, {
+                    name: name.trim(),
+                    thumbX: x,
+                    thumbY: y,
+                    updatedAt: Date.now(),
+                });
+                if (pendingThumbFile) {
+                    const thumbFile = new File(
+                        [pendingThumbFile],
+                        'thumbnail.png',
+                        { type: pendingThumbFile.type || 'image/png' },
+                    );
+                    // Remove any existing thumbnail for this mod.
+                    await db.refModFiles
+                        .where({ mod: modId })
+                        .and((f: any) => f.fileType === 'thumbnail')
+                        .delete();
+                    await db.refModFiles.add({
+                        id: `${modId}/thumbnail`,
+                        mod: modId,
+                        filename: 'thumbnail.png',
+                        file: thumbFile,
+                        fileType: 'thumbnail',
+                    });
+                }
+            });
+            onClose();
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            handleReplaceThumbnail(file);
+        }
+        e.target.value = '';
     };
 
     return (
@@ -74,7 +132,7 @@ export const ModEditDialog = ({
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter' && ready) {
+                            if (e.key === 'Enter' && ready && !saving) {
                                 e.preventDefault();
                                 handleSave();
                             }
@@ -95,12 +153,20 @@ export const ModEditDialog = ({
                                 }}
                             >
                                 <img
-                                    src={url}
+                                    src={displayUrl}
                                     alt=''
                                     style={refModThumbStyle(x, y)}
                                     draggable={false}
                                 />
                             </Box>
+                            <Button
+                                variant='outlined'
+                                size='small'
+                                startIcon={<PhotoLibrary />}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                {tr('refmods.replace_thumbnail')}
+                            </Button>
                             <Stack spacing={1}>
                                 <Typography variant='body2'>
                                     {tr('refmods.thumb_horizontal')}: {x}%
@@ -129,10 +195,28 @@ export const ModEditDialog = ({
                             </Stack>
                         </>
                     ) : (
-                        <Typography color='grey' variant='body2'>
-                            {tr('refmods.no_thumbnail')}
-                        </Typography>
+                        <>
+                            <Typography color='grey' variant='body2'>
+                                {tr('refmods.no_thumbnail')}
+                            </Typography>
+                            <Button
+                                variant='outlined'
+                                size='small'
+                                startIcon={<PhotoLibrary />}
+                                onClick={() => fileInputRef.current?.click()}
+                            >
+                                {tr('refmods.add_thumbnail')}
+                            </Button>
+                        </>
                     )}
+                    {/* Shared hidden file input */}
+                    <input
+                        ref={fileInputRef}
+                        type='file'
+                        accept='image/*'
+                        style={{ display: 'none' }}
+                        onChange={handleFileChange}
+                    />
                 </Stack>
             </DialogContent>
             <DialogActions>
@@ -140,7 +224,7 @@ export const ModEditDialog = ({
                 <Button
                     variant='contained'
                     onClick={handleSave}
-                    disabled={!ready}
+                    disabled={!ready || saving}
                 >
                     {tr('refmods.save')}
                 </Button>

@@ -624,6 +624,8 @@ const translation = {
         thumb_horizontal: 'Horizontal offset',
         thumb_vertical: 'Vertical offset',
         no_thumbnail: 'No thumbnail for this mod',
+        replace_thumbnail: 'Replace thumbnail',
+        add_thumbnail: 'Add thumbnail',
         crop_images: 'Crop images',
         crop_title: 'Crop Reference Images',
         crop_aspect: 'Target aspect',

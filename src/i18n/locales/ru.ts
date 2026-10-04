@@ -623,6 +623,8 @@ const translation = {
         thumb_horizontal: 'Горизонтальное смещение',
         thumb_vertical: 'Вертикальное смещение',
         no_thumbnail: 'Нет миниатюры для этого мода',
+        replace_thumbnail: 'Заменить миниатюру',
+        add_thumbnail: 'Добавить миниатюру',
         crop_images: 'Обрезать изображения',
         crop_title: 'Обрезка референс-изображений',
         crop_aspect: 'Итоговый аспект',
