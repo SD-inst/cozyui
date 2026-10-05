@@ -17,6 +17,12 @@ export const useTagsController = () => {
         }
         tagRC.current = tag;
         const words = tag.split('_').filter((w) => !!w);
+        if (!words.length) {
+            // only separators, nothing to suggest
+            setOpen(false);
+            setPos(0);
+            return;
+        }
         const dbtags = await Promise.all(
             words.map((w) =>
                 db.tags.where('index').startsWith(w).distinct().sortBy('score')
@@ -29,13 +35,14 @@ export const useTagsController = () => {
         if (words.length === 1) {
             // one word fast path
             setTags(dbtags[0].reverse().slice(0, tag_number));
+            return;
         }
         const names = dbtags
             .map((ta) => ta.map((t) => t.name))
             .reduce((a, b) => {
                 const set = new Set(b);
                 return a.filter((t) => set.has(t));
-            });
+            }, [] as string[]);
         const dbtagsDeduped = await db.tags
             .where('name')
             .anyOf(names)
@@ -47,6 +54,9 @@ export const useTagsController = () => {
         setTags(dbtagsDeduped.reverse().slice(0, tag_number));
     }, [tag, tag_number]);
     const move = (inc: number) => {
+        if (!tags.length) {
+            return;
+        }
         setPos((p) => (p + inc + tags.length) % tags.length);
     };
     return {
