@@ -17,7 +17,7 @@ import {
 import { Close, ContentCut, Delete, Refresh } from '@mui/icons-material';
 import Lightbox from 'yet-another-react-lightbox';
 import Video from 'yet-another-react-lightbox/plugins/video';
-import { clone } from 'lodash';
+import { clone, omit } from 'lodash';
 import React, {
     cloneElement,
     useCallback,
@@ -311,12 +311,19 @@ export const ArrayInput = ({
     const apiUrl = useApiURL();
     const { unregister, getValues, setValue } = useFormContext();
     const rawValue = useWatch({ name });
-    const value = React.useMemo(() => rawValue ?? [], [rawValue]);
+    // A cross-tab send (useSendResult) restores the receiver field as a bare
+    // filename string; treat it as empty until the effect below wraps it into
+    // a single entry, so the array-only code paths never see a non-array.
+    const value = React.useMemo(
+        () => (Array.isArray(rawValue) ? rawValue : []),
+        [rawValue],
+    );
     // The per-item content is read synchronously from `getValues` (not the
     // `useWatch` value above) so it is always in the same order as `fields`.
     // The watched value can lag one render behind `fields` after a `move`,
     // which would briefly show the old order for the rendered items.
-    const items = (getValues(name) ?? []) as any[];
+    const rawItems = getValues(name);
+    const items = (Array.isArray(rawItems) ? rawItems : []) as any[];
     const { fields, append, update, swap, remove, replace, move } =
         useFieldArray({ name });
     // Universal per-item toggles. Injected into the per-item children so every
@@ -341,14 +348,42 @@ export const ArrayInput = ({
     useEffect(() => {
         if (rawValue === undefined || rawValue === null) {
             setValue(name, []);
+        } else if (typeof rawValue === 'string') {
+            // A cross-tab send (useSendResult) restores the receiver field as
+            // a bare filename, clobbering the array. `fields` still holds the
+            // previous entries (the array subject skips non-array values), so
+            // rebuild the array from them and place the received file the way
+            // the receiver effect does: first empty slot, else append, else
+            // drop it with an overflow toast.
+            const next = fields.map((f) => ({
+                ...clone(newValue),
+                ...omit(f as object, 'id'),
+            }));
+            const idx = next.findIndex((e) => !e[keyField]);
+            if (idx >= 0) {
+                next[idx] = { ...next[idx], [keyField]: rawValue };
+            } else if (max === -1 || next.length < max) {
+                next.push({ ...clone(newValue), [keyField]: rawValue });
+            } else {
+                toast.error(tr('toasts.array_overflow'));
+            }
+            setValue(name, next);
         }
-    }, [rawValue, name, setValue]);
+    }, [rawValue, name, setValue, keyField, newValue, fields, max, tr]);
     const prevFieldsLen = useRef(0);
     useEffect(() => {
         const prev = prevFieldsLen.current;
         prevFieldsLen.current = fields.length;
         const justAppended = fields.length > prev;
-        if (!justAppended && value.length === 0 && fields.length > 0) {
+        // Only sync an emptied array while the watched value is genuinely an
+        // array; a bare cross-tab-send string is normalized by the effect
+        // above and must not be wiped here.
+        if (
+            !justAppended &&
+            Array.isArray(rawValue) &&
+            value.length === 0 &&
+            fields.length > 0
+        ) {
             replace([]);
             return;
         }
@@ -357,7 +392,15 @@ export const ArrayInput = ({
                 append(clone(newValue));
             }
         }
-    }, [append, min, newValue, value.length, fields.length, replace]);
+    }, [
+        append,
+        min,
+        newValue,
+        rawValue,
+        value.length,
+        fields.length,
+        replace,
+    ]);
 
     const appendSlots = (entries: Record<string, any>[]): number => {
         const room = roomForNewSlots(value.length, max, entries.length);

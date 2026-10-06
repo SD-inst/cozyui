@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/vitest';
 import { useEffect } from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { Box } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import type { Control } from 'react-hook-form';
@@ -701,6 +701,103 @@ describe('ArrayInput receiver fields', () => {
             if (values?.length) {
                 expect(values[0]?.source).toBe('from_receivers');
             }
+        });
+    });
+
+    it('wraps a bare filename string (cross-tab send) into a single entry', async () => {
+        let formRef: any;
+        const HarnessSent = () => {
+            const form = useForm({
+                defaultValues: {
+                    reference_images: 'sent_file.png',
+                },
+            });
+            useEffect(() => {
+                formRef = form;
+            }, [form]);
+
+            const ctx = makeCtx('T2I');
+
+            return (
+                <TabContext.Provider value={ctx}>
+                    <I18nContext.Provider
+                        value={{ ...defaultValue, polyglot, locale: 'en' }}
+                    >
+                        <FormProvider {...form}>
+                            <ArrayInput
+                                name='reference_images'
+                                max={10}
+                                newValue={{}}
+                            >
+                                <input name='image' />
+                            </ArrayInput>
+                        </FormProvider>
+                    </I18nContext.Provider>
+                </TabContext.Provider>
+            );
+        };
+
+        render(<HarnessSent />);
+
+        await waitFor(() => {
+            const values = formRef?.getValues(
+                'reference_images',
+            ) as any[];
+            expect(Array.isArray(values)).toBe(true);
+            expect(values[0]?.image).toBe('sent_file.png');
+        });
+    });
+
+    it('appends a sent filename to the existing entries instead of wiping them', async () => {
+        let formRef: any;
+        const HarnessSentExisting = () => {
+            const form = useForm({
+                defaultValues: {
+                    reference_images: [{ image: 'existing.png' }],
+                },
+            });
+            useEffect(() => {
+                formRef = form;
+            }, [form]);
+
+            const ctx = makeCtx('T2I');
+
+            return (
+                <TabContext.Provider value={ctx}>
+                    <I18nContext.Provider
+                        value={{ ...defaultValue, polyglot, locale: 'en' }}
+                    >
+                        <FormProvider {...form}>
+                            <ArrayInput
+                                name='reference_images'
+                                max={10}
+                                newValue={{}}
+                            >
+                                <input name='image' />
+                            </ArrayInput>
+                        </FormProvider>
+                    </I18nContext.Provider>
+                </TabContext.Provider>
+            );
+        };
+
+        render(<HarnessSentExisting />);
+
+        // Simulate the cross-tab send: the restore writes a bare filename
+        // over the array field.
+        act(() => {
+            formRef?.setValue('reference_images', 'sent_file.png');
+        });
+
+        await waitFor(() => {
+            const values = formRef?.getValues(
+                'reference_images',
+            ) as any[];
+            expect(Array.isArray(values)).toBe(true);
+            expect(values.map((v) => v?.image)).toEqual([
+                'existing.png',
+                'sent_file.png',
+            ]);
         });
     });
 });
