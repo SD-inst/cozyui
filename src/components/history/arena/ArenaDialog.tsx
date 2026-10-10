@@ -23,6 +23,15 @@ import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 // the real media is rendered per-slide by `render.slide` (LightboxSlide).
 const BLANK_SRC = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5TAwAAAAD';
 
+// Height of the vote-button band in the voting lightbox. The lightbox container
+// gets this as padding-bottom (shrinking the slide area) and the buttons sit in
+// that reserved band, so they never cover the media (or a video's native
+// controls).
+const VOTE_BAND = 64;
+
+// Extra band height for the "winner is clear" hint line above the buttons.
+const HINT_BAND = 30;
+
 // Whether a resolved source type is a zoomable image (as opposed to video/audio).
 const isImageType = (type?: string) =>
     !!type && type !== 'gifs' && type !== 'audio';
@@ -319,7 +328,11 @@ const ArenaLightbox = ({
     canVote,
     currentId,
     onVote,
+    onDraw,
     voteLabel,
+    drawLabel,
+    conclusive,
+    conclusiveLabel,
     clock,
     sync,
 }: {
@@ -332,7 +345,11 @@ const ArenaLightbox = ({
     canVote: boolean;
     currentId: string;
     onVote: (winnerId: string) => void;
+    onDraw: () => void;
     voteLabel: string;
+    drawLabel: string;
+    conclusive: boolean;
+    conclusiveLabel: string;
     clock: React.MutableRefObject<PlaybackClock>;
     sync: boolean;
 }) => {
@@ -354,6 +371,10 @@ const ArenaLightbox = ({
         alt: String(i),
     }));
 
+    // The reserved bottom band grows when the "winner is clear" hint is shown,
+    // so the hint (above the buttons) also never overlaps the media.
+    const band = VOTE_BAND + (conclusive ? HINT_BAND : 0);
+
     return (
         <>
             {participants.map((p, i) => (
@@ -374,6 +395,14 @@ const ArenaLightbox = ({
                 animation={{ navigation: 0 }}
                 plugins={[StickyZoom, Fullscreen]}
                 zoom={{ scrollToZoom: true, maxZoomPixelRatio: 5 }}
+                // While voting, reserve a bottom band for the vote buttons: the
+                // container's padding-bottom shrinks the slide area, so the
+                // buttons (positioned in that band) never overlap the media.
+                styles={{
+                    container: canVote
+                        ? { paddingBottom: band }
+                        : undefined,
+                }}
                 render={{
                     slide: (props) => {
                         const i = Number(
@@ -401,30 +430,72 @@ const ArenaLightbox = ({
                             <Box
                                 sx={{
                                     position: 'absolute',
-                                    bottom: 12,
+                                    bottom: 0,
                                     left: 0,
                                     right: 0,
+                                    height: band,
                                     display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
                                     justifyContent: 'center',
+                                    gap: 0.5,
                                     pointerEvents: 'none',
                                 }}
                             >
-                                <Button
-                                    variant='contained'
-                                    color='primary'
-                                    ref={voteButtonRef}
-                                    onClick={() => onVote(currentId)}
+                                {conclusive && (
+                                    <Box
+                                        sx={{
+                                            px: 1.5,
+                                            py: 0.25,
+                                            borderRadius: 1,
+                                            bgcolor: 'rgba(0, 0, 0, 0.55)',
+                                            color: '#8bc34a',
+                                            fontSize: 14,
+                                        }}
+                                    >
+                                        {conclusiveLabel}
+                                    </Box>
+                                )}
+                                <Box
                                     sx={{
-                                        pointerEvents: 'auto',
-                                        // The button is kept focused (see the
-                                        // effect in ArenaDialog) for Enter-to-vote;
-                                        // suppress the focus ring on this overlay
-                                        // button.
-                                        '&:focus-visible': { outline: 'none' },
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: 1,
                                     }}
                                 >
-                                    {voteLabel}
-                                </Button>
+                                    <Button
+                                        variant='contained'
+                                        color='primary'
+                                        ref={voteButtonRef}
+                                        onClick={() => onVote(currentId)}
+                                        sx={{
+                                            pointerEvents: 'auto',
+                                            // The button is kept focused (see the
+                                            // effect in ArenaDialog) for
+                                            // Enter-to-vote; suppress the focus
+                                            // ring on this overlay button.
+                                            '&:focus-visible': {
+                                                outline: 'none',
+                                            },
+                                        }}
+                                    >
+                                        {voteLabel}
+                                    </Button>
+                                    <Button
+                                        variant='outlined'
+                                        color='primary'
+                                        onClick={onDraw}
+                                        sx={{
+                                            pointerEvents: 'auto',
+                                            '&:focus-visible': {
+                                                outline: 'none',
+                                            },
+                                        }}
+                                    >
+                                        {drawLabel}
+                                    </Button>
+                                </Box>
                             </Box>
                         ) : null,
                 }}
@@ -455,6 +526,11 @@ const Confidence = ({ summary }: { summary: ArenaSummary }) => {
                     </>
                 )}
             </Typography>
+            {confidence.conclusive && summary.status !== 'finished' && (
+                <Typography variant='body2' color='success.main'>
+                    {tr('arena.conclusive')}
+                </Typography>
+            )}
         </Box>
     );
 };
@@ -695,10 +771,11 @@ export const ArenaDialog = () => {
     const viewParticipants = showStandings
         ? summary.standings
         : [aParticipant, bParticipant];
-    // Records a vote and disables the button while in flight, so racing
-    // double-clicks can't double-record the same pair (the arena now re-votes
-    // exhausted pairs, so the provider-level repeat guard is no longer there).
-    const handleVote = async (winnerId: string) => {
+    // Records a vote (winner key, or null for a draw) and disables the button
+    // while in flight, so racing double-clicks can't double-record the same
+    // pair (the arena now re-votes exhausted pairs, so the provider-level
+    // repeat guard is no longer there).
+    const handleVote = async (winnerId: string | null) => {
         if (!pair || voting) return;
         setVoting(true);
         try {
@@ -770,38 +847,50 @@ export const ArenaDialog = () => {
                         </Box>
                         <Confidence summary={summary} />
                         {pair ? (
-                            <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
-                                <CandidateView
-                                    participant={aParticipant!}
-                                    source={aDisp.source}
-                                    display={aDisp.display}
-                                    label={tr('arena.a')}
-                                    onOpen={() => setLbIndex(0)}
-                                    onVote={() => handleVote(pair[0])}
-                                    disabled={voting}
-                                    videoRef={syncEnabled ? aVideo : undefined}
-                                    videoHandlers={
-                                        syncEnabled
-                                            ? makeVideoHandlers(0)
-                                            : undefined
-                                    }
-                                />
-                                <CandidateView
-                                    participant={bParticipant!}
-                                    source={bDisp.source}
-                                    display={bDisp.display}
-                                    label={tr('arena.b')}
-                                    onOpen={() => setLbIndex(1)}
-                                    onVote={() => handleVote(pair[1])}
-                                    disabled={voting}
-                                    videoRef={syncEnabled ? bVideo : undefined}
-                                    videoHandlers={
-                                        syncEnabled
-                                            ? makeVideoHandlers(1)
-                                            : undefined
-                                    }
-                                />
-                            </Box>
+                            <>
+                                <Box sx={{ display: 'flex', gap: 2, flexDirection: { xs: 'column', sm: 'row' } }}>
+                                    <CandidateView
+                                        participant={aParticipant!}
+                                        source={aDisp.source}
+                                        display={aDisp.display}
+                                        label={tr('arena.a')}
+                                        onOpen={() => setLbIndex(0)}
+                                        onVote={() => handleVote(pair[0])}
+                                        disabled={voting}
+                                        videoRef={syncEnabled ? aVideo : undefined}
+                                        videoHandlers={
+                                            syncEnabled
+                                                ? makeVideoHandlers(0)
+                                                : undefined
+                                        }
+                                    />
+                                    <CandidateView
+                                        participant={bParticipant!}
+                                        source={bDisp.source}
+                                        display={bDisp.display}
+                                        label={tr('arena.b')}
+                                        onOpen={() => setLbIndex(1)}
+                                        onVote={() => handleVote(pair[1])}
+                                        disabled={voting}
+                                        videoRef={syncEnabled ? bVideo : undefined}
+                                        videoHandlers={
+                                            syncEnabled
+                                                ? makeVideoHandlers(1)
+                                                : undefined
+                                        }
+                                    />
+                                </Box>
+                                <Box sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+                                    <Button
+                                        variant='outlined'
+                                        color='primary'
+                                        disabled={voting}
+                                        onClick={() => handleVote(null)}
+                                    >
+                                        {tr('arena.draw')}
+                                    </Button>
+                                </Box>
+                            </>
                         ) : (
                             // Voting ended: the round-robin / match cap is
                             // exhausted. Offer to keep going (re-vote) or to
@@ -860,6 +949,14 @@ export const ArenaDialog = () => {
                                                 w: p.wins,
                                                 l: p.losses,
                                             })}
+                                            {(p.draws ?? 0) > 0 && (
+                                                <>
+                                                    {' · '}
+                                                    {tr('arena.draws', {
+                                                        d: p.draws,
+                                                    })}
+                                                </>
+                                            )}
                                         </Typography>
                                         <SourceParams participant={p} />
                                     </Box>
@@ -879,7 +976,11 @@ export const ArenaDialog = () => {
                     canVote={canVote}
                     currentId={currentId}
                     onVote={handleVote}
+                    onDraw={() => handleVote(null)}
                     voteLabel={tr('arena.vote_this')}
+                    drawLabel={tr('arena.draw')}
+                    conclusive={summary.confidence.conclusive}
+                    conclusiveLabel={tr('arena.conclusive')}
                     clock={clock}
                     sync={syncEnabled}
                 />

@@ -106,6 +106,15 @@ describe('arena — random pairing', () => {
     it('nextPair returns null with fewer than 2 participants', () => {
         expect(nextPair(newArena(), 1)).toBeNull();
     });
+
+    it('nextPair picks the closest-rated unplayed pair', () => {
+        let a = mkArena(4, 9);
+        // Make 1:0 clearly stronger than the rest.
+        a = recordVote(a, '1:0', '2:0', '1:0', 1);
+        // The closest remaining pair: 3:0 vs 4:0 (both still at the initial
+        // rating) — the most informative comparison.
+        expect(nextPair(a, 9)).toEqual(['3:0', '4:0']);
+    });
 });
 
 describe('arena — Elo rating', () => {
@@ -124,6 +133,21 @@ describe('arena — Elo rating', () => {
         expect(l.rating).toBeCloseTo(984, 5); // 1000 + 32 * (0 - 0.5)
         expect(w.wins).toBe(1);
         expect(l.losses).toBe(1);
+    });
+
+    it('recordVote with a null winner records a draw (ratings unchanged)', () => {
+        let a = addParticipants(newArena(), 1, ['u'], ['x']);
+        a = addParticipants(a, 2, ['v'], ['y']);
+        a = recordVote(a, '1:0', '2:0', null, 1);
+        const p1 = a.participants.find((p) => p.key === '1:0')!;
+        const p2 = a.participants.find((p) => p.key === '2:0')!;
+        expect(p1.rating).toBeCloseTo(1000, 5); // score 0.5 vs expected 0.5
+        expect(p2.rating).toBeCloseTo(1000, 5);
+        expect(p1.draws).toBe(1);
+        expect(p2.draws).toBe(1);
+        expect(p1.wins).toBe(0);
+        expect(p2.losses).toBe(0);
+        expect(a.matches[0].winnerKey).toBeNull();
     });
 });
 
@@ -150,6 +174,49 @@ describe('arena — confidence (Bradley–Terry)', () => {
         const c = confidence(a);
         expect(c.leaderKey).toBe('1:0');
         expect(c.leaderProb).toBeGreaterThan(0.8);
+    });
+
+    it('conclusive once the head-to-head edge is decisive, not before', () => {
+        let a = mkArena(2, 3);
+        for (let i = 0; i < 2; i++) {
+            a = recordVote(a, '1:0', '2:0', '1:0', i + 1);
+        }
+        expect(confidence(a).conclusive).toBe(false);
+        for (let i = 2; i < 5; i++) {
+            a = recordVote(a, '1:0', '2:0', '1:0', i + 1);
+        }
+        expect(confidence(a).conclusive).toBe(true);
+    });
+
+    it('draws keep the arena undecided', () => {
+        let a = mkArena(2, 3);
+        for (let i = 0; i < 6; i++) {
+            a = recordVote(a, '1:0', '2:0', null, i + 1);
+        }
+        const c = confidence(a);
+        expect(c.leaderProb).toBeCloseTo(0.5, 5);
+        expect(c.conclusive).toBe(false);
+    });
+
+    it('transitive 6-player round-robin is decided by the tournament rule', () => {
+        // A single round-robin can never reach 95% Bayesian confidence (the
+        // top two meet once), but an unbeaten leader that beat the runner-up
+        // face-to-face must be recognized as decided — and well before the
+        // last pair.
+        let a = mkArena(6, 1);
+        let decidedAt = 0;
+        for (let step = 1; step <= 15; step++) {
+            const p = nextPair(a, 1, false);
+            if (!p) break;
+            // the lower-indexed player always wins (perfectly transitive)
+            a = recordVote(a, p[0], p[1], p[0] < p[1] ? p[0] : p[1], step);
+            if (confidence(a).conclusive) {
+                decidedAt = step;
+                break;
+            }
+        }
+        expect(decidedAt).toBeGreaterThan(0);
+        expect(decidedAt).toBeLessThanOrEqual(9);
     });
 });
 

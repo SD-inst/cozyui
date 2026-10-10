@@ -21,7 +21,14 @@ import {
 const parseArena = (rec: TaskResult): ArenaState | null => {
     if (!rec.arena) return null;
     try {
-        return JSON.parse(rec.arena) as ArenaState;
+        const state = JSON.parse(rec.arena) as ArenaState;
+        // Older records predate the draw counter — default it so recordVote and
+        // the standings display can rely on it.
+        state.participants = state.participants.map((p) => ({
+            ...p,
+            draws: p.draws ?? 0,
+        }));
+        return state;
     } catch {
         return null;
     }
@@ -184,7 +191,12 @@ export const ArenaContextProvider = ({ children }: PropsWithChildren) => {
     }, [participantCount, openArena, tr]);
 
     const vote = useCallback(
-        async (arenaId: number, aKey: string, bKey: string, winner: string) => {
+        async (
+            arenaId: number,
+            aKey: string,
+            bKey: string,
+            winner: string | null,
+        ) => {
             const rec = await db.taskResults.get(arenaId);
             if (!rec?.arena) return;
             const state = parseArena(rec);

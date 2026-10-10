@@ -22,7 +22,8 @@ export type ArenaContextType = {
     start: () => Promise<void>;
     openArena: (id: number) => void;
     closeArena: () => void;
-    vote: (arenaId: number, aKey: string, bKey: string, winner: string) => Promise<void>;
+    // winner: participant key, or null for a draw
+    vote: (arenaId: number, aKey: string, bKey: string, winner: string | null) => Promise<void>;
     finishArena: (arenaId: number) => Promise<void>;
     continueArena: (arenaId: number) => Promise<void>;
     continueVoting: (arenaId: number) => Promise<void>;

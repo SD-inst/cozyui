@@ -1,7 +1,8 @@
 // Pure, framework-free logic for the Elo arena: types, Elo rating updates,
-// deterministic random pairing (no repeat until all pairs are exhausted), and a
-// Bayesian Bradley–Terry confidence estimate. Everything here is deterministic
-// (seeded PRNG, fixed iterations) so it can be unit-tested without React/jsdom.
+// adaptive pairing (closest ratings first, no repeat until all pairs are
+// exhausted), and a Bayesian Bradley–Terry confidence estimate. Everything
+// here is deterministic (seeded PRNG, fixed iterations) so it can be
+// unit-tested without React/jsdom.
 
 export type ArenaStatus = 'building' | 'active' | 'finished';
 
@@ -14,12 +15,13 @@ export interface ArenaParticipant {
     rating: number; // Elo rating
     wins: number;
     losses: number;
+    draws: number;
 }
 
 export interface ArenaMatch {
     aKey: string;
     bKey: string;
-    winnerKey: string;
+    winnerKey: string | null; // null = draw
     ts: number;
 }
 
@@ -42,9 +44,14 @@ export interface ArenaState {
 
 export interface Confidence {
     leaderKey: string | null;
-    leaderProb: number; // probability the leader is the true best (0..1)
+    leaderProb: number; // P(leader's true win-rate vs the runner-up > 50%) (0..1)
     ciHalfWidth: number; // 1.96 * se(leader) — from the BT fit's inverse-Hessian SE
+    conclusive: boolean; // leaderProb >= CONCLUSIVE_PROB — the winner is settled
 }
+
+// The leaderProb at which the arena is considered decided (early stopping):
+// further head-to-head votes are unlikely to change who is best.
+export const CONCLUSIVE_PROB = 0.95;
 
 export interface ArenaSummary {
     status: ArenaStatus;
@@ -130,6 +137,7 @@ export const addParticipants = (
             rating: state.config.initialRating,
             wins: 0,
             losses: 0,
+            draws: 0,
         });
     });
     return { ...state, participants };
@@ -170,7 +178,8 @@ export const toggleParticipants = (
         : addParticipants(state, taskResultId, urls, labels);
 
 // ---------------------------------------------------------------------------
-// Random pairing (no repeat of a played pair until every pair has been played)
+// Adaptive pairing (no repeat of a played pair until every pair has been
+// played)
 // ---------------------------------------------------------------------------
 export const playedPairKey = (aKey: string, bKey: string): string =>
     [aKey, bKey].sort().join('|');
@@ -180,17 +189,21 @@ export const playedPairs = (state: ArenaState): Set<string> =>
 
 export const totalPairs = (n: number): number => (n < 2 ? 0 : (n * (n - 1)) / 2);
 
-// Pick the next pair: the first not-yet-played pair in a deterministic
-// seeded shuffle of all possible (sorted) pairs. Because the order depends
-// only on the seed and the participant keys (not on which are played), the
-// sequence is fully reproducible across resumes — the same seed and same
-// played-set always yield the same next pair.
+// Pick the next pair: the not-yet-played pair with the SMALLEST rating gap —
+// the most informative comparison (a close match is the one that can still
+// flip the standings; a mismatch between far-apart ratings adds little
+// evidence). This is the active-ranking counterpart of "vote until the winner
+// is statistically decided": it concentrates the votes on the pairs that
+// actually determine the leader. Ties are broken by the seeded shuffle order,
+// so the choice stays fully reproducible across resumes (ratings are part of
+// the persisted state).
 //
 // Voting STOPS (returns null) once the smaller of (all unique pairs, the
 // maxMatches cap) is reached, UNLESS `allowRevote` is true (the user chose to
-// "Continue voting" past the stop). While continuing, the round-robin resumes
-// (next unplayed pair) and, once every pair has been played, loops (re-vote)
-// through the seeded shuffle so the arena keeps going deterministically.
+// "Continue voting" past the stop). While continuing, the adaptive round-robin
+// resumes (next unplayed pair) and, once every pair has been played, loops
+// (re-vote) through the seeded shuffle so the arena keeps going
+// deterministically.
 export const nextPair = (
     state: ArenaState,
     seed: number,
@@ -221,11 +234,26 @@ export const nextPair = (
     if (!allowRevote && state.matches.length >= effectiveMax) {
         return null;
     }
-    // Round-robin: the first not-yet-played pair.
+    // Adaptive round-robin: the unplayed pair with the closest ratings (first
+    // one in the seeded shuffle order among equal gaps).
+    const rating: Record<string, number> = {};
+    state.participants.forEach((p) => {
+        rating[p.key] = p.rating;
+    });
+    let best: [string, string] | null = null;
+    let bestGap = Infinity;
     for (const p of all) {
-        if (!played.has(playedPairKey(p[0], p[1]))) {
-            return p;
+        if (played.has(playedPairKey(p[0], p[1]))) {
+            continue;
         }
+        const gap = Math.abs((rating[p[0]] ?? 0) - (rating[p[1]] ?? 0));
+        if (gap < bestGap) {
+            bestGap = gap;
+            best = p;
+        }
+    }
+    if (best) {
+        return best;
     }
     // Round-robin exhausted — only reachable while continuing; re-vote (loop
     // through the seeded shuffle) so the arena keeps going deterministically.
@@ -233,13 +261,14 @@ export const nextPair = (
 };
 
 // ---------------------------------------------------------------------------
-// Recording a vote (Elo update)
+// Recording a vote (Elo update). `winnerKey = null` records a draw (both
+// participants get score 0.5; neither wins/losses count changes).
 // ---------------------------------------------------------------------------
 export const recordVote = (
     state: ArenaState,
     aKey: string,
     bKey: string,
-    winnerKey: string,
+    winnerKey: string | null,
     ts: number,
 ): ArenaState => {
     const participants = state.participants.map((p) => ({ ...p }));
@@ -248,13 +277,17 @@ export const recordVote = (
     if (!a || !b) {
         return state;
     }
+    const draw = winnerKey === null;
     const eA = eloExpected(a.rating, b.rating);
     const eB = eloExpected(b.rating, a.rating);
-    const scoreA = winnerKey === aKey ? 1 : 0;
-    const scoreB = winnerKey === bKey ? 1 : 0;
+    const scoreA = draw ? 0.5 : winnerKey === aKey ? 1 : 0;
+    const scoreB = draw ? 0.5 : winnerKey === bKey ? 1 : 0;
     a.rating = eloUpdate(a.rating, eA, scoreA, state.config.kFactor);
     b.rating = eloUpdate(b.rating, eB, scoreB, state.config.kFactor);
-    if (winnerKey === aKey) {
+    if (draw) {
+        a.draws = (a.draws ?? 0) + 1;
+        b.draws = (b.draws ?? 0) + 1;
+    } else if (winnerKey === aKey) {
         a.wins += 1;
         b.losses += 1;
     } else {
@@ -349,10 +382,32 @@ const invertMatrix = (a: number[][]): number[][] | null => {
     return I;
 };
 
+// Standard normal CDF (Φ) via the Abramowitz–Stegun erf approximation
+// (|error| < 1.5e-7 — far below what the stopping rule needs).
+const normalCdf = (z: number): number => {
+    const x = z / Math.SQRT2;
+    const sign = x < 0 ? -1 : 1;
+    const ax = Math.abs(x);
+    const t = 1 / (1 + 0.3275911 * ax);
+    const erf =
+        1 -
+        (((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t -
+            0.284496736) *
+            t +
+            0.254829592) *
+            t) *
+            Math.exp(-ax * ax);
+    return 0.5 * (1 + sign * erf);
+};
+
+// BT logit → Elo scale conversion (Elo = 400/ln10 * logit).
+const ELO_PER_LOGIT = 400 / Math.LN10;
+
 // Fit the Bradley–Terry model (logistic, L2-ridge for identifiability) to get
 // each participant's standard error (the rating CI width). The leader's
-// confidence (leaderProb) is the head-to-head win-rate against the runner-up
-// with a uniform prior — robust for small samples, see the leaderProb block.
+// confidence (leaderProb) is P(θ_leader > θ_runner-up) from the BT posterior —
+// it uses ALL matches (transitive evidence: beating everyone counts), not
+// just the leader-vs-runner-up head-to-head.
 export const confidence = (state: ArenaState): Confidence => {
     const n = state.participants.length;
     if (n < 2) {
@@ -360,13 +415,17 @@ export const confidence = (state: ArenaState): Confidence => {
             leaderKey: null,
             leaderProb: 0,
             ciHalfWidth: Infinity,
+            conclusive: false,
         };
     }
     const idx: Record<string, number> = {};
     state.participants.forEach((p, i) => {
         idx[p.key] = i;
     });
-    const lambda = 1e-3; // ridge — keeps the Hessian invertible
+    // Ridge = Gaussian prior N(0, 1) per BT logit (≈ ±174 Elo) — keeps the
+    // Hessian invertible AND encodes a sane prior on model strength, so the
+    // posterior (and its SE) is meaningful even for small samples.
+    const lambda = 1;
 
     let theta = new Array(n).fill(0);
     let XtWX: number[][] | null = null;
@@ -379,12 +438,14 @@ export const confidence = (state: ArenaState): Confidence => {
             const i = idx[m.aKey];
             const j = idx[m.bKey];
             if (i === undefined || j === undefined) continue;
-            const winner = m.winnerKey === m.aKey ? i : j;
-            const loser = m.winnerKey === m.aKey ? j : i;
+            const draw = m.winnerKey === null;
+            const winner = draw ? i : m.winnerKey === m.aKey ? i : j;
+            const loser = draw ? j : m.winnerKey === m.aKey ? j : i;
+            const y = draw ? 0.5 : 1; // score of `winner` (a draw is a half-win)
             const eta = theta[winner] - theta[loser];
             const mu = sigmoid(eta);
             const wgt = mu * (1 - mu) + 1e-6;
-            const z = eta + (1 - mu) / wgt; // y = 1 (winner beat loser)
+            const z = eta + (y - mu) / wgt;
             XtWX[winner][winner] += wgt;
             XtWX[loser][loser] += wgt;
             XtWX[winner][loser] -= wgt;
@@ -411,39 +472,65 @@ export const confidence = (state: ArenaState): Confidence => {
     const sorted = standings(state);
     const leaderKey = sorted[0]?.key ?? null;
     if (!leaderKey) {
-        return { leaderKey: null, leaderProb: 0, ciHalfWidth: Infinity };
+        return {
+            leaderKey: null,
+            leaderProb: 0,
+            ciHalfWidth: Infinity,
+            conclusive: false,
+        };
     }
     const leaderIdx = idx[leaderKey];
     const leaderSe = inv ? Math.sqrt(Math.max(inv[leaderIdx][leaderIdx], 0)) : Infinity;
 
-    // Probability the leader beats the immediate challenger (2nd in standings),
-    // from their head-to-head record with a uniform (Beta 1,1) prior. A dead tie
-    // (no head-to-head data yet) is a coin flip (0.5); it → 1 as the leader's
-    // edge grows. This is far more robust than the asymptotic BT Hessian SE,
-    // which is over-diffuse for small samples.
-    let leaderProb = 0;
-    if (sorted.length >= 2) {
-        const runnerUpKey = sorted[1].key;
-        const hh = state.matches.reduce(
-            (acc, m) => {
-                const isPair =
-                    (m.aKey === leaderKey && m.bKey === runnerUpKey) ||
-                    (m.bKey === leaderKey && m.aKey === runnerUpKey);
-                if (!isPair) return acc;
-                if (m.winnerKey === leaderKey) acc.wins += 1;
-                else acc.losses += 1;
-                return acc;
-            },
-            { wins: 0, losses: 0 },
+    // P(θ_leader > θ_runner-up) from the BT posterior (normal approximation of
+    // the MAP fit): d = θ_leader − θ_runner-up with variance read off the
+    // inverse Hessian (including the covariance term). This pools ALL match
+    // evidence — a leader that beat everyone is recognized even if they only
+    // faced the runner-up once — unlike a head-to-head-only rule. No data yet
+    // (or a singular Hessian) is a coin flip (0.5); it → 1 as the leader's
+    // edge grows and the posterior tightens.
+    let leaderProb = 0.5;
+    if (inv && sorted.length >= 2) {
+        const runnerIdx = idx[sorted[1].key];
+        const d = theta[leaderIdx] - theta[runnerIdx];
+        const varDiff = Math.max(
+            inv[leaderIdx][leaderIdx] +
+                inv[runnerIdx][runnerIdx] -
+                2 * inv[leaderIdx][runnerIdx],
+            1e-9,
         );
-        leaderProb = (hh.wins + 1) / (hh.wins + hh.losses + 2);
+        leaderProb = normalCdf(d / Math.sqrt(varDiff));
     }
 
     return {
         leaderKey,
         leaderProb,
-        ciHalfWidth: 1.96 * (Number.isFinite(leaderSe) ? leaderSe : Infinity),
+        ciHalfWidth:
+            1.96 *
+            (Number.isFinite(leaderSe) ? leaderSe * ELO_PER_LOGIT : Infinity),
+        conclusive: leaderProb >= CONCLUSIVE_PROB || tournamentDecided(state),
     };
+};
+
+// The tournament ("king of the hill") stopping rule: the leader is unbeaten,
+// has at least 3 wins, and has directly beaten the runner-up. A single
+// round-robin over a handful of candidates can never reach 95% Bayesian
+// confidence (the top two meet only once, so their head-to-head evidence is
+// one vote), but an unbeaten leader who beat the strongest challenger
+// face-to-face is a decided arena in practice. Advisory only — it just offers
+// to finish; the user stays in control.
+const tournamentDecided = (state: ArenaState): boolean => {
+    const sorted = standings(state);
+    const leader = sorted[0];
+    const runnerUp = sorted[1];
+    if (!leader || !runnerUp) return false;
+    if (leader.losses !== 0 || leader.wins < 3) return false;
+    return state.matches.some(
+        (m) =>
+            ((m.aKey === leader.key && m.bKey === runnerUp.key) ||
+                (m.bKey === leader.key && m.aKey === runnerUp.key)) &&
+            m.winnerKey === leader.key,
+    );
 };
 
 export const summarize = (state: ArenaState): ArenaSummary => {
