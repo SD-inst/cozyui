@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
 import { BoxOwnProps } from '@mui/system';
-import { ReactElement, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppSelector } from '../../redux/hooks';
+import { useElementVisibility } from '../../hooks/useElementVisibility';
 
 const preview_style = { maxWidth: '50px', maxHeight: '50px' };
 
@@ -15,43 +16,64 @@ export const ModelOption = ({
     id: string;
     previews?: boolean;
 } & BoxOwnProps) => {
-    const [preview, setPreview] = useState<ReactElement>();
     const preview_root = useAppSelector((s) => s.config.preview_root);
+    const { visible, ref } = useElementVisibility();
+    const [model, setModel] = useState('');
+    const [video, setVideo] = useState(false);
     useEffect(() => {
-        if (!previews || !preview_root || !id.endsWith('.safetensors')) {
-            return;
+        setVideo(false);
+        if (
+            previews &&
+            visible &&
+            preview_root &&
+            id.endsWith('.safetensors')
+        ) {
+            setModel(id);
+        } else {
+            setModel('');
         }
-        const preview_img =
-            preview_root + '/' + id.replace(/(\.safetensors)$/, '.preview.png');
-        setPreview(
-            <img
-                style={preview_style}
-                src={preview_img}
-                onError={() => {
-                    const preview_vid =
-                        preview_root +
-                        '/' +
-                        id.replace(/(\.safetensors)$/, '.preview.mp4');
-                    setPreview(
-                        <video
-                            style={preview_style}
-                            autoPlay
-                            loop
-                            muted
-                            playsInline
-                            src={preview_vid}
-                        />
-                    );
-                }}
-            />
-        );
-    }, [id, preview_root, previews]);
+    }, [id, preview_root, previews, visible]);
     return (
         <Box minHeight='60px !important' {...props}>
             {previews ? (
                 <>
-                    <Box display='flex' justifyContent='center' width={50}>
-                        {preview}
+                    <Box ref={ref} display='flex' justifyContent='center' width={50}>
+                        {model ? (
+                            video ? (
+                                <video
+                                    key={model}
+                                    style={preview_style}
+                                    autoPlay
+                                    loop
+                                    muted
+                                    playsInline
+                                    preload='none'
+                                    src={
+                                        preview_root +
+                                        '/' +
+                                        model.replace(
+                                            /(\.safetensors)$/,
+                                            '.preview.mp4',
+                                        )
+                                    }
+                                />
+                            ) : (
+                                <img
+                                    key={model}
+                                    style={preview_style}
+                                    loading='lazy'
+                                    src={
+                                        preview_root +
+                                        '/' +
+                                        model.replace(
+                                            /(\.safetensors)$/,
+                                            '.preview.png',
+                                        )
+                                    }
+                                    onError={() => setVideo(true)}
+                                />
+                            )
+                        ) : null}
                     </Box>
                     <Box position='absolute' left={80}>
                         {value}
