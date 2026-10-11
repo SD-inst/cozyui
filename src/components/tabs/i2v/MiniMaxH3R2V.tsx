@@ -12,6 +12,7 @@ import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionS
 import { MiniMaxH3Steps } from '../../controls/MiniMaxH3Steps';
 import { TurboPDDToggle } from '../../controls/TurboPDDToggle';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
+import { MiniMaxH3AudioRefiner } from '../../controls/MiniMaxH3AudioRefiner';
 import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { SectionAccordion } from '../../controls/SectionAccordion';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
@@ -611,6 +612,7 @@ const Content = () => {
                     <MiniMaxH3SigmaShiftControls />
                     <H3SparseAttention />
                     <MiniMaxH3SpectrumControls />
+                    <MiniMaxH3AudioRefiner />
                     <ReferenceScaling name='ref_image_size' />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />

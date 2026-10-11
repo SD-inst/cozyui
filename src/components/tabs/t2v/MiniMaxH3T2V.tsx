@@ -8,6 +8,7 @@ import { MiniMaxH3Steps } from '../../controls/MiniMaxH3Steps';
 import { TurboPDDToggle } from '../../controls/TurboPDDToggle';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { MiniMaxH3SpectrumControls } from '../../controls/MiniMaxH3SpectrumControls';
+import { MiniMaxH3AudioRefiner } from '../../controls/MiniMaxH3AudioRefiner';
 import { MiniMaxH3SigmaShiftControls } from '../../controls/MiniMaxH3SigmaShiftControls';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { LoraInput } from '../../controls/LoraInput';
@@ -108,6 +109,7 @@ const Content = () => {
                     <MiniMaxH3SigmaShiftControls />
                     <H3SparseAttention />
                     <MiniMaxH3SpectrumControls />
+                    <MiniMaxH3AudioRefiner />
                     <VideoInterpolationSlider />
                     <TurboLoraSelect />
                 </AdvancedSettings>

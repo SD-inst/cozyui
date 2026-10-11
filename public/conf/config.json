@@ -3698,8 +3698,9 @@
                 "turbo": {
                     "id": "handle",
                     "sampler_node_id": "105:14",
-                    "unet_loader_node_id": "105:6",
-                    "spectrum_node_id": "137"
+                    "spectrum_node_id": "137",
+                    "sigma_shift_node_id": "136",
+                    "turbo_model_node_ids": ["137"]
                 },
                 "pdd": {
                     "id": "handle",
@@ -3725,6 +3726,14 @@
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
                     "sigma_shift_node_id": "136"
+                },
+                "audio_refine": {
+                    "id": "handle",
+                    "order": 150,
+                    "sigma_shift_node_id": "136",
+                    "guider_node_id": "105:16",
+                    "video_vae_decode_node_id": "105:10",
+                    "audio_vae_decode_node_id": "105:23"
                 },
                 "video_image_override": {
                     "id": "handle"
@@ -3859,8 +3868,9 @@
                 "turbo": {
                     "id": "handle",
                     "sampler_node_id": "105:14",
-                    "unet_loader_node_id": "105:6",
-                    "spectrum_node_id": "137"
+                    "spectrum_node_id": "137",
+                    "sigma_shift_node_id": "136",
+                    "turbo_model_node_ids": ["137"]
                 },
                 "pdd": {
                     "id": "handle",
@@ -3886,6 +3896,14 @@
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
                     "sigma_shift_node_id": "136"
+                },
+                "audio_refine": {
+                    "id": "handle",
+                    "order": 150,
+                    "sigma_shift_node_id": "136",
+                    "guider_node_id": "105:16",
+                    "video_vae_decode_node_id": "105:10",
+                    "audio_vae_decode_node_id": "105:23"
                 },
                 "video_image_override": {
                     "id": "handle"
@@ -4027,8 +4045,9 @@
                 "turbo": {
                     "id": "handle",
                     "sampler_node_id": "105:14",
-                    "unet_loader_node_id": "105:6",
-                    "spectrum_node_id": "137"
+                    "spectrum_node_id": "137",
+                    "sigma_shift_node_id": "136",
+                    "turbo_model_node_ids": ["137"]
                 },
                 "pdd": {
                     "id": "handle",
@@ -4062,6 +4081,14 @@
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
                     "sigma_shift_node_id": "136"
+                },
+                "audio_refine": {
+                    "id": "handle",
+                    "order": 150,
+                    "sigma_shift_node_id": "136",
+                    "guider_node_id": "105:16",
+                    "video_vae_decode_node_id": "105:10",
+                    "audio_vae_decode_node_id": "105:23"
                 },
                 "video_image_override": {
                     "id": "handle"

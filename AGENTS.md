@@ -845,6 +845,27 @@ This means:
 - If a node should not exist (e.g. switching from base to dev model), the handler must explicitly remove it from the current `api` object
 - **Do NOT delete nodes for disabled toggles** — if a toggle-controlled node is only inserted when `value === true`, just return early when `value === false`. The graph is reloaded fresh from the API JSON on each generation, so no leftover nodes exist
 
+### Handler execution order — IMPORTANT
+
+`GenerateButton` runs the controls in the order `Object.keys(controls).sort((a,b) => order(controls[a]) - order(controls[b]))`, so a handler's config `order` decides when it sees the (already mutated) workflow:
+
+- direct node-id controls run first (order `0`), `id: "handle"` defaults to `100`, an explicit `order` (e.g. `audio_refine: 150`) runs after all of them;
+- the sort is stable, so for equal `order` the config.json **key order** decides — put a control after the controls it depends on;
+- async handlers are awaited inside the loop, so a rewiring done by an earlier control is visible to later ones.
+
+Give a handler an explicit `order` when it must read values another handler has already written into the graph (e.g. reading `VAEDecode.inputs.samples` after `latent_upscale` has rewired it).
+
+### Derive conditioning from the sampler that produced the latent — IMPORTANT
+
+When a handler inserts a **post-processing / refinement** node (H3 audio refiner, any extra sampler pass) it must take the latent AND the conditioning from the **same producing sampler**, never from the static base ids:
+
+- read the final latent from what currently feeds the decode: `api[video_vae_decode].inputs.samples`;
+- resolve conditioning through that sampler: `sampler.inputs.guider` → `guider.inputs.conditioning` (see `conditioningOfSampler` in [`MiniMaxH3AudioRefinerHandler.ts`](src/components/controls/MiniMaxH3AudioRefinerHandler.ts)).
+
+Why: with latent upscale active, the second sampler gets its own `BasicGuider` whose conditioning is built at the **upscaled** resolution (a duplicated `MiniMaxH3ImageToVideo`/`MiniMaxH3ReferenceToVideo`), while the base `105:16` conditioning is at the base resolution — feeding it to a node that consumes the upscaled latent produces a **tensor size mismatch** (observed on I2V). Reading through the sampler's own guider chain also picks up RefMod-applied conditioning (rewired by `refmods`, which runs earlier) and the PDD/upscale model swaps.
+
+Corollary for the model chain: insert accelerator LoRAs at the node's **consumers** (`turbo_model_node_ids`, e.g. `137`), not into the node's own input (`136`), so downstream branches can tap that node's output without them.
+
 ---
 
 ## Key Patterns

@@ -6,9 +6,12 @@ import { useAPI } from './useAPI';
 
 /**
  * Hook that returns a handler for the MiniMax H3 Turbo toggle.
- * When enabled, inserts a MiniMaxH3TurboLoRA node into the model chain
- * (before regular LoRAs) and adds a MiniMaxH3TurboSampler node,
- * connecting it to SamplerCustomAdvanced's `sampler` input.
+ * When enabled, inserts the turbo LoRA node into the model chain AFTER the
+ * sigma-shift node (at `turbo_model_node_ids` — the shift node's consumers)
+ * and, for H3 turbo, adds a MiniMaxH3TurboSampler node, connecting it to
+ * SamplerCustomAdvanced's `sampler` input. Keeping the turbo weights
+ * downstream of the shift node lets the audio-refine branch tap the shift
+ * node's model output without them.
  */
 export const useMiniMaxH3TurboHandler = () => {
     const { handler_options } = useAPI() as any;
@@ -37,16 +40,17 @@ export const useMiniMaxH3TurboHandler = () => {
 
         const turboLoraName = getValues('turbo_lora.lora_name') as string;
         const turboLoraStrength = getValues('turbo_lora.strength') as number;
-        const unetLoaderId = control?.unet_loader_node_id;
         const samplerNodeId = control?.sampler_node_id;
         const spectrumNodeId = control?.spectrum_node_id;
+        const sigmaShiftNodeId = control?.sigma_shift_node_id;
+        // The turbo LoRA is applied AFTER the sigma-shift node (the shift
+        // node's consumers), so the audio-refine branch can tap the shift
+        // node's model output without carrying the turbo weights. Falls back
+        // to the shift node itself (the pre-reorder position) when unset.
+        const modelNodeIds: string[] =
+            control?.turbo_model_node_ids ?? output_node_ids;
 
-        if (
-            !turboLoraName ||
-            !output_node_ids?.length ||
-            !unetLoaderId ||
-            !samplerNodeId
-        ) {
+        if (!turboLoraName || !modelNodeIds?.length || !samplerNodeId) {
             return;
         }
 
@@ -56,7 +60,7 @@ export const useMiniMaxH3TurboHandler = () => {
 
         if (!isH3Turbo) {
             const inputNodeId = (
-                api[output_node_ids[0]]?.inputs?.[api_input_name] as
+                api[modelNodeIds[0]]?.inputs?.[api_input_name] as
                     | NodeRef
                     | undefined
             )?.[0];
@@ -74,24 +78,24 @@ export const useMiniMaxH3TurboHandler = () => {
                 class_type: class_name,
                 _meta: { title: class_name },
             };
-            output_node_ids.forEach(
+            modelNodeIds.forEach(
                 (id: string) =>
                     (api[id].inputs[api_input_name] = [loraNodeId, output_idx]),
             );
 
             if (is4Step) {
-                api[output_node_ids[0]].inputs.shift_video = 6;
+                const shiftId = sigmaShiftNodeId ?? output_node_ids[0];
+                api[shiftId].inputs.shift_video = 6;
             }
         } else {
             insertNode(
                 api,
-                output_node_ids,
+                modelNodeIds,
                 api_input_name,
                 {
                     inputs: {
                         lora_name: turboLoraName,
                         strength: turboLoraStrength,
-                        [lora_input_name]: [unetLoaderId, 0],
                         low_vram: true,
                     },
                     class_type: 'MiniMaxH3TurboLoRA',
