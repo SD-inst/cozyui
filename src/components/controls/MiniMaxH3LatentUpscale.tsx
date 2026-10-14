@@ -36,6 +36,7 @@ export const MiniMaxH3LatentUpscale = ({
             aspectRatio: getValues('aspect_ratio'),
             baseMP: getValues('megapixels'),
             targetMP: value.megapixels,
+            length: getValues('length'),
             // PDD variant 2: run the upscale pass on the model before the PDD
             // node (the PDD LoRAs are only valid on the base pass).
             pddModelRef:

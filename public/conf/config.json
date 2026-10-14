@@ -3947,15 +3947,17 @@
                     "set_field": "image",
                     "max": 9
                 },
-                "ref_videos": {
-                    "id": "handle",
-                    "node_id": "105:104",
-                    "guider_node_id": "105:16",
-                    "vae_node_id": "105:11",
-                    "audio_vae_node_id": "105:24",
-                    "set_field": "video",
-                    "max": 3
-                },
+            "ref_videos": {
+                "id": "handle",
+                "node_id": "105:104",
+                "guider_node_id": "105:16",
+                "vae_node_id": "105:11",
+                "audio_vae_node_id": "105:24",
+                "sampler_node_id": "105:14",
+                "resolution_node_id": "115",
+                "set_field": "video",
+                "max": 3
+            },
                 "ref_audio": {
                     "id": "handle",
                     "node_id": "105:104",
@@ -4080,6 +4082,8 @@
                     "audio_vae_decode_node_id": "105:23",
                     "guider_node_id": "105:16",
                     "node_id": "105:104",
+                    "vae_node_id": "105:11",
+                    "audio_vae_node_id": "105:24",
                     "sigma_shift_node_id": "136"
                 },
                 "audio_refine": {

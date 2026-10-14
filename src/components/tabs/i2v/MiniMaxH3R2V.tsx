@@ -1,4 +1,4 @@
-import { Box, useEventCallback } from '@mui/material';
+import { Box, Typography, useEventCallback } from '@mui/material';
 import { useWatch } from 'react-hook-form';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { ArrayInput } from '../../controls/ArrayInput';
@@ -32,6 +32,11 @@ import { miniMaxH3R2VImageSystemPrompt } from '../../chat/prompts/minimaxH3R2VIm
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { LoraInput } from '../../controls/LoraInput';
 import { keyframeHandler } from '../../controls/MiniMaxH3KeyframeHandler';
+import {
+    anchorFitFrames,
+    anchorLayoutFor,
+    anchorLengthInfo,
+} from '../../controls/MiniMaxH3LatentAnchor';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
@@ -48,7 +53,12 @@ import { WFTab } from '../../WFTab';
 
 import { useFormContext } from 'react-hook-form';
 
-const imageValue = { image: '', keyframe: false, keyframe_position: 0 };
+const imageValue = {
+    image: '',
+    keyframe: false,
+    latent: false,
+    keyframe_frame: 0,
+};
 const audioValue = { audio: '' };
 const videoValue = {
     video: '',
@@ -56,26 +66,95 @@ const videoValue = {
     trim: 0,
     last: false,
     keyframe: false,
-    keyframe_position: 0,
+    latent: false,
+    keyframe_frame: 0,
 };
 
-const KeyframeControl = ({ name }: { name: string }) => {
-    const positionName = name.replace(/\.keyframe$/, '.keyframe_position');
+const KeyframeControl = ({
+    name,
+    video = false,
+}: {
+    name: string;
+    video?: boolean;
+}) => {
+    const tr = useTranslate();
+    const frameName = name.replace(/\.keyframe$/, '.keyframe_frame');
+    const latentName = name.replace(/\.keyframe$/, '.latent');
+    const trimName = name.replace(/\.keyframe$/, '.trim');
     const enabled = useWatch({ name, defaultValue: false });
+    const latent = useWatch({ name: latentName, defaultValue: false });
+    const frame = useWatch({ name: frameName, defaultValue: 0 });
+    const trim = useWatch({ name: trimName, defaultValue: 0 });
+    const length = useWatch({ name: 'length', defaultValue: 5 });
+    const layout =
+        video && (enabled || latent)
+            ? anchorLayoutFor(length, frame, trim)
+            : null;
     return (
         <Box>
-            <ToggleInput name={name} label='keyframe' defaultValue={false} />
-            {enabled && (
-                <SliderInput
-                    name={positionName}
+            <Box display='flex' flexWrap='wrap' gap={4}>
+                <ToggleInput name={name} label='keyframe' defaultValue={false} />
+                <ToggleInput
+                    name={latentName}
+                    label='latent'
+                    defaultValue={false}
+                />
+            </Box>
+            {(enabled || latent) && (
+                <LengthInput
+                    name={frameName}
                     label='keyframe_position'
                     min={0}
-                    max={30}
-                    step={0.1}
+                    max={735}
+                    step={video ? 17 : 1}
+                    fps={24}
                     defaultValue={0}
                 />
             )}
+            {layout && (
+                <Typography variant='caption' color='text.secondary'>
+                    {tr('controls.anchor_actual', {
+                        start: layout.guideFrameIndex,
+                        end: layout.guideFrameIndex + layout.fitFrames - 1,
+                        fit: layout.fitFrames,
+                    })}
+                </Typography>
+            )}
         </Box>
+    );
+};
+
+const TrimHint = ({ name }: { name: string }) => {
+    const tr = useTranslate();
+    const trim = useWatch({ name, defaultValue: 0 });
+    if (trim <= 0) {
+        return null;
+    }
+    return (
+        <Typography variant='caption' color='text.secondary'>
+            {tr('controls.anchor_clip', { fit: anchorFitFrames(trim) })}
+        </Typography>
+    );
+};
+
+const LengthControl = () => {
+    const tr = useTranslate();
+    const length = useWatch({ name: 'length', defaultValue: 5 });
+    const info = anchorLengthInfo(length);
+    return (
+        <SliderInput
+            name='length'
+            label='length'
+            defaultValue={5}
+            min={0}
+            max={30}
+            step={0.1}
+            hint={tr('controls.length_info', {
+                frames: info.frames,
+                slots: info.slots,
+                audio: info.audioSlots,
+            })}
+        />
     );
 };
 
@@ -420,6 +499,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                 getValues('ref_images') || [],
                 getValues('ref_videos') || [],
                 control,
+                { length: getValues('length') },
             );
         },
     );
@@ -443,7 +523,7 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     max={720}
                     fps={24}
                     defaultValue={0}
-                    step={8}
+                    step={17}
                     sx={{ minWidth: 200, flex: 1 }}
                 />
                 <ToggleInput
@@ -452,7 +532,8 @@ const ReferenceVideos = ({ name }: { name: string }) => {
                     sx={{ mt: 1 }}
                 />
             </Box>
-            <KeyframeControl name='keyframe' />
+            <TrimHint name='trim' />
+            <KeyframeControl name='keyframe' video />
         </ArrayInput>
     );
 };
@@ -577,14 +658,7 @@ const Content = () => {
                     max={2}
                     step={0.01}
                 />
-                <SliderInput
-                    name='length'
-                    label='length'
-                    defaultValue={5}
-                    min={0}
-                    max={30}
-                    step={0.1}
-                />
+                <LengthControl />
                 <MiniMaxH3Steps />
                 <TurboPDDToggle />
                 <MiniMaxH3LatentUpscale />

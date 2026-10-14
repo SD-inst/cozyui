@@ -13,6 +13,8 @@ import { HelpButton } from './HelpButton';
 export type SliderInputProps = {
     tooltip?: string;
     suffix?: string;
+    /** Extra caption shown inline after the value (computed hints). */
+    hint?: string;
     name: string;
     label?: string;
 } & SliderProps;
@@ -72,6 +74,11 @@ export const SliderInputBase = ({
                     </Typography>
                 )}
                 {tooltip && <HelpButton title={tooltip} />}
+                {props.hint ? (
+                    <Typography variant='caption' color='text.secondary'>
+                        {props.hint}
+                    </Typography>
+                ) : null}
             </Box>
             <Slider
                 valueLabelDisplay='auto'

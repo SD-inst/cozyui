@@ -2,6 +2,16 @@ import { NodeRef, Workflow } from '../../api/graph';
 import { getFreeNodeId, insertGraph } from '../../api/utils';
 import { controlType } from '../../redux/config';
 import { collectKeyframeEntries, TRefEntry } from './MiniMaxH3KeyframeHandler';
+import {
+    anchorAudioRef,
+    anchorSourceRef,
+    buildAnchorFitChain,
+    buildAnchorMaskGraph,
+    buildAnchorReplaceChain,
+    buildAudioSpliceChain,
+    collectLatentEntries,
+    computeAnchorPlan,
+} from './MiniMaxH3LatentAnchor';
 
 export type TValue = {
     enabled: boolean;
@@ -111,6 +121,8 @@ export type TSecondGuiderValues = {
      * the second guider's model is set to this ref instead of the base guider's.
      */
     pddModelRef?: NodeRef;
+    /** The form's `length` (seconds), for the latent-anchor slot plan. */
+    length?: number;
 };
 
 /**
@@ -402,6 +414,121 @@ export const applyLatentUpscale = (
     const output: [string, number] = [baseNodeID + ':sampler', 0];
     api[video_vae_decode_node_id].inputs.samples = output;
     api[audio_vae_decode_node_id].inputs.samples = output;
+
+    // Re-apply latent anchors on the upscaled video stream: the pass-1 anchor
+    // content is already inside the upscaled latent (and is learned-upscaled),
+    // but the mask is gone (denoised_output carries no noise_mask) and the
+    // 3D upscaler discards it too. Re-encode the anchor clips at the upscaled
+    // pixel size (mirroring the upscaler's megapixels formula) and splice them
+    // back at the same slot indexes — the temporal axis is untouched by the
+    // upscaler, so the plan applies unchanged; the mask images are constant
+    // per slot, so they resize onto the upscaled latent grid exactly.
+    const latentEntries = collectLatentEntries(
+        values.refImages,
+        values.refVideos,
+    );
+    if (latentEntries.length && control.node_id && control.vae_node_id) {
+        const plan = computeAnchorPlan(
+            values.length ?? 5,
+            latentEntries.sort((a, b) => a.position - b.position),
+        );
+        if (plan) {
+            const refNodeID = control.node_id;
+            const refNode = api[refNodeID];
+            const resSelID =
+                refNode &&
+                Array.isArray(refNode.inputs.width) &&
+                refNode.inputs.width[0];
+            const multiple =
+                ((resSelID &&
+                    api[resSelID as string]?.inputs?.multiple) as number) || 32;
+            const upSize = computeUpscaledPixelSize(
+                values.aspectRatio,
+                values.baseMP ?? 0.4,
+                multiple,
+                values.targetMP ?? 1,
+            );
+            const sources = new Map<(typeof plan.regions)[number], NodeRef>();
+            plan.regions.forEach((region) => {
+                const entry = latentEntries.find(
+                    (e) => e.kind === region.kind && e.index === region.index,
+                );
+                if (!entry) {
+                    return;
+                }
+                const ref = anchorSourceRef(api, refNodeID, entry);
+                if (ref) {
+                    sources.set(region, ref);
+                }
+            });
+            const fits = buildAnchorFitChain(api, {
+                regions: plan.regions,
+                sources,
+            });
+            const replaced = buildAnchorReplaceChain(api, {
+                videoDest: [baseNodeID + ':upscale', 0],
+                regions: plan.regions,
+                fits,
+                sources,
+                vaeRef: [control.vae_node_id, 0],
+                size: { kind: 'static', width: upSize.width, height: upSize.height },
+            });
+            const audioSources = new Map<
+                (typeof plan.regions)[number],
+                NodeRef
+            >();
+            plan.regions.forEach((region) => {
+                if (!region.audio) {
+                    return;
+                }
+                const ref = anchorAudioRef(api, refNodeID, region.index);
+                if (ref) {
+                    audioSources.set(region, ref);
+                }
+            });
+            const audioWindows: Array<[number, number]> = plan.regions
+                .filter((region) => region.audio && audioSources.has(region))
+                .map((region) => region.audio as [number, number]);
+            let audioLatent: NodeRef = [baseNodeID + ':separate', 1];
+            if (audioWindows.length && control.audio_vae_node_id) {
+                audioLatent = buildAudioSpliceChain(api, {
+                    audioDest: [baseNodeID + ':separate', 1],
+                    regions: plan.regions,
+                    audioSources,
+                    audioVAERef: [control.audio_vae_node_id, 0],
+                    audioSlots: plan.audioSlots,
+                });
+            }
+            const { videoMask, audioMask } = buildAnchorMaskGraph(
+                api,
+                plan,
+                plan.regions,
+                audioWindows,
+            );
+            const anchorMaskGraph: Workflow = {
+                ':vmask': {
+                    inputs: { samples: replaced, mask: videoMask },
+                    class_type: 'SetLatentNoiseMask',
+                    _meta: { title: 'Mask Video Slots (Latent Upscale)' },
+                },
+            };
+            if (audioWindows.length) {
+                anchorMaskGraph[':amask'] = {
+                    inputs: { samples: audioLatent, mask: audioMask },
+                    class_type: 'SetLatentNoiseMask',
+                    _meta: { title: 'Mask Audio Slots (Latent Upscale)' },
+                };
+            }
+            const anchorBaseID = insertGraph(api, anchorMaskGraph);
+            api[baseNodeID + ':concat'].inputs.video_latent = [
+                anchorBaseID + ':vmask',
+                0,
+            ];
+            api[baseNodeID + ':concat'].inputs.audio_latent = audioWindows.length
+                ? [anchorBaseID + ':amask', 0]
+                : audioLatent;
+        }
+    }
 
     const newGuiderID = buildSecondGuider(
         api,
