@@ -866,6 +866,20 @@ Why: with latent upscale active, the second sampler gets its own `BasicGuider` w
 
 Corollary for the model chain: insert accelerator LoRAs at the node's **consumers** (`turbo_model_node_ids`, e.g. `137`), not into the node's own input (`136`), so downstream branches can tap that node's output without them.
 
+### H3 latent anchors (latent keyframes via masked AV latent) — IMPORTANT
+
+The `latent` toggle next to `keyframe` on R2V references (`MiniMaxH3LatentAnchor.ts`) VAE-encodes an image/clip into the sampler's AV latent and freezes those slots with a nested `noise_mask` — unlike `MiniMaxH3AddGuide` (conditioning tokens re-injected every step), the sampler blends the anchor back every step, so the model never has to "understand" an end-clip it was not trained on.
+
+H3 video VAE time chunking (the whole slot math): `clip_length=17`, `vae_ratio_t=4`, `token_drop=3` (dropped only once, at the very end of the whole encode). A full video of F = 17M+5 frames has T = 5M+2 slots; chunk i covers pixel frames `[17i, 17i+17)` ↔ slots `[5i, 5i+5)`; the trailing 5 frames get the trailing 2 slots (the `(1,4)` mini-cycle of `FRAME_PER_TOKEN`). Standalone clip encodes: **17m frames → 5m−3 slots, 17m+5 frames → 5m+2 slots** — so only a 17m+5 clip runs **flush to the video end** (its trailing chunk == the video's trailing chunk); an interior region needs a 17m trim + 5 junk pad frames, then `LatentCut(dim='t', amount=5m)` drops the pad's 2 slots. Anchors therefore always snap to 17-frame chunk boundaries.
+
+Latent/mask plumbing facts (all verified against this ComfyUI):
+
+- AV latents are `NestedTensor((video [B,24,T,h,w], audio [B,32,2,T_a]))`. **Stock nodes do not handle NestedTensor samples**: `ReplaceVideoLatentFrames` (core, `nodes_latent.py`) reads `shape[2]` and slices `[:, :, i:j]` — it works only after splitting the streams. Use the core `LTXVSeparateAVLatent`/`LTXVConcatAVLatent` (their description explicitly says "any AV model, e.g. LTXV or MiniMax H3"); the Concat builds the **nested `noise_mask`** from the per-stream `noise_mask`s, which is what the sampler's nested-mask path consumes (`comfy/samplers.py:1297`).
+- `SetLatentNoiseMask` never touches `samples`, so it is safe on AV latents — but the mask shape convention differs per stream because `reshape_mask` maps the MASK spatial axes onto the latent's **last two** dims: video (5D) → put time in the **batch axis** (one constant image per latent slot; equal-length trilinear is exact, constant spatial = exact at any latent size); audio (4D `[B,32,2,T_a]`) → put time in the mask **width** (one `2×T_a` image; `SolidMask` + `MaskComposite(subtract, x=a0)` cuts the window). A single mask on an AV latent applies to the video only; audio stays fully denoised unless masked explicitly.
+- The audio stream can only be **masked, not spliced**: its time axis is the last dim of a 4D latent, while core's `LatentCut/LatentConcat` `t` maps to `ndim-3` (axis 1 on 4D → the channel axis). Frozen zero slots decode to silence (used to stop audio over-generation under an anchored tail); injecting the clip's own audio needs a ~50-line custom node (nested utils exist in `ComfyUI-MiniMaxH3_LatentUpscaler/utils.py`).
+- `MinimaxH3LatentUpscaler3D` **discards `noise_mask`** (outputs only `samples`) and `denoised_output` (sampler output index 1) carries no mask either — the upscale pass must **re-apply** anchors and masks on the upscaled latent (same slot indexes: the upscaler keeps T; re-encode clips at the static upscaled pixel size via `computeUpscaledPixelSize`).
+- Masking is H3-native in core: the `MiniMaxH3` model class pools the mask to the DiT token grid, turns masked tokens into cond-timestep tokens (`VISUAL_COND_TIMESTEP=0.999` noise aug) and re-blends `latent_image` every step; the Spectrum node handles `denoise_mask` natively too.
+
 ---
 
 ## Key Patterns

@@ -376,6 +376,7 @@ const translation = {
         videos: 'videos',
         correct_brightness: 'correct brightness',
         overlap: 'overlap',
+        loop_overlap: 'loop overlap',
     },
     settings: {
         select_language: 'Select language',

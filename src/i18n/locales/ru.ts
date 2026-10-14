@@ -375,6 +375,7 @@ const translation = {
         videos: 'видео',
         correct_brightness: 'коррекция яркости',
         overlap: 'перекрытие',
+        loop_overlap: 'перекрытие цикла',
     },
     settings: {
         select_language: 'Выбор языка',

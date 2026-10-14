@@ -1,5 +1,5 @@
 import { useEventCallback } from '@mui/material';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useController, useFormContext, useWatch } from 'react-hook-form';
 import { ArrayInput } from '../../controls/ArrayInput';
 import { FileUpload } from '../../controls/FileUpload';
 import { GenerateButton } from '../../controls/GenerateButton';
@@ -12,6 +12,7 @@ import {
 import { Randomizer } from '../../controls/Randomizer';
 import { SliderInput } from '../../controls/SliderInput';
 import { ToggleInput } from '../../controls/ToggleInput';
+import { ToggleInputBase } from '../../controls/ToggleInputBase';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { useRegisterHandler } from '../../contexts/TabContext';
@@ -40,6 +41,72 @@ const buildLoad = (api: Workflow, filename: string): string => {
     return compId;
 };
 
+// Closes the loop: crossfades the last N frames of the joined video into a
+// copy of the first N frames of the first clip (same tone-correction and
+// transition logic as the chain joins), then strips those N frames from the
+// start. Replaying the result wraps around without a visible seam.
+const buildLoopSeam = (
+    api: Workflow,
+    framesRef: [string, number],
+    headSourceRef: [string, number],
+    correct: boolean,
+    overlap: number,
+): [string, number] => {
+    const headId = getFreeNodeId(api) + '';
+    api[headId] = {
+        inputs: { start_index: 0, num_frames: overlap, images: headSourceRef },
+        class_type: 'GetImageRangeFromBatch',
+        _meta: { title: 'Loop Head Frames' },
+    };
+    let headRef: [string, number] = [headId, 0];
+    if (correct) {
+        const toneId = getFreeNodeId(api) + '';
+        api[toneId] = {
+            inputs: {
+                source: framesRef,
+                target: headRef,
+                mode: 'frame_shift',
+                overlap,
+                lut_bins: 64,
+            },
+            class_type: 'MiniMaxH3ToneCompensate',
+            _meta: { title: 'MiniMax H3 Tone Compensate' },
+        };
+        headRef = [toneId, 0];
+    }
+    const seamId = getFreeNodeId(api) + '';
+    api[seamId] = {
+        inputs: {
+            // images_2 holds exactly `overlap` frames, so the join ends at
+            // the blended seam and nothing from the head is duplicated.
+            start_index: -overlap,
+            interpolation: 'ease_in_out',
+            transition_type: 'fade',
+            transitioning_frames: overlap,
+            blur_radius: 0,
+            reverse: false,
+            device: 'GPU',
+            images_1: framesRef,
+            images_2: headRef,
+        },
+        class_type: 'ImageBatchJoinWithTransition',
+        _meta: { title: 'Loop Seam Join' },
+    };
+    const stripId = getFreeNodeId(api) + '';
+    api[stripId] = {
+        inputs: {
+            image: [seamId, 0],
+            batch_index: overlap,
+            // ComfyUI clamps length to the remaining batch size, so this
+            // keeps everything after the stripped first frames.
+            length: 4096,
+        },
+        class_type: 'ImageFromBatch',
+        _meta: { title: 'Strip Loop Head' },
+    };
+    return [stripId, 0];
+};
+
 const Videos = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
     const handler = useEventCallback(
@@ -53,6 +120,7 @@ const Videos = ({ name }: { name: string }) => {
             }
             const overlap = getValues('overlap') ?? 48;
             const correct = getValues('correct_brightness') ?? false;
+            const loop = getValues('loop') ?? false;
             const videos = (value || []).filter((v) => v.video && !v.skip);
             if (!videos.length) {
                 return;
@@ -150,6 +218,16 @@ const Videos = ({ name }: { name: string }) => {
                 audioRef = [concatId, 0];
             }
 
+            if (loop) {
+                framesRef = buildLoopSeam(
+                    api,
+                    framesRef,
+                    corrected[0],
+                    correct,
+                    getValues('loop_overlap') ?? overlap,
+                );
+            }
+
             api[combineNode].inputs.images = framesRef;
             api[combineNode].inputs.audio = audioRef;
             api[combineNode].inputs.fps = fpsRef;
@@ -174,8 +252,34 @@ const Videos = ({ name }: { name: string }) => {
     );
 };
 
+// Seeds loop_overlap from the main overlap on the user's enable click only.
+// A restored loop=true state (tab switch / reload) sets the form value
+// without firing the switch onChange, so the persisted loop overlap stays.
+const LoopToggle = ({ name }: { name: string }) => {
+    const { getValues, setValue } = useFormContext();
+    const {
+        field: { ref, value, onChange, onBlur },
+    } = useController({ name, defaultValue: false });
+    return (
+        <ToggleInputBase
+            name={name}
+            label='loop'
+            baseRef={ref}
+            value={value}
+            onBlur={onBlur}
+            onChange={(_, checked) => {
+                onChange(checked);
+                if (checked) {
+                    setValue('loop_overlap', getValues('overlap'));
+                }
+            }}
+        />
+    );
+};
+
 const Content = () => {
     const videos = useWatch({ name: 'videos', defaultValue: [] });
+    const loop = useWatch({ name: 'loop', defaultValue: false });
     const filled = (videos || []).filter((v: any) => v.video).length;
     return (
         <Layout>
@@ -194,6 +298,17 @@ const Content = () => {
                     max={240}
                     step={1}
                 />
+                <LoopToggle name='loop' />
+                {loop && (
+                    <SliderInput
+                        name='loop_overlap'
+                        label='loop_overlap'
+                        defaultValue={48}
+                        min={8}
+                        max={240}
+                        step={1}
+                    />
+                )}
                 <Randomizer />
             </GridLeft>
             <GridRight>
