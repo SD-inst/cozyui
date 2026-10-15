@@ -681,7 +681,7 @@ const Content = () => {
                     <SamplerSelectInput name='sampler' defaultValue='er_sde' />
                     <SchedulerSelectInput
                         name='scheduler'
-                        defaultValue='beta57'
+                        defaultValue='sgm_uniform'
                     />
                     <MiniMaxH3SigmaShiftControls />
                     <H3SparseAttention />
