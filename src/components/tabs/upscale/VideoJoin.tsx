@@ -18,94 +18,15 @@ import { VideoResult } from '../../controls/VideoResult';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { WFTab } from '../../WFTab';
 import { Workflow } from '../../../api/graph';
-import { getFreeNodeId } from '../../../api/utils';
+import { getFreeNodeId, insertGraph } from '../../../api/utils';
 import { controlType } from '../../../redux/config';
+import {
+    buildAudioLoopSeam,
+    buildLoad,
+    buildLoopSeam,
+} from './videoJoinGraph';
 
 const videoValue = { video: '' };
-
-// Builds the whole join pipeline dynamically. Node IDs come exclusively from
-// getFreeNodeId — never hardcoded.
-const buildLoad = (api: Workflow, filename: string): string => {
-    const loadId = getFreeNodeId(api) + '';
-    api[loadId] = {
-        inputs: { file: filename, 'video-preview': '' },
-        class_type: 'LoadVideo',
-        _meta: { title: 'Load Video' },
-    };
-    const compId = getFreeNodeId(api) + '';
-    api[compId] = {
-        inputs: { video: [loadId, 0] },
-        class_type: 'GetVideoComponents',
-        _meta: { title: 'Get Video Components' },
-    };
-    return compId;
-};
-
-// Closes the loop: crossfades the last N frames of the joined video into a
-// copy of the first N frames of the first clip (same tone-correction and
-// transition logic as the chain joins), then strips those N frames from the
-// start. Replaying the result wraps around without a visible seam.
-const buildLoopSeam = (
-    api: Workflow,
-    framesRef: [string, number],
-    headSourceRef: [string, number],
-    correct: boolean,
-    overlap: number,
-): [string, number] => {
-    const headId = getFreeNodeId(api) + '';
-    api[headId] = {
-        inputs: { start_index: 0, num_frames: overlap, images: headSourceRef },
-        class_type: 'GetImageRangeFromBatch',
-        _meta: { title: 'Loop Head Frames' },
-    };
-    let headRef: [string, number] = [headId, 0];
-    if (correct) {
-        const toneId = getFreeNodeId(api) + '';
-        api[toneId] = {
-            inputs: {
-                source: framesRef,
-                target: headRef,
-                mode: 'frame_shift',
-                overlap,
-                lut_bins: 64,
-            },
-            class_type: 'MiniMaxH3ToneCompensate',
-            _meta: { title: 'MiniMax H3 Tone Compensate' },
-        };
-        headRef = [toneId, 0];
-    }
-    const seamId = getFreeNodeId(api) + '';
-    api[seamId] = {
-        inputs: {
-            // images_2 holds exactly `overlap` frames, so the join ends at
-            // the blended seam and nothing from the head is duplicated.
-            start_index: -overlap,
-            interpolation: 'ease_in_out',
-            transition_type: 'fade',
-            transitioning_frames: overlap,
-            blur_radius: 0,
-            reverse: false,
-            device: 'GPU',
-            images_1: framesRef,
-            images_2: headRef,
-        },
-        class_type: 'ImageBatchJoinWithTransition',
-        _meta: { title: 'Loop Seam Join' },
-    };
-    const stripId = getFreeNodeId(api) + '';
-    api[stripId] = {
-        inputs: {
-            image: [seamId, 0],
-            batch_index: overlap,
-            // ComfyUI clamps length to the remaining batch size, so this
-            // keeps everything after the stripped first frames.
-            length: 4096,
-        },
-        class_type: 'ImageFromBatch',
-        _meta: { title: 'Strip Loop Head' },
-    };
-    return [stripId, 0];
-};
 
 const Videos = ({ name }: { name: string }) => {
     const { getValues } = useFormContext();
@@ -173,58 +94,63 @@ const Videos = ({ name }: { name: string }) => {
             let framesRef: [string, number] = corrected[0];
             let audioRef: [string, number] = [components[0], 1];
             for (let i = 1; i < corrected.length; i++) {
-                const joinId = getFreeNodeId(api) + '';
-                api[joinId] = {
-                    inputs: {
-                        // Negative start_index resolves to (F_prev - N) at
-                        // runtime, so the seam is the last N frames.
-                        start_index: -overlap,
-                        interpolation: 'ease_in_out',
-                        transition_type: 'fade',
-                        transitioning_frames: overlap,
-                        blur_radius: 0,
-                        reverse: false,
-                        device: 'GPU',
-                        images_1: framesRef,
-                        images_2: corrected[i],
+                const base = insertGraph(api, {
+                    ':join': {
+                        inputs: {
+                            // Negative start_index resolves to (F_prev - N) at
+                            // runtime, so the seam is the last N frames.
+                            start_index: -overlap,
+                            interpolation: 'ease_in_out',
+                            transition_type: 'fade',
+                            transitioning_frames: overlap,
+                            blur_radius: 0,
+                            reverse: false,
+                            device: 'GPU',
+                            images_1: framesRef,
+                            images_2: corrected[i],
+                        },
+                        class_type: 'ImageBatchJoinWithTransition',
+                        _meta: { title: 'Image Batch Join With Transition' },
                     },
-                    class_type: 'ImageBatchJoinWithTransition',
-                    _meta: { title: 'Image Batch Join With Transition' },
-                };
-                framesRef = [joinId, 0];
-
-                const mathId = getFreeNodeId(api) + '';
-                api[mathId] = {
-                    inputs: {
-                        expression: overlap + ' / a',
-                        'values.a': fpsRef,
+                    ':math': {
+                        inputs: {
+                            expression: overlap + ' / a',
+                            'values.a': fpsRef,
+                        },
+                        class_type: 'ComfyMathExpression',
+                        _meta: { title: 'Overlap in seconds' },
                     },
-                    class_type: 'ComfyMathExpression',
-                    _meta: { title: 'Overlap in seconds' },
-                };
-                const concatId = getFreeNodeId(api) + '';
-                api[concatId] = {
-                    inputs: {
-                        audio1: audioRef,
-                        audio2: [components[i], 1],
-                        silence_before: 0,
-                        silence_between: 0,
-                        silence_after: 0,
-                        fade_duration: [mathId, 0],
+                    ':concat': {
+                        inputs: {
+                            audio1: audioRef,
+                            audio2: [components[i], 1],
+                            silence_before: 0,
+                            silence_between: 0,
+                            silence_after: 0,
+                            fade_duration: [':math', 0],
+                        },
+                        class_type: 'SoundFlow_Concatenator',
+                        _meta: { title: 'Audio Crossfade Join' },
                     },
-                    class_type: 'SoundFlow_Concatenator',
-                    _meta: { title: 'Audio Crossfade Join' },
-                };
-                audioRef = [concatId, 0];
+                });
+                framesRef = [base + ':join', 0];
+                audioRef = [base + ':concat', 0];
             }
 
             if (loop) {
+                const loopOverlap = getValues('loop_overlap') ?? overlap;
                 framesRef = buildLoopSeam(
                     api,
                     framesRef,
                     corrected[0],
                     correct,
-                    getValues('loop_overlap') ?? overlap,
+                    loopOverlap,
+                );
+                audioRef = buildAudioLoopSeam(
+                    api,
+                    audioRef,
+                    fpsRef,
+                    loopOverlap,
                 );
             }
 
