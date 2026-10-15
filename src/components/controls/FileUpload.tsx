@@ -14,6 +14,7 @@ import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
+import { cleanUploadName } from '../../utils/uploadName';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useBackupUpload, useReuploadLost } from '../../hooks/useBackupUpload';
 import { useImageURL } from '../../hooks/useImageURL';
@@ -134,7 +135,7 @@ export const FileUpload = ({
         const formData = new FormData();
         const file = new File(
             [src],
-            new Date().getTime() + '_' + src.name,
+            new Date().getTime() + '_' + cleanUploadName(src.name),
             { type: src.type },
         );
         formData.append('image', file);

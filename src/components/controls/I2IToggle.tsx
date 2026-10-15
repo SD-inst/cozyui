@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
 import { timedSignal } from '../../api/files';
+import { cleanUploadName } from '../../utils/uploadName';
 import { getCreateVideoNodeId, insertGraph } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
 import { useImageURL } from '../../hooks/useImageURL';
@@ -88,7 +89,10 @@ const uploadMaskImage = async (
     return new Promise((resolve, reject) => {
         maskCanvas.toBlob(async (blob) => {
             if (!blob) return reject('No blob');
-            const baseName = imageFilename.replace(/\.[^.]+$/, '');
+            const baseName = cleanUploadName(imageFilename).replace(
+                /\.[^.]+$/,
+                '',
+            );
             const filename = `mask_${baseName}.png`;
             const file = new File([blob], filename, { type: 'image/png' });
             const formData = new FormData();

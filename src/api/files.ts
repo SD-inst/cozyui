@@ -1,3 +1,5 @@
+import { cleanUploadName } from '../utils/uploadName';
+
 export class FileMissingError extends Error {
     constructor(filename: string) {
         super(`File not found on server: ${filename}`);
@@ -32,7 +34,7 @@ export const uploadFile = async (
     apiUrl: string,
 ): Promise<string> => {
     const formData = new FormData();
-    const name = new Date().getTime() + '_' + file.name;
+    const name = new Date().getTime() + '_' + cleanUploadName(file.name);
     formData.append('image', new File([file], name, { type: file.type }));
     const r = await fetch(apiUrl + '/api/upload/image', {
         method: 'POST',

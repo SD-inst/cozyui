@@ -7,6 +7,7 @@ import { actionEnum, setParams, setTab } from '../redux/tab';
 import { useApiURL } from './useApiURL';
 import { useResult } from './useResult';
 import { saveUploadBackup } from './useBackupUpload';
+import { cleanUploadName } from '../utils/uploadName';
 
 export const useSendResult = ({
     targetTab,
@@ -32,7 +33,11 @@ export const useSendResult = ({
         const formData = new FormData();
         const url = makeOutputUrl(apiUrl, result[index]);
         const blob = await fetch(url).then((b) => b.blob());
-        const file = new File([blob], result[index].filename, { type: blob.type });
+        const file = new File(
+            [blob],
+            cleanUploadName(result[index].filename),
+            { type: blob.type },
+        );
         formData.append('image', file);
         const image = await fetch(apiUrl + '/api/upload/image', {
             method: 'POST',

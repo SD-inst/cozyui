@@ -39,6 +39,7 @@ import { settings } from '../../hooks/settings';
 import { useIsCurrentTab, useTabName } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 import { roomForNewSlots } from '../../utils/arraySlots';
+import { cleanUploadName } from '../../utils/uploadName';
 import { UploadType } from './UploadType';
 import { ext, getAudioAcceptString } from './fileExts';
 import { ArrayFileContext } from './ArrayFileContext';
@@ -510,7 +511,7 @@ export const ArrayInput = ({
             const formData = new FormData();
             const renamed = new File(
                 [file],
-                new Date().getTime() + '_' + file.name,
+                new Date().getTime() + '_' + cleanUploadName(file.name),
                 { type: file.type },
             );
             formData.append('image', renamed);
