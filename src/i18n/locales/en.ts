@@ -326,6 +326,7 @@ const translation = {
         anchor_actual: 'actual: frames %{start}-%{end} (clip %{fit} f)',
         anchor_clip: 'anchor clip: %{fit} frames',
         length_info: 'frames: %{frames} (latent %{slots}, audio %{audio})',
+        length_info_audio: 'actual duration: %{seconds}s (audio %{audio} slots)',
         keyframe_strength: 'keyframe strength',
         reference_audio_enabled: 'use reference audio',
         trim: 'trim audio (sec)',

@@ -325,6 +325,7 @@ const translation = {
         anchor_actual: 'фактически: кадры %{start}–%{end} (клип %{fit})',
         anchor_clip: 'якорный клип: %{fit} кадров',
         length_info: 'кадров: %{frames} (латент %{slots}, аудио %{audio})',
+        length_info_audio: 'фактическая длительность: %{seconds} с (аудио %{audio} слотов)',
         keyframe_strength: 'сила кадра',
         reference_audio_enabled: 'аудио-референс',
         trim: 'обрезать аудио (сек)',

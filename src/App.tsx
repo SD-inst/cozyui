@@ -65,6 +65,7 @@ import { LTX23I2VTab } from './components/tabs/i2v/LTX23I2V';
 import { LTX23V2VTab } from './components/tabs/v2v/LTX23V2V';
 import { MiniMaxH3I2VTab } from './components/tabs/i2v/MiniMaxH3I2V';
 import { MiniMaxH3R2VTab } from './components/tabs/i2v/MiniMaxH3R2V';
+import { MiniMaxH3AudioTab } from './components/tabs/audio/MiniMaxH3Audio';
 import { RefModManagerTab } from './components/tabs/t2v/RefModManager';
 
 function App() {
@@ -113,6 +114,7 @@ function App() {
                                 {HunyanI2VKJTab}
                                 {StableAudioTab}
                                 {MMAudioTab}
+                                {MiniMaxH3AudioTab}
                                 {ChatterboxTab}
                                 {ChatterboxDialogTab}
                                 {VibeVoiceTab}
