@@ -199,9 +199,8 @@ describe('ArrayInput compact-mode controls dialog', () => {
             />,
         );
 
-        // MUI Add icon has the exact path: M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z
-        // When at max, this path should not exist in the DOM.
-        const addIcon = document.querySelector('[d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"]');
+        // The add button renders the MUI Add icon; when at max it is absent.
+        const addIcon = document.querySelector('[d^="M19 13"]');
         expect(addIcon).toBeNull();
     });
 
@@ -423,9 +422,8 @@ describe('ArrayInput list mode', () => {
 
         render(<HarnessList />);
 
-        // The add button should be present (MUI Button with Add icon).
-        const buttons = screen.getAllByRole('button');
-        expect(buttons.length).toBeGreaterThan(0);
+        // The add button renders the MUI Add icon.
+        expect(document.querySelector('[d^="M19 13"]')).not.toBeNull();
     });
 
     it('hides the add button when at max', () => {
@@ -463,11 +461,8 @@ describe('ArrayInput list mode', () => {
 
         render(<HarnessList />);
 
-        // When at max, only the move/delete buttons should exist, no add button.
-        // The add button is a MUI Button with an Add icon (svg with specific class).
-        // We verify the item count is 2 and no additional "add" button appears.
-        const items = screen.getAllByText(/^[12]$/);
-        expect(items).toHaveLength(2);
+        // At max the add button (MUI Add icon) is not rendered.
+        expect(document.querySelector('[d^="M19 13"]')).toBeNull();
     });
 });
 
@@ -552,14 +547,14 @@ describe('ArrayInput min/max constraints', () => {
 
         render(<HarnessMin />);
 
-        // DeleteArrayInputButton returns null when value.length <= min.
-        // With min=2 and exactly 2 items, delete buttons should not render.
-        // Verify the items are still there.
+        // DeleteArrayInputButton returns null when value.length <= min,
+        // so no Close icon renders and both items stay.
+        expect(document.querySelector('[d^="M19 6.41"]')).toBeNull();
         expect(screen.getByText('1')).toBeInTheDocument();
         expect(screen.getByText('2')).toBeInTheDocument();
     });
 
-    it('allows removal when above min', () => {
+    it('allows removal when above min', async () => {
         const HarnessAboveMin = () => {
             const form = useForm({
                 defaultValues: {
@@ -595,12 +590,19 @@ describe('ArrayInput min/max constraints', () => {
 
         render(<HarnessAboveMin />);
 
-        // With min=1 and 3 items, delete buttons should be visible.
-        // DeleteArrayInputButton uses a Close icon inside a Button.
-        // The button has no explicit name, so we check by the icon.
-        const buttons = screen.getAllByRole('button');
-        // Should have at least some buttons for delete and move.
-        expect(buttons.length).toBeGreaterThan(0);
+        // With min=1 and 3 items, the delete button (Close icon) renders;
+        // clicking it removes the first item and renumbers the rest.
+        const closeBtn = document
+            .querySelector('[d^="M19 6.41"]')
+            ?.closest('button');
+        expect(closeBtn).toBeTruthy();
+        fireEvent.click(closeBtn!);
+
+        await waitFor(() => {
+            expect(screen.queryByText('3')).toBeNull();
+            expect(screen.getByText('1')).toBeInTheDocument();
+            expect(screen.getByText('2')).toBeInTheDocument();
+        });
     });
 });
 
@@ -643,12 +645,11 @@ describe('ArrayInput move buttons', () => {
 
         render(<HarnessMove />);
 
-        // MoveArrayInputButton returns null for up at index 0 and down at last index.
-        // We can't easily query by icon, but we can verify the structure.
-        // The buttons are MUI IconButtons without labels.
-        // Instead, let's verify the item count is correct.
-        expect(screen.getByText('1')).toBeInTheDocument();
-        expect(screen.getByText('2')).toBeInTheDocument();
+        // MoveArrayInputButton returns null for up at index 0 and down at
+        // the last index: with 2 items there is exactly one ArrowUpward
+        // (item 2) and one ArrowDownward (item 1).
+        expect(document.querySelectorAll('[d^="m4 12"]')).toHaveLength(1);
+        expect(document.querySelectorAll('[d^="m20 12"]')).toHaveLength(1);
     });
 });
 
@@ -658,6 +659,7 @@ describe('ArrayInput move buttons', () => {
 
 describe('ArrayInput receiver fields', () => {
     it('propagates receiver value to items without a target field', async () => {
+        let formRef: any;
         const HarnessReceiver = () => {
             const form = useForm({
                 defaultValues: {
@@ -666,8 +668,8 @@ describe('ArrayInput receiver fields', () => {
                 },
             });
             useEffect(() => {
-                control = form.control as unknown as Control;
-            }, [form.control]);
+                formRef = form;
+            }, [form]);
 
             const ctx = makeCtx('T2V');
 
@@ -697,10 +699,8 @@ describe('ArrayInput receiver fields', () => {
         render(<HarnessReceiver />);
 
         await waitFor(() => {
-            const values = (control as any)?.getValues?.('ref_images') as any[];
-            if (values?.length) {
-                expect(values[0]?.source).toBe('from_receivers');
-            }
+            const values = formRef?.getValues('ref_images') as any[];
+            expect(values?.[0]?.source).toBe('from_receivers');
         });
     });
 
