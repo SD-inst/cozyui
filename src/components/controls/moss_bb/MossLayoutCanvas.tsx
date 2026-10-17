@@ -270,6 +270,14 @@ export const MossLayoutCanvas = ({
 
     const handlePointerDown = useEventCallback(
         (e: React.PointerEvent<SVGSVGElement>): void => {
+            // Commit any focused editor field BEFORE selection changes:
+            // React flushes this pointerdown (and re-renders) before the
+            // browser dispatches blur, so the field's onBlur closure would
+            // otherwise target the newly selected box.
+            const ae = document.activeElement;
+            if (ae instanceof HTMLElement && ae.matches('input, textarea, select')) {
+                ae.blur();
+            }
             (e.target as Element).hasPointerCapture?.(e.pointerId);
             svgRef.current?.setPointerCapture(e.pointerId);
             pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });

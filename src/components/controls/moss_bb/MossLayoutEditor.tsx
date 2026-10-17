@@ -194,21 +194,24 @@ const ListField = ({
     label,
     placeholder,
     value,
+    ownerId,
     onCommit,
 }: {
     label: string;
     placeholder?: string;
     value?: string[];
+    /** Identity of the field owner; forces re-sync when it changes even
+     * if `value` stays `undefined` (both boxes without tags). */
+    ownerId: string | number;
     onCommit: (next: string[] | undefined) => void;
 }) => {
     const [text, setText] = useState(value?.join(', ') ?? '');
-    const lastEmitted = useRef<string | null>(null);
+    // Re-sync whenever the committed value or the owning box changes
+    // (box switch, undo, or our own commit - the latter also normalizes
+    // trailing commas).
     useEffect(() => {
-        const joined = value?.join(', ') ?? '';
-        if (joined !== lastEmitted.current) {
-            setText(joined);
-        }
-    }, [value]);
+        setText(value?.join(', ') ?? '');
+    }, [value, ownerId]);
     return (
         <TextField
             size='small'
@@ -219,7 +222,6 @@ const ListField = ({
             onChange={(e) => setText(e.target.value)}
             onBlur={() => {
                 const parsed = parseList(text);
-                lastEmitted.current = parsed.join(', ');
                 onCommit(parsed.length ? parsed : undefined);
             }}
         />
@@ -1005,8 +1007,10 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                 </Box>
                                 <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
                                     <ListField
+                                        key='meta'
                                         label={tr('moss_bb.summary_meta')}
                                         value={ed.meta}
+                                        ownerId='meta'
                                         onCommit={(meta) =>
                                             setEd((s) => (s ? { ...s, meta } : s))
                                         }
@@ -1193,8 +1197,10 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                         )}
                                     </Box>
                                     <ListField
+                                        key={`tags-${selected.id}`}
                                         label={tr('moss_bb.box_tags')}
                                         value={selected.tags}
+                                        ownerId={selected.id}
                                         onCommit={(tags) =>
                                             patchItem(selected.id, { tags })
                                         }
