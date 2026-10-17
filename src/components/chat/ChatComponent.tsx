@@ -76,6 +76,8 @@ export const ChatComponent = ({
     mediaFields,
     systemPrompt = 'You are a helpful assistant.',
     transformFirstMessage,
+    transformAssistantMessage,
+    buildRefineMessage,
     sx,
     modes,
     defaultMode,
@@ -84,6 +86,10 @@ export const ChatComponent = ({
     mediaFields?: mediaFieldType[];
     systemPrompt?: string;
     transformFirstMessage?: (text: string) => string;
+    /** Rewrite an assistant message before it is written to the prompt field (e.g. compile a draft). */
+    transformAssistantMessage?: (text: string) => string;
+    /** Build the refine message from the current prompt (e.g. inject canvas size). */
+    buildRefineMessage?: (promptText: string) => string;
     sx?: SxProps;
     /** When present, the chat shows a mode selector and uses the selected mode. */
     modes?: chatModeType[];
@@ -270,7 +276,7 @@ export const ChatComponent = ({
     };
 
     const handleSendToPrompt = (text: string) => {
-        setValue(promptFieldName, text);
+        setValue(promptFieldName, transformAssistantMessage ? transformAssistantMessage(text) : text);
     };
 
     const handleRefine = () => {
@@ -279,7 +285,12 @@ export const ChatComponent = ({
         setRefineDialogOpen(false);
         reset();
         setTimeout(() => {
-            form.setValue('input', `Update the prompt: \n\n${promptText}`);
+            form.setValue(
+                'input',
+                buildRefineMessage
+                    ? buildRefineMessage(promptText)
+                    : `Update the prompt: \n\n${promptText}`,
+            );
             const el = inputRef.current;
             el?.focus();
             el?.setSelectionRange(19, 19);

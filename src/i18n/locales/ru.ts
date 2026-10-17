@@ -600,6 +600,7 @@ const translation = {
             'Нельзя добавить больше изображений. Удалите или сбросьте одно из существующих.',
         folders_not_supported:
             'Папки не поддерживаются. Перетащите отдельные файлы.',
+        moss_layout_invalid: 'Некорректный черновик MOSS Layout: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',

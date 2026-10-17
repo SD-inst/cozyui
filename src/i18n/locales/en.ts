@@ -601,6 +601,7 @@ const translation = {
             "Can't add more elements. Please reset or remove one of the references.",
         folders_not_supported:
             'Folders are not supported. Drop individual files instead.',
+        moss_layout_invalid: 'MOSS Layout draft is invalid: %{err}',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',
