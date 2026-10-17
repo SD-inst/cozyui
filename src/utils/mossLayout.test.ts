@@ -209,6 +209,32 @@ describe('decompileMossPrompt / compileMossDraft round trip', () => {
         expect(JSON.parse(compileMossDraft(restored))).toEqual(JSON.parse(compiled));
     });
 
+    it('resolves palettes to hex at parse time too', () => {
+        // simulate a legacy prompt compiled before palette normalization
+        const legacyPrompt = JSON.stringify({
+            summary: {
+                caption: layoutDraft.summary.caption,
+                palette: ['deep green', 'silver'],
+            },
+            items: [
+                {
+                    label: 'object',
+                    caption: 'a cup',
+                    palette: ['terracotta', 'shimmering aurora glow'],
+                    bbox: [-288, -592, 352, 32],
+                },
+            ],
+            bbox_coord_space: 'abs_centralized',
+            bbox_format: 'yxyx',
+        });
+        const restored = decompileMossPrompt(legacyPrompt, 1536, 1024)!;
+        expect(restored.palette).toEqual(['#006900', '#c0c0c0']);
+        expect(restored.items[0].palette).toEqual([
+            '#e2725b',
+            'shimmering aurora glow',
+        ]);
+    });
+
     it('returns null for captions, plain text and non-layout JSON', () => {
         expect(decompileMossPrompt('A cat on a windowsill.', 1024, 1024)).toBeNull();
         expect(decompileMossPrompt('{"caption": "x"}', 1024, 1024)).toBeNull();

@@ -81,8 +81,6 @@ const CANVAS_MODES = ['single', 'multi_panel', 'collage'] as const;
 
 const TEXT_DISPLAYS: TextDisplay[] = ['none', 'text', 'all'];
 
-const PALETTE_MAX = 8;
-
 /**
  * Color chips with the native picker; add/remove per element. Hex entries
  * show a swatch/picker; non-hex entries (e.g. a color name from the LLM)
@@ -173,16 +171,14 @@ const PaletteField = ({
                         </Box>
                     );
                 })}
-                {colors.length < PALETTE_MAX && (
-                    <IconButton
-                        size='small'
-                        color='primary'
-                        onClick={() => onCommit([...colors, '#808080'])}
-                        aria-label={addLabel}
-                    >
-                        <Add fontSize='small' />
-                    </IconButton>
-                )}
+                <IconButton
+                    size='small'
+                    color='primary'
+                    onClick={() => onCommit([...colors, '#808080'])}
+                    aria-label={addLabel}
+                >
+                    <Add fontSize='small' />
+                </IconButton>
             </Box>
         </Box>
     );

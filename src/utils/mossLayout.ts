@@ -691,7 +691,11 @@ export const decompileMossPrompt = (
             item.tags = entry.tags.filter((t): t is string => typeof t === 'string');
         }
         if (Array.isArray(entry.palette)) {
-            item.palette = entry.palette.filter((t): t is string => typeof t === 'string');
+            // Resolve color names to hex here too, so the editor always
+            // renders color pickers for old prompts (unknown entries stay).
+            item.palette = entry.palette
+                .filter((t): t is string => typeof t === 'string')
+                .map(resolvePaletteColor);
         }
         items.push(item);
     }
@@ -712,9 +716,9 @@ export const decompileMossPrompt = (
         result.canvas = data.summary.canvas;
     }
     if (Array.isArray(data.summary.palette)) {
-        result.palette = data.summary.palette.filter(
-            (t): t is string => typeof t === 'string',
-        );
+        result.palette = data.summary.palette
+            .filter((t): t is string => typeof t === 'string')
+            .map(resolvePaletteColor);
     }
     return result;
 };

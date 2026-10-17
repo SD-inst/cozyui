@@ -18,7 +18,6 @@ import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { useTranslate } from '../../../i18n/I18nContext';
-import { extractMossPrompt } from '../../../utils/mossLayout';
 import { WFTab } from '../../WFTab';
 
 const MossLayoutEditor = lazy(() =>
@@ -30,24 +29,32 @@ const MossLayoutEditor = lazy(() =>
 const MossChat = () => {
     const tr = useTranslate();
     const { setValue, getValues } = useFormContext();
-    const transform = useEventCallback((text: string): string => {
-        const result = extractMossPrompt(text);
-        switch (result.kind) {
-            case 'caption':
-                return result.prompt;
-            case 'layout':
-                setValue('width', result.width);
-                setValue('height', result.height);
-                return result.prompt;
-            case 'error':
-                toast.error(
-                    tr('toasts.moss_layout_invalid', { err: result.message }),
-                );
-                return text;
-            default:
-                return text;
-        }
-    });
+    const transform = useEventCallback(
+        async (text: string): Promise<string> => {
+            // Lazy: keeps the MOSS layout compiler out of the eager chunk.
+            const { extractMossPrompt } = await import(
+                '../../../utils/mossLayout'
+            );
+            const result = extractMossPrompt(text);
+            switch (result.kind) {
+                case 'caption':
+                    return result.prompt;
+                case 'layout':
+                    setValue('width', result.width);
+                    setValue('height', result.height);
+                    return result.prompt;
+                case 'error':
+                    toast.error(
+                        tr('toasts.moss_layout_invalid', {
+                            err: result.message,
+                        }),
+                    );
+                    return text;
+                default:
+                    return text;
+            }
+        },
+    );
     const refineMessage = useEventCallback(
         (promptText: string): string => {
             const [width, height] = getValues(['width', 'height']) as [

@@ -86,8 +86,8 @@ export const ChatComponent = ({
     mediaFields?: mediaFieldType[];
     systemPrompt?: string;
     transformFirstMessage?: (text: string) => string;
-    /** Rewrite an assistant message before it is written to the prompt field (e.g. compile a draft). */
-    transformAssistantMessage?: (text: string) => string;
+    /** Rewrite an assistant message before it is written to the prompt field (e.g. compile a draft). May be async. */
+    transformAssistantMessage?: (text: string) => string | Promise<string>;
     /** Build the refine message from the current prompt (e.g. inject canvas size). */
     buildRefineMessage?: (promptText: string) => string;
     sx?: SxProps;
@@ -275,8 +275,11 @@ export const ChatComponent = ({
         }, 100);
     };
 
-    const handleSendToPrompt = (text: string) => {
-        setValue(promptFieldName, transformAssistantMessage ? transformAssistantMessage(text) : text);
+    const handleSendToPrompt = async (text: string) => {
+        const transformed = transformAssistantMessage
+            ? await transformAssistantMessage(text)
+            : text;
+        setValue(promptFieldName, transformed);
     };
 
     const handleRefine = () => {
