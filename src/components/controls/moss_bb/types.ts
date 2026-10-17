@@ -3,6 +3,8 @@ import { MossLayoutItem } from '../../../utils/mossLayout';
 export type EditableItem = MossLayoutItem & { id: number };
 export type CanvasMode = 'select' | 'draw';
 export type ViewState = { scale: number; tx: number; ty: number };
+/** Box label rendering: none, visible text of `text` items, or everything. */
+export type TextDisplay = 'none' | 'text' | 'all';
 
 export const BOX_COLORS = [
     '#e5484d',

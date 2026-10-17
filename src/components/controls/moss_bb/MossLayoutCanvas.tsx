@@ -4,6 +4,7 @@ import { MossBBox } from '../../../utils/mossLayout';
 import {
     CanvasMode,
     EditableItem,
+    TextDisplay,
     ViewState,
     boxColor,
     clampView,
@@ -33,6 +34,28 @@ const HANDLE_CURSORS = [
 
 const MIN_SIZE = 8;
 
+/**
+ * Greedy word wrap by estimated character capacity at the given font size.
+ */
+const wrapLines = (text: string, fs: number, maxWidth: number): string[] => {
+    const maxChars = Math.max(1, Math.floor(maxWidth / (fs * 0.58)));
+    const lines: string[] = [];
+    let line = '';
+    for (const word of text.split(/\s+/)) {
+        const test = line ? `${line} ${word}` : word;
+        if (line && test.length > maxChars) {
+            lines.push(line);
+            line = word;
+        } else {
+            line = test;
+        }
+    }
+    if (line) {
+        lines.push(line);
+    }
+    return lines;
+};
+
 type Gesture =
     | { kind: 'draw'; start: { x: number; y: number }; current: { x: number; y: number } }
     | { kind: 'move'; id: number; startBox: MossBBox; startP: { x: number; y: number } }
@@ -60,6 +83,7 @@ export const MossLayoutCanvas = ({
     snap,
     view,
     bgUrl,
+    textMode,
     onViewChange,
     onSelect,
     onItemsChange,
@@ -74,6 +98,7 @@ export const MossLayoutCanvas = ({
     snap: boolean;
     view: ViewState;
     bgUrl: string | null;
+    textMode: TextDisplay;
     onViewChange: (view: ViewState) => void;
     onSelect: (id: number | null) => void;
     onItemsChange: (items: EditableItem[]) => void;
@@ -542,8 +567,29 @@ export const MossLayoutCanvas = ({
                         const selected = item.id === selectedId;
                         const bw = x2 - x1;
                         const bh = y2 - y1;
-                        const fitFs = Math.min(bh * 0.6, bw / (0.62 * Math.max(item.text?.length ?? 1, 1)), 44);
-                        const textFs = Math.max(Math.min(fitFs, 44), minFont);
+                        // Label content depends on the display mode: nothing,
+                        // only the exact text of `text` items, or text plus
+                        // every caption (quoted text first, like core preview).
+                        const parts: string[] = [];
+                        if (
+                            item.text?.trim() &&
+                            (textMode === 'all' || item.label === 'text')
+                        ) {
+                            parts.push(`"${item.text.trim().split('\n')[0]}"`);
+                        }
+                        if (textMode === 'all' && item.caption.trim()) {
+                            parts.push(item.caption.trim());
+                        }
+                        const body = parts.join(' — ');
+                        const bodyFs = Math.max(
+                            minFont,
+                            Math.min(44, bh * 0.28, bw * 0.18),
+                        );
+                        const bodyLines =
+                            body && bw > 16 && bh > 10
+                                ? wrapLines(body, bodyFs, bw - 6)
+                                : [];
+                        const lineHeight = bodyFs * 1.2;
                         return (
                             <g key={item.id}>
                                 <defs>
@@ -562,17 +608,20 @@ export const MossLayoutCanvas = ({
                                     strokeWidth={(selected ? 3 : 2) * inv}
                                     style={{ cursor: 'move' }}
                                 />
-                                {item.text && bw > 16 && bh > 10 && (
+                                {bodyLines.length > 0 && (
                                     <g clipPath={`url(#moss-bb-clip-${item.id})`}>
-                                        <text
-                                            x={x1 + 3}
-                                            y={y1 + 16 * inv + 2 + textFs * 0.85}
-                                            fill={color}
-                                            fontSize={textFs}
-                                            style={{ pointerEvents: 'none', userSelect: 'none' }}
-                                        >
-                                            {item.text.split('\n')[0]}
-                                        </text>
+                                        {bodyLines.map((line, li) => (
+                                            <text
+                                                key={li}
+                                                x={x1 + 3}
+                                                y={y1 + 16 * inv + 2 + bodyFs * 0.85 + li * lineHeight}
+                                                fill={color}
+                                                fontSize={bodyFs}
+                                                style={{ pointerEvents: 'none', userSelect: 'none' }}
+                                            >
+                                                {line}
+                                            </text>
+                                        ))}
                                     </g>
                                 )}
                                 <g

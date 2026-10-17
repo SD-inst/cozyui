@@ -1,15 +1,18 @@
 import {
     Add,
+    Article,
     ArrowDownward,
     ArrowUpward,
     CenterFocusStrong,
     Create,
+    CropSquare,
     DeleteOutline,
     GridOn,
     Layers,
     OpenWith,
     Redo as RedoIcon,
     Remove,
+    TextFields,
     Undo as UndoIcon,
     ZoomIn,
     ZoomOut,
@@ -56,6 +59,7 @@ import { MossLayoutCanvas } from './MossLayoutCanvas';
 import {
     CanvasMode,
     EditableItem,
+    TextDisplay,
     ViewState,
     boxColor,
     clampView,
@@ -72,6 +76,8 @@ type EditorState = {
 };
 
 const CANVAS_MODES = ['single', 'multi_panel', 'collage'] as const;
+
+const TEXT_DISPLAYS: TextDisplay[] = ['none', 'text', 'all'];
 
 const parseList = (value: string): string[] =>
     value
@@ -185,6 +191,7 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
     const [mode, setMode] = useState<CanvasMode>('select');
     const [snap, setSnap] = useState(true);
     const [bg, setBg] = useState(!!lastResult);
+    const [textDisplay, setTextDisplay] = useState<TextDisplay>('text');
     const [view, setView] = useState<ViewState>({ scale: 1, tx: 0, ty: 0 });
     const [history, setHistory] = useState({ undo: 0, redo: 0 });
     const [wInput, setWInput] = useState(() => String(initial?.width ?? ''));
@@ -706,21 +713,50 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                 </IconButton>
                             </span>
                         </Tooltip>
+                        <Tooltip
+                            // Functional tooltip: current in-box label mode.
+                            disableHoverListener={false}
+                            disableTouchListener={false}
+                            title={tr(`moss_bb.text_${textDisplay}`)}
+                        >
+                            <span>
+                                <IconButton
+                                    size='small'
+                                    color={textDisplay === 'none' ? 'default' : 'primary'}
+                                    onClick={() =>
+                                        setTextDisplay(
+                                            TEXT_DISPLAYS[
+                                                (TEXT_DISPLAYS.indexOf(textDisplay) + 1) %
+                                                    TEXT_DISPLAYS.length
+                                            ],
+                                        )
+                                    }
+                                >
+                                    {textDisplay === 'none' && <CropSquare />}
+                                    {textDisplay === 'text' && <TextFields />}
+                                    {textDisplay === 'all' && <Article />}
+                                </IconButton>
+                            </span>
+                        </Tooltip>
                         <IconButton size='small' onClick={undo} disabled={history.undo === 0}>
                             <UndoIcon />
                         </IconButton>
                         <IconButton size='small' onClick={redo} disabled={history.redo === 0}>
                             <RedoIcon />
                         </IconButton>
-                        <IconButton size='small' onClick={() => zoom(1 / 1.25)}>
-                            <ZoomOut />
-                        </IconButton>
-                        <IconButton size='small' onClick={() => zoom(1.25)}>
-                            <ZoomIn />
-                        </IconButton>
-                        <IconButton size='small' onClick={() => setView({ scale: 1, tx: 0, ty: 0 })}>
-                            <CenterFocusStrong />
-                        </IconButton>
+                        {!isPhone && (
+                            <>
+                                <IconButton size='small' onClick={() => zoom(1 / 1.25)}>
+                                    <ZoomOut />
+                                </IconButton>
+                                <IconButton size='small' onClick={() => zoom(1.25)}>
+                                    <ZoomIn />
+                                </IconButton>
+                                <IconButton size='small' onClick={() => setView({ scale: 1, tx: 0, ty: 0 })}>
+                                    <CenterFocusStrong />
+                                </IconButton>
+                            </>
+                        )}
                     </>
                 )}
             </DialogTitle>
@@ -756,6 +792,7 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                 snap={snap}
                                 view={view}
                                 bgUrl={bg ? lastResult : null}
+                                textMode={textDisplay}
                                 onViewChange={setView}
                                 onSelect={setSelectedId}
                                 onItemsChange={handleItemsChange}
