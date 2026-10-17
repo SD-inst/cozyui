@@ -19,6 +19,19 @@ export default tseslint.config(
         },
         rules: {
             ...reactHooks.configs.recommended.rules,
+            // eslint-plugin-react-hooks v7 turned on a batch of React-Compiler
+            // rules in `recommended` that clash with long-standing project
+            // patterns (latest-ref, setState in effects). Keep only the
+            // classic hooks rules; silence the rest.
+            ...Object.fromEntries(
+                Object.keys(reactHooks.configs.recommended.rules)
+                    .filter(
+                        (rule) =>
+                            rule !== 'react-hooks/rules-of-hooks' &&
+                            rule !== 'react-hooks/exhaustive-deps',
+                    )
+                    .map((rule) => [rule, 'off']),
+            ),
             'react-refresh/only-export-components': [
                 'warn',
                 { allowConstantExport: true },

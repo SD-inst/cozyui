@@ -308,3 +308,136 @@ export const extractMossPrompt = (text: string): MossExtractResult => {
     }
     return error ?? { kind: 'raw' };
 };
+
+/* ------------------------------------------------------------------ */
+/* Readable draft model — used by the bounding box editor.             */
+/* ------------------------------------------------------------------ */
+
+export type MossBBox = [number, number, number, number]; // absolute xyxy px
+
+export type MossLayoutItem = {
+    label: 'object' | 'character' | 'text';
+    caption: string;
+    text?: string;
+    bbox: MossBBox;
+    tags?: string[];
+    palette?: string[];
+};
+
+export type MossLayoutDraft = {
+    width: number;
+    height: number;
+    summary: string;
+    meta?: string[];
+    canvas?: 'single' | 'multi_panel' | 'collage';
+    items: MossLayoutItem[];
+};
+
+export const isMossDimension = (value: number): boolean =>
+    Number.isInteger(value) && value > 0 && value % 16 === 0;
+
+/** Compile an editor draft into the final prompt string. Throws on validation errors. */
+export const compileMossDraft = (draft: MossLayoutDraft): string => {
+    const summary: Record<string, unknown> = { caption: draft.summary };
+    if (draft.meta) {
+        summary.meta = draft.meta;
+    }
+    if (draft.canvas) {
+        summary.canvas = draft.canvas;
+    }
+    const { prompt } = compileMossPrompt({
+        width: draft.width,
+        height: draft.height,
+        bbox_coord_space: 'abs',
+        bbox_format: 'xyxy',
+        summary,
+        items: draft.items,
+    });
+    return prompt;
+};
+
+const toNumber = (value: unknown, fallback = 0): number =>
+    typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+
+const toText = (value: unknown): string => (typeof value === 'string' ? value : '');
+
+/**
+ * Reverse of `compileMossPrompt`: parse a compiled (`abs_centralized`/`yxyx`)
+ * or draft (`abs`/`xyxy`) layout JSON back into the editable draft. Canvas
+ * dimensions come from the form because the compiled prompt omits them.
+ * Returns null when the text is not a layout at all.
+ */
+export const decompileMossPrompt = (
+    text: string,
+    width: number,
+    height: number,
+): MossLayoutDraft | null => {
+    let data: unknown;
+    try {
+        data = JSON.parse(text.trim());
+    } catch {
+        return null;
+    }
+    if (!isRecord(data)) {
+        return null;
+    }
+    const compiled =
+        data.bbox_coord_space === 'abs_centralized' && data.bbox_format === 'yxyx';
+    const draft = data.bbox_coord_space === 'abs' && data.bbox_format === 'xyxy';
+    if (!compiled && !draft) {
+        return null;
+    }
+    if (!isRecord(data.summary) || typeof data.summary.caption !== 'string') {
+        return null;
+    }
+    if (!Array.isArray(data.items)) {
+        return null;
+    }
+    const items: MossLayoutItem[] = [];
+    for (const entry of data.items) {
+        if (!isRecord(entry) || !Array.isArray(entry.bbox) || entry.bbox.length !== 4) {
+            return null;
+        }
+        const [a, b, c, d] = entry.bbox.map((v) => toNumber(v));
+        const box: MossBBox = compiled
+            ? [b + width / 2, a + height / 2, d + width / 2, c + height / 2]
+            : [a, b, c, d];
+        const label =
+            entry.label === 'object' || entry.label === 'character' || entry.label === 'text'
+                ? entry.label
+                : 'object';
+        const item: MossLayoutItem = {
+            label,
+            caption: toText(entry.caption),
+            bbox: box,
+        };
+        const textValue = toText(entry.text);
+        if (textValue) {
+            item.text = textValue;
+        }
+        if (Array.isArray(entry.tags)) {
+            item.tags = entry.tags.filter((t): t is string => typeof t === 'string');
+        }
+        if (Array.isArray(entry.palette)) {
+            item.palette = entry.palette.filter((t): t is string => typeof t === 'string');
+        }
+        items.push(item);
+    }
+    const result: MossLayoutDraft = {
+        width,
+        height,
+        summary: data.summary.caption,
+        items,
+    };
+    if (Array.isArray(data.summary.meta)) {
+        result.meta = data.summary.meta.filter((t): t is string => typeof t === 'string');
+    }
+    if (
+        data.summary.canvas === 'single' ||
+        data.summary.canvas === 'multi_panel' ||
+        data.summary.canvas === 'collage'
+    ) {
+        result.canvas = data.summary.canvas;
+    }
+    return result;
+};

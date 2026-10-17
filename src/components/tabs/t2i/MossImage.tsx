@@ -1,4 +1,6 @@
-import { useEventCallback } from '@mui/material';
+import { CropSquare } from '@mui/icons-material';
+import { Button, useEventCallback } from '@mui/material';
+import { Suspense, lazy, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { ChatComponent } from '../../chat/ChatComponent';
@@ -18,6 +20,12 @@ import { WidthHeight } from '../../controls/WidthHeightInput';
 import { useTranslate } from '../../../i18n/I18nContext';
 import { extractMossPrompt } from '../../../utils/mossLayout';
 import { WFTab } from '../../WFTab';
+
+const MossLayoutEditor = lazy(() =>
+    import('../../controls/moss_bb/MossLayoutEditor').then((m) => ({
+        default: m.MossLayoutEditor,
+    })),
+);
 
 const MossChat = () => {
     const tr = useTranslate();
@@ -59,10 +67,26 @@ const MossChat = () => {
 };
 
 const Content = () => {
+    const tr = useTranslate();
+    const [editorOpen, setEditorOpen] = useState(false);
     return (
         <Layout>
             <GridLeft>
                 <PromptInput name='prompt' />
+                <Button
+                    size='small'
+                    variant='outlined'
+                    startIcon={<CropSquare />}
+                    onClick={() => setEditorOpen(true)}
+                    sx={{ alignSelf: 'center', mb: 2 }}
+                >
+                    {tr('moss_bb.edit')}
+                </Button>
+                {editorOpen && (
+                    <Suspense>
+                        <MossLayoutEditor onClose={() => setEditorOpen(false)} />
+                    </Suspense>
+                )}
                 <MossChat />
                 <PromptInput name='neg_prompt' />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />

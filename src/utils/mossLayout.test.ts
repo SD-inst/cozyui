@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { compileMossPrompt, extractMossPrompt } from './mossLayout';
+import {
+    compileMossDraft,
+    compileMossPrompt,
+    decompileMossPrompt,
+    extractMossPrompt,
+} from './mossLayout';
 
 const layoutDraft = {
     width: 1536,
@@ -159,5 +164,45 @@ describe('extractMossPrompt', () => {
     it('ignores non-draft fenced JSON', () => {
         const res = extractMossPrompt('Config: ```json\n{"some": "setting"}\n``` done');
         expect(res).toEqual({ kind: 'raw' });
+    });
+});
+
+describe('decompileMossPrompt / compileMossDraft round trip', () => {
+    it('restores the original draft from a compiled prompt', () => {
+        const compiled = compileMossPrompt(layoutDraft).prompt;
+        const restored = decompileMossPrompt(compiled, 1536, 1024);
+        expect(restored).not.toBeNull();
+        expect(restored!.width).toBe(1536);
+        expect(restored!.height).toBe(1024);
+        expect(restored!.summary).toBe(layoutDraft.summary.caption);
+        expect(restored!.canvas).toBe('single');
+        expect(restored!.meta).toEqual(layoutDraft.summary.meta);
+        expect(restored!.items[0].bbox).toEqual(layoutDraft.items[0].bbox);
+        expect(restored!.items[1].bbox).toEqual(layoutDraft.items[1].bbox);
+        expect(restored!.items[1].text).toBe('把日常，过成诗。');
+        expect(restored!.items[2].text).toBe('一杯温暖\n一刻从容');
+        // Recompiling yields an identical structure (key order may differ).
+        expect(JSON.parse(compileMossDraft(restored!))).toEqual(JSON.parse(compiled));
+    });
+
+    it('accepts draft-form (abs/xyxy) JSON as well', () => {
+        const restored = decompileMossPrompt(JSON.stringify(layoutDraft), 1536, 1024);
+        expect(restored).not.toBeNull();
+        expect(restored!.items[0].bbox).toEqual([176, 224, 800, 864]);
+    });
+
+    it('returns null for captions, plain text and non-layout JSON', () => {
+        expect(decompileMossPrompt('A cat on a windowsill.', 1024, 1024)).toBeNull();
+        expect(decompileMossPrompt('{"caption": "x"}', 1024, 1024)).toBeNull();
+        expect(decompileMossPrompt('', 1024, 1024)).toBeNull();
+        expect(decompileMossPrompt('{"some": "config"}', 1024, 1024)).toBeNull();
+    });
+
+    it('drops items with malformed boxes', () => {
+        const broken = structuredClone(layoutDraft);
+        broken.items[0].bbox = [1, 2, 3] as unknown as [number, number, number, number];
+        expect(
+            decompileMossPrompt(JSON.stringify(broken), 1536, 1024),
+        ).toBeNull();
     });
 });
