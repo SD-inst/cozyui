@@ -23,7 +23,11 @@ import { VirtualVRAMSliderInput } from '../../controls/VirtualVRAMSliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { hunyuanT2VSystemPrompt } from '../../chat/prompts/hunyuanT2V';
+
+const hunyuanT2VSystemPrompt = () =>
+    import('../../chat/prompts/hunyuanT2V').then(
+        (m) => m.hunyuanT2VSystemPrompt,
+    );
 
 const Content = () => {
     return (

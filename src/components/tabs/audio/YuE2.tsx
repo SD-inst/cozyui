@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { ChatComponent } from '../../chat/ChatComponent';
-import {
-    yue2EditingPrompt,
-    yue2GenerationPrompt,
-} from '../../chat/prompts/yue2';
 import { AbcPlanningToggle } from '../../controls/AbcPlanningToggle';
 import { AbcResultPanel } from '../../controls/AbcResultPanel';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
@@ -26,6 +22,11 @@ import {
     buildStructuredPrompt,
     parseStructuredPrompt,
 } from '../../../utils/structuredPrompt';
+
+const yue2GenerationPrompt = () =>
+    import('../../chat/prompts/yue2').then((m) => m.yue2GenerationPrompt);
+const yue2EditingPrompt = () =>
+    import('../../chat/prompts/yue2').then((m) => m.yue2EditingPrompt);
 
 const defaultStyle =
     'Upbeat indie pop with warm female vocals, bright electric guitars, punchy drums, melodic bass, and subtle synth layers. Catchy and energetic, with an uplifting summer atmosphere, a memorable chorus, and polished modern production.';

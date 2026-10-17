@@ -1,6 +1,5 @@
 import { useWatch } from 'react-hook-form';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { ltx23V2VSystemPrompt } from '../../chat/prompts/ltx23V2V';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { CFGInput } from '../../controls/CFGInput';
 import { FileUpload } from '../../controls/FileUpload';
@@ -15,6 +14,9 @@ import { TextInput } from '../../controls/TextInput';
 import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
+
+const ltx23V2VSystemPrompt = () =>
+    import('../../chat/prompts/ltx23V2V').then((m) => m.ltx23V2VSystemPrompt);
 
 const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });

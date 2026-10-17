@@ -21,9 +21,11 @@ import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { ltx23I2VSystemPrompt } from '../../chat/prompts/ltx23I2V';
 import { LTXKeepSizeToggle } from '../../controls/ltx2/LTXKeepSizeToggle';
 import { LTX2LoopControl } from '../../controls/ltx2/LTX2LoopControl';
+
+const ltx23I2VSystemPrompt = () =>
+    import('../../chat/prompts/ltx23I2V').then((m) => m.ltx23I2VSystemPrompt);
 
 const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });

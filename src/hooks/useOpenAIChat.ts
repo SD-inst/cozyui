@@ -155,7 +155,9 @@ export function useOpenAIChat({
     // The system prompt is a live parameter: keep the system message in sync
     // with the current `initialMessages` system content so it always reflects
     // the current mode (e.g. image vs video), even after load or a mid-session
-    // change.
+    // change. A lazily loaded prompt arrives after mount, so if the list has
+    // no system message yet (empty initial state or a restored chat without
+    // one), insert it at the front.
     const systemContent = initialMessages.find(
         (m) => m.role === 'system',
     )?.content;
@@ -163,8 +165,11 @@ export function useOpenAIChat({
         if (typeof systemContent !== 'string') {
             return;
         }
-        setMessagesState((prev) =>
-            prev.some(
+        setMessagesState((prev) => {
+            if (!prev.some((m) => m.role === 'system')) {
+                return [{ role: 'system', content: systemContent }, ...prev];
+            }
+            return prev.some(
                 (m) => m.role === 'system' && m.content !== systemContent,
             )
                 ? prev.map((m) =>
@@ -172,8 +177,8 @@ export function useOpenAIChat({
                             ? { ...m, content: systemContent }
                             : m,
                     )
-                : prev,
-        );
+                : prev;
+        });
     }, [systemContent, messagesState]);
 
     const sendMessage = useCallback(

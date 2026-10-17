@@ -27,8 +27,6 @@ import { ModArrayInput } from '../../controls/ModArrayInput';
 import { useTranslate } from '../../../i18n/I18nContext';
 import { controlType } from '../../../redux/config';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { miniMaxH3R2VSystemPrompt } from '../../chat/prompts/minimaxH3R2V';
-import { miniMaxH3R2VImageSystemPrompt } from '../../chat/prompts/minimaxH3R2VImage';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { LoraInput } from '../../controls/LoraInput';
 import { keyframeHandler } from '../../controls/MiniMaxH3KeyframeHandler';
@@ -52,6 +50,15 @@ import { VideoImageResult } from '../../controls/VideoImageResult';
 import { WFTab } from '../../WFTab';
 
 import { useFormContext } from 'react-hook-form';
+
+const miniMaxH3R2VSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3R2V').then(
+        (m) => m.miniMaxH3R2VSystemPrompt,
+    );
+const miniMaxH3R2VImageSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3R2VImage').then(
+        (m) => m.miniMaxH3R2VImageSystemPrompt,
+    );
 
 const imageValue = {
     image: '',

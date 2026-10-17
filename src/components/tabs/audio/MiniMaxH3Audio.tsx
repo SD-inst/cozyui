@@ -24,10 +24,14 @@ import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHand
 import { useTranslate } from '../../../i18n/I18nContext';
 import { controlType } from '../../../redux/config';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { miniMaxH3AudioSystemPrompt } from '../../chat/prompts/minimaxH3Audio';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { WFTab } from '../../WFTab';
 import { anchorLengthInfo } from '../../controls/MiniMaxH3LatentAnchor';
+
+const miniMaxH3AudioSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3Audio').then(
+        (m) => m.miniMaxH3AudioSystemPrompt,
+    );
 
 const audioValue = { audio: '' };
 

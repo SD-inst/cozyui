@@ -21,7 +21,11 @@ import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
 import { useWatchForm } from '../../../hooks/useWatchForm';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { qwenImage21SystemPrompt } from '../../chat/prompts/qwenImage21';
+
+const qwenImage21SystemPrompt = () =>
+    import('../../chat/prompts/qwenImage21').then(
+        (m) => m.qwenImage21SystemPrompt,
+    );
 
 type ReferenceType = {
     image: string;

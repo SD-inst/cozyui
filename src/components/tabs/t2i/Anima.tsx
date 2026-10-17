@@ -1,5 +1,4 @@
 import { ChatComponent } from '../../chat/ChatComponent';
-import { animaSystemPrompt } from '../../chat/prompts/anima';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { CFGInput } from '../../controls/CFGInput';
 import { GenerateButton } from '../../controls/GenerateButton';
@@ -16,6 +15,9 @@ import { SendBackToI2IButton } from '../../controls/SendBackToI2I';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
+
+const animaSystemPrompt = () =>
+    import('../../chat/prompts/anima').then((m) => m.animaSystemPrompt);
 
 const Content = () => {
     return (

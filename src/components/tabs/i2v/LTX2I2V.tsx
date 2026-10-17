@@ -19,7 +19,9 @@ import { UploadType } from '../../controls/UploadType';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { ltx2I2VSystemPrompt } from '../../chat/prompts/ltx2I2V';
+
+const ltx2I2VSystemPrompt = () =>
+    import('../../chat/prompts/ltx2I2V').then((m) => m.ltx2I2VSystemPrompt);
 
 const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });

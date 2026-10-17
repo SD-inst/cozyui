@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useOpenAIChat, OpenAIMessage } from './useOpenAIChat';
@@ -103,6 +104,28 @@ describe('useOpenAIChat state machine', () => {
             />,
         );
         expect(screen.getByTestId('msgCount')).toHaveTextContent('1');
+    });
+
+    it('a system prompt resolved after mount is inserted at the front', async () => {
+        const HarnessLazy = () => {
+            const [prompt, setPrompt] = useState<string | undefined>();
+            useEffect(() => {
+                Promise.resolve('Lazy prompt').then(setPrompt);
+            }, []);
+            return (
+                <Harness
+                    initialMessages={
+                        prompt === undefined
+                            ? []
+                            : [{ role: 'system', content: prompt }]
+                    }
+                />
+            );
+        };
+        render(<HarnessLazy />);
+        await waitFor(() => {
+            expect(screen.getByTestId('msgCount')).toHaveTextContent('1');
+        });
     });
 
     it('sendMessage sets isConnecting and isGenerating to true, completes on success', async () => {

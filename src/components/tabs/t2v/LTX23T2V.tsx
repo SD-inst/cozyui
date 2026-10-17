@@ -18,7 +18,9 @@ import { VideoResult } from '../../controls/VideoResult';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { ltx23T2VSystemPrompt } from '../../chat/prompts/ltx23T2V';
+
+const ltx23T2VSystemPrompt = () =>
+    import('../../chat/prompts/ltx23T2V').then((m) => m.ltx23T2VSystemPrompt);
 
 const Content = () => {
     const fps = useWatch({ name: 'fps', defaultValue: 24 });

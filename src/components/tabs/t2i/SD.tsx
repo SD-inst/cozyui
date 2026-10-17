@@ -1,5 +1,4 @@
 import { ChatComponent } from '../../chat/ChatComponent';
-import { sdSystemPrompt } from '../../chat/prompts/sd';
 import { CFGInput } from '../../controls/CFGInput';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { I2IToggle } from '../../controls/I2IToggle';
@@ -15,6 +14,9 @@ import { SendBackToI2IButton } from '../../controls/SendBackToI2I';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
+
+const sdSystemPrompt = () =>
+    import('../../chat/prompts/sd').then((m) => m.sdSystemPrompt);
 
 const Content = () => {
     return (

@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { lazyPromptType, useLazyPrompt } from '../../hooks/useLazyPrompt';
 import { useImageURLs, useModThumbURLs } from '../../hooks/useImageURL';
 import { useRefModMeta } from '../../hooks/useRefMods';
 import { ImagePart, MediaRef, useOpenAIChat } from '../../hooks/useOpenAIChat';
@@ -64,7 +65,7 @@ export type mediaFieldType = {
 export type chatModeType = {
     id: string;
     label: string;
-    systemPrompt: string;
+    systemPrompt: lazyPromptType;
     /** Build the first user message (e.g. inject the current field values). */
     transformFirstMessage?: (text: string) => string;
     /** Recover the user's raw text from a transformed first message. */
@@ -74,7 +75,7 @@ export type chatModeType = {
 export const ChatComponent = ({
     promptFieldName = 'prompt',
     mediaFields,
-    systemPrompt = 'You are a helpful assistant.',
+    systemPrompt,
     transformFirstMessage,
     transformAssistantMessage,
     buildRefineMessage,
@@ -84,7 +85,7 @@ export const ChatComponent = ({
 }: {
     promptFieldName?: string;
     mediaFields?: mediaFieldType[];
-    systemPrompt?: string;
+    systemPrompt?: lazyPromptType;
     transformFirstMessage?: (text: string) => string;
     /** Rewrite an assistant message before it is written to the prompt field (e.g. compile a draft). May be async. */
     transformAssistantMessage?: (text: string) => string | Promise<string>;
@@ -116,7 +117,17 @@ export const ChatComponent = ({
     const currentMode = hasModes
         ? modes!.find((m) => m.id === mode) ?? modes![0]
         : undefined;
-    const effectiveSystemPrompt = currentMode?.systemPrompt ?? systemPrompt;
+    const modePromptLoader = currentMode?.systemPrompt;
+    const resolvedModePrompt = useLazyPrompt(modePromptLoader);
+    const resolvedSystemPrompt = useLazyPrompt(
+        hasModes ? undefined : systemPrompt,
+    );
+    // A string `systemPrompt` resolves synchronously inside the hook; the raw
+    // value is only used when it is a plain string, never a loader.
+    const effectiveSystemPrompt: string | undefined =
+        resolvedModePrompt ??
+        resolvedSystemPrompt ??
+        (typeof systemPrompt === 'string' ? systemPrompt : undefined);
     const effectiveTransform =
         currentMode?.transformFirstMessage ?? transformFirstMessage;
     const allMediaFields = mediaFields ?? [];
@@ -195,12 +206,15 @@ export const ChatComponent = ({
         isThinking,
         isConnecting,
     } = useOpenAIChat({
-        initialMessages: [
-            {
-                role: 'system',
-                content: effectiveSystemPrompt,
-            },
-        ],
+        initialMessages:
+            effectiveSystemPrompt === undefined
+                ? []
+                : [
+                      {
+                          role: 'system',
+                          content: effectiveSystemPrompt,
+                      },
+                  ],
     });
 
     const scrollChatToBottom = useCallback(() => {

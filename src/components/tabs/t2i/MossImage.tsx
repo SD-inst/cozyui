@@ -4,7 +4,6 @@ import { Suspense, lazy, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { mossImageSystemPrompt } from '../../chat/prompts/mossImage';
 import { CFGInput } from '../../controls/CFGInput';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { ImageResult } from '../../controls/ImageResult';
@@ -25,6 +24,9 @@ const MossLayoutEditor = lazy(() =>
         default: m.MossLayoutEditor,
     })),
 );
+
+const mossImageSystemPrompt = () =>
+    import('../../chat/prompts/mossImage').then((m) => m.mossImageSystemPrompt);
 
 const MossChat = () => {
     const tr = useTranslate();

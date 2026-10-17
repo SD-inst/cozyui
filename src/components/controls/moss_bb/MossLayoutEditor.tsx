@@ -42,7 +42,6 @@ import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { chatCompletionOnce } from '../../../api/llmOneShot';
 import { makeOutputUrl } from '../../../api/utils';
-import { mossImageSystemPrompt } from '../../chat/prompts/mossImage';
 import { useApiURL } from '../../../hooks/useApiURL';
 import { useIsPhone } from '../../../hooks/useIsPhone';
 import { useLLMConfig } from '../../../hooks/useLLMConfig';
@@ -513,6 +512,10 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
         const { prompt: promptText, width, height } = readForm();
         setConverting(true);
         try {
+            // Lazy: the prompt module lives in its own chunk.
+            const { mossImageSystemPrompt } = await import(
+                '../../chat/prompts/mossImage'
+            );
             const completion = await chatCompletionOnce(llmConfig, [
                 { role: 'system', content: mossImageSystemPrompt },
                 {

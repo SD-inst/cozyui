@@ -1,5 +1,4 @@
 import { ChatComponent } from '../../chat/ChatComponent';
-import { krea2SystemPrompt } from '../../chat/prompts/krea2';
 import { CFGInput } from '../../controls/CFGInput';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { I2IToggle } from '../../controls/I2IToggle';
@@ -14,6 +13,9 @@ import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { WFTab } from '../../WFTab';
+
+const krea2SystemPrompt = () =>
+    import('../../chat/prompts/krea2').then((m) => m.krea2SystemPrompt);
 
 const Content = () => {
     return (

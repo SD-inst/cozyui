@@ -515,6 +515,22 @@ Images use the standard format: `{ "type": "image_url", "image_url": { "url": "d
 - R2V (full-reference mode): six sections, each with a header on its own line — `subject_definitions`, `summary`, `retention_analysis`, `detailed_description`, `overall_soundscape`, `non_diegetic_music`. Reference labels `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` are numbered independently per category in attachment order. The output must enumerate assets fully (`<Picture 1>, <Picture 2>, ...`) — never ranges like "Pictures 1 to 4". Audio files are never attached to the message; `<Audio N>` labels are assigned from the user's text only.
 - Reference guides: `docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md` (shared shot/camera/speaker rules) and `docs/VIDEO_PROMPT_WRITING_GUIDE_ref_en.md` (full-reference mode).
 
+### Chat system prompts are lazy chunks — IMPORTANT
+
+Every module in [`src/components/chat/prompts/`](src/components/chat/prompts/) is a big template-text file (~2–29 KB each). They are **never imported statically** — each must be loaded via `import()` so Vite/Rollup splits it into its own chunk and the main bundle stays lean.
+
+- In the consuming component, define a **stable module-level loader constant** (stable identity matters: `ChatComponent` passes it to `useLazyPrompt`, which re-fetches whenever the function identity changes):
+  ```tsx
+  const animaSystemPrompt = () =>
+      import('../../chat/prompts/anima').then((m) => m.animaSystemPrompt);
+
+  <ChatComponent systemPrompt={animaSystemPrompt} />
+  ```
+- `ChatComponent.systemPrompt` and `chatModeType.systemPrompt` accept `lazyPromptType` (`string | (() => Promise<string>)`) from [`useLazyPrompt`](src/hooks/useLazyPrompt.ts). In `useOpenAIChat`, the system message is a live parameter: while the prompt is unresolved the chat starts with no system message, and once it resolves the sync effect inserts/updates it at the front — including restored chats persisted without one.
+- Multi-mode chats (YuE2): put the loader in each mode; only the active mode's prompt is fetched.
+- One-shot LLM calls outside `ChatComponent` (e.g. `convertWithLLM` in `MossLayoutEditor`) `await import()` the prompt inline at the call site.
+- When adding a new prompt module, follow the same pattern — a static `import { … } from '…/prompts/…'` anywhere regrows the main chunk.
+
 ---
 
 ## Creating a New Tab

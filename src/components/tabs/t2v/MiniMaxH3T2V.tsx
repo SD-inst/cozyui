@@ -28,9 +28,16 @@ import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHand
 import { useMiniMaxH3FirstMessageTransform } from '../../../hooks/useMiniMaxH3FirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { miniMaxH3T2VSystemPrompt } from '../../chat/prompts/minimaxH3T2V';
-import { miniMaxH3T2VImageSystemPrompt } from '../../chat/prompts/minimaxH3T2VImage';
 import { useWatch } from 'react-hook-form';
+
+const miniMaxH3T2VSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3T2V').then(
+        (m) => m.miniMaxH3T2VSystemPrompt,
+    );
+const miniMaxH3T2VImageSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3T2VImage').then(
+        (m) => m.miniMaxH3T2VImageSystemPrompt,
+    );
 
 const Content = () => {
     const turboHandler = useMiniMaxH3TurboHandler();

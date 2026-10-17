@@ -33,9 +33,16 @@ import { ModArrayInput } from '../../controls/ModArrayInput';
 import { useMiniMaxH3I2VFirstMessageTransform } from '../../../hooks/useMiniMaxH3I2VFirstMessageTransform';
 import { useRegisterHandler } from '../../contexts/TabContext';
 import { ChatComponent } from '../../chat/ChatComponent';
-import { miniMaxH3I2VSystemPrompt } from '../../chat/prompts/minimaxH3I2V';
-import { miniMaxH3I2VImageSystemPrompt } from '../../chat/prompts/minimaxH3I2VImage';
 import { useWatch } from 'react-hook-form';
+
+const miniMaxH3I2VSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3I2V').then(
+        (m) => m.miniMaxH3I2VSystemPrompt,
+    );
+const miniMaxH3I2VImageSystemPrompt = () =>
+    import('../../chat/prompts/minimaxH3I2VImage').then(
+        (m) => m.miniMaxH3I2VImageSystemPrompt,
+    );
 
 const ImageFrameInput = ({ name }: { name: string }) => {
     const handler = useEventCallback(
