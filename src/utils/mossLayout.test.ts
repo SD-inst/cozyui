@@ -4,6 +4,8 @@ import {
     compileMossPrompt,
     decompileMossPrompt,
     extractMossPrompt,
+    parseHexColor,
+    resolvePaletteColor,
 } from './mossLayout';
 
 const layoutDraft = {
@@ -220,5 +222,64 @@ describe('decompileMossPrompt / compileMossDraft round trip', () => {
         expect(
             decompileMossPrompt(JSON.stringify(broken), 1536, 1024),
         ).toBeNull();
+    });
+});
+
+describe('palette color normalization', () => {
+    it('parses and canonicalizes hex', () => {
+        expect(parseHexColor('#ABC')).toBe('#aabbcc');
+        expect(parseHexColor('  #123456 ')).toBe('#123456');
+        expect(parseHexColor('sienna')).toBeNull();
+    });
+
+    it('resolves color names to hex', () => {
+        expect(resolvePaletteColor('sienna')).toBe('#a0522d');
+        expect(resolvePaletteColor('warm beige')).toBe('#f5f3dc');
+        expect(resolvePaletteColor('deep teal')).toBe('#006969');
+        expect(resolvePaletteColor('PEACH PUFF')).toBe('#ffdab9');
+        expect(resolvePaletteColor('#abc')).toBe('#aabbcc');
+    });
+
+    it('composes modifiers and multiple color words', () => {
+        // The exact example reported from a real LLM run: all resolvable.
+        const example = [
+            'deep green',
+            'bright green',
+            'rust orange-brown',
+            'dark grey',
+            'silver',
+            'white',
+            'red',
+            'muted earth brown',
+        ];
+        const resolved = example.map(resolvePaletteColor);
+        resolved.forEach((c) => expect(c).toMatch(/^#[0-9a-f]{6}$/));
+        // deep and bright green must differ (modifiers applied)
+        expect(resolved[0]).not.toBe(resolved[1]);
+        expect(resolved[0]).toBe('#006900'); // deep green
+        expect(resolved[1]).toBe('#00b900'); // bright green
+        // dark grey resolves via the CSS darkgrey name; silver/white/red exact
+        expect(resolved[3]).toBe('#a9a9a9');
+        expect(resolved[4]).toBe('#c0c0c0');
+        // rust + orange tint brown -> a rust-brown, not plain brown
+        expect(resolved[2]).not.toBe('#a52a2a');
+    });
+
+    it('keeps truly unknown color descriptions verbatim', () => {
+        expect(resolvePaletteColor('shimmering aurora glow')).toBe(
+            'shimmering aurora glow',
+        );
+    });
+
+    it('normalizes palettes through the compiler (summary and items)', () => {
+        const withNames = structuredClone(layoutDraft);
+        (withNames.summary as Record<string, unknown>).palette = [
+            'warm beige',
+            '#ABC',
+        ];
+        (withNames.items[0] as Record<string, unknown>).palette = ['sienna'];
+        const compiled = JSON.parse(compileMossPrompt(withNames).prompt);
+        expect(compiled.summary.palette).toEqual(['#f5f3dc', '#aabbcc']);
+        expect(compiled.items[0].palette).toEqual(['#a0522d']);
     });
 });

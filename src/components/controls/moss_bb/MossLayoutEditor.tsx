@@ -55,6 +55,7 @@ import {
     compileMossDraft,
     decompileMossPrompt,
     extractMossPrompt,
+    parseHexColor,
 } from '../../../utils/mossLayout';
 import { MossLayoutCanvas } from './MossLayoutCanvas';
 import {
@@ -82,21 +83,10 @@ const TEXT_DISPLAYS: TextDisplay[] = ['none', 'text', 'all'];
 
 const PALETTE_MAX = 8;
 
-const normalizeHex = (value: string): string => {
-    const v = value.trim().toLowerCase();
-    if (/^#[0-9a-f]{6}$/.test(v)) {
-        return v;
-    }
-    const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(v);
-    if (short) {
-        return `#${short[1]}${short[1]}${short[2]}${short[2]}${short[3]}${short[3]}`;
-    }
-    return '#000000';
-};
-
 /**
- * Color chips with the native picker; add/remove per element. Values are
- * committed as `#rrggbb` strings (the compiler stores them as plain strings).
+ * Color chips with the native picker; add/remove per element. Hex entries
+ * show a swatch/picker; non-hex entries (e.g. a color name from the LLM)
+ * render as a text chip so they are at least visible and removable.
  */
 const PaletteField = ({
     label,
@@ -127,44 +117,62 @@ const PaletteField = ({
                 {label}
             </Typography>
             <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', alignItems: 'center', mt: 0.25 }}>
-                {colors.map((color, i) => (
-                    <Box
-                        key={i}
-                        sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            border: '1px solid',
-                            borderColor: 'divider',
-                            borderRadius: 1,
-                            overflow: 'hidden',
-                        }}
-                    >
+                {colors.map((color, i) => {
+                    const hex = parseHexColor(color);
+                    return (
                         <Box
-                            component='input'
-                            type='color'
-                            value={normalizeHex(color)}
-                            title={color}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                                change(i, e.target.value)
-                            }
+                            key={i}
                             sx={{
-                                width: 44,
-                                height: 30,
-                                p: 0,
-                                border: 'none',
-                                background: 'none',
-                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                borderRadius: 1,
+                                overflow: 'hidden',
                             }}
-                        />
-                        <IconButton
-                            size='small'
-                            onClick={() => remove(i)}
-                            aria-label={removeLabel}
                         >
-                            <Close fontSize='small' />
-                        </IconButton>
-                    </Box>
-                ))}
+                            {hex ? (
+                                <Box
+                                    component='input'
+                                    type='color'
+                                    value={hex}
+                                    title={hex}
+                                    onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>,
+                                    ) => change(i, e.target.value)}
+                                    sx={{
+                                        width: 44,
+                                        height: 30,
+                                        p: 0,
+                                        border: 'none',
+                                        background: 'none',
+                                        cursor: 'pointer',
+                                    }}
+                                />
+                            ) : (
+                                <Box
+                                    sx={{
+                                        px: 1,
+                                        py: 0.5,
+                                        fontSize: 13,
+                                        whiteSpace: 'nowrap',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    {color}
+                                </Box>
+                            )}
+                            <IconButton
+                                size='small'
+                                onClick={() => remove(i)}
+                                aria-label={removeLabel}
+                            >
+                                <Close fontSize='small' />
+                            </IconButton>
+                        </Box>
+                    );
+                })}
                 {colors.length < PALETTE_MAX && (
                     <IconButton
                         size='small'
@@ -516,6 +524,7 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                     content:
                         `Convert the following image description into a MOSS-Image Layout draft for a ${width}x${height} canvas. ` +
                         'Output ONLY one ```json block with the draft (bbox_coord_space "abs", bbox_format "xyxy", absolute top-left pixels). ' +
+                        'All palette entries must be lowercase #rrggbb hex color codes, never color names. ' +
                         'Preserve the subjects and every visible string exactly.\n\n' +
                         promptText,
                 },

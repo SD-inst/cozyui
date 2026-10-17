@@ -205,16 +205,31 @@ export const compileMossPrompt = (
         });
         const compiled: Record<string, unknown> = {};
         Object.entries(item).forEach(([key, value]) => {
-            compiled[key] =
-                key === 'bbox'
-                    ? centeredBox(value, width as number, height as number, `${location}.bbox`)
-                    : value;
+            if (key === 'bbox') {
+                compiled[key] = centeredBox(
+                    value,
+                    width as number,
+                    height as number,
+                    `${location}.bbox`,
+                );
+            } else if (key === 'palette') {
+                compiled[key] = (value as string[]).map(resolvePaletteColor);
+            } else {
+                compiled[key] = value;
+            }
         });
         compiledItems.push(compiled);
     });
 
+    const summaryOut: Record<string, unknown> = { ...summary };
+    if (Array.isArray(summary.palette)) {
+        summaryOut.palette = (summary.palette as string[]).map(
+            resolvePaletteColor,
+        );
+    }
+
     const result = {
-        summary,
+        summary: summaryOut,
         items: compiledItems,
         bbox_coord_space: 'abs_centralized',
         bbox_format: 'yxyx',
@@ -336,6 +351,259 @@ export type MossLayoutDraft = {
 
 export const isMossDimension = (value: number): boolean =>
     Number.isInteger(value) && value > 0 && value % 16 === 0;
+
+const CSS_NAMED_COLORS: Record<string, string> = {
+    aliceblue: '#f0f8ff', antiquewhite: '#faebd7', aqua: '#00ffff',
+    aquamarine: '#7fffd4', azure: '#f0ffff', beige: '#f5f5dc',
+    bisque: '#ffe4c4', black: '#000000', blanchedalmond: '#ffebcd',
+    blue: '#0000ff', blueviolet: '#8a2be2', brown: '#a52a2a',
+    burlywood: '#deb887', cadetblue: '#5f9ea0', chartreuse: '#7fff00',
+    chocolate: '#d2691e', coral: '#ff7f50', cornflowerblue: '#6495ed',
+    cornsilk: '#fff8dc', crimson: '#dc143c', cyan: '#00ffff',
+    darkblue: '#00008b', darkcyan: '#008b8b',
+    darkgoldenrod: '#b8860b', darkgray: '#a9a9a9', darkgreen: '#006400',
+    darkgrey: '#a9a9a9', darkkhaki: '#bdb76b', darkmagenta: '#8b008b',
+    darkolivegreen: '#556b2f', darkorange: '#ff8c00', darkorchid: '#9932cc',
+    darkred: '#8b0000', darksalmon: '#e9967a', darkseagreen: '#8fbc8f',
+    darkslateblue: '#483d8b', darkslategray: '#2f4f4f',
+    darkslategrey: '#2f4f4f', darkturquoise: '#00ced1', darkviolet: '#9400d3',
+    deeppink: '#ff1493', deepskyblue: '#00bfff', dimgray: '#696969',
+    dimgrey: '#696969', dodgerblue: '#1e90ff', firebrick: '#b22222',
+    floralwhite: '#fffaf0', forestgreen: '#228b22', fuchsia: '#ff00ff',
+    gainsboro: '#dcdcdc', ghostwhite: '#f8f8ff', gold: '#ffd700',
+    goldenrod: '#daa520', gray: '#808080', green: '#008000',
+    greenyellow: '#adff2f', grey: '#808080', honeydew: '#f0fff0',
+    hotpink: '#ff69b4', indianred: '#cd5c5c', indigo: '#4b0082',
+    ivory: '#fffff0', khaki: '#f0e68c', lavender: '#e6e6fa',
+    lavenderblush: '#fff0f5', lawngreen: '#7cfc00', lemonchiffon: '#fffacd',
+    lightblue: '#add8e6', lightcoral: '#f08080', lightcyan: '#e0ffff',
+    lightgoldenrodyellow: '#fafad2', lightgray: '#d3d3d3',
+    lightgreen: '#90ee90', lightgrey: '#d3d3d3', lightpink: '#ffb6c1',
+    lightsalmon: '#ffa07a', lightseagreen: '#20b2aa', lightskyblue: '#87cefa',
+    lightslategray: '#778899', lightslategrey: '#778899',
+    lightsteelblue: '#b0c4de', lightyellow: '#ffffe0', lime: '#00ff00',
+    limegreen: '#32cd32', linen: '#faf0e6', magenta: '#ff00ff',
+    maroon: '#800000', mediumaquamarine: '#66cdaa', mediumblue: '#0000cd',
+    mediumorchid: '#ba55d3', mediumpurple: '#9370db',
+    mediumseagreen: '#3cb371', mediumslateblue: '#7b68ee',
+    mediumspringgreen: '#00fa9a', mediumturquoise: '#48d1cc',
+    mediumvioletred: '#c71585', midnightblue: '#191970',
+    mintcream: '#f5fffa', mistyrose: '#ffe4e1', moccasin: '#ffe4b5',
+    navajowhite: '#ffdead', navy: '#000080', oldlace: '#fdf5e6',
+    olive: '#808000', olivedrab: '#6b8e23', orange: '#ffa500',
+    orangered: '#ff4500', orchid: '#da70d6', palegoldenrod: '#eee8aa',
+    palegreen: '#98fb98', paleturquoise: '#afeeee',
+    palevioletred: '#db7093', papayawhip: '#ffefd5', peachpuff: '#ffdab9',
+    peru: '#cd853f', pink: '#ffc0cb', plum: '#dda0dd',
+    powderblue: '#b0e0e6', purple: '#800080', rebeccapurple: '#663399',
+    red: '#ff0000', rosybrown: '#bc8f8f', royalblue: '#4169e1',
+    saddlebrown: '#8b4513', salmon: '#fa8072', sandybrown: '#f4a460',
+    seagreen: '#2e8b57', seashell: '#fff5ee', sienna: '#a0522d',
+    silver: '#c0c0c0', skyblue: '#87ceeb', slateblue: '#6a5acd',
+    slategray: '#708090', slategrey: '#708090', snow: '#fffafa',
+    springgreen: '#00ff7f', steelblue: '#4682b4', tan: '#d2b48c',
+    teal: '#008080', thistle: '#d8bfd8', tomato: '#ff6347',
+    turquoise: '#40e0d0', violet: '#ee82ee', wheat: '#f5deb3',
+    white: '#ffffff', whitesmoke: '#f5f5f5', yellow: '#ffff00',
+    yellowgreen: '#9acd32',
+};
+
+/** Returns the canonical lowercase `#rrggbb` for a hex string, or null. */
+export const parseHexColor = (value: string): string | null => {
+    const v = value.trim().toLowerCase();
+    if (/^#[0-9a-f]{6}$/.test(v)) {
+        return v;
+    }
+    const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(v);
+    if (short) {
+        return `#${short[1]}${short[1]}${short[2]}${short[2]}${short[3]}${short[3]}`;
+    }
+    return null;
+};
+
+/** Common color words outside the CSS list that LLMs emit frequently. */
+const EXTRA_NAMED_COLORS: Record<string, string> = {
+    rust: '#b7410e',
+    terracotta: '#e2725b',
+    burgundy: '#800020',
+    charcoal: '#36454f',
+    cream: '#fffdd0',
+    mustard: '#ffdb58',
+    sage: '#bcb88f',
+    mauve: '#e0b0ff',
+    ochre: '#cc7722',
+    sand: '#dec9a5',
+    navy: '#000080',
+};
+
+type HSL = { h: number; s: number; l: number };
+
+const hexToRgb = (hex: string): [number, number, number] => {
+    const n = parseInt(hex.slice(1), 16);
+    return [(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff];
+};
+
+const rgbToHex = (rgb: number[]): string =>
+    '#' +
+    rgb
+        .map((v) =>
+            Math.max(0, Math.min(255, Math.round(v)))
+                .toString(16)
+                .padStart(2, '0'),
+        )
+        .join('');
+
+const rgbToHsl = (r: number, g: number, b: number): HSL => {
+    r /= 255;
+    g /= 255;
+    b /= 255;
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    if (max === min) {
+        return { h: 0, s: 0, l: l * 100 };
+    }
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h = 0;
+    if (max === r) {
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+    } else if (max === g) {
+        h = ((b - r) / d + 2) / 6;
+    } else {
+        h = ((r - g) / d + 4) / 6;
+    }
+    return { h: h * 360, s: s * 100, l: l * 100 };
+};
+
+const hslToRgb = ({ h, s, l }: HSL): number[] => {
+    h /= 360;
+    s /= 100;
+    l /= 100;
+    if (s === 0) {
+        return [l * 255, l * 255, l * 255];
+    }
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+    const conv = (t: number): number => {
+        if (t < 0) {
+            t += 1;
+        }
+        if (t > 1) {
+            t -= 1;
+        }
+        if (t < 1 / 6) {
+            return p + (q - p) * 6 * t;
+        }
+        if (t < 1 / 2) {
+            return q;
+        }
+        if (t < 2 / 3) {
+            return p + (q - p) * (2 / 3 - t) * 6;
+        }
+        return p;
+    };
+    return [conv(h + 1 / 3) * 255, conv(h) * 255, conv(h - 1 / 3) * 255];
+};
+
+/** Shortest-path hue nudge toward a target angle. */
+const shiftHue = (h: number, target: number, k: number): number => {
+    let d = target - h;
+    while (d > 180) {
+        d -= 360;
+    }
+    while (d < -180) {
+        d += 360;
+    }
+    return (h + d * k + 360) % 360;
+};
+
+const MODIFIERS: Record<string, (c: HSL) => HSL> = {
+    light: (c) => ({ ...c, l: c.l + (100 - c.l) * 0.18 }),
+    lighter: (c) => ({ ...c, l: c.l + (100 - c.l) * 0.25 }),
+    pale: (c) => ({ ...c, s: c.s * 0.75, l: c.l + (100 - c.l) * 0.22 }),
+    soft: (c) => ({ ...c, s: c.s * 0.65 }),
+    muted: (c) => ({ ...c, s: c.s * 0.6 }),
+    subdued: (c) => ({ ...c, s: c.s * 0.6 }),
+    desaturated: (c) => ({ ...c, s: c.s * 0.55 }),
+    dusty: (c) => ({ ...c, s: c.s * 0.7, l: c.l * 0.92 }),
+    dark: (c) => ({ ...c, l: c.l * 0.8 }),
+    deep: (c) => ({
+        ...c,
+        s: Math.min(100, c.s * 1.15),
+        l: c.l * 0.82,
+    }),
+    bright: (c) => ({
+        ...c,
+        s: Math.min(100, c.s * 1.1),
+        l: c.l + (100 - c.l) * 0.15,
+    }),
+    vivid: (c) => ({ ...c, s: Math.min(100, c.s * 1.25) }),
+    strong: (c) => ({ ...c, s: Math.min(100, c.s * 1.2) }),
+    saturated: (c) => ({ ...c, s: Math.min(100, c.s * 1.2) }),
+    warm: (c) => ({ ...c, h: shiftHue(c.h, 30, 0.12) }),
+    cool: (c) => ({ ...c, h: shiftHue(c.h, 215, 0.12) }),
+};
+
+const namedColor = (word: string): string | null =>
+    CSS_NAMED_COLORS[word] ?? EXTRA_NAMED_COLORS[word] ?? null;
+
+/** Resolve a phrase like "rust orange-brown" or "muted earth brown". */
+const resolveNamedColors = (raw: string): string | null => {
+    const words = raw.split(/[^a-z0-9]+/).filter(Boolean);
+    if (words.length === 0) {
+        return null;
+    }
+    const colorIdx = words
+        .map((w, i) => ({ w, i }))
+        .filter(({ w }) => namedColor(w));
+    if (colorIdx.length === 0) {
+        return null;
+    }
+    const base = rgbToHsl(...hexToRgb(namedColor(colorIdx[colorIdx.length - 1].w)!));
+    const tints = colorIdx.slice(0, -1).map(({ w }) => hexToRgb(namedColor(w)!));
+    let rgb = hslToRgb(base);
+    if (tints.length) {
+        const avg = tints.reduce(
+            (acc, t) => [acc[0] + t[0], acc[1] + t[1], acc[2] + t[2]],
+            [0, 0, 0],
+        ).map((v) => v / tints.length);
+        const k = 0.35;
+        rgb = rgb.map((v, j) => v * (1 - k) + avg[j] * k);
+    }
+    let hsl = rgbToHsl(rgb[0], rgb[1], rgb[2]);
+    const modifiers = words.filter((w) => MODIFIERS[w]);
+    modifiers.forEach((m) => {
+        hsl = MODIFIERS[m](hsl);
+    });
+    return rgbToHex(hslToRgb(hsl));
+};
+
+/**
+ * Normalize a palette entry to `#rrggbb`. LLMs sometimes emit color names
+ * ("warm beige") instead of hex: exact CSS names first, then a compositional
+ * resolve (base = last color word, earlier color words tint it, light/dark/
+ * muted/... modifiers adjust HSL). Unknown descriptions are kept verbatim so
+ * information is never lost.
+ */
+export const resolvePaletteColor = (value: string): string => {
+    const hex = parseHexColor(value);
+    if (hex) {
+        return hex;
+    }
+    const raw = value.trim().toLowerCase();
+    const direct = CSS_NAMED_COLORS[raw];
+    if (direct) {
+        return direct;
+    }
+    const joined = raw.replace(/[^a-z0-9]/g, '');
+    const joinedHit = CSS_NAMED_COLORS[joined];
+    if (joinedHit) {
+        return joinedHit;
+    }
+    const composed = resolveNamedColors(raw);
+    return composed ?? value.trim();
+};
 
 /** Compile an editor draft into the final prompt string. Throws on validation errors. */
 export const compileMossDraft = (draft: MossLayoutDraft): string => {
