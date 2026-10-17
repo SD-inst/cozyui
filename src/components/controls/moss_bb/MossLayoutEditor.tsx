@@ -4,6 +4,7 @@ import {
     ArrowDownward,
     ArrowUpward,
     CenterFocusStrong,
+    Close,
     Create,
     CropSquare,
     DeleteOutline,
@@ -78,6 +79,106 @@ type EditorState = {
 const CANVAS_MODES = ['single', 'multi_panel', 'collage'] as const;
 
 const TEXT_DISPLAYS: TextDisplay[] = ['none', 'text', 'all'];
+
+const PALETTE_MAX = 8;
+
+const normalizeHex = (value: string): string => {
+    const v = value.trim().toLowerCase();
+    if (/^#[0-9a-f]{6}$/.test(v)) {
+        return v;
+    }
+    const short = /^#([0-9a-f])([0-9a-f])([0-9a-f])$/.exec(v);
+    if (short) {
+        return `#${short[1]}${short[1]}${short[2]}${short[2]}${short[3]}${short[3]}`;
+    }
+    return '#000000';
+};
+
+/**
+ * Color chips with the native picker; add/remove per element. Values are
+ * committed as `#rrggbb` strings (the compiler stores them as plain strings).
+ */
+const PaletteField = ({
+    label,
+    value,
+    removeLabel,
+    addLabel,
+    onCommit,
+}: {
+    label: string;
+    value?: string[];
+    removeLabel: string;
+    addLabel: string;
+    onCommit: (next: string[] | undefined) => void;
+}) => {
+    const colors = value ?? [];
+    const change = (index: number, hex: string): void => {
+        const next = [...colors];
+        next[index] = hex;
+        onCommit(next);
+    };
+    const remove = (index: number): void => {
+        const next = colors.filter((_, j) => j !== index);
+        onCommit(next.length ? next : undefined);
+    };
+    return (
+        <Box>
+            <Typography variant='caption' color='text.secondary'>
+                {label}
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 0.75, flexWrap: 'wrap', alignItems: 'center', mt: 0.25 }}>
+                {colors.map((color, i) => (
+                    <Box
+                        key={i}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            border: '1px solid',
+                            borderColor: 'divider',
+                            borderRadius: 1,
+                            overflow: 'hidden',
+                        }}
+                    >
+                        <Box
+                            component='input'
+                            type='color'
+                            value={normalizeHex(color)}
+                            title={color}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                change(i, e.target.value)
+                            }
+                            sx={{
+                                width: 44,
+                                height: 30,
+                                p: 0,
+                                border: 'none',
+                                background: 'none',
+                                cursor: 'pointer',
+                            }}
+                        />
+                        <IconButton
+                            size='small'
+                            onClick={() => remove(i)}
+                            aria-label={removeLabel}
+                        >
+                            <Close fontSize='small' />
+                        </IconButton>
+                    </Box>
+                ))}
+                {colors.length < PALETTE_MAX && (
+                    <IconButton
+                        size='small'
+                        color='primary'
+                        onClick={() => onCommit([...colors, '#808080'])}
+                        aria-label={addLabel}
+                    >
+                        <Add fontSize='small' />
+                    </IconButton>
+                )}
+            </Box>
+        </Box>
+    );
+};
 
 const parseList = (value: string): string[] =>
     value
@@ -911,16 +1012,15 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                         }
                                     />
                                 </Box>
-                                <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
-                                    <ListField
-                                        label={tr('moss_bb.summary_palette')}
-                                        placeholder='#RRGGBB'
-                                        value={ed.palette}
-                                        onCommit={(palette) =>
-                                            setEd((s) => (s ? { ...s, palette } : s))
-                                        }
-                                    />
-                                </Box>
+                                <PaletteField
+                                    label={tr('moss_bb.summary_palette')}
+                                    value={ed.palette}
+                                    removeLabel={tr('moss_bb.palette_remove')}
+                                    addLabel={tr('moss_bb.palette_add')}
+                                    onCommit={(palette) =>
+                                        setEd((s) => (s ? { ...s, palette } : s))
+                                    }
+                                />
                             </Box>
                             <Divider />
                             {/* Boxes list */}
@@ -1099,10 +1199,11 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                             patchItem(selected.id, { tags })
                                         }
                                     />
-                                    <ListField
+                                    <PaletteField
                                         label={tr('moss_bb.box_palette')}
-                                        placeholder='#RRGGBB'
                                         value={selected.palette}
+                                        removeLabel={tr('moss_bb.palette_remove')}
+                                        addLabel={tr('moss_bb.palette_add')}
                                         onCommit={(palette) =>
                                             patchItem(selected.id, { palette })
                                         }
