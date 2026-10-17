@@ -2840,6 +2840,78 @@
                 }
             }
         },
+        "Moss Image": {
+            "api": "api/moss_image.json",
+            "defaults": {
+                "model": "moss/moss_image_sft_int8_convrot.safetensors",
+                "neg_prompt": "worst quality, bad anatomy, watermark, jpeg artifact"
+            },
+            "controls": {
+                "prompt": {
+                    "id": "4",
+                    "field": "text"
+                },
+                "neg_prompt": {
+                    "id": "10",
+                    "field": "text"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "field": "unet_name"
+                },
+                "width": {
+                    "id": "5",
+                    "field": "width"
+                },
+                "height": {
+                    "id": "5",
+                    "field": "height"
+                },
+                "steps": {
+                    "id": "2",
+                    "field": "steps"
+                },
+                "cfg": {
+                    "id": "2",
+                    "field": "cfg"
+                },
+                "sampler": {
+                    "id": "2",
+                    "field": "sampler_name"
+                },
+                "scheduler": {
+                    "id": "2",
+                    "field": "scheduler"
+                },
+                "seed": {
+                    "id": "11",
+                    "field": "value"
+                },
+                "batch_size": {
+                    "id": "5",
+                    "field": "batch_size"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "result": {
+                "id": "8",
+                "type": "images"
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["2"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {
@@ -4363,6 +4435,9 @@
         },
         "minimax_h3_vae": {
             "filter": "minimax_h3_video_vae"
+        },
+        "moss": {
+            "filter": "moss/"
         },
         "yue2": {
             "filter": "yue2"
