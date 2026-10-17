@@ -330,6 +330,7 @@ export type MossLayoutDraft = {
     summary: string;
     meta?: string[];
     canvas?: 'single' | 'multi_panel' | 'collage';
+    palette?: string[];
     items: MossLayoutItem[];
 };
 
@@ -344,6 +345,9 @@ export const compileMossDraft = (draft: MossLayoutDraft): string => {
     }
     if (draft.canvas) {
         summary.canvas = draft.canvas;
+    }
+    if (draft.palette) {
+        summary.palette = draft.palette;
     }
     const { prompt } = compileMossPrompt({
         width: draft.width,
@@ -438,6 +442,11 @@ export const decompileMossPrompt = (
         data.summary.canvas === 'collage'
     ) {
         result.canvas = data.summary.canvas;
+    }
+    if (Array.isArray(data.summary.palette)) {
+        result.palette = data.summary.palette.filter(
+            (t): t is string => typeof t === 'string',
+        );
     }
     return result;
 };

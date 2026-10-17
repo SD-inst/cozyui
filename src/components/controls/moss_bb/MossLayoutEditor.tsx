@@ -24,6 +24,8 @@ import {
     DialogTitle,
     Divider,
     IconButton,
+    MenuItem,
+    Select,
     TextField,
     ToggleButton,
     ToggleButtonGroup,
@@ -64,6 +66,57 @@ type EditorState = {
     summary: string;
     width: number;
     height: number;
+    meta?: string[];
+    canvas?: 'single' | 'multi_panel' | 'collage';
+    palette?: string[];
+};
+
+const CANVAS_MODES = ['single', 'multi_panel', 'collage'] as const;
+
+const parseList = (value: string): string[] =>
+    value
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+/**
+ * Comma-separated string list editor; commits on blur so intermediate
+ * typing (trailing commas) does not mangle the value.
+ */
+const ListField = ({
+    label,
+    placeholder,
+    value,
+    onCommit,
+}: {
+    label: string;
+    placeholder?: string;
+    value?: string[];
+    onCommit: (next: string[] | undefined) => void;
+}) => {
+    const [text, setText] = useState(value?.join(', ') ?? '');
+    const lastEmitted = useRef<string | null>(null);
+    useEffect(() => {
+        const joined = value?.join(', ') ?? '';
+        if (joined !== lastEmitted.current) {
+            setText(joined);
+        }
+    }, [value]);
+    return (
+        <TextField
+            size='small'
+            fullWidth
+            label={label}
+            placeholder={placeholder}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={() => {
+                const parsed = parseList(text);
+                lastEmitted.current = parsed.join(', ');
+                onCommit(parsed.length ? parsed : undefined);
+            }}
+        />
+    );
 };
 
 const MIN_DIM = 64;
@@ -117,6 +170,9 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                 summary: parsed.summary,
                 width: parsed.width,
                 height: parsed.height,
+                meta: parsed.meta,
+                canvas: parsed.canvas,
+                palette: parsed.palette,
             };
         }
         // Non-layout prompt: the user chooses how to seed the editor.
@@ -372,6 +428,9 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                 summary: draft.summary,
                 width: draft.width,
                 height: draft.height,
+                meta: draft.meta,
+                canvas: draft.canvas,
+                palette: draft.palette,
             });
         } catch (e) {
             toast.error(
@@ -411,6 +470,9 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                 width: s.width,
                 height: s.height,
                 summary: s.summary.trim(),
+                meta: s.meta,
+                canvas: s.canvas,
+                palette: s.palette,
                 items: s.items.map((it) => ({
                     label: it.label,
                     caption: it.caption,
@@ -779,6 +841,49 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                         setEd((s) => (s ? { ...s, summary: e.target.value } : s))
                                     }
                                 />
+                                <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                                    <Select
+                                        size='small'
+                                        value={ed.canvas ?? 'single'}
+                                        onChange={(e) =>
+                                            setEd((s) =>
+                                                s
+                                                    ? {
+                                                          ...s,
+                                                          canvas: e.target
+                                                              .value as (typeof CANVAS_MODES)[number],
+                                                      }
+                                                    : s,
+                                            )
+                                        }
+                                        sx={{ minWidth: 150 }}
+                                    >
+                                        {CANVAS_MODES.map((mode) => (
+                                            <MenuItem key={mode} value={mode}>
+                                                {tr(`moss_bb.canvas_${mode}`)}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </Box>
+                                <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                                    <ListField
+                                        label={tr('moss_bb.summary_meta')}
+                                        value={ed.meta}
+                                        onCommit={(meta) =>
+                                            setEd((s) => (s ? { ...s, meta } : s))
+                                        }
+                                    />
+                                </Box>
+                                <Box sx={{ display: 'flex', gap: 1, mt: 1, flexWrap: 'wrap' }}>
+                                    <ListField
+                                        label={tr('moss_bb.summary_palette')}
+                                        placeholder='#RRGGBB'
+                                        value={ed.palette}
+                                        onCommit={(palette) =>
+                                            setEd((s) => (s ? { ...s, palette } : s))
+                                        }
+                                    />
+                                </Box>
                             </Box>
                             <Divider />
                             {/* Boxes list */}
@@ -950,6 +1055,21 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                             ),
                                         )}
                                     </Box>
+                                    <ListField
+                                        label={tr('moss_bb.box_tags')}
+                                        value={selected.tags}
+                                        onCommit={(tags) =>
+                                            patchItem(selected.id, { tags })
+                                        }
+                                    />
+                                    <ListField
+                                        label={tr('moss_bb.box_palette')}
+                                        placeholder='#RRGGBB'
+                                        value={selected.palette}
+                                        onCommit={(palette) =>
+                                            patchItem(selected.id, { palette })
+                                        }
+                                    />
                                     <Button
                                         size='small'
                                         color='error'

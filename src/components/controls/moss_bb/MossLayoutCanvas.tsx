@@ -566,7 +566,7 @@ export const MossLayoutCanvas = ({
                                     <g clipPath={`url(#moss-bb-clip-${item.id})`}>
                                         <text
                                             x={x1 + 3}
-                                            y={y1 + textFs * 0.85}
+                                            y={y1 + 16 * inv + 2 + textFs * 0.85}
                                             fill={color}
                                             fontSize={textFs}
                                             style={{ pointerEvents: 'none', userSelect: 'none' }}

@@ -185,10 +185,26 @@ describe('decompileMossPrompt / compileMossDraft round trip', () => {
         expect(JSON.parse(compileMossDraft(restored!))).toEqual(JSON.parse(compiled));
     });
 
-    it('accepts draft-form (abs/xyxy) JSON as well', () => {
-        const restored = decompileMossPrompt(JSON.stringify(layoutDraft), 1536, 1024);
+    it('accepts draft-form (abs/xyxy) JSON as well', () => {        const restored = decompileMossPrompt(JSON.stringify(layoutDraft), 1536, 1024);
         expect(restored).not.toBeNull();
         expect(restored!.items[0].bbox).toEqual([176, 224, 800, 864]);
+    });
+
+    it('round-trips summary meta/canvas/palette and item tags/palette', () => {
+        const withExtras = structuredClone(layoutDraft);
+        withExtras.summary.canvas = 'multi_panel';
+        withExtras.summary.meta = ['poster', 'retro'];
+        (withExtras.summary as Record<string, unknown>).palette = ['#222222'];
+        (withExtras.items[0] as Record<string, unknown>).tags = ['cup'];
+        (withExtras.items[0] as Record<string, unknown>).palette = ['#e8e4dc'];
+        const compiled = compileMossPrompt(withExtras).prompt;
+        const restored = decompileMossPrompt(compiled, 1536, 1024)!;
+        expect(restored.canvas).toBe('multi_panel');
+        expect(restored.meta).toEqual(['poster', 'retro']);
+        expect(restored.palette).toEqual(['#222222']);
+        expect(restored.items[0].tags).toEqual(['cup']);
+        expect(restored.items[0].palette).toEqual(['#e8e4dc']);
+        expect(JSON.parse(compileMossDraft(restored))).toEqual(JSON.parse(compiled));
     });
 
     it('returns null for captions, plain text and non-layout JSON', () => {
