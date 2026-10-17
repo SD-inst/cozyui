@@ -896,6 +896,24 @@ Results arrive via WebSocket, dispatched to `s.tab.result[tabName][id][type]`. T
 
 At runtime, the app reads the API JSON and replaces input values based on the current form state. The `useAPI()` hook provides the mapping between control names and node fields. **IMPORTANT**: all controls that are registered in react-hook-form should have a corresponding config.json entry. If control is handled somehwere else (by another control or handler), it should have its `id` set to `skip` explicitly.
 
+### Tooltips vs. the `disable_help` setting — IMPORTANT
+
+[`ThemeContext`](src/components/contexts/ThemeContext.tsx) sets `MuiTooltip` defaults `disableHoverListener` and `disableTouchListener` to the `disable_help` user setting (`settings.disable_help`). So when a user turns on "Disable tooltips", **every** `<Tooltip>` in the app stops showing — including ones that carry essential state, not just help text.
+
+Functional/informational tooltips (e.g. explaining why a control is disabled or what a toggle currently does, like the bounding-box editor's snap/underlay buttons and the `NodeTimingsBar` segments) must stay visible regardless of that setting. Force them back on per instance:
+
+```tsx
+<Tooltip
+    disableHoverListener={false}
+    disableTouchListener={false}
+    title={tr('...')}
+>
+    <span>{/* wrapper so a disabled child still receives hover */}</span>
+</Tooltip>
+```
+
+Only leave `disableHoverListener`/`disableTouchListener` unset for genuine "help" tooltips that should honor the user's preference.
+
 ### LoRA Handling
 
 LoRA loading is configured via `handler_options.lora_params` in config. The system dynamically inserts LoRA loader nodes and connects them to the model pipeline.
