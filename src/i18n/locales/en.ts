@@ -581,6 +581,8 @@ const translation = {
         mode_select: 'Select / move / resize',
         mode_draw: 'Draw a new box',
         snap: 'Snap to 16px grid',
+        bg: 'Underlay: last generated image',
+        bg_none: 'No generated image to underlay yet',
         canvas: 'Canvas',
         summary: 'Summary caption',
         boxes: 'Boxes (background first)',

@@ -59,6 +59,7 @@ export const MossLayoutCanvas = ({
     mode,
     snap,
     view,
+    bgUrl,
     onViewChange,
     onSelect,
     onItemsChange,
@@ -72,6 +73,7 @@ export const MossLayoutCanvas = ({
     mode: CanvasMode;
     snap: boolean;
     view: ViewState;
+    bgUrl: string | null;
     onViewChange: (view: ViewState) => void;
     onSelect: (id: number | null) => void;
     onItemsChange: (items: EditableItem[]) => void;
@@ -497,6 +499,17 @@ export const MossLayoutCanvas = ({
                         stroke='rgba(150,150,150,0.8)'
                         strokeWidth={inv}
                     />
+                    {bgUrl && (
+                        <image
+                            href={bgUrl}
+                            x={0}
+                            y={0}
+                            width={width}
+                            height={height}
+                            preserveAspectRatio='none'
+                            style={{ pointerEvents: 'none' }}
+                        />
+                    )}
                     {snap && (
                         <g opacity={0.15}>
                             {vLines.map((x) => (

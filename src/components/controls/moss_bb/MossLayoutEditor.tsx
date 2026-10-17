@@ -6,6 +6,7 @@ import {
     Create,
     DeleteOutline,
     GridOn,
+    Layers,
     OpenWith,
     Redo as RedoIcon,
     Remove,
@@ -34,9 +35,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { chatCompletionOnce } from '../../../api/llmOneShot';
+import { makeOutputUrl } from '../../../api/utils';
 import { mossImageSystemPrompt } from '../../chat/prompts/mossImage';
+import { useApiURL } from '../../../hooks/useApiURL';
 import { useIsPhone } from '../../../hooks/useIsPhone';
 import { useLLMConfig } from '../../../hooks/useLLMConfig';
+import { useResult } from '../../../hooks/useResult';
 import { useTranslate } from '../../../i18n/I18nContext';
 import {
     MossBBox,
@@ -92,6 +96,12 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
     const isPhone = useIsPhone();
     const llmConfig = useLLMConfig();
     const { getValues, setValue } = useFormContext();
+    const apiUrl = useApiURL();
+    const results = useResult();
+    // Last generated image of this tab - used as an underlay for planning edits.
+    const lastResult = results?.length
+        ? makeOutputUrl(apiUrl, results[results.length - 1])
+        : null;
 
     const initial = useMemo<EditorState | null>(() => {
         const promptText = getValues('prompt');
@@ -118,6 +128,7 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
     const [selectedId, setSelectedId] = useState<number | null>(null);
     const [mode, setMode] = useState<CanvasMode>('select');
     const [snap, setSnap] = useState(true);
+    const [bg, setBg] = useState(!!lastResult);
     const [view, setView] = useState<ViewState>({ scale: 1, tx: 0, ty: 0 });
     const [history, setHistory] = useState({ undo: 0, redo: 0 });
     const [wInput, setWInput] = useState(() => String(initial?.width ?? ''));
@@ -592,7 +603,15 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                 <Create />
                             </ToggleButton>
                         </ToggleButtonGroup>
-                        <Tooltip title={tr('moss_bb.snap')}>
+                        <Tooltip
+                            // Functional tooltip: explains the toggle state /
+                            // why the button is disabled. Force-enabled because
+                            // the app theme disables "help" tooltips globally
+                            // via the disable_help setting (see ThemeContext).
+                            disableHoverListener={false}
+                            disableTouchListener={false}
+                            title={tr('moss_bb.snap')}
+                        >
                             <span>
                                 <IconButton
                                     size='small'
@@ -600,6 +619,28 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                     onClick={() => setSnap((s) => !s)}
                                 >
                                     <GridOn />
+                                </IconButton>
+                            </span>
+                        </Tooltip>
+                        <Tooltip
+                            // Functional tooltip: explains the underlay toggle
+                            // and the reason it is disabled without a result.
+                            disableHoverListener={false}
+                            disableTouchListener={false}
+                            title={
+                                lastResult
+                                    ? tr('moss_bb.bg')
+                                    : tr('moss_bb.bg_none')
+                            }
+                        >
+                            <span>
+                                <IconButton
+                                    size='small'
+                                    color={bg ? 'primary' : 'default'}
+                                    disabled={!lastResult}
+                                    onClick={() => setBg((b) => !b)}
+                                >
+                                    <Layers />
                                 </IconButton>
                             </span>
                         </Tooltip>
@@ -652,6 +693,7 @@ export const MossLayoutEditor = ({ onClose }: { onClose: () => void }) => {
                                 mode={mode}
                                 snap={snap}
                                 view={view}
+                                bgUrl={bg ? lastResult : null}
                                 onViewChange={setView}
                                 onSelect={setSelectedId}
                                 onItemsChange={handleItemsChange}
