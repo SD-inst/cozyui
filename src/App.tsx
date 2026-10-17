@@ -49,6 +49,8 @@ import { SongBloomTab } from './components/tabs/audio/SongBloom';
 import { StableAudioTab } from './components/tabs/audio/StableAudio';
 import { VibeVoiceTab } from './components/tabs/audio/VibeVoiceTTS';
 import { VibeVoiceDialogTab } from './components/tabs/audio/VibeVoiceTTSDialog';
+import { BreezeSingleSpeakerTab } from './components/tabs/audio/BreezeSingleSpeaker';
+import { BreezeMultiSpeakerTab } from './components/tabs/audio/BreezeMultiSpeaker';
 import { YuE2Tab } from './components/tabs/audio/YuE2';
 import { YuE2CoverTab } from './components/tabs/audio/YuE2Cover';
 import { VideoInterpolationTab } from './components/tabs/upscale/VideoInterpolation';
@@ -121,6 +123,8 @@ function App() {
                                 {ChatterboxDialogTab}
                                 {VibeVoiceTab}
                                 {VibeVoiceDialogTab}
+                                {BreezeSingleSpeakerTab}
+                                {BreezeMultiSpeakerTab}
                                 {ACEStepTab}
                                 {SongBloomTab}
                                 {YuE2Tab}

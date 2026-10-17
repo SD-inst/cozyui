@@ -290,6 +290,8 @@ export const ArrayInput = ({
     onReplaceClick,
     renderPreview,
     highlightIndex,
+    hideChatToggle = false,
+    hideHeading = false,
     ...props
 }: {
     name: string;
@@ -306,6 +308,12 @@ export const ArrayInput = ({
     onReplaceClick?: (index: number) => void;
     renderPreview?: (item: any, index: number) => ReactNode;
     highlightIndex?: number;
+    // Tabs without a chat have no consumer for `skip_chat`; hide the toggle so
+    // it doesn't clutter every item. The generation-side `skip` always stays.
+    hideChatToggle?: boolean;
+    // Drop the internal title row when the array is wrapped in an accordion
+    // that already shows the label (the reset button stays).
+    hideHeading?: boolean;
 } & PropsWithChildren) => {
     const tr = useTranslate();
     const theme = useTheme();
@@ -334,12 +342,16 @@ export const ArrayInput = ({
     // dialog and list mode.
     const perItemToggles = [
         <ToggleInput key='skip' name='skip' label='skip' defaultValue={false} />,
-        <ToggleInput
-            key='skip_chat'
-            name='skip_chat'
-            label='skip_chat'
-            defaultValue={false}
-        />,
+        ...(hideChatToggle
+            ? []
+            : [
+                  <ToggleInput
+                      key='skip_chat'
+                      name='skip_chat'
+                      label='skip_chat'
+                      defaultValue={false}
+                  />,
+              ]),
     ];
     const effectiveChildren = [
         ...React.Children.toArray(props.children),
@@ -843,9 +855,11 @@ export const ArrayInput = ({
                     justifyContent='space-between'
                     gap={1}
                 >
-                    <Typography variant='body1'>
-                        {label ? tr(label) : tr('controls.' + name)}
-                    </Typography>
+                    {!hideHeading && (
+                        <Typography variant='body1'>
+                            {label ? tr(label) : tr('controls.' + name)}
+                        </Typography>
+                    )}
                     <ArrayInputResetButton
                         name={name}
                         min={min}
@@ -1196,9 +1210,11 @@ export const ArrayInput = ({
                 justifyContent='space-between'
                 gap={1}
             >
-                <Typography variant='body1'>
-                    {label ? tr(label) : tr('controls.' + name)}
-                </Typography>
+                {!hideHeading && (
+                    <Typography variant='body1'>
+                        {label ? tr(label) : tr('controls.' + name)}
+                    </Typography>
+                )}
                 <ArrayInputResetButton
                     name={name}
                     min={min}

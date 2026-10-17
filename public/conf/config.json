@@ -3635,6 +3635,131 @@
                 "type": "audio"
             }
         },
+        "Breeze Single-Speaker": {
+            "api": "api/breeze_singlespeaker.json",
+            "controls": {
+                "prompt": {
+                    "id": "1",
+                    "field": "text"
+                },
+                "audio_input": {
+                    "id": "3",
+                    "field": "audio"
+                },
+                "stitch_reference": {
+                    "id": "skip"
+                },
+                "cfg": {
+                    "id": "1",
+                    "field": "cfg_scale"
+                },
+                "max_new_tokens": {
+                    "id": "1",
+                    "field": "max_new_tokens"
+                },
+                "temperature": {
+                    "id": "1",
+                    "field": "temperature"
+                },
+                "top_k": {
+                    "id": "1",
+                    "field": "top_k"
+                },
+                "top_p": {
+                    "id": "1",
+                    "field": "top_p"
+                },
+                "repetition_penalty": {
+                    "id": "1",
+                    "field": "repetition_penalty"
+                },
+                "depth_temperature": {
+                    "id": "1",
+                    "field": "depth_temperature"
+                },
+                "depth_top_k": {
+                    "id": "1",
+                    "field": "depth_top_k"
+                },
+                "depth_top_p": {
+                    "id": "1",
+                    "field": "depth_top_p"
+                },
+                "seed": {
+                    "id": "8",
+                    "field": "value"
+                },
+                "instruction": {
+                    "id": "handle",
+                    "gen_node_id": "1",
+                    "audio_field": "audio_input",
+                    "whisper_node_id": "5",
+                    "load_audio_id": "3",
+                    "stitch_field": "stitch_reference"
+                }
+            },
+            "result": {
+                "id": "6",
+                "type": "audio"
+            }
+        },
+        "Breeze Multi-Speaker": {
+            "api": "api/breeze_multispeaker.json",
+            "controls": {
+                "prompt": {
+                    "id": "73",
+                    "field": "text"
+                },
+                "speakers": {
+                    "id": "handle",
+                    "tts_node_id": "73"
+                },
+                "pause_between_speakers": {
+                    "id": "73",
+                    "field": "pause_between_speakers"
+                },
+                "max_new_tokens": {
+                    "id": "73",
+                    "field": "max_new_tokens"
+                },
+                "temperature": {
+                    "id": "73",
+                    "field": "temperature"
+                },
+                "top_k": {
+                    "id": "73",
+                    "field": "top_k"
+                },
+                "top_p": {
+                    "id": "73",
+                    "field": "top_p"
+                },
+                "repetition_penalty": {
+                    "id": "73",
+                    "field": "repetition_penalty"
+                },
+                "depth_temperature": {
+                    "id": "73",
+                    "field": "depth_temperature"
+                },
+                "depth_top_k": {
+                    "id": "73",
+                    "field": "depth_top_k"
+                },
+                "depth_top_p": {
+                    "id": "73",
+                    "field": "depth_top_p"
+                },
+                "seed": {
+                    "id": "77",
+                    "field": "value"
+                }
+            },
+            "result": {
+                "id": "79",
+                "type": "audio"
+            }
+        },
         "Video interpolation": {
             "api": "api/video_interpolation.json",
             "controls": {

@@ -1,0 +1,67 @@
+{
+    "73": {
+        "inputs": {
+            "text": "Alice: Hey Bob, did you finish recording the demo?\nBob: (sigh) Almost. I just need one more take.\nAlice: (laugh) That is what you said an hour ago!",
+            "pause_between_speakers": 0.3,
+            "max_new_tokens": 1500,
+            "temperature": 0.9,
+            "top_k": 50,
+            "top_p": 1,
+            "repetition_penalty": 1.1,
+            "depth_temperature": 0.9,
+            "depth_top_k": 50,
+            "depth_top_p": 1,
+            "seed": ["77", 0],
+            "breeze_model": ["76", 0]
+        },
+        "class_type": "BreezeTTS2MultiSpeaker",
+        "_meta": {
+            "title": "Breeze TTS 2 Multi-Speaker"
+        }
+    },
+    "76": {
+        "inputs": {
+            "model": "bf16 (best quality)",
+            "dtype": "auto",
+            "device": "auto",
+            "attention": "auto",
+            "decode_mode": "eager",
+            "download_if_missing": false
+        },
+        "class_type": "BreezeTTS2LoadModel",
+        "_meta": {
+            "title": "Breeze TTS 2 Load Model"
+        }
+    },
+    "77": {
+        "inputs": {
+            "value": 1024
+        },
+        "class_type": "PrimitiveInt",
+        "_meta": {
+            "title": "Seed"
+        }
+    },
+    "78": {
+        "inputs": {
+            "prefix": "Breeze_MS_",
+            "suffix": "",
+            "input": ["77", 0]
+        },
+        "class_type": "SomethingToString",
+        "_meta": {
+            "title": "Something To String"
+        }
+    },
+    "79": {
+        "inputs": {
+            "filename_prefix": ["78", 0],
+            "format": "flac",
+            "audio": ["73", 0]
+        },
+        "class_type": "SaveAudioAdvanced",
+        "_meta": {
+            "title": "Save Audio (Advanced)"
+        }
+    }
+}

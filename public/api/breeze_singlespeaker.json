@@ -1,0 +1,93 @@
+{
+    "1": {
+        "inputs": {
+            "text": "(sigh) It is good to hear your voice again after all this time.",
+            "reference_text": ["5", 1],
+            "cfg_scale": 1,
+            "max_new_tokens": 1500,
+            "temperature": 0.9,
+            "top_k": 50,
+            "top_p": 1,
+            "repetition_penalty": 1.1,
+            "depth_temperature": 0.9,
+            "depth_top_k": 50,
+            "depth_top_p": 1,
+            "seed": ["8", 0],
+            "breeze_model": ["2", 0],
+            "reference_audio": ["3", 0]
+        },
+        "class_type": "BreezeTTS2VoiceClone",
+        "_meta": {
+            "title": "Breeze TTS 2 Voice Clone"
+        }
+    },
+    "2": {
+        "inputs": {
+            "model": "bf16 (best quality)",
+            "dtype": "auto",
+            "device": "auto",
+            "attention": "auto",
+            "decode_mode": "eager",
+            "download_if_missing": false
+        },
+        "class_type": "BreezeTTS2LoadModel",
+        "_meta": {
+            "title": "Breeze TTS 2 Load Model"
+        }
+    },
+    "3": {
+        "inputs": {
+            "audio": ""
+        },
+        "class_type": "LoadAudio",
+        "_meta": {
+            "title": "Load Audio"
+        }
+    },
+    "5": {
+        "inputs": {
+            "model": "whisper-large-v3-turbo",
+            "dtype": "auto",
+            "language": "auto",
+            "task": "transcribe",
+            "chunk_length_s": 30,
+            "download_if_missing": false,
+            "audio": ["3", 0]
+        },
+        "class_type": "BreezeWhisperTranscribe",
+        "_meta": {
+            "title": "Breeze TTS 2 Whisper Transcribe"
+        }
+    },
+    "6": {
+        "inputs": {
+            "filename_prefix": ["7", 0],
+            "format": "flac",
+            "audio": ["1", 0]
+        },
+        "class_type": "SaveAudioAdvanced",
+        "_meta": {
+            "title": "Save Audio (Advanced)"
+        }
+    },
+    "7": {
+        "inputs": {
+            "prefix": "Breeze_SS_",
+            "suffix": "",
+            "input": ["8", 0]
+        },
+        "class_type": "SomethingToString",
+        "_meta": {
+            "title": "Something To String"
+        }
+    },
+    "8": {
+        "inputs": {
+            "value": 1024
+        },
+        "class_type": "PrimitiveInt",
+        "_meta": {
+            "title": "Seed"
+        }
+    }
+}
