@@ -21,7 +21,7 @@
       "scheduler": "sgm_uniform",
       "denoise": 1,
       "model": [
-        "1",
+        "9",
         0
       ],
       "positive": [
@@ -116,6 +116,22 @@
     "class_type": "SaveImage",
     "_meta": {
       "title": "Save Image"
+    }
+  },
+  "9": {
+    "inputs": {
+      "double_layers": "",
+      "single_layers": "22",
+      "start_percent": 0,
+      "end_percent": 0.5,
+      "model": [
+        "1",
+        0
+      ]
+    },
+    "class_type": "SkipLayerGuidanceDiTSimple",
+    "_meta": {
+      "title": "SkipLayerGuidanceDiTSimple (uncond skips block 22)"
     }
   },
   "10": {
