@@ -7,7 +7,7 @@ import {
     FormHelperText,
     useEventCallback,
 } from '@mui/material';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { KeyboardEvent, useContext, useEffect, useMemo, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';

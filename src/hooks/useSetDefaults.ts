@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useTabName } from '../components/contexts/TabContext';
 import { useAppSelector } from '../redux/hooks';
 import { useFormContext } from 'react-hook-form';

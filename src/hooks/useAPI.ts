@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useContext, useMemo } from 'react';
 import { TabContext } from '../components/contexts/TabContext';
 import { controlType, tabConfigType } from '../redux/config';

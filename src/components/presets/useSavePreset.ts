@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { clone } from 'lodash';
+import { clone } from 'lodash-es';
 import toast from 'react-hot-toast';
 import { FileMissingError, getFileFromServer } from '../../api/files';
 import { useApiURL } from '../../hooks/useApiURL';

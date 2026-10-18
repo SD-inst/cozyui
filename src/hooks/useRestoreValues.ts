@@ -2,7 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { useTabName } from '../components/contexts/TabContext';
 import { useAppSelector } from '../redux/hooks';
 import { useEventCallback } from '@mui/material';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useCallback } from 'react';
 import { hasRegisteredField } from '../utils/registeredFields';
 

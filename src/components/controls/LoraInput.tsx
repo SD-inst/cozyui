@@ -16,7 +16,7 @@ import {
     Typography,
     useEventCallback,
 } from '@mui/material';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 import { mergeType } from '../../api/mergeType';

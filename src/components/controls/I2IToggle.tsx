@@ -1,5 +1,5 @@
 import { Box, useEventCallback } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
 import { timedSignal } from '../../api/files';
@@ -13,10 +13,17 @@ import { controlType } from '../../redux/config';
 import { useRegisterHandler } from '../contexts/TabContext';
 import { FileUpload } from './FileUpload';
 import { InpaintCropSettings } from './InpaintCropSettings';
-import { MaskEditor } from './mask_editor/MaskEditor';
 import { SliderInput } from './SliderInput';
 import { ToggleInput, ToggleInputProps } from './ToggleInput';
 import { UploadType } from './UploadType';
+
+// The mask editor subtree (~60 KB) is only needed when inpainting is turned
+// on: kept out of the main chunk via dynamic import.
+const MaskEditor = lazy(() =>
+    import('./mask_editor/MaskEditor').then((m) => ({
+        default: m.MaskEditor,
+    })),
+);
 
 type TValue = {
     enabled: boolean;
@@ -464,13 +471,15 @@ export const I2IToggle = ({
                     />
                     {inpainting && (
                         <>
-                            <MaskEditor
-                                name={`${name}.mask`}
-                                imageSrc={imageURL}
-                                defaultBrushSize={30}
-                                maskColor='#ff0000'
-                                maskOpacity={0.5}
-                            />
+                            <Suspense fallback={null}>
+                                <MaskEditor
+                                    name={`${name}.mask`}
+                                    imageSrc={imageURL}
+                                    defaultBrushSize={30}
+                                    maskColor='#ff0000'
+                                    maskOpacity={0.5}
+                                />
+                            </Suspense>
                             <InpaintCropSettings name={name} />
                         </>
                     )}

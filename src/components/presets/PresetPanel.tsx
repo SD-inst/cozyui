@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { SelectInputBase } from '../controls/SelectInputBase';
 import { autoscrollSlotProps } from '../controls/utils';
 import { SectionAccordion } from '../controls/SectionAccordion';

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useAppSelector } from '../redux/hooks';
 
 export const useListChoices = ({

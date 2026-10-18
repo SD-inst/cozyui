@@ -1,5 +1,5 @@
 import { Box, Button, useEventCallback } from '@mui/material';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { actionEnum, setParams } from '../../redux/tab';

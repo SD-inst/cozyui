@@ -3,8 +3,6 @@ import {
     Autocomplete,
     Box,
     Button,
-    Checkbox,
-    FormControlLabel,
     List,
     ListProps,
     OutlinedInput,
@@ -12,15 +10,12 @@ import {
     TextField,
     Typography,
 } from '@mui/material';
-import dayjs from 'dayjs';
-import 'dayjs/locale/ru';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useLiveQuery } from 'dexie-react-hooks';
 import {
     Dispatch,
     SetStateAction,
+    Suspense,
+    lazy,
     useCallback,
     useContext,
     useEffect,
@@ -28,7 +23,8 @@ import {
     useRef,
     useState,
 } from 'react';
-import { I18nContext, useTranslate } from '../../i18n/I18nContext';
+import { useTranslate } from '../../i18n/I18nContext';
+import { CompareContext } from '../contexts/CompareContext';
 import { CompareContextProvider } from '../contexts/CompareContextProvider';
 import { FilterContext } from '../contexts/FilterContext';
 import { WorkflowTabsContext } from '../contexts/WorkflowTabsContext';
@@ -38,13 +34,39 @@ import { SectionAccordion } from '../controls/SectionAccordion';
 import { VerticalBox } from '../VerticalBox';
 import { collectHistory } from '../../utils/export/domain';
 import { db } from './db';
-import { DiffViewer } from './DiffViewer';
 import { pkFromFilter } from './filter';
 import { HistoryCard } from './HistoryCard';
 import { ExportImport } from '../export/ExportImport';
+import { ArenaContext } from './arena/ArenaContext';
 import { ArenaContextProvider } from './arena/ArenaContextProvider';
-import { ArenaDialog } from './arena/ArenaDialog';
 import { ArenaMenu } from './arena/ArenaMenu';
+
+// The diff viewer (react-diff-viewer + diff), the arena dialog, and the
+// date/pinned filter fields (@mui/x-date-pickers + dayjs) are heavy and only
+// needed on demand: kept out of the main chunk via dynamic import. The
+// wrappers gate on the open state so the chunk is fetched only when the
+// dialog is actually opened, not when the history panel is expanded.
+const DiffViewer = lazy(() =>
+    import('./DiffViewer').then((m) => ({ default: m.DiffViewer })),
+);
+const ArenaDialog = lazy(() =>
+    import('./arena/ArenaDialog').then((m) => ({ default: m.ArenaDialog })),
+);
+const DateFilterFields = lazy(() =>
+    import('./DateFilterFields').then((m) => ({
+        default: m.DateFilterFields,
+    })),
+);
+
+const LazyDiffViewer = () => {
+    const { open } = useContext(CompareContext);
+    return open ? <DiffViewer /> : null;
+};
+
+const LazyArenaDialog = () => {
+    const arena = useContext(ArenaContext);
+    return arena?.openArenaId != null ? <ArenaDialog /> : null;
+};
 
 const page_size = 10;
 
@@ -92,17 +114,6 @@ const HistoryPagination = ({
 
 export const HistoryPanel = ({ ...props }: ListProps) => {
     const tr = useTranslate();
-    const { locale } = useContext(I18nContext);
-    // Russian: fixed ru locale (day-first, Russian names). English: follow the
-    // browser region — the US is month-first (MM/DD/YYYY), every other region
-    // day-first (DD.MM.YYYY).
-    const isRussian = locale === 'ru';
-    const adapterLocale = isRussian ? 'ru' : 'en';
-    const dateFormat = isRussian
-        ? undefined
-        : navigator.language === 'en-US'
-            ? 'MM/DD/YYYY'
-            : 'DD.MM.YYYY';
     const [page, setPage] = useState(1);
     const {
         pinned,
@@ -240,6 +251,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
         <ArenaContextProvider>
             <SectionAccordion
             label='controls.history'
+            lazyContent
             summaryActions={
                 <>
                     <ArenaMenu />
@@ -311,7 +323,11 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                  }
                              />
                         </Box>
-                        <SectionAccordion label='controls.advanced_filters'>
+                         <SectionAccordion
+                             label='controls.advanced_filters'
+                             lazyContent
+                             sx={{ width: '100%' }}
+                         >
                             <Box width='100%' display='flex' flexWrap='wrap'>
                                 <Autocomplete
                                     size='small'
@@ -363,53 +379,16 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                                         ...tabKeys,
                                     ]}
                                 />
-                                <LocalizationProvider
-                                    dateAdapter={AdapterDayjs}
-                                    adapterLocale={adapterLocale}
-                                >
-                                    <DatePicker
-                                        label={tr('controls.date_from')}
-                                        value={dateFrom ? dayjs(dateFrom) : null}
-                                        format={dateFormat}
-                                        onChange={(v) =>
-                                            setDateFrom(
-                                                v ? v.format('YYYY-MM-DD') : '',
-                                            )
-                                        }
-                                        slotProps={{
-                                            textField: {
-                                                size: 'small',
-                                                sx: { width: 170, mr: 1, mb: 2 },
-                                            },
-                                        }}
+                                <Suspense fallback={null}>
+                                    <DateFilterFields
+                                        dateFrom={dateFrom}
+                                        dateTo={dateTo}
+                                        pinned={pinned}
+                                        setDateFrom={setDateFrom}
+                                        setDateTo={setDateTo}
+                                        setPinned={setPinned}
                                     />
-                                    <DatePicker
-                                        label={tr('controls.date_to')}
-                                        value={dateTo ? dayjs(dateTo) : null}
-                                        format={dateFormat}
-                                        onChange={(v) =>
-                                            setDateTo(
-                                                v ? v.format('YYYY-MM-DD') : '',
-                                            )
-                                        }
-                                        slotProps={{
-                                            textField: {
-                                                size: 'small',
-                                                sx: { width: 170, mb: 2 },
-                                            },
-                                        }}
-                                    />
-                                </LocalizationProvider>
-                                <FormControlLabel
-                                    label={tr('controls.pinned')}
-                                    control={
-                                        <Checkbox
-                                            checked={pinned}
-                                            onChange={(_, c) => setPinned(c)}
-                                        />
-                                    }
-                                    sx={{ ml: 0, mb: 2 }}
-                                />
+                                </Suspense>
                             </Box>
                         </SectionAccordion>
                         <HistoryPagination page={page} setPage={setPage} />
@@ -434,9 +413,13 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                             })}
                         </List>
                         <HistoryPagination page={page} setPage={setPage} />
-                        <DiffViewer />
+                        <Suspense fallback={null}>
+                            <LazyDiffViewer />
+                        </Suspense>
                     </VerticalBox>
-                    <ArenaDialog />
+                    <Suspense fallback={null}>
+                        <LazyArenaDialog />
+                    </Suspense>
                 </CompareContextProvider>
             </SectionAccordion>
         </ArenaContextProvider>

@@ -1,7 +1,7 @@
 import { Box, LinearProgress, Typography } from '@mui/material';
 import { useAppSelector } from '../redux/hooks';
 import { VerticalBox } from './VerticalBox';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useTaskDuration, useTaskEta } from '../hooks/useTaskDuration';
 import { useEffect } from 'react';
 import { useTranslate } from '../i18n/I18nContext';

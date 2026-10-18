@@ -1004,6 +1004,15 @@ Asset arrays (`ArrayInput`) and the LoRA chips (`LoraInput`) both let the user d
 
 Both are tested: `ArrayInput.test.tsx` and `LoraInput.test.tsx` (the latter asserts the chips carry `aria-roledescription="sortable"` and that a click still opens the dialog).
 
+### Heavy/rare subtrees must stay out of the main chunk
+
+The main chunk is kept lean by dynamic-importing rarely loaded code; keep it that way when adding features:
+
+- **`SectionAccordion` has a `lazyContent` prop** — children mount only on the accordion's first expansion (`TransitionProps.onEntered`). MUI keeps `AccordionDetails` children mounted while collapsed, so IndexedDB queries and heavy widgets inside a collapsed accordion otherwise run at page load. Used on the History panel (its cards, `ArenaDialog`, `DiffViewer`) and the advanced filters.
+- **Heavy rare libraries are isolated in their own lazy module**, not just lazy-mounted: `DateFilterFields` holds the only `@mui/x-date-pickers` + dayjs usage (175 KB chunk), `DiffViewer` owns `react-diff-viewer-continued` + `diff`. If a common file imports them statically, they move back into main.
+- **`lazy()` + `<Suspense fallback={null}>` for on-demand widgets**: `MaskEditor` (loaded when `I2IToggle` inpainting is enabled), `MossLayoutEditor`, `lamejs`, chat prompts (see the chat section).
+- **`lodash` must not be used — import from `lodash-es` only.** The CJS `lodash` defeats tree-shaking (Rollup inlined the whole 544 KB bundle); `lodash-es` keeps only the used functions (~110 KB → a few KB).
+
 ---
 
 ## Common File Locations

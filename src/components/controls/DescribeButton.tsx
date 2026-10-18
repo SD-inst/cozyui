@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useContext, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import {

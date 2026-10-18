@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { setWith, unset } from 'lodash';
+import { setWith, unset } from 'lodash-es';
 import { Workflow } from '../api/graph';
 
 export enum actionEnum {

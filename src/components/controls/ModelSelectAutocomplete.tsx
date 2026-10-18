@@ -5,7 +5,7 @@ import {
     TextField,
     useEventCallback,
 } from '@mui/material';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useController } from 'react-hook-form';
 import { useListChoices } from '../../hooks/useListChoices';
 import { useTranslate } from '../../i18n/I18nContext';

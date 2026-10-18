@@ -1,4 +1,4 @@
-import { get, merge } from 'lodash';
+import { get, merge } from 'lodash-es';
 import {
     overrideType,
     resultsOptionsType,

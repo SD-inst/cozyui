@@ -17,7 +17,7 @@ import {
 import { Close, ContentCut, Delete, Refresh } from '@mui/icons-material';
 import Lightbox from 'yet-another-react-lightbox';
 import Video from 'yet-another-react-lightbox/plugins/video';
-import { clone, omit } from 'lodash';
+import { clone, omit } from 'lodash-es';
 import React, {
     cloneElement,
     useCallback,

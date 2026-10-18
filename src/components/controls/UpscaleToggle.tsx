@@ -1,5 +1,5 @@
 import { useEventCallback } from '@mui/material';
-import { get } from 'lodash';
+import { get } from 'lodash-es';
 import { useAppDispatch, useAppSelector } from '../../redux/hooks';
 import { Workflow } from '../../api/graph';
 import { delResult } from '../../redux/tab';

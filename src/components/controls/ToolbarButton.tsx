@@ -4,7 +4,7 @@ import {
     Tooltip,
     type IconButtonProps,
 } from '@mui/material';
-import { merge } from 'lodash';
+import { merge } from 'lodash-es';
 
 export interface ToolbarButtonProps {
     title: string;

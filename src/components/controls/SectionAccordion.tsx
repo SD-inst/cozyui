@@ -5,13 +5,15 @@ import {
     AccordionSummary,
     Box,
 } from '@mui/material';
-import { ReactNode, RefObject } from 'react';
+import type { SyntheticEvent } from 'react';
+import { ReactNode, RefObject, useCallback, useState } from 'react';
 import { useTranslate } from '../../i18n/I18nContext';
 
 export const SectionAccordion = ({
     label,
     children,
     defaultExpanded,
+    lazyContent,
     sx,
     slotProps,
     detailsRef,
@@ -23,6 +25,13 @@ export const SectionAccordion = ({
     label: string;
     children: ReactNode;
     defaultExpanded?: boolean;
+    /**
+     * Defer mounting `children` until the accordion is first expanded
+     * (MUI keeps details mounted when collapsed, so heavy subtrees —
+     * dynamic-import chunks, IndexedDB queries — would otherwise run at
+     * page load). Once expanded, content stays mounted.
+     */
+    lazyContent?: boolean;
     sx?: any;
     slotProps?: any;
     detailsRef?: RefObject<HTMLElement | null>;
@@ -36,8 +45,29 @@ export const SectionAccordion = ({
     summaryActions?: ReactNode;
 }) => {
     const tr = useTranslate();
+    const [expanded, setExpanded] = useState(!!defaultExpanded);
+    // Children mount on the first expansion and stay mounted afterwards.
+    // Uses the Accordion's own expansion state (not the Collapse's
+    // `TransitionProps.onEntered`, which callers already use via
+    // `slotProps.transition` — e.g. `autoscrollSlotProps` — and which would
+    // clobber our handler).
+    const [contentMounted, setContentMounted] = useState(!lazyContent);
+    const handleChange = useCallback(
+        (_: SyntheticEvent, next: boolean) => {
+            setExpanded(next);
+            if (next) {
+                setContentMounted(true);
+            }
+        },
+        [],
+    );
     return (
-        <Accordion defaultExpanded={defaultExpanded} sx={sx} slotProps={slotProps}>
+        <Accordion
+            expanded={expanded}
+            onChange={handleChange}
+            sx={sx}
+            slotProps={slotProps}
+        >
             <AccordionSummary expandIcon={<ExpandMore />} sx={summarySx}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexGrow: 1 }}>
                     {icon && <>{icon} </>}
@@ -47,8 +77,19 @@ export const SectionAccordion = ({
                     {summaryActions}
                 </Box>
             </AccordionSummary>
-            <AccordionDetails ref={detailsRef} sx={detailsSx}>
-                {children}
+            <AccordionDetails
+                ref={detailsRef}
+                // An unmounted lazy subtree leaves the details block empty and
+                // zero-width; with `width: 100%` the accordion still stretches
+                // across its container (e.g. centered flex columns) before
+                // the content loads.
+                sx={
+                    lazyContent && !contentMounted
+                        ? { width: '100%', ...detailsSx }
+                        : detailsSx
+                }
+            >
+                {contentMounted ? children : null}
             </AccordionDetails>
         </Accordion>
     );

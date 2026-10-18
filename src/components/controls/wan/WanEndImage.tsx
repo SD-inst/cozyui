@@ -1,5 +1,5 @@
 import { Box, useEventCallback } from '@mui/material';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { Workflow } from '../../../api/graph';
 import { getFreeNodeId } from '../../../api/utils';

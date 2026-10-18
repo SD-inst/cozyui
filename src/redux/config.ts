@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { isArray, mergeWith } from 'lodash';
+import { isArray, mergeWith } from 'lodash-es';
 import { mergeType } from '../api/mergeType';
 
 export type controlType = {

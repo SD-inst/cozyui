@@ -1,5 +1,5 @@
 import { useEventCallback } from '@mui/material';
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { useWatchForm } from './useWatchForm';
 import { Workflow } from '../api/graph';
 import { insertNode } from '../api/utils';

@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    CircularProgress,
     Dialog,
     DialogActions,
     DialogContent,
@@ -388,7 +389,13 @@ export const DiffViewer = () => {
                     : tr('controls.difference')}
             </DialogTitle>
             <DialogContent>
-                {singleJson ? (
+                {!diffJsonWords ? (
+                    // The first render has no compareMethod: react-diff-viewer
+                    // would fall back to diffChars, reject the object inputs,
+                    // and (after the throw is fixed) produce an unreadable
+                    // char diff. Wait for the `diff` module imports instead.
+                    <CircularProgress />
+                ) : singleJson ? (
                     <ReactDiffViewer
                         newValue={jsonB}
                         useDarkTheme={mode === 'dark'}
