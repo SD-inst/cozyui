@@ -14,6 +14,7 @@ import toast from 'react-hot-toast';
 import { settings } from '../../hooks/settings';
 import { useAPI } from '../../hooks/useAPI';
 import { useApiURL } from '../../hooks/useApiURL';
+import { useCurrentTab } from '../../hooks/useCurrentTab';
 import { useElementVisibility } from '../../hooks/useElementVisibility';
 import { useGet } from '../../hooks/useGet';
 import { useIsPhone } from '../../hooks/useIsPhone';
@@ -157,9 +158,13 @@ export const GenerateButton = ({
     const { api, controls } = useAPI();
 
     const apiUrl = useApiURL();
+    const current_tab = useCurrentTab();
     const { data: apiData, isSuccess: apiSuccess } = useGet<Workflow>({
         url: api,
-        enabled: !!api,
+        // every tab's content stays mounted (display:none), so without this
+        // gate all workflow JSONs are fetched at page load; load only the
+        // active tab's workflow and keep it cached (staleTime) across switches
+        enabled: !!api && current_tab === tab_name,
     });
     const handlers = useHandlers();
     const enable_previews = useBooleanSetting(settings.enable_previews);
