@@ -109,7 +109,6 @@ export const GenerateButton = ({
     disabled,
     requiredControls,
 }: GenerateButtonProps) => {
-    // https://github.com/microsoft/TypeScript/issues/14107
     const { getValues, control } = useFormContext();
     const requiredNames = useMemo(() => {
         if (!requiredControls) {
@@ -119,7 +118,7 @@ export const GenerateButton = ({
             ? [...requiredControls]
             : [requiredControls];
     }, [requiredControls]);
-    const watchedControls: any = useWatch({
+    const watchedControls = useWatch({
         name: requiredNames,
         disabled: !requiredNames.length,
     });
