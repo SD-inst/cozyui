@@ -1,24 +1,50 @@
 import { Box } from '@mui/material';
+import { get } from 'lodash-es';
 import { useListChoices } from '../../hooks/useListChoices';
+import { useAppSelector } from '../../redux/hooks';
 import { SelectInput } from './SelectInput';
 import { SliderInput } from './SliderInput';
 
-const DEFAULT_TURBO_LORA =
+const emptyFilter = '';
+
+const H3_DEFAULT_TURBO_LORA =
     'h3/minimax_h3_fl2v_turbo_8step_v1.0_768p_comfyui_lightx2v_bf16.safetensors';
+const H3_TURBO_VENDORS = ['turbo', 'lightx2v', 'hyperflow', 'taomate'];
+const h3TurboFilter = (l: string) =>
+    l.includes('minimax_h3') && H3_TURBO_VENDORS.some((v) => l.includes(v));
 
-const TURBO_VENDORS = ['turbo', 'lightx2v', 'hyperflow', 'taomate'];
-
-export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
+/**
+ * Turbo LoRA picker (select + strength). `type` is the usual model-type
+ * filter — the `config.loras[type].filter` path prefix used by
+ * `ModelSelectAutocomplete`/`LoraInput` — and `filter` narrows the list
+ * further (H3: acceleration vendors; Moss: the `8-steps` file-name prefix).
+ * With no props it lists the MiniMax H3 turbo LoRAs.
+ */
+export const TurboLoraSelect = ({
+    type,
+    filter = h3TurboFilter,
+    defaultValue = H3_DEFAULT_TURBO_LORA,
+    sx,
+}: {
+    /** config.loras key of the model family, e.g. 'moss' */
+    type?: string;
+    filter?: (lora: string) => boolean;
+    defaultValue?: string;
+    sx?: any;
+}) => {
     const loras = useListChoices({
         component: 'LoraLoaderModelOnly',
         field: 'lora_name',
         index: 0,
     });
+    const typeFilter = useAppSelector((s) =>
+        type ? get(s, ['config', 'loras', type, 'filter'], emptyFilter) : emptyFilter,
+    );
     const choices = loras
         .filter(
             (l) =>
-                l.includes('minimax_h3') &&
-                TURBO_VENDORS.some((v) => l.includes(v)),
+                (!typeFilter || l.includes(typeFilter)) &&
+                (filter ? filter(l) : true),
         )
         .map((l) => ({
             text: l.slice(
@@ -44,7 +70,7 @@ export const TurboLoraSelect = ({ sx }: { sx?: any }) => {
                     name='turbo_lora.lora_name'
                     label='turbo_lora'
                     choices={choices}
-                    defaultValue={DEFAULT_TURBO_LORA}
+                    defaultValue={defaultValue}
                     sx={{ width: '100% !important' }}
                 />
             </Box>

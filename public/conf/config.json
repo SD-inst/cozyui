@@ -2787,6 +2787,14 @@
                 },
                 "lora": {
                     "id": "handle"
+                },
+                "turbo": {
+                    "id": "handle",
+                    "cfg_node_id": "2",
+                    "cfg_field": "cfg"
+                },
+                "turbo_lora": {
+                    "id": "skip"
                 }
             },
             "result": {

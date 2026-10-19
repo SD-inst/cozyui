@@ -15,8 +15,12 @@ import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
+import { ToggleInput } from '../../controls/ToggleInput';
+import { TurboLoraSelect } from '../../controls/TurboLoraSelect';
 import { WidthHeight } from '../../controls/WidthHeightInput';
 import { useTranslate } from '../../../i18n/I18nContext';
+import { useRegisterHandler } from '../../contexts/TabContext';
+import { useTurboLoraHandler } from '../../../hooks/useTurboLoraHandler';
 import { WFTab } from '../../WFTab';
 
 const MossLayoutEditor = lazy(() =>
@@ -27,6 +31,10 @@ const MossLayoutEditor = lazy(() =>
 
 const mossImageSystemPrompt = () =>
     import('../../chat/prompts/mossImage').then((m) => m.mossImageSystemPrompt);
+
+const MOSS_DEFAULT_TURBO_LORA = 'moss/8-steps-dmd-lora.safetensors';
+const isMossTurboLora = (lora: string) =>
+    lora.slice(lora.lastIndexOf('/') + 1).startsWith('8-steps');
 
 const MossChat = () => {
     const tr = useTranslate();
@@ -78,6 +86,8 @@ const MossChat = () => {
 const Content = () => {
     const tr = useTranslate();
     const [editorOpen, setEditorOpen] = useState(false);
+    const turboHandler = useTurboLoraHandler();
+    useRegisterHandler({ name: 'turbo', handler: turboHandler });
     return (
         <Layout>
             <GridLeft>
@@ -100,6 +110,7 @@ const Content = () => {
                 <PromptInput name='neg_prompt' />
                 <WidthHeight maxWidth={2048} maxHeight={2048} />
                 <SliderInput name='steps' defaultValue={20} min={1} max={100} />
+                <ToggleInput name='turbo' label='turbo' />
                 <CFGInput defaultValue={5} />
                 <SamplerSelectInput name='sampler' defaultValue='seeds_2' />
                 <SchedulerSelectInput name='scheduler' defaultValue='sgm_uniform' />
@@ -113,6 +124,12 @@ const Content = () => {
                     min={1}
                     max={16}
                     defaultValue={1}
+                />
+                <TurboLoraSelect
+                    type='moss'
+                    filter={isMossTurboLora}
+                    defaultValue={MOSS_DEFAULT_TURBO_LORA}
+                    sx={{ mb: 2 }}
                 />
                 <LoraInput name='lora' type='moss' sx={{ mb: 2 }} />
                 <SeedInput name='seed' defaultValue={1024} />
