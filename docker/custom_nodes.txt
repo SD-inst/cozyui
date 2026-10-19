@@ -13,14 +13,12 @@ https://github.com/filliptm/ComfyUI_Fill-ChatterBox
 https://github.com/fredconex/ComfyUI-SongBloom
 https://github.com/huixingyun/ComfyUI-SoundFlow
 https://github.com/Jalen-Brunson/ComfyUI-MiniMax-H3-PDD-Acc
-https://github.com/kijai/ComfyUI-Florence2
 https://github.com/kijai/ComfyUI-HunyuanVideoWrapper
 https://github.com/kijai/ComfyUI-KJNodes
 https://github.com/kijai/ComfyUI-MMAudio.git
 https://github.com/kijai/ComfyUI-WanVideoWrapper.git
 https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite
 https://github.com/Larryvrh/ComfyUI-MiniMax-H3-Turbo
-https://github.com/Lightricks/ComfyUI-LTXVideo
 https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch
 https://github.com/nunchaku-ai/ComfyUI-nunchaku
 https://github.com/pollockjj/ComfyUI-MultiGPU

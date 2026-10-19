@@ -1,6 +1,5 @@
 import { mergeType } from '../../../api/mergeType';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
-import { DescribeButton } from '../../controls/DescribeButton';
 import { EnhanceVideoInput } from '../../controls/EnhanceVideoInput';
 import { FileUpload } from '../../controls/FileUpload';
 import { FlowShiftInput } from '../../controls/FlowShiftInput';
@@ -13,27 +12,29 @@ import { KJHYTeaCacheInput } from '../../controls/hyv/KJHYTeaCacheInput';
 import { KJSchedulerSelectInput } from '../../controls/KJSchedulerSelectInput';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { LengthInput } from '../../controls/LengthSlider';
-import { LLMSelectInput } from '../../controls/LLMSelectInput';
 import { LoraInput } from '../../controls/LoraInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { VideoResult } from '../../controls/VideoResult';
 import { WFTab } from '../../WFTab';
+import { ChatComponent } from '../../chat/ChatComponent';
+
+const hunyuanI2VSystemPrompt = () =>
+    import('../../chat/prompts/hunyuanI2V').then(
+        (m) => m.hunyuanI2VSystemPrompt,
+    );
 
 const Content = () => {
     return (
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
-                <TextInput
-                    name='suffix'
-                    defaultValue=''
-                    sx={{ display: 'none' }}
-                />
-                <LLMSelectInput name='llm' />
-                <DescribeButton />
                 <TextInput name='prompt' multiline sx={{ mb: 3 }} />
+                <ChatComponent
+                    systemPrompt={hunyuanI2VSystemPrompt}
+                    mediaFields={[{ name: 'image', kind: 'image' }]}
+                />
                 <HYSize name='size' defaultValue={544} />
                 <LengthInput
                     min={5}

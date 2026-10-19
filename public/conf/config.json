@@ -458,98 +458,6 @@
                 "type": "gifs"
             }
         },
-        "LTX I2V": {
-            "api": "api/ltx_i2v.json",
-            "controls": {
-                "prompt": {
-                    "id": "186",
-                    "field": "input_text"
-                },
-                "image": {
-                    "id": "106",
-                    "field": "image"
-                },
-                "seed": {
-                    "id": "193",
-                    "field": "value"
-                },
-                "length": {
-                    "id": "103",
-                    "field": "frames_number"
-                },
-                "compression": {
-                    "id": "103",
-                    "field": "img_compression"
-                },
-                "steps": {
-                    "id": "81",
-                    "field": "steps"
-                },
-                "max_width": {
-                    "id": "155",
-                    "field": "width"
-                },
-                "max_height": {
-                    "id": "155",
-                    "field": "height"
-                },
-                "neg_prompt": {
-                    "id": "88",
-                    "field": "text"
-                },
-                "cfg": {
-                    "id": "130",
-                    "field": "cfg"
-                },
-                "stg": {
-                    "id": "130",
-                    "field": "stg"
-                },
-                "stg_rescale": {
-                    "id": "130",
-                    "field": "rescale"
-                },
-                "stg_mode": {
-                    "id": "128",
-                    "field": "stg_mode"
-                },
-                "sampler": {
-                    "id": "14",
-                    "field": "sampler_name"
-                },
-                "suffix": {
-                    "id": "skip"
-                },
-                "llm": {
-                    "id": "skip"
-                }
-            },
-            "result": {
-                "id": "195",
-                "type": "gifs"
-            }
-        },
-        "Describe image": {
-            "api": "api/describe_image.json",
-            "controls": {
-                "image": {
-                    "id": "11",
-                    "field": "image"
-                },
-                "llm": {
-                    "id": "1",
-                    "field": "model"
-                },
-                "suffix": {
-                    "id": "12",
-                    "field": "input_text"
-                }
-            },
-            "result": {
-                "id": "6",
-                "type": "text"
-            }
-        },
         "LTX-2 T2V": {
             "api": "api/ltx2_t2v.json",
             "controls": {
@@ -1111,12 +1019,6 @@
                 "enhance_video": {
                     "id": "handle"
                 },
-                "suffix": {
-                    "id": "skip"
-                },
-                "llm": {
-                    "id": "skip"
-                },
                 "tea_cache": {
                     "id": "handle",
                     "node_id": "3"
@@ -1203,12 +1105,6 @@
                 },
                 "lora": {
                     "id": "handle"
-                },
-                "suffix": {
-                    "id": "skip"
-                },
-                "llm": {
-                    "id": "skip"
                 },
                 "aug_strength": {
                     "id": "86",
@@ -2819,9 +2715,6 @@
                 },
                 "lora": {
                     "id": "handle"
-                },
-                "llm": {
-                    "id": "skip"
                 }
             },
             "result": {

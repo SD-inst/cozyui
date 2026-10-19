@@ -2,7 +2,6 @@ import { mergeType } from '../../../api/mergeType';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { ClipSelectInput } from '../../controls/ClipSelectInput';
 import { CompileModelToggle } from '../../controls/CompileModelToggle';
-import { DescribeButton } from '../../controls/DescribeButton';
 import { FileUpload } from '../../controls/FileUpload';
 import { FlowShiftInput } from '../../controls/FlowShiftInput';
 import { GenerateButton } from '../../controls/GenerateButton';
@@ -11,7 +10,6 @@ import { HYLengthInput } from '../../controls/hyv/HYLengthInput';
 import { HYModelSelectInput } from '../../controls/hyv/HYModelSelectInput';
 import { HYSize } from '../../controls/hyv/HYSize';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
-import { LLMSelectInput } from '../../controls/LLMSelectInput';
 import { LoraInput } from '../../controls/LoraInput';
 import { PromptInput } from '../../controls/PromptInput';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
@@ -19,25 +17,27 @@ import { SchedulerSelectInput } from '../../controls/SchedulerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
 import { TeaCacheInput } from '../../controls/TeaCacheInput';
-import { TextInput } from '../../controls/TextInput';
 import { VideoInterpolationSlider } from '../../controls/VideoInterpolationSlider';
 import { VideoResult } from '../../controls/VideoResult';
 import { VirtualVRAMSliderInput } from '../../controls/VirtualVRAMSliderInput';
 import { WFTab } from '../../WFTab';
+import { ChatComponent } from '../../chat/ChatComponent';
+
+const hunyuanI2VSystemPrompt = () =>
+    import('../../chat/prompts/hunyuanI2V').then(
+        (m) => m.hunyuanI2VSystemPrompt,
+    );
 
 const Content = () => {
     return (
         <Layout>
             <GridLeft>
                 <FileUpload name='image' />
-                <TextInput
-                    name='suffix'
-                    defaultValue=''
-                    sx={{ display: 'none' }}
-                />
-                <LLMSelectInput name='llm' />
-                <DescribeButton />
                 <PromptInput name='prompt' sx={{ mb: 3 }} />
+                <ChatComponent
+                    systemPrompt={hunyuanI2VSystemPrompt}
+                    mediaFields={[{ name: 'image', kind: 'image' }]}
+                />
                 <HYSize name='size' defaultValue={544} />
                 <HYLengthInput />
                 <SliderInput name='steps' defaultValue={30} min={1} max={50} />
