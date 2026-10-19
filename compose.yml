@@ -2,6 +2,10 @@ services:
   comfyui:
     build:
       dockerfile: comfyui.Dockerfile
+      args:
+        # Leave empty to track the ComfyUI branch tip; set to a commit sha
+        # (COMFYUI_REV=<sha> docker compose build) to pin the core build.
+        COMFYUI_REV: ${COMFYUI_REV:-}
     ports:
       - 8188:8188
     runtime: nvidia

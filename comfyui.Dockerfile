@@ -19,12 +19,15 @@ RUN --mount=type=cache,target=/var/cache/apt --mount=type=cache,target=/var/lib/
     dumb-init
 
 RUN --mount=type=cache,target=/root/.cache python -m pip install --upgrade pip wheel
-RUN git clone --depth 1 --single-branch https://github.com/comfyanonymous/ComfyUI /app
+COPY docker/git_mirror.sh docker/clone_comfyui.sh docker/custom_nodes.txt docker/install_nodes.sh /opt/docker/
+# ComfyUI core goes through the same mirror cache as the node packs, so rebuilding
+# a later layer costs one fetch instead of a fresh clone. Pin the core with
+# `docker compose build --build-arg COMFYUI_REV=<sha>` (empty = remote branch tip).
+ARG COMFYUI_REV=
+RUN --mount=type=cache,target=/nodes-cache COMFYUI_REV="$COMFYUI_REV" /opt/docker/clone_comfyui.sh
 WORKDIR /app
 RUN --mount=type=cache,target=/root/.cache python -m pip install -r requirements.txt
-COPY docker/custom_nodes.txt docker/install_nodes.sh /app/docker/
-RUN --mount=type=cache,target=/root/.cache /app/docker/install_nodes.sh
-RUN --mount=type=cache,target=/root/.cache python -m pip install llama-cpp-python llama-cpp-agent mkdocs mkdocs-material mkdocstrings[python]
+RUN --mount=type=cache,target=/root/.cache --mount=type=cache,target=/nodes-cache /opt/docker/install_nodes.sh
 EXPOSE 8188/tcp
 ENTRYPOINT ["python", "main.py"]
 CMD ["--listen"]
