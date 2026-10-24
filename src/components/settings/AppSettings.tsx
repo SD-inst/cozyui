@@ -54,6 +54,7 @@ export const AppSettings = () => {
                     <SettingCheckbox name={settings.backup_uploads} />
                     <SettingCheckbox name={settings.chat_stream} />
                     <SettingCheckbox name={settings.letterbox_crop} />
+                    <SettingCheckbox name={settings.connection_sound} />
                 </Box>
                 <LLMSettings />
                 {tag_enabled && (

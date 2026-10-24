@@ -412,6 +412,7 @@ const translation = {
         override_on: 'On',
         override_off: 'Off',
         notification: 'Notification sound',
+        connection_sound: 'Sound on ComfyUI connect/disconnect',
         notification_name: 'Sound effect #%{number}',
         notification_none: 'None',
         unit: 'Unit',

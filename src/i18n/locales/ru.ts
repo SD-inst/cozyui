@@ -410,6 +410,7 @@ const translation = {
         override_on: 'Включено',
         override_off: 'Выключено',
         notification: 'Звук уведомления',
+        connection_sound: 'Звук при подключении/отключении ComfyUI',
         notification_name: 'Звуковой эффект №%{number}',
         notification_none: 'Нет',
         unit: 'Единица',

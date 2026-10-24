@@ -20,6 +20,8 @@ import {
 import { addResult, clearPrompt } from '../redux/tab';
 import { useRef } from 'react';
 import { updateNoCache } from '../api/utils';
+import { settings } from '../hooks/settings';
+import { useBooleanSetting } from '../hooks/useSetting';
 
 export type WSHandlers = {
     onStatus?: (data: any) => void;
@@ -228,12 +230,26 @@ export const WSReceiver = () => {
         dispatch(setConnected(true));
         console.log('Connected to ComfyUI!');
         toast.success(tr('toasts.connected'));
+        playConnectionSound('connected.mp3');
     });
     const handleClose = useEventCallback(() => {
         dispatch(setConnected(false));
         console.log('Disconnected from ComfyUI');
         toast.error(tr('toasts.disconnected'));
+        playConnectionSound('disconnected.mp3');
     });
+    const connection_sound = useBooleanSetting(settings.connection_sound);
+    const connection_audio = useRef<HTMLAudioElement>(null);
+    const playConnectionSound = (sound: string) => {
+        const audio = connection_audio.current;
+        if (!connection_sound || !audio) {
+            return;
+        }
+        audio.src = `audio/${sound}`;
+        // The browser blocks playback until the user has interacted with the
+        // page (e.g. the sound on the very first page load) — swallow it.
+        audio.play().catch(() => undefined);
+    };
     useWebSocket(
         apiUrl + '/ws?clientId=' + client_id,
         handleMessage,
@@ -241,5 +257,5 @@ export const WSReceiver = () => {
         handleClose,
         !!apiUrl && tr_ready,
     );
-    return null;
+    return <audio ref={connection_audio} />;
 };
