@@ -15,7 +15,7 @@ import toast from 'react-hot-toast';
 import { Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useReuploadLost } from '../../hooks/useBackupUpload';
+import { useReuploadLost } from '../../hooks/useReuploadLost';
 import { useImageURL } from '../../hooks/useImageURL';
 import { useBooleanSetting } from '../../hooks/useSetting';
 import { settings } from '../../hooks/settings';

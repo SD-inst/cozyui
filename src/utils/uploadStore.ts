@@ -13,6 +13,11 @@ import { uploadToInputDir } from '../api/files';
 import { get } from 'lodash-es';
 import { db } from '../components/history/db';
 
+// Above this share of the browser's storage quota, the oldest copies go away.
+// The browser's own quota error is the hard limit (see `registerUpload`); this
+// only keeps the cache from growing into it.
+const SOFT_QUOTA_RATIO = 0.4;
+
 export type UploadMeta = {
     // Diagnostics only: which control the bytes came from.
     tab?: string;
@@ -134,8 +139,6 @@ export const uploadInputFile = async (
 // the user's original filename. The server name each legacy entry belongs to is
 // read back from that tab's persisted form values; an entry no form value
 // references belongs to a file nothing asks for anymore, and goes away.
-let migration: Promise<void> | null = null;
-
 const migrateUploadBackups = async (): Promise<void> => {
     const legacy = await db.uploads.filter((r) => !r.filename).toArray();
     if (!legacy.length) {
@@ -153,9 +156,7 @@ const migrateUploadBackups = async (): Promise<void> => {
         const slash = record.id.indexOf('/');
         const tab = slash > 0 ? record.id.slice(0, slash) : '';
         const path = record.id.slice(slash + 1);
-        const filename = path
-            ? get(valuesByTab[tab], path)
-            : undefined;
+        const filename = path ? get(valuesByTab[tab], path) : undefined;
         if (typeof filename === 'string' && filename) {
             await db.uploads
                 .put({
@@ -171,9 +172,74 @@ const migrateUploadBackups = async (): Promise<void> => {
     }
 };
 
-export const ensureUploadsMigrated = (): Promise<void> => {
-    if (!migration) {
-        migration = migrateUploadBackups().catch(() => undefined);
+// Copies of files no saved form value mentions anymore cannot be needed: the
+// only thing that asks for a stored copy is a payload that names the file.
+// Beyond that, the oldest copies go once the cache approaches its share of the
+// storage quota — losing a copy costs a re-pick, and the browser's quota is the
+// hard limit anyway.
+export const pruneUploads = async (stateTexts: string[]): Promise<void> => {
+    const ids = (await db.uploads.orderBy('lastUsedAt').primaryKeys()) as string[];
+    const referenced = (id: string): boolean =>
+        stateTexts.some((text) => text.includes(id));
+
+    for (const id of ids) {
+        if (!referenced(id)) {
+            await db.uploads.delete(id);
+        }
     }
-    return migration;
+
+    const estimate = await navigator.storage?.estimate?.();
+    if (!estimate?.quota || !estimate.usage) {
+        return;
+    }
+    if (estimate.usage <= estimate.quota * SOFT_QUOTA_RATIO) {
+        return;
+    }
+    // Oldest first, referenced ones last: a file still in a form can still be
+    // needed, so it is the last thing to lose its copy.
+    const remaining = (await db.uploads
+        .orderBy('lastUsedAt')
+        .primaryKeys()) as string[];
+    const victims = [
+        ...remaining.filter((id) => !referenced(id)),
+        ...remaining.filter((id) => referenced(id)),
+    ];
+    for (const id of victims) {
+        await db.uploads.delete(id);
+        const after = await navigator.storage.estimate();
+        if (!after.usage || !after.quota) {
+            break;
+        }
+        if (after.usage <= after.quota * SOFT_QUOTA_RATIO) {
+            break;
+        }
+    }
+};
+
+// The copies are what makes a cleared input folder survivable, so the browser
+// must not evict them on its own under disk pressure.
+const requestPersistence = async (): Promise<void> => {
+    try {
+        await navigator.storage?.persist?.();
+    } catch {
+        // A rejected request only means the cache stays evictable.
+    }
+};
+
+let startup: Promise<void> | null = null;
+
+// Migration, garbage collection and the persistence request run once per page
+// load, before anything reads the store.
+export const ensureUploadStoreReady = (): Promise<void> => {
+    if (!startup) {
+        startup = (async () => {
+            const stateTexts = (await db.formState.toArray()).map(
+                (row) => row.state,
+            );
+            await migrateUploadBackups();
+            await pruneUploads(stateTexts);
+            await requestPersistence();
+        })().catch(() => undefined);
+    }
+    return startup;
 };

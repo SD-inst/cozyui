@@ -29,10 +29,7 @@ window.matchMedia = vi.fn().mockReturnValue({
 vi.mock('../../hooks/useApiURL', () => ({
     useApiURL: () => 'http://localhost:8188',
 }));
-vi.mock('../../hooks/useUploadBackupGuard', () => ({
-    useUploadBackupGuard: () => {},
-}));
-vi.mock('../../hooks/useBackupUpload', () => ({
+vi.mock('../../hooks/useReuploadLost', () => ({
     useReuploadLost: () => () => {},
 }));
 vi.mock('react-hot-toast', () => ({

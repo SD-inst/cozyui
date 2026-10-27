@@ -14,7 +14,11 @@
 // already points at a file that exists. The second phase only sees what the
 // handlers introduced on their own and skips every name the first phase already
 // confirmed.
-import { FilePresence, probeFile } from '../api/files';
+import {
+    FilePresence,
+    getFileFromServer,
+    probeFileFull,
+} from '../api/files';
 import { Workflow } from '../api/graph';
 import { db } from '../components/history/db';
 import {
@@ -25,8 +29,9 @@ import {
     renameInValues,
 } from './filePreflight';
 import {
-    ensureUploadsMigrated,
+    ensureUploadStoreReady,
     lookupUpload,
+    registerUpload,
     renameUpload,
     uploadInputFile,
 } from './uploadStore';
@@ -37,6 +42,10 @@ export const PREFLIGHT_BUDGET_MS = 4 * 60_000;
 const PROBE_CONCURRENCY = 4;
 // Per file, per page load: a persistently failing upload must not loop.
 const MAX_RESTORE_ATTEMPTS = 2;
+// Files the server has and we do not are worth caching for next time, but not
+// at the cost of pulling a huge video over the wire on a guess.
+const CACHE_MAX_BYTES = 20 * 1024 * 1024;
+const CACHE_CONCURRENCY = 2;
 
 const restoreAttempts: Record<string, number> = {};
 
@@ -76,6 +85,10 @@ export type FormAccess = {
 export type PreflightRun = {
     values: (form: FormAccess) => Promise<PreflightReport>;
     graph: (args: { api: Workflow } & FormAccess) => Promise<PreflightReport>;
+    // Pull the files the server has and we do not into local storage. Meant to
+    // run after the prompt is sent: it only pays off the next time the folder
+    // is cleared.
+    cacheUnstored: () => Promise<void>;
     report: PreflightReport;
 };
 
@@ -88,6 +101,10 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
     };
     const presence = new Map<string, FilePresence>();
     const renames: Record<string, string> = {};
+    // Names we hold bytes for — the store's contents plus anything this run
+    // uploaded itself.
+    let localNames = new Set<string>();
+    const unstored: Array<{ filename: string; size?: number }> = [];
     let manifest: Set<string> | null = null;
 
     const probeAndRestore = async (
@@ -104,9 +121,15 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
                 report.unreachable.push({ filename, where });
                 return;
             }
-            const result = await probeFile(filename, apiUrl);
+            const { presence: result, size } = await probeFileFull(
+                filename,
+                apiUrl,
+            );
             presence.set(filename, result);
             if (result === 'present') {
+                if (!localNames.has(filename)) {
+                    unstored.push({ filename, size });
+                }
                 return;
             }
             if (result === 'unknown') {
@@ -128,6 +151,7 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
                 const { name } = await uploadInputFile(local, apiUrl);
                 renames[filename] = name;
                 presence.set(name, 'present');
+                localNames.add(name);
                 report.restored.push({ from: filename, to: name });
                 // The stored copy follows the file to its new name, so the next
                 // generation finds it under the name the form now holds. The
@@ -152,18 +176,39 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
 
     const loadManifest = async (): Promise<Set<string>> => {
         if (!manifest) {
-            await ensureUploadsMigrated();
+            await ensureUploadStoreReady();
             // Names the local store holds bytes for: uploaded by this client
             // even when the name carries no upload prefix. A store that cannot
             // be read only means nothing can be restored — generation continues
             // and the server reports what it is missing.
             manifest = new Set<string>(await readStoredNames());
+            localNames = manifest;
         }
         return manifest;
     };
 
     return {
         report,
+        cacheUnstored: async () => {
+            const pending = unstored.splice(0, unstored.length);
+            await mapLimit(
+                pending,
+                CACHE_CONCURRENCY,
+                async ({ filename, size }) => {
+                    // Without a length there is no way to know the cost before
+                    // paying it, and `/view` always reports one.
+                    if (size === undefined || size > CACHE_MAX_BYTES) {
+                        return;
+                    }
+                    try {
+                        const file = await getFileFromServer(filename, apiUrl);
+                        await registerUpload(filename, file);
+                    } catch {
+                        // Best effort: the next run looks at the file again.
+                    }
+                },
+            );
+        },
         values: async (form) => {
             if (!apiUrl) {
                 return report;

@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
 import {
-    ensureUploadsMigrated,
+    ensureUploadStoreReady,
     lookupUpload,
 } from '../utils/uploadStore';
 
@@ -26,7 +26,7 @@ export const useReuploadLost = <T,>(
             if (!filename) {
                 return;
             }
-            await ensureUploadsMigrated();
+            await ensureUploadStoreReady();
             const file = await lookupUpload(filename);
             if (!file) {
                 onLost(filename);

@@ -77,7 +77,7 @@ describe('ensureUploadsMigrated', () => {
         ]);
 
         const store = await freshStore();
-        await store.ensureUploadsMigrated();
+        await store.ensureUploadStoreReady();
 
         expect(await store.lookupUpload('1730_cat.png')).toBeDefined();
         expect(await store.lookupUpload('1731_dog.png')).toBeDefined();
@@ -90,7 +90,7 @@ describe('ensureUploadsMigrated', () => {
         await db.uploads.put({ id: 'Gone/tab.field', file: file('x.png') });
 
         const store = await freshStore();
-        await store.ensureUploadsMigrated();
+        await store.ensureUploadStoreReady();
 
         expect(await db.uploads.count()).toBe(0);
     });
@@ -103,8 +103,8 @@ describe('ensureUploadsMigrated', () => {
         });
 
         const store = await freshStore();
-        await store.ensureUploadsMigrated();
-        await store.ensureUploadsMigrated();
+        await store.ensureUploadStoreReady();
+        await store.ensureUploadStoreReady();
 
         expect(await store.lookupUpload('kept.png')).toBeDefined();
     });

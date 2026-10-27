@@ -329,6 +329,11 @@ export const GenerateButton = ({
             return;
         }
 
+        // Files the server has and we have no copy of: pull them in the
+        // background, so the next time the input folder is emptied there is
+        // something to restore from. The generation is not held up for it.
+        void preflight.cacheUnstored().catch(() => undefined);
+
         const vals = getValues();
         for (const k in vals) {
             if (!(k in controls)) {

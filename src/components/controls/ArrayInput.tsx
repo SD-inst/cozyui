@@ -32,8 +32,7 @@ import { Flipped, Flipper } from 'react-flip-toolkit';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useUploadBackupGuard } from '../../hooks/useUploadBackupGuard';
-import { useReuploadLost } from '../../hooks/useBackupUpload';
+import { useReuploadLost } from '../../hooks/useReuploadLost';
 import { useBooleanSetting } from '../../hooks/useSetting';
 import { settings } from '../../hooks/settings';
 import { useIsCurrentTab, useTabName } from '../contexts/TabContext';
@@ -357,7 +356,6 @@ export const ArrayInput = ({
         ...React.Children.toArray(props.children),
         ...perItemToggles,
     ];
-    useUploadBackupGuard(name, value, keyField);
     useEffect(() => {
         if (rawValue === undefined || rawValue === null) {
             setValue(name, []);

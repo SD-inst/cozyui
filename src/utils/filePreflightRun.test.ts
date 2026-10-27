@@ -32,7 +32,11 @@ const makeFetch = (
         });
     });
 
-const formOf = (values: any) => {
+// The store's startup pass drops copies that no saved form value mentions, so a
+// test seeding a copy seeds the form state referencing it too — what a real
+// session looks like.
+const formOf = async (values: any) => {
+    await db.formState.put({ tab: 'Test', state: JSON.stringify(values) });
     const setValues: Array<{ path: string; value: string }> = [];
     const setPath = (path: string, value: string) => {
         setValues.push({ path, value });
@@ -72,7 +76,7 @@ describe('createPreflightRun', () => {
         const fetchMock = makeFetch(['1700000001001_here.png'], ['1700000001000_gone.png']);
         vi.stubGlobal('fetch', fetchMock);
 
-        const form = formOf({
+        const form = await formOf({
             image: '1700000001000_gone.png',
             model: 'ltx2/ltx-2-19b-dev-fp8.safetensors',
             ref_images: [{ image: '1700000001001_here.png' }],
@@ -118,7 +122,7 @@ describe('createPreflightRun', () => {
         });
         vi.stubGlobal('fetch', makeFetch([], ['1700000001100_gone.png']));
 
-        const form = formOf({ image: '1700000001100_gone.png' });
+        const form = await formOf({ image: '1700000001100_gone.png' });
         const run = createPreflightRun(apiUrl);
         await run.values(form.access);
 
@@ -129,7 +133,7 @@ describe('createPreflightRun', () => {
     it('reports a missing file it has no copy of', async () => {
         vi.stubGlobal('fetch', makeFetch([], ['1700000001200_gone.png']));
 
-        const form = formOf({ image: '1700000001200_gone.png' });
+        const form = await formOf({ image: '1700000001200_gone.png' });
         const run = createPreflightRun(apiUrl);
         await run.values(form.access);
 
@@ -151,7 +155,7 @@ describe('createPreflightRun', () => {
         const fetchMock = makeFetch([], [], ['1700000001300_maybe.png']);
         vi.stubGlobal('fetch', fetchMock);
 
-        const form = formOf({ image: '1700000001300_maybe.png' });
+        const form = await formOf({ image: '1700000001300_maybe.png' });
         const run = createPreflightRun(apiUrl);
         await run.values(form.access);
 
@@ -173,7 +177,7 @@ describe('createPreflightRun', () => {
 
         // The form holds the name in a nested object the value pass walks too,
         // so the graph pass only has to fix the node.
-        const form = formOf({ i2i: { enabled: true, image: '1700000001400_gone.png' } });
+        const form = await formOf({ i2i: { enabled: true, image: '1700000001400_gone.png' } });
         const run = createPreflightRun(apiUrl);
         await run.values(form.access);
         const api = {

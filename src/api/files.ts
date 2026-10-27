@@ -74,10 +74,17 @@ export const uploadFile = async (
 // mass deletion and triggers a storm of re-uploads.
 export type FilePresence = 'present' | 'missing' | 'unknown';
 
-export const probeFile = async (
+export type FileProbe = {
+    presence: FilePresence;
+    // Reported by the server for a present file; used to decide whether a copy
+    // is worth keeping locally.
+    size?: number;
+};
+
+export const probeFileFull = async (
     filename: string,
     apiUrl: string,
-): Promise<FilePresence> => {
+): Promise<FileProbe> => {
     try {
         const r = await fetch(viewUrl(apiUrl, filename), {
             method: 'HEAD',
@@ -87,13 +94,22 @@ export const probeFile = async (
             signal: timedSignal(),
         });
         if (r.ok) {
-            return 'present';
+            const length = Number(r.headers?.get?.('content-length'));
+            return {
+                presence: 'present',
+                size: Number.isFinite(length) ? length : undefined,
+            };
         }
-        return r.status === 404 ? 'missing' : 'unknown';
+        return { presence: r.status === 404 ? 'missing' : 'unknown' };
     } catch {
-        return 'unknown';
+        return { presence: 'unknown' };
     }
 };
+
+export const probeFile = async (
+    filename: string,
+    apiUrl: string,
+): Promise<FilePresence> => (await probeFileFull(filename, apiUrl)).presence;
 
 export const fileOnServer = async (
     filename: string,
