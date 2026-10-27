@@ -927,6 +927,21 @@ Results arrive via WebSocket, dispatched to `s.tab.result[tabName][id][type]`. T
 
 At runtime, the app reads the API JSON and replaces input values based on the current form state. The `useAPI()` hook provides the mapping between control names and node fields. **IMPORTANT**: all controls that are registered in react-hook-form should have a corresponding config.json entry. If control is handled somehwere else (by another control or handler), it should have its `id` set to `skip` explicitly.
 
+### Uploaded input files: local copies and the pre-generation preflight — IMPORTANT
+
+ComfyUI's `input` folder is not durable (in `compose.yml` only `./models` is a volume), while the persisted form state keeps naming those files for weeks. One referenced file that is gone makes ComfyUI reject the **whole** workflow with `prompt_outputs_failed_validation`, whose top-level message names neither the node nor the value — so `GenerateButton` decodes `node_errors` into `#<node id> <class_type>: <details>` and shows that ([src/api/validation.ts](src/api/validation.ts)).
+
+Every upload registers its bytes in `db.uploads` under **the server filename** (`id === filename`, indexed by `filename` and `lastUsedAt`) — the only identity that survives reordering, slot changes and re-uploads. All upload paths go through `uploadInputFile` ([src/utils/uploadStore.ts](src/utils/uploadStore.ts)); a re-upload renames the record (`renameUpload`) instead of leaving a stale entry. Pre-v13 records keyed by form position are re-keyed once at startup from each tab's persisted `formState`; a copy no saved form value mentions anymore is deleted, and once the store passes its share of `navigator.storage.estimate()` the oldest copies go (files still referenced by a form last). `navigator.storage.persist()` is requested because these copies are what makes a cleared input folder survivable.
+
+`GenerateButton` runs one preflight per generation ([src/utils/filePreflightRun.ts](src/utils/filePreflightRun.ts), policy in the pure [src/utils/filePreflight.ts](src/utils/filePreflight.ts)) in two phases:
+
+- **before the control handlers**, over the form values: each referenced file is probed with `HEAD /api/view`, a missing one is re-uploaded from the local copy, and the new name is written back with `setValue` — so every node the handlers then build already points at a file that exists;
+- **after the handlers**, over the finished workflow: covers names the handlers put into the graph themselves, skipping everything the first phase confirmed, and applies the same rename to the form so previews and the next generation don't repeat the work.
+
+Only names this client uploaded are candidates: the `<milliseconds>_` prefix every upload adds, or a registration in the store. Prompts, output names and model/LoRA selectors (`ltx2/ltx-2-19b-dev-fp8.safetensors` — always with a subfolder) are never candidates and could not be re-uploaded anyway. Array entries with `skip: true` or `enabled: false` are excluded, since their files never reach the graph.
+
+`probeFile` is tri-state (`present | missing | unknown`): only a real HTTP 404 counts as gone; a timeout or a 5xx is `unknown`, so a wedged server is never mistaken for a mass deletion and nothing is re-uploaded. A file that is gone with no local copy aborts the generation with a message naming the control (`errors.files_lost`) rather than sending a doomed request. Files the server has and the store does not are fetched in the background after the prompt is sent (`cacheUnstored`, ≤ 20 MB each). Masks built by `I2IToggle` are deliberately not registered: they are rebuilt every generation and never appear in a form value.
+
 ### Tooltips vs. the `disable_help` setting — IMPORTANT
 
 [`ThemeContext`](src/components/contexts/ThemeContext.tsx) sets `MuiTooltip` defaults `disableHoverListener` and `disableTouchListener` to the `disable_help` user setting (`settings.disable_help`). So when a user turns on "Disable tooltips", **every** `<Tooltip>` in the app stops showing — including ones that carry essential state, not just help text.
