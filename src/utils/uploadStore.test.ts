@@ -1,7 +1,12 @@
 import 'fake-indexeddb/auto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '../components/history/db';
-import { lookupUpload, registerUpload, renameUpload } from './uploadStore';
+import {
+    dropCopiesLostByTab,
+    lookupUpload,
+    registerUpload,
+    renameUpload,
+} from './uploadStore';
 
 const file = (name: string, body = 'bytes') =>
     new File([body], name, { type: 'image/png' });
@@ -47,9 +52,93 @@ describe('uploadStore', () => {
     });
 });
 
-describe('ensureUploadsMigrated', () => {
-    // The migration runs once per process; each case seeds the legacy rows
-    // before it, and the memoized promise is reset by reloading the module.
+describe('dropCopiesLostByTab', () => {
+    beforeEach(async () => {
+        await db.uploads.clear();
+        await db.formState.clear();
+    });
+
+    const saved = (state: any) => JSON.stringify(state);
+
+    it('drops the copy of a file the tab removed', async () => {
+        await db.uploads.put({
+            id: '1730_cat.png',
+            filename: '1730_cat.png',
+            file: file('cat.png'),
+            lastUsedAt: 1,
+        });
+        // The row is written before the drop runs, as the save effect does.
+        await db.formState.put({
+            tab: 'R2V',
+            state: saved({ ref_images: [{}, {}] }),
+        });
+
+        await dropCopiesLostByTab(
+            saved({ ref_images: [{ image: '1730_cat.png' }, {}] }),
+            saved({ ref_images: [{}, {}] }),
+        );
+
+        expect(await db.uploads.get('1730_cat.png')).toBeUndefined();
+    });
+
+    it('keeps a copy another tab still references', async () => {
+        await db.uploads.put({
+            id: '1730_cat.png',
+            filename: '1730_cat.png',
+            file: file('cat.png'),
+            lastUsedAt: 1,
+        });
+        await db.formState.bulkPut([
+            { tab: 'R2V', state: saved({ ref_images: [] }) },
+            { tab: 'Upscale', state: saved({ image: '1730_cat.png' }) },
+        ]);
+
+        await dropCopiesLostByTab(
+            saved({ ref_images: [{ image: '1730_cat.png' }] }),
+            saved({ ref_images: [] }),
+        );
+
+        expect(await db.uploads.get('1730_cat.png')).toBeDefined();
+    });
+
+    it('keeps a copy a skipped entry still holds', async () => {
+        await db.uploads.put({
+            id: '1730_cat.png',
+            filename: '1730_cat.png',
+            file: file('cat.png'),
+            lastUsedAt: 1,
+        });
+        const state = saved({
+            ref_images: [{ image: '1730_cat.png', skip: true }],
+        });
+        await db.formState.put({ tab: 'R2V', state });
+
+        await dropCopiesLostByTab(state, state);
+
+        expect(await db.uploads.get('1730_cat.png')).toBeDefined();
+    });
+
+    it('ignores a wholesale empty state (initialization or reset)', async () => {
+        await db.uploads.put({
+            id: '1730_cat.png',
+            filename: '1730_cat.png',
+            file: file('cat.png'),
+            lastUsedAt: 1,
+        });
+        await db.formState.put({ tab: 'R2V', state: saved({}) });
+
+        await dropCopiesLostByTab(
+            saved({ ref_images: [{ image: '1730_cat.png' }] }),
+            '{}',
+        );
+
+        expect(await db.uploads.get('1730_cat.png')).toBeDefined();
+    });
+});
+
+describe('ensureUploadStoreReady', () => {
+    // The startup pass runs once per process; each case seeds its rows before
+    // it, and the memoized promise is reset by reloading the module.
     const freshStore = async () => {
         vi.resetModules();
         return import('./uploadStore');

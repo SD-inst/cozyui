@@ -205,6 +205,37 @@ const pruneUploads = async (stateTexts: string[]): Promise<void> => {
     }
 };
 
+// A tab that stopped referencing a file can no longer need its copy, so the
+// copy goes as soon as that removal is saved, instead of waiting for the next
+// session's startup pass. The check runs against the states that are actually
+// persisted (this tab's new row included), so a file another tab still uses, or
+// one still sitting in a skipped array entry, keeps its copy.
+//
+// An empty new state is skipped: that shape comes from initialization or a
+// wholesale reset rather than from removing one element, and acting on it would
+// drop copies the form is about to reference again.
+export const dropCopiesLostByTab = async (
+    previousState: string | undefined,
+    newState: string,
+): Promise<void> => {
+    if (!previousState || !newState || newState === '{}') {
+        return;
+    }
+    const names = (await db.uploads
+        .orderBy('lastUsedAt')
+        .primaryKeys()) as string[];
+    const lost = names.filter((name) => previousState.includes(name));
+    if (!lost.length) {
+        return;
+    }
+    const texts = (await db.formState.toArray()).map((row) => row.state);
+    for (const name of lost) {
+        if (!texts.some((text) => text.includes(name))) {
+            await db.uploads.delete(name);
+        }
+    }
+};
+
 // The copies are what makes a cleared input folder survivable, so the browser
 // must not evict them on its own under disk pressure.
 const requestPersistence = async (): Promise<void> => {

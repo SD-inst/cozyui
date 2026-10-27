@@ -22,6 +22,7 @@ import { settings } from '../hooks/settings';
 import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { filterFormValues } from '../utils/filterFormValues';
+import { dropCopiesLostByTab } from '../utils/uploadStore';
 import { useTabName } from './contexts/TabContext';
 import { TabContextProvider } from './contexts/TabContextProvider';
 import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
@@ -86,8 +87,17 @@ const ValuesRestore = ({
             clearTimeout(saveTimeoutRef.current);
         }
         saveTimeoutRef.current = setTimeout(() => {
-            const filtered = filterFormValues(vals);
-            db.formState.put({ tab: tab_name, state: JSON.stringify(filtered) });
+            const state = JSON.stringify(filterFormValues(vals));
+            void (async () => {
+                const previous = await db.formState.get(tab_name);
+                await db.formState.put({ tab: tab_name, state });
+                // Copies of files this tab stopped referencing go as soon as
+                // the new state is what is actually saved — a removed asset
+                // should not sit in IndexedDB for the rest of the session.
+                await dropCopiesLostByTab(previous?.state, state).catch(
+                    () => undefined,
+                );
+            })();
             saveTimeoutRef.current = null;
         }, 1000);
         return () => {
