@@ -70,11 +70,19 @@ export const registerUpload = async (
     return false;
 };
 
+// A missing copy only means the file cannot be restored by us; a storage that
+// is unavailable (private mode, quota exhausted) must not break generation.
 export const lookupUpload = async (name: string): Promise<File | undefined> => {
-    const record = await db.uploads.get(name);
-    if (record) {
-        await db.uploads.update(name, { lastUsedAt: now() }).catch(() => undefined);
-        return record.file;
+    try {
+        const record = await db.uploads.get(name);
+        if (record) {
+            await db.uploads
+                .update(name, { lastUsedAt: now() })
+                .catch(() => undefined);
+            return record.file;
+        }
+    } catch {
+        return undefined;
     }
     return undefined;
 };

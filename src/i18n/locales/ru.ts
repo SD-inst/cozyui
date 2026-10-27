@@ -395,7 +395,6 @@ const translation = {
         disable_help: 'Отключить подсказки',
         enable_previews: 'Включить предпросмотр',
         tag_completion: 'Дополнение тегов',
-        backup_uploads: 'Сохранять/восстанавливать загруженные файлы',
         tag_number: 'Количество предлагаемых тегов',
         tag_enabled_tabs: 'Теги разрешены на вкладках',
         activation_tags_enabled_tabs: 'Activation tags разрешены на вкладках',
@@ -665,6 +664,7 @@ const translation = {
         folders_not_supported:
             'Папки не поддерживаются. Перетащите отдельные файлы.',
         moss_layout_invalid: 'Некорректный черновик MOSS Layout: %{err}',
+        files_restored: 'Файлов, которых не стало на сервере, восстановлено: %{count}',
     },
     status: {
         [statusEnum.WAITING]: 'Ожидание...',
@@ -723,6 +723,8 @@ const translation = {
         missing_ids: 'Отсутствующие id узлов в API: %{list}',
         missing_fields: 'Отсутствующие поля в API: %{list}',
         validation_failed: 'ComfyUI отклонил воркфлоу: %{list}',
+        files_lost: 'Пропали с сервера, локальной копии нет: %{list}',
+        preflight_timeout: 'Проверка загруженных файлов не уложилась в отведённое время',
         interrupted: 'прервано',
     },
 };

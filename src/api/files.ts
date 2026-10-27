@@ -43,8 +43,10 @@ export const uploadToInputDir = async (
 ): Promise<{ name: string; file: File }> => {
     const sent = new File(
         [file],
+        // A restored or pasted file can arrive without a name; the timestamp
+        // prefix keeps it unique either way.
         options?.name ??
-            new Date().getTime() + '_' + cleanUploadName(file.name),
+            new Date().getTime() + '_' + cleanUploadName(file.name || ''),
         { type: file.type },
     );
     const formData = new FormData();

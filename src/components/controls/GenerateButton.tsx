@@ -41,6 +41,10 @@ import { controlType } from '../../redux/config';
 import { Workflow } from '../../api/graph';
 import { timedSignal } from '../../api/files';
 import { formatPromptError, parsePromptError } from '../../api/validation';
+import {
+    createPreflightRun,
+    PreflightReport,
+} from '../../utils/filePreflightRun';
 import { ConnectionIndicator } from './ConnectionIndicator';
 import { hasRegisteredField } from '../../utils/registeredFields';
 
@@ -110,7 +114,7 @@ export const GenerateButton = ({
     disabled,
     requiredControls,
 }: GenerateButtonProps) => {
-    const { getValues, control } = useFormContext();
+    const { getValues, control, setValue: setFieldValue } = useFormContext();
     const requiredNames = useMemo(() => {
         if (!requiredControls) {
             return [] as string[];
@@ -168,6 +172,42 @@ export const GenerateButton = ({
     });
     const handlers = useHandlers();
     const enable_previews = useBooleanSetting(settings.enable_previews);
+    // ComfyUI rejects the whole workflow when one referenced file is gone from
+    // its input folder, and the rejection names nothing the user can act on.
+    // That folder is not durable — a container rebuild empties it while the
+    // saved form keeps naming those files — so every file the payload
+    // references is checked before sending and put back from the local copy.
+    const stopOnPreflight = useEventCallback(
+        (report: PreflightReport): boolean => {
+            if (report.restored.length) {
+                toast.success(
+                    tr('toasts.files_restored', {
+                        count: report.restored.length,
+                    }),
+                );
+            }
+            if (report.timedOut) {
+                toast.error(tr('errors.preflight_timeout'));
+                dispatch(setStatus(statusEnum.ERROR));
+                return true;
+            }
+            if (report.lost.length) {
+                const list = report.lost
+                    .map((f) => `${f.where} (${f.filename})`)
+                    .join(', ');
+                const message = tr('errors.files_lost', { list });
+                toast.error(message);
+                dispatch(
+                    setStatusMessage({
+                        status: statusEnum.ERROR,
+                        message,
+                    }),
+                );
+                return true;
+            }
+            return false;
+        },
+    );
     const sendPrompt = useEventCallback(async () => {
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
@@ -181,6 +221,18 @@ export const GenerateButton = ({
             await fetch(apiUrl + '/api/queue', { signal: timedSignal() });
         } catch {
             // ignore — browsers drop the connection on container start-up
+        }
+
+        // Pass 1: the form values, before any handler reads them, so a restored
+        // file's new name flows into every node the handlers build.
+        const preflight = createPreflightRun(noexec ? '' : apiUrl);
+        await preflight.values({
+            getValues,
+            setValue: (path, value) =>
+                setFieldValue(path, value, { shouldDirty: false }),
+        });
+        if (stopOnPreflight(preflight.report)) {
+            return;
         }
 
         const params = {
@@ -262,6 +314,19 @@ export const GenerateButton = ({
                 }
                 params.prompt[id].inputs[controls[name].field] = val;
             });
+        }
+
+        // Pass 2: the workflow as the handlers built it. Only the names the
+        // first pass did not confirm are looked at here, which keeps the second
+        // pass free of requests in the normal case.
+        await preflight.graph({
+            api: params.prompt,
+            getValues,
+            setValue: (path, value) =>
+                setFieldValue(path, value, { shouldDirty: false }),
+        });
+        if (stopOnPreflight(preflight.report)) {
+            return;
         }
 
         const vals = getValues();

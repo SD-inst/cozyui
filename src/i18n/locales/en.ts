@@ -396,7 +396,6 @@ const translation = {
         disable_help: 'Disable tooltips',
         enable_previews: 'Enable previews',
         tag_completion: 'Tag completion',
-        backup_uploads: 'Backup/restore uploaded files',
         tag_number: 'Number of tag suggestions',
         tag_enabled_tabs: 'Tags enabled on tabs',
         activation_tags_enabled_tabs: 'Activation tags enabled on tabs',
@@ -666,6 +665,8 @@ const translation = {
         folders_not_supported:
             'Folders are not supported. Drop individual files instead.',
         moss_layout_invalid: 'MOSS Layout draft is invalid: %{err}',
+        files_restored:
+            'Restored %{count} file(s) that were no longer on the server',
     },
     status: {
         [statusEnum.WAITING]: 'Waiting...',
@@ -723,6 +724,9 @@ const translation = {
         missing_ids: 'Missing API ids: %{list}',
         missing_fields: 'Missing API fields: %{list}',
         validation_failed: 'ComfyUI rejected the workflow: %{list}',
+        files_lost:
+            'Gone from the server, no local copy: %{list}',
+        preflight_timeout: 'Timed out while checking uploaded files',
         interrupted: 'interrupted',
     },
 };
