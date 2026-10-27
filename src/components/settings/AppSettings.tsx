@@ -15,6 +15,7 @@ import { SettingCheckbox } from './SettingCheckbox';
 import { Version } from './Version';
 import { HiddenTabs } from './HiddenTabs';
 import { ResetTabOrderButton } from './ResetTabOrderButton';
+import { ResetDatabaseButton } from './ResetDatabaseButton';
 import { SettingNumber } from './SettingNumber';
 import { SettingMultichoice } from './SettingMultichoice';
 import {
@@ -91,6 +92,7 @@ export const AppSettings = () => {
                 <NotificationSetting />
                 <LanguageSelect />
                 <ClearHistoryButton sx={{ mt: 5 }} />
+                <ResetDatabaseButton />
                 <HiddenTabs />
                 <ResetTabOrderButton />
                 <Version />

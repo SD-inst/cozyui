@@ -441,6 +441,14 @@ const translation = {
             'Filter is active! Only the items matching "%{prompt}" will be deleted',
         pinned_active: 'Only pinned items will be deleted!',
         type_active: 'Only items of type %{type} will be deleted!',
+        reset_database: 'Reset local database',
+        reset_database_text:
+            'This deletes everything this browser stored for CozyUI: the history and the files saved with it, copies of uploaded inputs, saved form values, sessions, presets, chat logs and settings. The ComfyUI server keeps its own files. Close the other tabs of this site first: an open tab blocks the deletion, and a blocked deletion never finishes on its own.',
+        reset_database_phrase: 'DELETE EVERYTHING',
+        reset_database_type:
+            'This cannot be undone. Type %{phrase} to enable the button.',
+        reset_database_no_match: 'The phrase does not match yet',
+        reset_database_busy: 'Deleting…',
         version: 'version: %{version}',
     },
     help: {
@@ -740,6 +748,8 @@ const translation = {
         crash_dismiss: 'Dismiss',
         crash_section: 'This part of the page failed to load: %{section}',
         crash_retry: 'Try again',
+        reset_database_failed:
+            'The local database could not be deleted (%{err}). Clear the site data in the browser settings instead — on iPhone: Settings → Safari → Advanced → Website Data → remove it for this site.',
     },
 };
 

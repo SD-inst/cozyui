@@ -10,6 +10,7 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import App from './App.tsx';
 import { ErrorBoundary } from './components/ErrorBoundary.tsx';
+import { runPendingDatabaseReset } from './utils/resetDatabase.ts';
 import { createPolyglot } from './i18n/I18nContext';
 import './index.css';
 import { store } from './redux/store.ts';
@@ -19,18 +20,27 @@ import { store } from './redux/store.ts';
 const crashLocale =
     (navigator.language || 'en').slice(0, 2) === 'ru' ? 'ru' : 'en';
 const crashPolyglot = createPolyglot(crashLocale, refreshCrashOverlay);
-installCrashReporting((key, options) => crashPolyglot.t(key, options));
+const crashTranslate = (
+    key: string,
+    options?: Record<string, string | number>,
+) => crashPolyglot.t(key, options);
+installCrashReporting(crashTranslate);
 
 const queryClient = new QueryClient();
 
-createRoot(document.getElementById('root')!).render(
-    <ErrorBoundary>
-        <StrictMode>
-            <Provider store={store}>
-                <QueryClientProvider client={queryClient}>
-                    <App />
-                </QueryClientProvider>
-            </Provider>
-        </StrictMode>
-    </ErrorBoundary>,
-);
+// A database reset survives the reload as a flag, and is carried out here —
+// before the app renders, while nothing has opened a connection to the database
+// yet, which is when a deletion has its best chance.
+runPendingDatabaseReset(crashTranslate).then(() => {
+    createRoot(document.getElementById('root')!).render(
+        <ErrorBoundary>
+            <StrictMode>
+                <Provider store={store}>
+                    <QueryClientProvider client={queryClient}>
+                        <App />
+                    </QueryClientProvider>
+                </Provider>
+            </StrictMode>
+        </ErrorBoundary>,
+    );
+});

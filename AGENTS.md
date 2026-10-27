@@ -427,6 +427,13 @@ Located in [`src/components/settings/`](src/components/settings/).
 | `HiddenTabs.tsx` | Configure visible/hidden tabs |
 | `NotificationSetting.tsx` | Notification sound settings |
 | `Version.tsx` | App version display |
+| `ResetDatabaseButton.tsx` | Typed-phrase reset of the whole local database |
+
+### Irreversible actions need more than OK — IMPORTANT
+
+`ResetDatabaseButton` deletes the entire IndexedDB — history with the files saved with it, copies of uploaded inputs, saved form values, sessions, presets, chat logs and settings — and it is the in-app recovery for a database that stopped answering (see the WebKit wedge under "Dexie filtering patterns"). Its dialog keeps the delete button dead until the user types `settings.reset_database_phrase`: the expected text is the same translated string the dialog displays, so a translation cannot move the two apart, and the comparison ignores case and surrounding spaces.
+
+Deleting a database is blocked while any tab holds a connection to it, and a blocked deletion never completes by itself — and the page offering the button is normally that tab. So the deletion is attempted with a timeout, and when it does not answer, [`src/utils/resetDatabase.ts`](src/utils/resetDatabase.ts) leaves a flag in `sessionStorage` (not in the database — that is the thing being deleted) and reloads; `main.tsx` runs `runPendingDatabaseReset()` before rendering, at the one moment when nothing has connected to the database yet. If even that fails, the crash overlay tells the user to clear the site data at the OS level, which is the only route left.
 
 ### Editable settings fields bind to `useSettingEditor` — IMPORTANT
 
