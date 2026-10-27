@@ -131,14 +131,7 @@ const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
                 tr,
                 isSession ? 'sessions' : 'presets',
             );
-            await refreshUploadBackups(
-                merged,
-                refs,
-                resolved,
-                filesMap,
-                mediaFields,
-                tab_name,
-            );
+            await refreshUploadBackups(resolved, filesMap, tab_name);
             restoreValues('', stripNulls(merged));
             // Skip the rename when we are deleting the record anyway.
             if (!deleteAfter) {

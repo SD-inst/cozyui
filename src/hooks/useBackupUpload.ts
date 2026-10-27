@@ -1,63 +1,47 @@
 import { useCallback, useRef } from 'react';
-import { useTabName } from '../components/contexts/TabContext';
-import { db } from '../components/history/db';
-import { settings } from './settings';
+import {
+    ensureUploadsMigrated,
+    lookupUpload,
+} from '../utils/uploadStore';
 
-export const saveUploadBackup = async (
-    file: File,
-    fieldName: string,
-    tabName: string,
-): Promise<void> => {
-    const record = await db.settings.where({ name: settings.backup_uploads }).first();
-    if (record?.value !== 'true') return;
-    const uploadKey = tabName + '/' + fieldName;
-    await db.uploads.put({ id: uploadKey, file });
-};
-
-export const useBackupUpload = (
-    fieldName: string,
-): [(file: File) => void] => {
-    const tabName = useTabName();
-    return [
-        useCallback(
-            (file: File) => {
-                saveUploadBackup(file, fieldName, tabName);
-            },
-            [fieldName, tabName]
-        ),
-    ];
-};
-
+// Recovery for a media element that stopped loading: the file its `src` points
+// at is no longer on the server, so the locally stored copy is uploaded again
+// and the field is handed the new name.
+//
+// `getFilename` names the file as the server knows it — the identity the local
+// store is keyed by. `attempts` caps the recovery per file: the re-upload
+// itself never fails (it succeeds and swaps the name), yet the media can still
+// error out afterwards (e.g. a 416 from the server), and an uncapped
+// onError → re-upload cycle would loop, creating a new duplicate file on the
+// server on every turn.
 export const useReuploadLost = <T,>(
-    getKey: (arg: T) => string,
-    onLost: (key: string) => void,
-    onReupload: (file: File, key: string, arg: T) => Promise<void>,
+    getFilename: (arg: T) => string | undefined,
+    onLost: (filename: string) => void,
+    onReupload: (file: File, filename: string, arg: T) => Promise<void>,
 ) => {
     const attempts = useRef<Record<string, number>>({});
     return useCallback(
         async (arg: T) => {
-            const key = getKey(arg);
-            const entry = await db.uploads.get(key);
-            if (!entry) {
-                onLost(key);
+            const filename = getFilename(arg);
+            if (!filename) {
                 return;
             }
-            if ((attempts.current[key] || 0) > 2) {
+            await ensureUploadsMigrated();
+            const file = await lookupUpload(filename);
+            if (!file) {
+                onLost(filename);
                 return;
             }
-            // Count every recovery attempt, not just failed re-uploads. The
-            // re-upload "succeeds" (the backed-up file is re-uploaded and the
-            // field value is swapped to a fresh filename), so it never throws —
-            // but if the media still errors (e.g. a 416 from the server), the
-            // onError → re-upload cycle would otherwise loop forever, creating a
-            // new duplicate file on the server every iteration.
-            attempts.current[key] = (attempts.current[key] || 0) + 1;
+            if ((attempts.current[filename] || 0) > 2) {
+                return;
+            }
+            attempts.current[filename] = (attempts.current[filename] || 0) + 1;
             try {
-                await onReupload(entry.file, key, arg);
+                await onReupload(file, filename, arg);
             } catch {
                 // Re-upload failed; the attempt cap above stops the loop.
             }
         },
-        [getKey, onLost, onReupload],
+        [getFilename, onLost, onReupload],
     );
 };

@@ -39,7 +39,7 @@ import { settings } from '../../hooks/settings';
 import { useIsCurrentTab, useTabName } from '../contexts/TabContext';
 import { useTranslate } from '../../i18n/I18nContext';
 import { roomForNewSlots } from '../../utils/arraySlots';
-import { cleanUploadName } from '../../utils/uploadName';
+import { uploadInputFile } from '../../utils/uploadStore';
 import { UploadType } from './UploadType';
 import { ext, getAudioAcceptString } from './fileExts';
 import { ArrayFileContext } from './ArrayFileContext';
@@ -516,25 +516,20 @@ export const ArrayInput = ({
 
     // File input ref ("+")
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const tabName = useTabName();
 
-    // Upload helper
+    // Upload helper: put the file in ComfyUI's input folder and keep a local
+    // copy under the name the server returned, so a cleared input folder can be
+    // restored without the user picking the file again.
     const uploadFile = React.useCallback(
-        async (file: File): Promise<string> => {
-            const formData = new FormData();
-            const renamed = new File(
-                [file],
-                new Date().getTime() + '_' + cleanUploadName(file.name),
-                { type: file.type },
-            );
-            formData.append('image', renamed);
-            const r = await fetch(apiUrl + '/api/upload/image', {
-                method: 'POST',
-                body: formData,
-            });
-            const j = await r.json();
-            return j.name;
-        },
-        [apiUrl],
+        async (file: File): Promise<string> =>
+            (
+                await uploadInputFile(file, apiUrl, {
+                    tab: tabName,
+                    field: name,
+                })
+            ).name,
+        [apiUrl, tabName, name],
     );
 
     const handleCompactAdd = () => {
@@ -803,11 +798,13 @@ export const ArrayInput = ({
         [move],
     );
 
-    const tabName = useTabName();
     const handleUploadLost = useReuploadLost(
-        (index: number) => `${tabName}/${name}.${index}.${keyField}`,
+        (index: number) => {
+            const filename = (getValues(name) as any[])?.[index]?.[keyField];
+            return typeof filename === 'string' ? filename : undefined;
+        },
         () => {},
-        async (file, _key, index) => {
+        async (file, _filename, index) => {
             const filename = await uploadFile(file);
             const current = getValues(name);
             update(index, { ...current[index], [keyField]: filename });

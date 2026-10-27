@@ -5,7 +5,7 @@
 import { Table } from 'dexie';
 import toast from 'react-hot-toast';
 import { fileOnServer, ensureFileOnServer } from '../api/files';
-import { saveUploadBackup } from '../hooks/useBackupUpload';
+import { registerUpload } from './uploadStore';
 import { db } from '../components/history/db';
 import { MediaRef, walkMediaFields } from './mediaFields';
 
@@ -166,50 +166,20 @@ export const buildMerged = (
     return merged;
 };
 
-// Refresh the per-field upload backups so FileUpload auto-recovery restores
-// the record's files at their final positions. Keys: `field` for a
-// single-file field and `field.<index>.<key>` for an array entry.
+// After a snapshot is applied the local copies must sit under the names the
+// form now holds: resolving gave each file either its still-valid server name or
+// a fresh one from a re-upload, and the recovery store is keyed by that name.
 export const refreshUploadBackups = async (
-    merged: any,
-    refs: MediaRef[],
     resolved: { [old: string]: string },
     filesMap: Map<string, File>,
-    mediaFields: Set<string>,
     tabName: string,
 ): Promise<void> => {
-    const newNameToFile = new Map<string, File>();
-    for (const ref of refs) {
-        const nw = resolved[ref.filename];
-        const local = filesMap.get(ref.filename);
-        if (nw && local) {
-            newNameToFile.set(nw, local);
-        }
-    }
-    for (const field of Object.keys(merged)) {
-        const v = merged[field];
-        if (typeof v === 'string') {
-            const f = newNameToFile.get(v);
-            if (f) {
-                await saveUploadBackup(f, field, tabName);
-            }
-            continue;
-        }
-        if (Array.isArray(v) && mediaFields.has(field)) {
-            const key = refs.find((r) => r.field === field)?.key ?? 'image';
-            for (let i = 0; i < v.length; i++) {
-                const e = v[i];
-                if (!e) {
-                    continue;
-                }
-                const f = newNameToFile.get(e[key]);
-                if (f) {
-                    await saveUploadBackup(
-                        f,
-                        `${field}.${i}.${key}`,
-                        tabName,
-                    );
-                }
-            }
+    for (const [old, name] of Object.entries(resolved)) {
+        const file = filesMap.get(old);
+        if (file) {
+            await registerUpload(name, file, { tab: tabName }).catch(
+                () => undefined,
+            );
         }
     }
 };

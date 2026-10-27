@@ -40,9 +40,22 @@ export interface FormState {
     state: string;
 }
 
+// Local copy of a file that lives in ComfyUI's `input` folder. `id` is the
+// server filename — the identity the rest of the app keys on, so a reorder or
+// a slot change never moves the backup. `filename` duplicates it as an indexed
+// property (Dexie cannot index a primary key) and is absent on legacy records,
+// which were keyed by form position (`<tab>/<field>[.<i>.<key>]`); those are
+// migrated once at startup by `migrateUploadBackups`.
 export interface Uploads {
     id: string;
     file: File;
+    filename?: string;
+    lastUsedAt?: number;
+    size?: number;
+    // Which control the bytes came from — diagnostics only, nothing reads it
+    // back for a lookup.
+    tab?: string;
+    field?: string;
 }
 
 export interface ChatLog {
@@ -197,6 +210,11 @@ db.version(12).stores({
     sessions: 'id, tab, timestamp',
     sessionFiles: 'id, session',
 });
+
+// `filename` makes a stored backup findable by the name the server knows it
+// under; `lastUsedAt` orders the LRU eviction that keeps the store inside its
+// byte budget.
+db.version(13).stores({ uploads: '&id, filename, lastUsedAt' });
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

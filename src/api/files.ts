@@ -29,13 +29,26 @@ const viewUrl = (apiUrl: string, filename: string): string => {
     return apiUrl + '/api/view?' + params.toString();
 };
 
-export const uploadFile = async (
+// Upload a file into ComfyUI's `input` folder. The client prefixes the name
+// with a timestamp so a re-sent file never collides with an older one, and the
+// server may prefix it again on a collision — so the name in the response is
+// the only reliable identity for the file afterwards. The File that was
+// actually sent (renamed) comes back too: callers hand it to `onUpload`
+// callbacks that expect the uploaded name.
+// `name` overrides the generated one (crop dialogs and masks pick their own).
+export const uploadToInputDir = async (
     file: File,
     apiUrl: string,
-): Promise<string> => {
+    options?: { name?: string },
+): Promise<{ name: string; file: File }> => {
+    const sent = new File(
+        [file],
+        options?.name ??
+            new Date().getTime() + '_' + cleanUploadName(file.name),
+        { type: file.type },
+    );
     const formData = new FormData();
-    const name = new Date().getTime() + '_' + cleanUploadName(file.name);
-    formData.append('image', new File([file], name, { type: file.type }));
+    formData.append('image', sent);
     const r = await fetch(apiUrl + '/api/upload/image', {
         method: 'POST',
         body: formData,
@@ -45,8 +58,13 @@ export const uploadFile = async (
     if (!j.name) {
         throw new Error('Upload failed: no name in response');
     }
-    return j.name;
+    return { name: j.name, file: sent };
 };
+
+export const uploadFile = async (
+    file: File,
+    apiUrl: string,
+): Promise<string> => (await uploadToInputDir(file, apiUrl)).name;
 
 // What a HEAD probe against `/api/view` can conclude. Only a real HTTP 404
 // means the file is gone; a timeout, a refused connection or a non-404 failure

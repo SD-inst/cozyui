@@ -6,8 +6,8 @@ import { useAppDispatch } from '../redux/hooks';
 import { actionEnum, setParams, setTab } from '../redux/tab';
 import { useApiURL } from './useApiURL';
 import { useResult } from './useResult';
-import { saveUploadBackup } from './useBackupUpload';
 import { cleanUploadName } from '../utils/uploadName';
+import { uploadInputFile } from '../utils/uploadStore';
 
 export const useSendResult = ({
     targetTab,
@@ -30,7 +30,6 @@ export const useSendResult = ({
         const values = Object.fromEntries(
             Object.entries(getValues()).filter((e) => fields!.includes(e[0])),
         );
-        const formData = new FormData();
         const url = makeOutputUrl(apiUrl, result[index]);
         const blob = await fetch(url).then((b) => b.blob());
         const file = new File(
@@ -38,13 +37,13 @@ export const useSendResult = ({
             cleanUploadName(result[index].filename),
             { type: blob.type },
         );
-        formData.append('image', file);
-        const image = await fetch(apiUrl + '/api/upload/image', {
-            method: 'POST',
-            body: formData,
+        // The copy that lands in the target tab's input folder is registered
+        // locally, so the target tab can restore it if the server loses it.
+        const image = await uploadInputFile(file, apiUrl, {
+            tab: targetTab,
+            field: fileField,
         })
-            .then((r) => r.json())
-            .then((j) => j.name)
+            .then(({ name }) => name)
             .catch((e) => toast(tr('toasts.error_uploading', { err: e })));
         dispatch(
             setParams({
@@ -53,9 +52,6 @@ export const useSendResult = ({
                 values: { ...values, [fileField]: image },
             }),
         );
-        if (image && targetTab) {
-            await saveUploadBackup(file, fileField, targetTab);
-        }
         dispatch(setTab(targetTab!));
     };
     if (index >= result.length || !targetTab || !fields) {

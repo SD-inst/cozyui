@@ -33,7 +33,7 @@ import {
     type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useApiURL } from '../../hooks/useApiURL';
-import { saveUploadBackup } from '../../hooks/useBackupUpload';
+import { uploadInputFile } from '../../utils/uploadStore';
 import { useIsPhone } from '../../hooks/useIsPhone';
 import { useTranslate } from '../../i18n/I18nContext';
 import { useTabName } from '../contexts/TabContext';
@@ -526,24 +526,16 @@ export const RefModCropDialog = ({
             const ext = isJpeg ? 'jpg' : 'png';
             const fileName = new Date().getTime() + '_cropped.' + ext;
             const file = new File([blob], fileName, { type: mime });
-            const formData = new FormData();
-            formData.append('image', file);
-            const r = await fetch(apiUrl + '/api/upload/image', {
-                method: 'POST',
-                body: formData,
+            // The cropped result is uploaded and registered locally under the
+            // name the server gave it — re-upload-on-lost restores that file.
+            const { name: newFilename } = await uploadInputFile(file, apiUrl, {
+                name: fileName,
+                tab: tabName,
+                field: backupField
+                    ? backupField(cur.index)
+                    : `ref_images.${cur.index}.image`,
             });
-            const j = await r.json();
-            const newFilename: string = j.name;
             onCropSlot(cur.index, newFilename, file);
-            // Keep the slot's backup in sync (re-upload-on-lost uses it).
-            const fieldName = backupField
-                ? backupField(cur.index)
-                : `ref_images.${cur.index}.image`;
-            await saveUploadBackup(
-                new File([blob], newFilename, { type: mime }),
-                fieldName,
-                tabName,
-            );
             // Advance to the next image, or close the dialog once the last
             // one (or the only one) is cropped — nothing left to do here.
             if (currentIndex < images.length - 1) {

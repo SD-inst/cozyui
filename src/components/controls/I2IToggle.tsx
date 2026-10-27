@@ -2,7 +2,7 @@ import { Box, useEventCallback } from '@mui/material';
 import { Suspense, lazy, useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 import { NodeRef, Workflow } from '../../api/graph';
-import { timedSignal } from '../../api/files';
+import { uploadToInputDir } from '../../api/files';
 import { cleanUploadName } from '../../utils/uploadName';
 import { getCreateVideoNodeId, insertGraph } from '../../api/utils';
 import { useApiURL } from '../../hooks/useApiURL';
@@ -87,36 +87,30 @@ const createMaskCanvas = (
 
 /**
  * Upload a mask (grayscale) image to ComfyUI server.
+ *
+ * Not registered in the local upload store on purpose: the mask is rebuilt
+ * from the form's brush strokes on every generation and its name never appears
+ * in a form value, so a stored copy would be unreferenced garbage.
  */
 const uploadMaskImage = async (
     maskCanvas: HTMLCanvasElement,
     apiUrl: string,
     imageFilename: string, // e.g., 'my_image.png' → mask_my_image.png
 ): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        maskCanvas.toBlob(async (blob) => {
-            if (!blob) return reject('No blob');
-            const baseName = cleanUploadName(imageFilename).replace(
-                /\.[^.]+$/,
-                '',
-            );
-            const filename = `mask_${baseName}.png`;
-            const file = new File([blob], filename, { type: 'image/png' });
-            const formData = new FormData();
-            formData.append('image', file);
-            try {
-                const r = await fetch(`${apiUrl}/api/upload/image`, {
-                    method: 'POST',
-                    body: formData,
-                    signal: timedSignal(),
-                });
-                const j = await r.json();
-                resolve(j.name);
-            } catch (e) {
-                reject(e);
-            }
-        }, 'image/png');
+    const baseName = cleanUploadName(imageFilename).replace(/\.[^.]+$/, '');
+    const filename = `mask_${baseName}.png`;
+    const blob = await new Promise<Blob>((resolve, reject) => {
+        maskCanvas.toBlob(
+            (b) => (b ? resolve(b) : reject(new Error('No blob'))),
+            'image/png',
+        );
     });
+    const { name } = await uploadToInputDir(
+        new File([blob], filename, { type: 'image/png' }),
+        apiUrl,
+        { name: filename },
+    );
+    return name;
 };
 
 export const I2IToggle = ({

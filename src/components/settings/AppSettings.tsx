@@ -51,7 +51,6 @@ export const AppSettings = () => {
                     <SettingCheckbox name={settings.disable_help} />
                     <SettingCheckbox name={settings.enable_previews} />
                     <SettingCheckbox name={settings.tag_completion} />
-                    <SettingCheckbox name={settings.backup_uploads} />
                     <SettingCheckbox name={settings.chat_stream} />
                     <SettingCheckbox name={settings.letterbox_crop} />
                     <SettingCheckbox name={settings.connection_sound} />

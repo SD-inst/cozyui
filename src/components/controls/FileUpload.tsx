@@ -14,14 +14,14 @@ import { useController } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Workflow } from '../../api/graph';
 import { getFreeNodeId } from '../../api/utils';
-import { cleanUploadName } from '../../utils/uploadName';
 import { useApiURL } from '../../hooks/useApiURL';
-import { useBackupUpload, useReuploadLost } from '../../hooks/useBackupUpload';
+import { useReuploadLost } from '../../hooks/useBackupUpload';
 import { useImageURL } from '../../hooks/useImageURL';
 import { useBooleanSetting } from '../../hooks/useSetting';
 import { settings } from '../../hooks/settings';
 import { useTranslate } from '../../i18n/I18nContext';
 import { controlType } from '../../redux/config';
+import { uploadInputFile } from '../../utils/uploadStore';
 import {
     useIsCurrentTab,
     useRegisterHandler,
@@ -69,7 +69,6 @@ export const FileUpload = ({
     ) => void;
 }) => {
     const [uploadProgress, setUploadProgress] = useState(false);
-    const [maybeBackupUpload] = useBackupUpload(props.name);
     const tr = useTranslate();
     const { field } = useController({ ...props, defaultValue: '' });
     const apiUrl = useApiURL();
@@ -127,26 +126,16 @@ export const FileUpload = ({
             }
         },
     );
-    const uploadKey = tabName + '/' + props.name;
     const arrayCtx = useArrayFileContext();
-    // Upload a single file to ComfyUI's input dir; returns its filename and
-    // the renamed File (timestamp-prefixed) for backup / onUpload.
+    // Upload a single file to ComfyUI's input dir and keep a local copy of it
+    // under the name the server handed back; returns that name plus the renamed
+    // File (timestamp-prefixed) for the onUpload callback.
     const uploadOne = useEventCallback(async (src: File) => {
-        const formData = new FormData();
-        const file = new File(
-            [src],
-            new Date().getTime() + '_' + cleanUploadName(src.name),
-            { type: src.type },
-        );
-        formData.append('image', file);
-        const r = await fetch(apiUrl + '/api/upload/image', {
-            method: 'POST',
-            body: formData,
+        const { name, file } = await uploadInputFile(src, apiUrl, {
+            tab: tabName,
+            field: props.name,
         });
-        const j = await r.json();
-        j.filename = j.name;
-        delete j.name;
-        return { filename: j.filename, file };
+        return { filename: name, file };
     });
     const { mutate } = useMutation({
         onMutate: async (files: File[]) => {
@@ -154,7 +143,6 @@ export const FileUpload = ({
                 setUploadProgress(true);
                 const { filename, file } = await uploadOne(files[0]);
                 field.onChange(filename);
-                maybeBackupUpload(files[0]);
                 if (onUpload && filename) {
                     onUpload(file);
                 }
@@ -177,7 +165,6 @@ export const FileUpload = ({
                 const results = await Promise.all(acceptedFiles.map(uploadOne));
                 const filenames = results.map((r) => r.filename);
                 field.onChange(filenames[0]);
-                maybeBackupUpload(acceptedFiles[0]);
                 if (onUpload && filenames[0]) {
                     onUpload(results[0].file);
                 }
@@ -271,7 +258,7 @@ export const FileUpload = ({
         return () => document.removeEventListener('paste', handlePaste);
     }, [isCurrentTab, handlePaste]);
     const handleUploadLost = useReuploadLost(
-        () => uploadKey,
+        () => (typeof field.value === 'string' ? field.value : undefined),
         () => field.onChange(null),
         (file) => {
             mutate([file]);
