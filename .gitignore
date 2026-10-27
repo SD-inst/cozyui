@@ -27,3 +27,7 @@ dist-ssr
 scripts/*.local.sh
 public/conf/*.local.json
 models/
+
+# Source maps of published builds: kept on disk for `yarn symbolicate`, never
+# served to the browser.
+sourcemaps/

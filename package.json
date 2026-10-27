@@ -5,7 +5,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "tsc -b && vitest run && vite build",
+        "build": "tsc -b && vitest run && vite build && node scripts/collect-sourcemaps.mjs",
+        "symbolicate": "./node_modules/.bin/esbuild scripts/symbolicate.ts --bundle --platform=node --format=esm --outfile=node_modules/.cache/cozyui/symbolicate.mjs --log-level=warning && node node_modules/.cache/cozyui/symbolicate.mjs",
         "lint": "eslint . && tsc -b --noEmit",
         "preview": "vite preview",
         "test": "vitest run",

@@ -26,6 +26,13 @@ export default defineConfig({
         },
     },
     build: {
+        // 'hidden' writes the .map files without pointing at them from the
+        // bundles, so no browser is told to fetch them; `scripts/
+        // collect-sourcemaps.mjs` then moves them out of `dist` entirely,
+        // because a published map is a published source. They stay on disk for
+        // `yarn symbolicate`, which turns a phone's crash report back into
+        // `src/...` positions.
+        sourcemap: 'hidden',
         rollupOptions: {
             output: {
                 manualChunks: {
