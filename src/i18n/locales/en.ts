@@ -728,6 +728,16 @@ const translation = {
             'Gone from the server, no local copy: %{list}',
         preflight_timeout: 'Timed out while checking uploaded files',
         interrupted: 'interrupted',
+        crash_title: 'The page stopped working',
+        crash_intro:
+            'Something broke while the page was loading. Copy the report below and send it to the developer.',
+        crash_intro_dismissible:
+            'Something went wrong, but the page is still working. Copy the report below and send it to the developer.',
+        crash_problem: 'Problem %{n}: %{message}',
+        crash_copy: 'Copy report',
+        crash_copied: 'Report copied',
+        crash_copy_hint: 'Long-press the text box below and choose Copy',
+        crash_dismiss: 'Dismiss',
     },
 };
 

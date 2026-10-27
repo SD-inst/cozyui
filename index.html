@@ -8,6 +8,34 @@
     </head>
     <body>
         <div id="root"></div>
+        <script>
+            // The app module is the usual thing that breaks, so the safety net
+            // has to exist before it is fetched: a chunk that fails to load or
+            // to parse would otherwise leave a blank page and no console. The
+            // reporter module drains this queue once it is evaluated.
+            window.__earlyCrashes = [];
+            window.addEventListener('error', function (event) {
+                // A failed <img> or <script> src arrives here too, carrying
+                // neither a message nor an Error object; it leaves the page
+                // working and is not worth reporting.
+                if (!window.__earlyCrashes || (!event.error && !event.message)) {
+                    return;
+                }
+                window.__earlyCrashes.push({
+                    error: event.error,
+                    message: event.message,
+                    filename: event.filename,
+                    lineno: event.lineno,
+                    colno: event.colno,
+                });
+            });
+            window.addEventListener('unhandledrejection', function (event) {
+                if (!window.__earlyCrashes) {
+                    return;
+                }
+                window.__earlyCrashes.push({ reason: event.reason });
+            });
+        </script>
         <script type="module" src="/src/main.tsx"></script>
     </body>
 </html>
