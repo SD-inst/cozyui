@@ -1121,7 +1121,9 @@ yarn test:watch      # dev mode (vitest)
 yarn build           # tsc -b && vitest run && vite build
 ```
 
-Test files are colocated with the code as `*.test.ts(x)` under `src/` and are type-checked by `tsc -b` (part of the app project, included by `tsconfig.app.json`). Pure logic lives in `src/utils/*` and `src/api/utils.ts`; keep it free of React so it stays testable without jsdom. Component tests use the `@testing-library/jest-dom` matchers — a test file using them must `import '@testing-library/jest-dom/vitest'` for the types (the runtime setup already loads it via `vitest.setup.ts`).
+**A test that renders a component with a missing i18n key fails.** The test polyglot is seeded from the real `en` locale ([`src/testUtils.ts`](src/testUtils.ts)) and records every key no locale defines (`onMissingKey` → `src/i18n/missingKeys.ts`); the setup asserts the set after each test instead of letting node-polyglot's `console.warn` scroll past — vitest owns the console after setup files run, so the hook has to sit on the polyglot. Tests therefore pass **real** translation keys (`label='controls.settings'`), never invented ones.
+
+Test files are colocated with the code as `*.test.ts(x)` under `src/` and are type-checked by `tsc -b` (part of the app project, included by `tsconfig.app.json`). Pure logic lives in `src/utils/*` and `src/api/utils.ts`; keep it free of React so it stays testable without jsdom. Component tests use the `@testing-library/jest-dom` matchers — a test file using them must `import '@testing-library/jest-dom/vitest'` for the types (the runtime setup already loads it via [`src/testSetup.ts`](src/testSetup.ts)).
 
 ## Kilo code notes
 

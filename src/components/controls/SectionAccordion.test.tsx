@@ -5,7 +5,7 @@ import { SectionAccordion } from './SectionAccordion';
 describe('SectionAccordion lazyContent', () => {
     it('mounts children only after first expansion', async () => {
         render(
-            <SectionAccordion label='test_section' lazyContent>
+            <SectionAccordion label='controls.settings' lazyContent>
                 <div>heavy-content</div>
             </SectionAccordion>,
         );
@@ -18,7 +18,7 @@ describe('SectionAccordion lazyContent', () => {
         const onEntered = vi.fn();
         render(
             <SectionAccordion
-                label='test_section'
+                label='controls.settings'
                 lazyContent
                 slotProps={{ transition: { onEntered, timeout: 0 } }}
             >
@@ -33,7 +33,7 @@ describe('SectionAccordion lazyContent', () => {
 
     it('keeps the details block stretched before lazy content mounts', () => {
         const { container } = render(
-            <SectionAccordion label='test_section' lazyContent>
+            <SectionAccordion label='controls.settings' lazyContent>
                 <div>heavy-content</div>
             </SectionAccordion>,
         );
