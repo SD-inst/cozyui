@@ -7,11 +7,14 @@ const apiUrl = 'http://localhost:8188';
 
 // Each case uses its own filenames: the per-file restore budget lives for the
 // whole module, and reusing a name would hit the cap.
+// `uploadedSize` is what the server reports for the freshly uploaded file, so a
+// case can make the upload come back truncated.
 const makeFetch = (
     existing: string[],
     missing: string[],
     unreachable: string[] = [],
     uploadedName = '1700000002000_uploaded.png',
+    uploadedSize?: number,
 ) =>
     vi.fn((url: string, init?: { method?: string }) => {
         if (init?.method === 'HEAD') {
@@ -22,8 +25,15 @@ const makeFetch = (
             if (missing.includes(filename)) {
                 return Promise.resolve({ ok: false, status: 404 });
             }
-            if (existing.includes(filename)) {
-                return Promise.resolve({ ok: true, status: 200 });
+            if (existing.includes(filename) || filename === uploadedName) {
+                return Promise.resolve({
+                    ok: true,
+                    status: 200,
+                    headers:
+                        uploadedSize === undefined
+                            ? undefined
+                            : { get: () => String(uploadedSize) },
+                });
             }
             return Promise.resolve({ ok: false, status: 404 });
         }
@@ -31,6 +41,20 @@ const makeFetch = (
             json: () => Promise.resolve({ name: uploadedName }),
         });
     });
+
+const refModRow = (id: string, serverFilename?: string) => ({
+    id,
+    name: 'Character',
+    kind: 'video' as const,
+    conceptType: 'object',
+    description: '',
+    tokens: 1,
+    shape: [1, 1, 1] as [number, number, number],
+    mode: 'encode' as const,
+    createdAt: 1,
+    updatedAt: 1,
+    serverFilename,
+});
 
 // The store's startup pass drops copies that no saved form value mentions, so a
 // test seeding a copy seeds the form state referencing it too — what a real
@@ -95,7 +119,9 @@ describe('createPreflightRun', () => {
         const probed = fetchMock.mock.calls
             .filter(([, init]: any) => init?.method === 'HEAD')
             .map(([url]: any) => new URL(url).searchParams.get('filename'));
-        expect(probed).toEqual(['1700000001000_gone.png', '1700000001001_here.png']);
+        expect(probed).toContain('1700000001000_gone.png');
+        expect(probed).toContain('1700000001001_here.png');
+        expect(probed).not.toContain('ltx2/ltx-2-19b-dev-fp8.safetensors');
 
         // The second pass finds the restored name already confirmed and does no
         // extra requests.
@@ -190,5 +216,60 @@ describe('createPreflightRun', () => {
 
         expect(api['98'].inputs.image).toBe('1700000002000_uploaded.png');
         expect(form.values.i2i.image).toBe('1700000002000_uploaded.png');
+    });
+
+    it('never treats a ref mod slot as an uploaded file', async () => {
+        const modId = '8a57fb00-e5d3-464c-bf57-f19c3dd216db';
+        await db.refMods.add(refModRow(modId, '1700000001500_mod.safetensors'));
+        // The poisoned store: the old positional guard fetched the mod id from
+        // `/api/view`, got an empty 404 body, and the migration re-keyed it onto
+        // the id itself — which made the id look like a file we had uploaded.
+        await db.uploads.put({
+            id: modId,
+            filename: modId,
+            file: new File(['bytes'], modId),
+            lastUsedAt: 1,
+        });
+        const fetchMock = makeFetch(['1700000001500_mod.safetensors'], [modId]);
+        vi.stubGlobal('fetch', fetchMock);
+
+        const form = await formOf({ refmods: [{ id: modId, strength: 1 }] });
+        const run = createPreflightRun(apiUrl);
+        await run.values(form.access);
+
+        // Nothing probed, nothing uploaded, and above all the slot still names
+        // its mod — rewriting it is what detached the mod from the form.
+        expect(fetchMock).not.toHaveBeenCalled();
+        expect(run.report.restored).toEqual([]);
+        expect(run.report.lost).toEqual([]);
+        expect(form.values.refmods[0].id).toBe(modId);
+    });
+
+    it('refuses a restore the server did not store intact', async () => {
+        await db.uploads.put({
+            id: '1700000001600_gone.png',
+            filename: '1700000001600_gone.png',
+            file: new File(['bytes'], 'cat.png'),
+            lastUsedAt: 1,
+        });
+        // The server takes the upload and ends up with a 0-byte file — a body
+        // cut short or rejected. Accepting that would let the prompt run against
+        // an empty input and fail later over some node the message never names.
+        vi.stubGlobal(
+            'fetch',
+            makeFetch([], ['1700000001600_gone.png'], [], '1700000002000_uploaded.png', 0),
+        );
+
+        const form = await formOf({ image: '1700000001600_gone.png' });
+        const run = createPreflightRun(apiUrl);
+        await run.values(form.access);
+
+        expect(run.report.restored).toEqual([]);
+        expect(run.report.lost).toEqual([
+            { filename: '1700000001600_gone.png', where: 'image' },
+        ]);
+        expect(form.values.image).toBe('1700000001600_gone.png');
+        // The copy keeps its old name, so a later generation can retry.
+        expect(await db.uploads.get('1700000001600_gone.png')).toBeDefined();
     });
 });

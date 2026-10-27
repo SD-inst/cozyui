@@ -123,7 +123,9 @@ export const ensureRefModOnServer = async (
         .where({ mod: id })
         .and((f: any) => f.fileType === 'safetensors')
         .first();
-    if (!file) return undefined;
+    // An empty backup restores an empty model — a mod that loads and does
+    // nothing, which is worse than the mod simply not being applied.
+    if (!file || !(file.file as Blob)?.size) return undefined;
     const mod = await db.refMods.get(id);
     const name = await ensureFileOnServer(
         new File([file.file], file.filename, { type: 'application/octet-stream' }),

@@ -36,11 +36,19 @@ const hasMediaExtension = (value: string): boolean => {
 };
 
 // `manifest` is the set of names the local upload store holds bytes for.
+// `exclude` names values that look like ours but belong to another mechanism —
+// ref mod ids and their server filenames. A stale store row keyed by a mod id
+// would otherwise make that id look like a file we uploaded, and rewriting it
+// destroys the form slot's reference to the mod.
 export const isFileCandidate = (
     value: unknown,
     manifest: Set<string>,
+    exclude?: Set<string>,
 ): value is string => {
     if (typeof value !== 'string' || !value) {
+        return false;
+    }
+    if (exclude?.has(value)) {
         return false;
     }
     // A subfolder means a model/asset path, never an uploaded input.
@@ -70,15 +78,22 @@ const walkValue = (
     value: unknown,
     path: string,
     manifest: Set<string>,
+    exclude: Set<string> | undefined,
     out: ValueRef[],
 ): void => {
-    if (isFileCandidate(value, manifest)) {
+    if (isFileCandidate(value, manifest, exclude)) {
         out.push({ filename: value, path });
         return;
     }
     if (Array.isArray(value)) {
         value.forEach((entry, index) => {
-            walkValue(entry, path ? `${path}.${index}` : `${index}`, manifest, out);
+            walkValue(
+                entry,
+                path ? `${path}.${index}` : `${index}`,
+                manifest,
+                exclude,
+                out,
+            );
         });
         return;
     }
@@ -87,7 +102,13 @@ const walkValue = (
             return;
         }
         for (const [key, child] of Object.entries(value)) {
-            walkValue(child, path ? `${path}.${key}` : key, manifest, out);
+            walkValue(
+                child,
+                path ? `${path}.${key}` : key,
+                manifest,
+                exclude,
+                out,
+            );
         }
     }
 };
@@ -95,9 +116,10 @@ const walkValue = (
 export const collectValueRefs = (
     values: unknown,
     manifest: Set<string>,
+    exclude?: Set<string>,
 ): ValueRef[] => {
     const out: ValueRef[] = [];
-    walkValue(values, '', manifest, out);
+    walkValue(values, '', manifest, exclude, out);
     return out.filter((ref) => ref.path !== '');
 };
 
@@ -117,9 +139,10 @@ const isNodeLink = (value: unknown): boolean =>
 const walkInput = (
     value: unknown,
     manifest: Set<string>,
+    exclude: Set<string> | undefined,
     out: string[],
 ): void => {
-    if (isFileCandidate(value, manifest)) {
+    if (isFileCandidate(value, manifest, exclude)) {
         out.push(value);
         return;
     }
@@ -129,7 +152,7 @@ const walkInput = (
     if (Array.isArray(value)) {
         // Some nodes take a list of filenames; a list of links is handled by
         // the isNodeLink guard above.
-        value.forEach((entry) => walkInput(entry, manifest, out));
+        value.forEach((entry) => walkInput(entry, manifest, exclude, out));
     }
 };
 
@@ -140,12 +163,13 @@ export const collectGraphRefs = (
     api: Workflow,
     manifest: Set<string>,
     skipNames?: Set<string>,
+    exclude?: Set<string>,
 ): GraphRef[] => {
     const out: GraphRef[] = [];
     for (const [nodeId, node] of Object.entries(api ?? {})) {
         for (const [field, value] of Object.entries(node?.inputs ?? {})) {
             const names: string[] = [];
-            walkInput(value, manifest, names);
+            walkInput(value, manifest, exclude, names);
             for (const filename of names) {
                 if (skipNames?.has(filename)) {
                     continue;

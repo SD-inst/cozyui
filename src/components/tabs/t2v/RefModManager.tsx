@@ -583,7 +583,19 @@ const CreateModPanel = () => {
                         '.safetensors';
                     const resultUrl = `${apiUrl}/api/view?filename=${filename}&subfolder=&type=output`;
                     const response = await fetch(resultUrl);
+                    // A 404 here has an empty body, and storing that would give
+                    // the mod a 0-byte safetensors: it shows up in the picker,
+                    // loads as an empty model, and every later re-upload of it
+                    // writes another empty file.
+                    if (!response.ok) {
+                        throw new Error(
+                            `Result file not available on the server: ${filename}`,
+                        );
+                    }
                     const blob = await response.blob();
+                    if (!blob.size) {
+                        throw new Error(`Result file is empty: ${filename}`);
+                    }
                     const file = new File([blob], filename);
                     const meta = await parseSafetensorsMeta(file);
                     const id = genId();

@@ -232,7 +232,13 @@ describe('GenerateButton pipeline', () => {
         };
         mockFetch.mockImplementation((url: string, init?: { method?: string }) => {
             if (init?.method === 'HEAD') {
-                return Promise.resolve({ ok: false, status: 404 });
+                // Everything the form still names is gone; the freshly restored
+                // file is there, which is what the post-upload check looks for.
+                return Promise.resolve(
+                    url.includes('filename=1700000002000_uploaded.png')
+                        ? { ok: true, status: 200 }
+                        : { ok: false, status: 404 },
+                );
             }
             if (url.includes('/api/upload/image')) {
                 return Promise.resolve({

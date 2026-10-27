@@ -26,6 +26,15 @@ type UploadMeta = {
 
 const now = (): number => Date.now();
 
+// A copy holding no bytes is worse than no copy: restoring it puts a 0-byte file
+// on the server, which the workflow accepts and then fails over in some later
+// node whose error names neither the file nor the control. The size is checked
+// both as recorded when the copy was written and on the bytes themselves — the
+// positional guard this cleans up wrote neither field, while a browser's
+// IndexedDB keeps the bytes faithful.
+const isEmptyCopy = (record: { size?: number; file?: Blob }): boolean =>
+    record.size === 0 || record.file?.size === 0;
+
 const isQuotaError = (e: unknown): boolean => {
     const err = e as { name?: string; innerErr?: { name?: string } };
     return (
@@ -42,11 +51,16 @@ const nextEvictable = async (): Promise<string | undefined> => {
 
 // Store (or refresh) the local copy of `name`. A full IndexedDB must not break
 // generation: the worst case is a file we can no longer restore by ourselves.
+// An empty file is never stored: restoring it would put a 0-byte input on the
+// server, which the workflow accepts and then fails over in some later node.
 export const registerUpload = async (
     name: string,
     file: File,
     meta: UploadMeta = {},
 ): Promise<boolean> => {
+    if (file.size === 0) {
+        return false;
+    }
     const record = {
         id: name,
         filename: name,
@@ -80,6 +94,14 @@ export const lookupUpload = async (name: string): Promise<File | undefined> => {
     try {
         const record = await db.uploads.get(name);
         if (record) {
+            // An empty copy is how a legacy backup of a name the server never
+            // had looks (a 404 body is empty). Restoring it would put a 0-byte
+            // file on the server, so the copy goes and the caller treats the
+            // file as one we cannot bring back.
+            if (isEmptyCopy(record)) {
+                await db.uploads.delete(name).catch(() => undefined);
+                return undefined;
+            }
             await db.uploads
                 .update(name, { lastUsedAt: now() })
                 .catch(() => undefined);
@@ -236,6 +258,19 @@ export const dropCopiesLostByTab = async (
     }
 };
 
+// Copies holding no bytes are worse than no copy: they make a restore "succeed"
+// with a 0-byte file on the server. The old positional guard stored exactly
+// that whenever it fetched a name the server did not have (a 404 body is empty),
+// so the pass runs at startup to clear whatever it left behind.
+const purgeEmptyCopies = async (): Promise<void> => {
+    const empty = (
+        await db.uploads.filter((r) => isEmptyCopy(r)).primaryKeys()
+    ) as string[];
+    for (const id of empty) {
+        await db.uploads.delete(id);
+    }
+};
+
 // The copies are what makes a cleared input folder survivable, so the browser
 // must not evict them on its own under disk pressure.
 const requestPersistence = async (): Promise<void> => {
@@ -263,6 +298,7 @@ export const ensureUploadStoreReady = (): Promise<void> => {
                     // A corrupt row only means its backups cannot be placed.
                 }
             }
+            await purgeEmptyCopies();
             await migrateUploadBackups(valuesByTab);
             await pruneUploads(stateTexts);
             await requestPersistence();

@@ -60,6 +60,27 @@ const readStoredNames = async (): Promise<string[]> => {
     }
 };
 
+// Ref mods manage their own server file: their bytes live in `db.refModFiles`
+// and `ensureRefModOnServer` is what brings them back. A mod id also sits in the
+// form as an array leaf, so a store row accidentally keyed by that id would make
+// the id itself look like an uploaded file — and rewriting that leaf detaches
+// the slot from its mod. Their names are never preflight candidates.
+const readRefModNames = async (): Promise<Set<string>> => {
+    try {
+        const mods = await db.refMods.toArray();
+        const names = new Set<string>();
+        for (const mod of mods) {
+            names.add(mod.id);
+            if (mod.serverFilename) {
+                names.add(mod.serverFilename);
+            }
+        }
+        return names;
+    } catch {
+        return new Set<string>();
+    }
+};
+
 export type LostFile = {
     filename: string;
     // Where it was found — a form path ("ref_images.2.image") or a node
@@ -106,6 +127,7 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
     let localNames = new Set<string>();
     const unstored: Array<{ filename: string; size?: number }> = [];
     let manifest: Set<string> | null = null;
+    let excluded: Set<string> | undefined;
 
     const probeAndRestore = async (
         refs: Array<{ filename: string; where: string }>,
@@ -149,6 +171,19 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
             restoreAttempts[filename] = (restoreAttempts[filename] || 0) + 1;
             try {
                 const { name } = await uploadInputFile(local, apiUrl);
+                // The upload "succeeded" only if the server really holds the
+                // bytes now: a body cut short or rejected by the server leaves a
+                // file of the wrong size, and sending a prompt against that is
+                // worse than stopping — the workflow fails somewhere later with
+                // a message that names neither the file nor the control.
+                const after = await probeFileFull(name, apiUrl);
+                if (
+                    after.presence !== 'present' ||
+                    (after.size !== undefined && after.size !== local.size)
+                ) {
+                    report.lost.push({ filename, where });
+                    return;
+                }
                 renames[filename] = name;
                 presence.set(name, 'present');
                 localNames.add(name);
@@ -183,6 +218,7 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
             // and the server reports what it is missing.
             manifest = new Set<string>(await readStoredNames());
             localNames = manifest;
+            excluded = await readRefModNames();
         }
         return manifest;
     };
@@ -215,7 +251,7 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
             }
             const deadline = Date.now() + PREFLIGHT_BUDGET_MS;
             const names = await loadManifest();
-            const refs = collectValueRefs(form.getValues(), names);
+            const refs = collectValueRefs(form.getValues(), names, excluded);
             await probeAndRestore(
                 refs.map((ref) => ({ filename: ref.filename, where: ref.path })),
                 deadline,
@@ -235,6 +271,7 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
                 api,
                 names,
                 new Set(presence.keys()),
+                excluded,
             );
             await probeAndRestore(
                 refs.map((ref) => ({

@@ -31,6 +31,14 @@ describe('isFileCandidate', () => {
         expect(isFileCandidate(undefined, noManifest)).toBe(false);
         expect(isFileCandidate(42, noManifest)).toBe(false);
     });
+
+    it('rejects a name another mechanism owns, store row and all', () => {
+        const modId = '8a57fb00-e5d3-464c-bf57-f19c3dd216db';
+        // The store accidentally holds a row keyed by a ref mod id; that must
+        // not make the id into a file whose name we are free to rewrite.
+        expect(isFileCandidate(modId, new Set([modId]))).toBe(true);
+        expect(isFileCandidate(modId, new Set([modId]), new Set([modId]))).toBe(false);
+    });
 });
 
 describe('collectValueRefs', () => {
@@ -79,6 +87,17 @@ describe('collectValueRefs', () => {
         );
         expect(refs.map((r) => r.path)).toEqual(['frames.0', 'frames.1']);
     });
+
+    it('leaves a ref mod slot alone when the store keys its id', () => {
+        const modId = '8a57fb00-e5d3-464c-bf57-f19c3dd216db';
+        const refs = collectValueRefs(
+            { refmods: [{ id: modId, strength: 1 }] },
+            new Set([modId]),
+            new Set([modId]),
+        );
+
+        expect(refs).toEqual([]);
+    });
 });
 
 describe('collectGraphRefs', () => {
@@ -119,6 +138,23 @@ describe('collectGraphRefs', () => {
         );
 
         expect(refs.map((r) => r.filename)).toEqual(['1700000001731_b.png']);
+    });
+
+    it('skips a ref mod file the mod mechanism restores itself', () => {
+        const modFile = '1700000001500_mod.safetensors';
+        const refs = collectGraphRefs(
+            {
+                '3': {
+                    class_type: 'MiniMaxH3RefModsLoader',
+                    inputs: { mod_1: modFile },
+                },
+            },
+            new Set([modFile]),
+            undefined,
+            new Set([modFile]),
+        );
+
+        expect(refs).toEqual([]);
     });
 });
 

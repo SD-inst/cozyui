@@ -50,6 +50,31 @@ describe('uploadStore', () => {
 
         expect(await lookupUpload('same.png')).toBeDefined();
     });
+
+    it('refuses to store a copy holding no bytes', async () => {
+        const stored = await registerUpload(
+            '1700000009000_empty.png',
+            new File([], 'empty.png'),
+        );
+
+        expect(stored).toBe(false);
+        expect(await db.uploads.get('1700000009000_empty.png')).toBeUndefined();
+    });
+
+    it('drops an empty copy instead of handing it out for a restore', async () => {
+        // What a backup of a name the server never had looks like: a 404 body
+        // is empty, and the old guard stored it as if it were the file.
+        await db.uploads.put({
+            id: '1700000009100_empty.png',
+            filename: '1700000009100_empty.png',
+            file: new File([], 'empty.png'),
+            size: 0,
+            lastUsedAt: 1,
+        });
+
+        expect(await lookupUpload('1700000009100_empty.png')).toBeUndefined();
+        expect(await db.uploads.get('1700000009100_empty.png')).toBeUndefined();
+    });
 });
 
 describe('dropCopiesLostByTab', () => {
@@ -177,6 +202,31 @@ describe('ensureUploadStoreReady', () => {
 
     it('drops a backup no form value references anymore', async () => {
         await db.uploads.put({ id: 'Gone/tab.field', file: file('x.png') });
+
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
+
+        expect(await db.uploads.count()).toBe(0);
+    });
+
+    it('clears an empty positional backup instead of re-keying it', async () => {
+        // The regression this guards: the old guard backed up every array leaf,
+        // including a ref mod slot's `id`, by fetching it from `/api/view`. That
+        // 404s with an empty body, and re-keying the result onto the mod id made
+        // the id itself look like a file this client had uploaded.
+        const modId = '8a57fb00-e5d3-464c-bf57-f19c3dd216db';
+        await db.uploads.put({
+            id: 'R2V/refmods.0.id',
+            file: new File([], modId),
+            // The empty bytes are what marks such a record in a browser; jsdom's
+            // IndexedDB polyfill does not keep Blob contents, so the recorded
+            // size carries the same information here.
+            size: 0,
+        });
+        await db.formState.put({
+            tab: 'R2V',
+            state: JSON.stringify({ refmods: [{ id: modId }] }),
+        });
 
         const store = await freshStore();
         await store.ensureUploadStoreReady();
