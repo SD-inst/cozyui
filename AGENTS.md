@@ -401,14 +401,16 @@ Uses **Dexie** (IndexedDB wrapper) for local storage.
 IndexedDB has no query planner; one cursor walks one index. Multi-criteria filtering is done client-side:
 
 - **Multi-filter = index query per criterion + PK intersection.** `pkFromFilter` in `filter.ts` runs one indexed query per active filter (`.where(field).equals/startsWith/between`) and intersects the resulting primary-key arrays in JS. All filterable fields MUST stay indexed (`timestamp`, `type`, `model`, `mark`, `*words`, `tab`) so the path never degrades to a full scan. The `group` filter has no stored field: `pkFromFilter` resolves it to the tabs of that group (via `workflowTabGroups` from `WorkflowTabsContext`, passed as its 2nd argument) and queries `.where('tab').anyOf(tabs)`.
-- **Distinct index values (index-only, no record loading):**
+- **Distinct index values (index-only, no record loading)** — `distinctModels()` in [`filter.ts`](src/components/history/filter.ts), used by `HistoryPanel` to list the model-filter options:
   ```ts
-  db.taskResults
+  const keys = await db.taskResults
       .where('model')
       .between(undefined, undefined, true, true) // full index range → Collection
-      .uniqueKeys(); // distinct values only
+      .keys(); // index keys, duplicates included
+  const models = [...new Set(keys as string[])].filter((m) => !!m).sort();
   ```
-  `uniqueKeys()` lives on `Collection`, not on `WhereClause` — a value method (e.g. `between(undefined, undefined)`) is required to get a `Collection`. Dexie then uses `openKeyCursor` + the native `nextunique` cursor direction: it walks only the index B-tree (record objects are NOT loaded) and yields each distinct value once. This is how `HistoryPanel` lists the model-filter options without scanning thousands of records.
+  `keys()` lives on `Collection`, not on `WhereClause` — a value method (e.g. `between(undefined, undefined)`) is required to get a `Collection`. It opens `openKeyCursor` with the plain `next` direction, so it walks only the index B-tree (record objects are NOT loaded); distinctness is done in JS with a `Set`.
+- **NEVER `uniqueKeys()`.** It is `keys()` with the `nextunique` cursor direction, and WebKit throws `UnknownError: Unable to open cursor` when such a cursor is opened on a database that has no rows — after which every later operation on that database stops completing, until its files are deleted. On Safari/iOS that kills the live query, React unmounts the page, and the user's database is left unusable. `distinctModels.test.ts` pins both properties: no `nextunique` direction and no value cursor.
 - **NEVER full-scan `taskResults` for filter options** (`.filter(...).toArray()` without a limit): records carry `data?: Blob` (generated files when `save_outputs_locally` is on), so an unbounded scan loads all media into memory. Page result queries always use `.limit(page_size)`.
 - Dexie tests run against `fake-indexeddb` (polyfill via `import 'fake-indexeddb/auto'`; jsdom has no IndexedDB) — see `distinctModels.test.ts`.
 

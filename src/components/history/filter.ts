@@ -44,6 +44,22 @@ const dateFilter: trFilterFunc = (param: { from?: number; to?: number }) => {
     return Promise.resolve([]);
 };
 
+// The model filter is populated with the models actually used in the history.
+// `uniqueKeys()` would be the natural call, but it opens the index key cursor in
+// the `nextunique` direction, and WebKit throws `UnknownError: Unable to open
+// cursor` for that on a database without rows — then wedges every later
+// operation on that database (Dexie.js #1030 / #1052, hit by an iPhone user on
+// a fresh install). A plain `next` key cursor walks the same model index B-tree
+// without loading records or their Blobs, so distinct values are collected here
+// instead of by the cursor direction.
+export const distinctModels = async (): Promise<string[]> => {
+    const keys = await db.taskResults
+        .where('model')
+        .between(undefined, undefined, true, true)
+        .keys();
+    return [...new Set(keys as string[])].filter((model) => !!model).sort();
+};
+
 export const pkFromFilter = async (
     filter: FilterType,
     tabGroups?: groupType,

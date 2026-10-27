@@ -738,6 +738,8 @@ const translation = {
         crash_copied: 'Report copied',
         crash_copy_hint: 'Long-press the text box below and choose Copy',
         crash_dismiss: 'Dismiss',
+        crash_section: 'This part of the page failed to load: %{section}',
+        crash_retry: 'Try again',
     },
 };
 

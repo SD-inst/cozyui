@@ -736,6 +736,8 @@ const translation = {
         crash_copied: 'Отчёт скопирован',
         crash_copy_hint: 'Зажмите поле с текстом ниже и выберите «Скопировать»',
         crash_dismiss: 'Скрыть',
+        crash_section: 'Эта часть страницы не загрузилась: %{section}',
+        crash_retry: 'Повторить',
     },
 };
 

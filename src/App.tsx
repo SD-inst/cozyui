@@ -70,6 +70,31 @@ import { MiniMaxH3I2VTab } from './components/tabs/i2v/MiniMaxH3I2V';
 import { MiniMaxH3R2VTab } from './components/tabs/i2v/MiniMaxH3R2V';
 import { MiniMaxH3AudioTab } from './components/tabs/audio/MiniMaxH3Audio';
 import { RefModManagerTab } from './components/tabs/t2v/RefModManager';
+import { useTranslate } from './i18n/I18nContext';
+import { CrashBoundary } from './components/CrashNotice';
+
+// History, sessions, presets and settings are secondary UI sitting next to the
+// generation controls. Each gets its own boundary so one of them breaking says
+// so in place instead of taking the whole page down.
+const SidePanels = () => {
+    const tr = useTranslate();
+    return (
+        <>
+            <CrashBoundary section={tr('controls.history')}>
+                <HistoryPanel />
+            </CrashBoundary>
+            <CrashBoundary section={tr('sessions.title')}>
+                <SessionsPanel />
+            </CrashBoundary>
+            <CrashBoundary section={tr('presets.title')}>
+                <PresetPanel />
+            </CrashBoundary>
+            <CrashBoundary section={tr('controls.settings')}>
+                <AppSettings />
+            </CrashBoundary>
+        </>
+    );
+};
 
 function App() {
     return (
@@ -138,10 +163,7 @@ function App() {
                             <Progress />
                             <InterruptButton />
                             <FilterContextProvider>
-                                <HistoryPanel />
-                                <SessionsPanel />
-                                <PresetPanel />
-                                <AppSettings />
+                                <SidePanels />
                             </FilterContextProvider>
                         </WorkflowTabsContextProvider>
                     </VerticalBox>

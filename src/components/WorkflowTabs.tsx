@@ -28,6 +28,7 @@ import { TabContextProvider } from './contexts/TabContextProvider';
 import { WorkflowTabsContext } from './contexts/WorkflowTabsContext';
 import { db } from './history/db';
 import { VerticalBox } from './VerticalBox';
+import { CrashBoundary } from './CrashNotice';
 import { SnapshotApplier } from './snapshot/SnapshotApplier';
 import { registerForm, unregisterForm } from './presets/formRegistry';
 
@@ -125,7 +126,7 @@ const ValuesRestore = ({
 const TabContent = ({ ...props }) => {
     const current_tab = useCurrentTab();
     const form = useForm();
-    const { value, content } = (props.children.props as any) ?? {};
+    const { value, content, label } = (props.children.props as any) ?? {};
     // true once ValuesRestore has finished initializing this tab's form;
     // SnapshotApplier must only run after that
     const [formInitialized, setFormInitialized] = useState(false);
@@ -162,15 +163,23 @@ const TabContent = ({ ...props }) => {
                 display={current_tab === value ? 'flex' : 'none'}
             >
                 <FormProvider {...form}>
-                    {current_tab === value && (
-                        <ValuesRestore
-                            onInitialized={() => setFormInitialized(true)}
-                        />
-                    )}
-                    {current_tab === value && (
-                        <SnapshotApplier formInitialized={formInitialized} />
-                    )}
-                    {content}
+                    {/* A tab that fails to render used to take the whole page
+                        down with it, which on a phone reads as the controls
+                        appearing and then vanishing. The boundary keeps the tab
+                        bar and every other tab working. */}
+                    <CrashBoundary section={label || value}>
+                        {current_tab === value && (
+                            <ValuesRestore
+                                onInitialized={() => setFormInitialized(true)}
+                            />
+                        )}
+                        {current_tab === value && (
+                            <SnapshotApplier
+                                formInitialized={formInitialized}
+                            />
+                        )}
+                        {content}
+                    </CrashBoundary>
                 </FormProvider>
             </VerticalBox>
         </TabContextProvider>

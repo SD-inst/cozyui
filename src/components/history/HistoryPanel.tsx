@@ -34,7 +34,7 @@ import { SectionAccordion } from '../controls/SectionAccordion';
 import { VerticalBox } from '../VerticalBox';
 import { collectHistory } from '../../utils/export/domain';
 import { db } from './db';
-import { pkFromFilter } from './filter';
+import { distinctModels, pkFromFilter } from './filter';
 import { HistoryCard } from './HistoryCard';
 import { ExportImport } from '../export/ExportImport';
 import { ArenaContext } from './arena/ArenaContext';
@@ -148,17 +148,7 @@ export const HistoryPanel = ({ ...props }: ListProps) => {
                 : Object.keys(workflowTabGroups),
         [workflowTabGroups, group],
     );
-    const modelOptions = useLiveQuery(async () => {
-        // Index-only distinct query: `uniqueKeys()` makes Dexie use openKeyCursor +
-        // the `nextunique` cursor direction, so it walks only the model index
-        // B-tree (no record objects / Blobs loaded) and yields each distinct model
-        // once. `between(undefined, undefined)` = the full index range.
-        const keys = await db.taskResults
-            .where('model')
-            .between(undefined, undefined, true, true)
-            .uniqueKeys();
-        return (keys as string[]).filter((m) => !!m).sort();
-    }, []);
+    const modelOptions = useLiveQuery(distinctModels, []);
     const modelOpts = (modelOptions ?? []).map((id) => ({
         id,
         label: modelName(id),
