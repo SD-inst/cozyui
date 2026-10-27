@@ -18,7 +18,7 @@ import { db } from '../components/history/db';
 // only keeps the cache from growing into it.
 const SOFT_QUOTA_RATIO = 0.4;
 
-export type UploadMeta = {
+type UploadMeta = {
     // Diagnostics only: which control the bytes came from.
     tab?: string;
     field?: string;
@@ -34,10 +34,10 @@ const isQuotaError = (e: unknown): boolean => {
     );
 };
 
-// Oldest entry that is not protected, for eviction after a write was refused.
-const nextEvictable = async (keep: Set<string>): Promise<string | undefined> => {
+// Oldest stored copy, for eviction after a write was refused.
+const nextEvictable = async (): Promise<string | undefined> => {
     const ids = await db.uploads.orderBy('lastUsedAt').primaryKeys();
-    return ids.find((id) => !keep.has(id as string));
+    return ids[0] as string | undefined;
 };
 
 // Store (or refresh) the local copy of `name`. A full IndexedDB must not break
@@ -46,7 +46,6 @@ export const registerUpload = async (
     name: string,
     file: File,
     meta: UploadMeta = {},
-    keep: Set<string> = new Set(),
 ): Promise<boolean> => {
     const record = {
         id: name,
@@ -65,7 +64,7 @@ export const registerUpload = async (
             if (!isQuotaError(e)) {
                 throw e;
             }
-            const victim = await nextEvictable(keep);
+            const victim = await nextEvictable();
             if (!victim) {
                 return false;
             }
@@ -113,10 +112,6 @@ export const renameUpload = async (from: string, to: string): Promise<void> => {
     });
 };
 
-export const forgetUpload = async (name: string): Promise<void> => {
-    await db.uploads.delete(name);
-};
-
 // Upload a file and keep its bytes locally. Returns the server name and the
 // renamed File that was sent. Registration is best-effort: an upload that
 // succeeded on the server is a success even if we could not cache it.
@@ -139,18 +134,12 @@ export const uploadInputFile = async (
 // the user's original filename. The server name each legacy entry belongs to is
 // read back from that tab's persisted form values; an entry no form value
 // references belongs to a file nothing asks for anymore, and goes away.
-const migrateUploadBackups = async (): Promise<void> => {
+const migrateUploadBackups = async (
+    valuesByTab: Record<string, any>,
+): Promise<void> => {
     const legacy = await db.uploads.filter((r) => !r.filename).toArray();
     if (!legacy.length) {
         return;
-    }
-    const valuesByTab: Record<string, any> = {};
-    for (const row of await db.formState.toArray()) {
-        try {
-            valuesByTab[row.tab] = JSON.parse(row.state);
-        } catch {
-            // A corrupt row only means its backups cannot be placed.
-        }
     }
     for (const record of legacy) {
         const slash = record.id.indexOf('/');
@@ -177,7 +166,7 @@ const migrateUploadBackups = async (): Promise<void> => {
 // Beyond that, the oldest copies go once the cache approaches its share of the
 // storage quota — losing a copy costs a re-pick, and the browser's quota is the
 // hard limit anyway.
-export const pruneUploads = async (stateTexts: string[]): Promise<void> => {
+const pruneUploads = async (stateTexts: string[]): Promise<void> => {
     const ids = (await db.uploads.orderBy('lastUsedAt').primaryKeys()) as string[];
     const referenced = (id: string): boolean =>
         stateTexts.some((text) => text.includes(id));
@@ -233,10 +222,17 @@ let startup: Promise<void> | null = null;
 export const ensureUploadStoreReady = (): Promise<void> => {
     if (!startup) {
         startup = (async () => {
-            const stateTexts = (await db.formState.toArray()).map(
-                (row) => row.state,
-            );
-            await migrateUploadBackups();
+            const rows = await db.formState.toArray();
+            const stateTexts = rows.map((row) => row.state);
+            const valuesByTab: Record<string, any> = {};
+            for (const row of rows) {
+                try {
+                    valuesByTab[row.tab] = JSON.parse(row.state);
+                } catch {
+                    // A corrupt row only means its backups cannot be placed.
+                }
+            }
+            await migrateUploadBackups(valuesByTab);
             await pruneUploads(stateTexts);
             await requestPersistence();
         })().catch(() => undefined);

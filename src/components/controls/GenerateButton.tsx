@@ -8,7 +8,7 @@ import {
     useEventCallback,
 } from '@mui/material';
 import { cloneDeep } from 'lodash-es';
-import { KeyboardEvent, useContext, useEffect, useMemo, useState } from 'react';
+import { KeyboardEvent, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { settings } from '../../hooks/settings';
@@ -177,14 +177,15 @@ export const GenerateButton = ({
     // That folder is not durable — a container rebuild empties it while the
     // saved form keeps naming those files — so every file the payload
     // references is checked before sending and put back from the local copy.
+    // The preflight reports once per generation, but it is consulted after each
+    // of its two phases — count only the restorations not announced yet.
+    const announcedRestorations = useRef(0);
     const stopOnPreflight = useEventCallback(
         (report: PreflightReport): boolean => {
-            if (report.restored.length) {
-                toast.success(
-                    tr('toasts.files_restored', {
-                        count: report.restored.length,
-                    }),
-                );
+            const fresh = report.restored.length - announcedRestorations.current;
+            if (fresh > 0) {
+                announcedRestorations.current = report.restored.length;
+                toast.success(tr('toasts.files_restored', { count: fresh }));
             }
             if (report.timedOut) {
                 toast.error(tr('errors.preflight_timeout'));
@@ -209,6 +210,7 @@ export const GenerateButton = ({
         },
     );
     const sendPrompt = useEventCallback(async () => {
+        announcedRestorations.current = 0;
         dispatch(setStatus(statusEnum.WAITING));
         setErrors(noErrors);
         // Reset the timer first so a stall before the request is sent doesn't

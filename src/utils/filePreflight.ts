@@ -161,7 +161,7 @@ export const collectGraphRefs = (
 // rebuilt and the changed leaves are reported (the caller pushes each one
 // through `setValue`, so the UI and the persisted state follow); the workflow
 // is rewritten in place.
-export type ValueRename = {
+type ValueRename = {
     // react-hook-form path of the changed leaf.
     path: string;
     // The new filename now stored there.

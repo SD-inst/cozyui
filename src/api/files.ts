@@ -74,7 +74,7 @@ export const uploadFile = async (
 // mass deletion and triggers a storm of re-uploads.
 export type FilePresence = 'present' | 'missing' | 'unknown';
 
-export type FileProbe = {
+type FileProbe = {
     presence: FilePresence;
     // Reported by the server for a present file; used to decide whether a copy
     // is worth keeping locally.

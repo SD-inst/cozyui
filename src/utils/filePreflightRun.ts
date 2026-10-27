@@ -38,7 +38,7 @@ import {
 
 // A wedged container must not hold the generation in WAITING forever: every
 // probe and upload is bounded on its own, this bounds the whole sweep.
-export const PREFLIGHT_BUDGET_MS = 4 * 60_000;
+const PREFLIGHT_BUDGET_MS = 4 * 60_000;
 const PROBE_CONCURRENCY = 4;
 // Per file, per page load: a persistently failing upload must not loop.
 const MAX_RESTORE_ATTEMPTS = 2;
