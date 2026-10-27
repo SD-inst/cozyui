@@ -1,4 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
+import { useCallback, useEffect, useState } from 'react';
 import { db } from '../components/history/db';
 import { settings } from './settings';
 
@@ -35,6 +36,45 @@ export const useStringSetting = (
             );
         }, [defaultValue, name]) ?? (undefinedAwait ? undefined : defaultValue)
     );
+};
+
+/**
+ * Editable string setting — the value to bind to an input plus the writer.
+ *
+ * A stored setting only comes back from IndexedDB asynchronously, so binding a
+ * controlled input straight to `useStringSetting` breaks editing in the middle
+ * of the text: right after the keystroke React restores the DOM value to the
+ * prop it still has — the previous one — and the typed text returns a tick
+ * later from the database, which drops the caret at the end of the field. The
+ * draft keeps the input bound to what the user just typed and is released as
+ * soon as the stored value catches up, so external writes are picked up again.
+ * @param name setting name
+ * @param defaultValue value returned until the database promise resolves
+ * @returns [current value, write a new one]
+ */
+export const useSettingEditor = (
+    name: settings,
+    defaultValue: string = ''
+): [string, (value: string) => void] => {
+    const stored = useStringSetting(name, defaultValue) ?? defaultValue;
+    const [draft, setDraft] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (draft !== null && draft === stored) {
+            setDraft(null);
+        }
+    }, [draft, stored]);
+
+    return [
+        draft ?? stored,
+        useCallback(
+            (value: string) => {
+                setDraft(value);
+                db.settings.put({ name, value });
+            },
+            [name]
+        ),
+    ];
 };
 
 export const useNumberSetting = (

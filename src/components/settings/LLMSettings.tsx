@@ -2,7 +2,7 @@ import { Autocomplete, Box, TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { settings } from '../../hooks/settings';
 import { useLLMConfig } from '../../hooks/useLLMConfig';
-import { useStringSetting } from '../../hooks/useSetting';
+import { useSettingEditor, useStringSetting } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
 import { db } from '../history/db';
 import { SettingTriState } from './SettingTriState';
@@ -10,8 +10,8 @@ import { SettingTriState } from './SettingTriState';
 export const LLMSettings = () => {
     const tr = useTranslate();
     const { baseURL, apiKey: effectiveApiKey } = useLLMConfig();
-    const url = useStringSetting(settings.llm_url);
-    const apiKey = useStringSetting(settings.llm_api_key);
+    const [url, setUrl] = useSettingEditor(settings.llm_url);
+    const [apiKey, setApiKey] = useSettingEditor(settings.llm_api_key);
     const model = useStringSetting(settings.llm_model);
     const [models, setModels] = useState<string[]>([]);
 
@@ -52,12 +52,7 @@ export const LLMSettings = () => {
                     <TextField
                         fullWidth
                         value={url}
-                        onChange={(e) =>
-                            db.settings.put({
-                                name: settings.llm_url,
-                                value: e.target.value,
-                            })
-                        }
+                        onChange={(e) => setUrl(e.target.value)}
                         placeholder='https://host/v1'
                         label={tr('settings.llm_url')}
                         aria-label={tr('settings.llm_url')}
@@ -68,12 +63,7 @@ export const LLMSettings = () => {
                     <TextField
                         fullWidth
                         value={apiKey}
-                        onChange={(e) =>
-                            db.settings.put({
-                                name: settings.llm_api_key,
-                                value: e.target.value,
-                            })
-                        }
+                        onChange={(e) => setApiKey(e.target.value)}
                         label={tr('settings.llm_api_key')}
                         aria-label={tr('settings.llm_api_key')}
                         size='small'

@@ -48,10 +48,16 @@ export const uploadFile = async (
     return j.name;
 };
 
-export const fileOnServer = async (
+// What a HEAD probe against `/api/view` can conclude. Only a real HTTP 404
+// means the file is gone; a timeout, a refused connection or a non-404 failure
+// is "unknown" — treating those as "missing" makes a wedged server look like a
+// mass deletion and triggers a storm of re-uploads.
+export type FilePresence = 'present' | 'missing' | 'unknown';
+
+export const probeFile = async (
     filename: string,
     apiUrl: string,
-): Promise<boolean> => {
+): Promise<FilePresence> => {
     try {
         const r = await fetch(viewUrl(apiUrl, filename), {
             method: 'HEAD',
@@ -60,24 +66,41 @@ export const fileOnServer = async (
             cache: 'no-store',
             signal: timedSignal(),
         });
-        return r.ok;
+        if (r.ok) {
+            return 'present';
+        }
+        return r.status === 404 ? 'missing' : 'unknown';
     } catch {
-        return false;
+        return 'unknown';
     }
 };
+
+export const fileOnServer = async (
+    filename: string,
+    apiUrl: string,
+): Promise<boolean> => (await probeFile(filename, apiUrl)) === 'present';
 
 /**
  * Ensure `file` is available on the server and return the filename to use.
  * If `filename` is given and still exists on the server, it is reused;
  * otherwise `file` is (re-)uploaded and the new server name is returned.
+ * When the server cannot be reached at all, the stored name is kept as is:
+ * re-uploading a copy we cannot confirm to be lost only piles duplicates onto
+ * whatever is still on the server.
  */
 export const ensureFileOnServer = async (
     file: File,
     filename: string | undefined,
     apiUrl: string,
 ): Promise<string> => {
-    if (filename && (await fileOnServer(filename, apiUrl))) {
-        return filename;
+    if (filename) {
+        const presence = await probeFile(filename, apiUrl);
+        if (presence === 'present') {
+            return filename;
+        }
+        if (presence === 'unknown') {
+            return filename;
+        }
     }
     return uploadFile(file, apiUrl);
 };

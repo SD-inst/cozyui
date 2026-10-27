@@ -1,8 +1,7 @@
 import { TextField, TextFieldProps } from '@mui/material';
 import { settings } from '../../hooks/settings';
-import { useNumberSetting } from '../../hooks/useSetting';
+import { useSettingEditor } from '../../hooks/useSetting';
 import { useTranslate } from '../../i18n/I18nContext';
-import { db } from '../history/db';
 
 export const SettingNumber = ({
     name,
@@ -13,10 +12,7 @@ export const SettingNumber = ({
     defaultValue: number;
 } & Omit<TextFieldProps, 'label'>) => {
     const tr = useTranslate();
-    const value = useNumberSetting(name, defaultValue);
-    const updateSetting = (c: string) => {
-        db.settings.put({ name, value: '' + c });
-    };
+    const [value, updateSetting] = useSettingEditor(name, '' + defaultValue);
     return (
         <TextField
             value={value}

@@ -40,6 +40,7 @@ import { SaveSessionButton } from '../sessions/SaveSessionButton';
 import { controlType } from '../../redux/config';
 import { Workflow } from '../../api/graph';
 import { timedSignal } from '../../api/files';
+import { formatPromptError, parsePromptError } from '../../api/validation';
 import { ConnectionIndicator } from './ConnectionIndicator';
 import { hasRegisteredField } from '../../utils/registeredFields';
 
@@ -315,10 +316,18 @@ export const GenerateButton = ({
                 }
                 return;
             }
-            const j = await r.json();
-            const message = j?.error?.message;
+            const j = await r.json().catch(() => undefined);
+            // The top-level message alone ("Prompt outputs failed validation")
+            // says nothing usable — the node breakdown names the node, its
+            // class and the value the server refused.
+            const validation = parsePromptError(j);
+            const message = validation
+                ? formatPromptError(validation)
+                : typeof j?.error?.message === 'string'
+                  ? j.error.message
+                  : '';
             if (message) {
-                toast.error(message);
+                toast.error(tr('errors.validation_failed', { list: message }));
                 dispatch(clearPrompt());
                 dispatch(
                     setStatusMessage({

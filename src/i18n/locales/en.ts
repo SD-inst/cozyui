@@ -722,6 +722,7 @@ const translation = {
         missing_bindings: 'Missing API bindings (present controls): %{list}',
         missing_ids: 'Missing API ids: %{list}',
         missing_fields: 'Missing API fields: %{list}',
+        validation_failed: 'ComfyUI rejected the workflow: %{list}',
         interrupted: 'interrupted',
     },
 };

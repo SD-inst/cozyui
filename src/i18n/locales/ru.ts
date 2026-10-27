@@ -722,6 +722,7 @@ const translation = {
             'Отсутствующие привязки к API (есть контролы): %{list}',
         missing_ids: 'Отсутствующие id узлов в API: %{list}',
         missing_fields: 'Отсутствующие поля в API: %{list}',
+        validation_failed: 'ComfyUI отклонил воркфлоу: %{list}',
         interrupted: 'прервано',
     },
 };

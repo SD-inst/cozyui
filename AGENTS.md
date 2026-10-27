@@ -262,6 +262,7 @@ rate: number;
 | [`useCurrentTab()`](src/hooks/useCurrentTab.ts) | `useCurrentTab.ts` | Get current tab info |
 | [`useSetDefaults()`](src/hooks/useSetDefaults.ts) | `useSetDefaults.ts` | Set form defaults from config |
 | [`useRestoreValues()`](src/hooks/useRestoreValues.ts) | `useRestoreValues.ts` | Restore values from IndexedDB |
+| [`useSettingEditor(name)`](src/hooks/useSetting.ts) | `useSetting.ts` | Editable setting as `[value, setValue]` — see "Editable settings fields" under Settings |
 | [`useAPI()`](src/hooks/useAPI.ts) | `useAPI.ts` | Get config for current tab |
 
 ### Tab Context
@@ -424,6 +425,20 @@ Located in [`src/components/settings/`](src/components/settings/).
 | `HiddenTabs.tsx` | Configure visible/hidden tabs |
 | `NotificationSetting.tsx` | Notification sound settings |
 | `Version.tsx` | App version display |
+
+### Editable settings fields bind to `useSettingEditor` — IMPORTANT
+
+A stored setting lives in IndexedDB and reaches React through `useLiveQuery`, i.e. one tick later than the keystroke. Binding an input's `value` straight to `useStringSetting`/`useNumberSetting` therefore breaks editing anywhere but at the end of the text: right after the keystroke React restores the DOM value to the prop it still holds — the previous one — and the typed text comes back from the database immediately after; each of those programmatic `input.value` writes puts the caret at the end of the field.
+
+```tsx
+const [url, setUrl] = useSettingEditor(settings.llm_url);
+
+<TextField value={url} onChange={(e) => setUrl(e.target.value)} />
+```
+
+[`useSettingEditor`](src/hooks/useSetting.ts) keeps a local draft and releases it as soon as the stored value catches up with it, so writes made anywhere else still reach the field. Read-only consumers of a setting keep using `useStringSetting`/`useNumberSetting`.
+
+To test caret behavior, the keystroke must reach React's value tracker: set the value through the prototype setter (`Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set.call(input, …)`) and only then `fireEvent.change(input)` — assigning `input.value` directly is invisible to React, and the test silently passes without any `onChange` running. See [`src/hooks/useSetting.test.tsx`](src/hooks/useSetting.test.tsx).
 
 ---
 
