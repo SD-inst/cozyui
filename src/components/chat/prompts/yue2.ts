@@ -12,10 +12,13 @@ Your entire answer must be the structured prompt itself: each section header on 
 ...
 
 RULES
-- \`// style\`: one or more comma-separated tags describing the genre, instrumentation, mood, and production (for example "pop, piano, guitars, danceable, easy listen"). Keep it concise and specific; do not write full sentences.
+- \`// style\`: a single flowing prose paragraph (about 3-6 sentences) that describes the track as it actually sounds: genre and era, tempo and rhythmic feel, the vocal character, the instruments or sound sources that carry the melody, harmony and rhythm, and how the arrangement develops across the song (distinct sections, breakdowns, layered climaxes, the ending). Name concrete, audible things — "punchy pulse-wave synth", "fast cascading square-wave arpeggios", "drum machine breakbeat" — not vague mood words. Keep the diction plain and functional: no purple prose, no stacked ornate epithets, no metaphors or similes.
 - \`// lyrics\`: the full lyrics with section headers in square brackets, such as [Intro], [Verse], [Chorus], [Bridge], [Outro], separated by blank lines. Follow the structure the user's description implies. If the user wants an instrumental song, write [Instrumental] and leave the rest empty.
 - Do NOT include a \`// ABC\` section. The model composes its own melody, so the ABC is never part of a generated prompt.
 - Write plain text only. No markdown of any kind: no code fences, no headings, no bold or italics, no lists, no tables. No titles, no preambles, no explanations, no questions, no follow-up suggestions.
+
+EXAMPLE OF A \`// style\` SECTION (a different song than the user asked for; match its level of detail, not its content):
+A mid-tempo dream pop song with soft breathy female vocals and a gentle, steady drum groove. Clean chorus-drenched electric guitars arpeggiate the chords while a warm bass guitar anchors the harmony and holds the low end together. The verses stay sparse, carried by voice and guitar alone; the choruses open up with layered vocal harmonies and a second lead guitar playing long sustained lines. A synthesizer pad swells under the final chorus, and the song closes with the guitars and vocals fading out over the repeating arpeggio.
 
 Your answer is the prompt itself, starting with \`// style\` and ending with the last line of \`// lyrics\`.`;
 
@@ -27,7 +30,7 @@ The user's first message has this structure, with each section header on its own
 // instruction
 <the user's instructions for how to change the song>
 // style
-<the current style tags>
+<the current style description>
 // lyrics
 <the current lyrics with [Section] headers>
 // ABC
@@ -47,7 +50,7 @@ Your entire answer must be the updated structured prompt: each section header on
 
 RULES
 - Apply the user's instructions to the current prompt. Change only what the instructions ask for and keep everything else unchanged.
-- \`// style\`: comma-separated tags describing the genre, instrumentation, mood, and production.
+- \`// style\`: a single flowing prose paragraph describing the track as it actually sounds — genre, tempo and rhythmic feel, vocals, the instruments or sound sources carrying melody, harmony and rhythm, and the arrangement's development. Plain, concrete diction; no purple prose.
 - \`// lyrics\`: the full lyrics with section headers in square brackets.
 - \`// ABC\`: include this section ONLY if it was present in the input. If the input had an \`// ABC\` section, update it according to the instructions and return it. If the input had no \`// ABC\` section, do NOT add one — the model composes its own melody.
 - Write plain text only. No markdown of any kind: no code fences, no headings, no bold or italics, no lists, no tables. No titles, no preambles, no explanations, no questions, no follow-up suggestions.
