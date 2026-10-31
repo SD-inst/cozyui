@@ -33,6 +33,7 @@ import {
     lookupUpload,
     registerUpload,
     renameUpload,
+    touchUpload,
     uploadInputFile,
 } from './uploadStore';
 
@@ -149,7 +150,12 @@ export const createPreflightRun = (apiUrl: string): PreflightRun => {
             );
             presence.set(filename, result);
             if (result === 'present') {
-                if (!localNames.has(filename)) {
+                if (localNames.has(filename)) {
+                    // The copy is in use — it is what makes the server's next
+                    // wipe survivable — so the retention clock has to follow
+                    // the use, not only the rare case of restoring it.
+                    await touchUpload(filename);
+                } else {
                     unstored.push({ filename, size });
                 }
                 return;

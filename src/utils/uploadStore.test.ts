@@ -1,11 +1,12 @@
 import 'fake-indexeddb/auto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { settings } from '../hooks/settings';
 import { db } from '../components/history/db';
 import {
-    dropCopiesLostByTab,
     lookupUpload,
     registerUpload,
     renameUpload,
+    touchUpload,
 } from './uploadStore';
 
 const file = (name: string, body = 'bytes') =>
@@ -77,87 +78,143 @@ describe('uploadStore', () => {
     });
 });
 
-describe('dropCopiesLostByTab', () => {
+describe('retention', () => {
+    const DAY = 24 * 60 * 60 * 1000;
+
+    // Pruning runs in the startup pass, whose promise is memoized per module
+    // instance, so each case reloads the module the way a fresh load would.
+    const freshStore = async () => {
+        vi.resetModules();
+        return import('./uploadStore');
+    };
+
+    const copy = async (name: string, ageDays: number) => {
+        await db.uploads.put({
+            id: name,
+            filename: name,
+            file: file(name),
+            lastUsedAt: Date.now() - ageDays * DAY,
+        });
+    };
+
+    let restoreStorage: (() => void) | undefined;
+
     beforeEach(async () => {
         await db.uploads.clear();
         await db.formState.clear();
+        await db.settings.delete(settings.upload_retention_days);
     });
 
-    const saved = (state: any) => JSON.stringify(state);
+    afterEach(() => {
+        restoreStorage?.();
+        restoreStorage = undefined;
+    });
 
-    it('drops the copy of a file the tab removed', async () => {
-        await db.uploads.put({
-            id: '1730_cat.png',
-            filename: '1730_cat.png',
-            file: file('cat.png'),
-            lastUsedAt: 1,
-        });
-        // The row is written before the drop runs, as the save effect does.
-        await db.formState.put({
-            tab: 'R2V',
-            state: saved({ ref_images: [{}, {}] }),
-        });
+    it('keeps an unreferenced copy inside the retention window', async () => {
+        await copy('1730_cat.png', 3);
 
-        await dropCopiesLostByTab(
-            saved({ ref_images: [{ image: '1730_cat.png' }, {}] }),
-            saved({ ref_images: [{}, {}] }),
-        );
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
+
+        expect(await store.lookupUpload('1730_cat.png')).toBeDefined();
+    });
+
+    it('drops a copy once it is past the window and no form names it', async () => {
+        await copy('1730_cat.png', 30);
+
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
 
         expect(await db.uploads.get('1730_cat.png')).toBeUndefined();
     });
 
-    it('keeps a copy another tab still references', async () => {
-        await db.uploads.put({
-            id: '1730_cat.png',
-            filename: '1730_cat.png',
-            file: file('cat.png'),
-            lastUsedAt: 1,
+    it('never ages out a copy a saved form state names', async () => {
+        // A tab nobody opened for a year never gets a chance to refresh its own
+        // copies, so age alone must not take the bytes its form points at.
+        await copy('1730_cat.png', 365);
+        await db.formState.put({
+            tab: 'R2V',
+            state: JSON.stringify({ ref_images: [{ image: '1730_cat.png' }] }),
         });
-        await db.formState.bulkPut([
-            { tab: 'R2V', state: saved({ ref_images: [] }) },
-            { tab: 'Upscale', state: saved({ image: '1730_cat.png' }) },
-        ]);
 
-        await dropCopiesLostByTab(
-            saved({ ref_images: [{ image: '1730_cat.png' }] }),
-            saved({ ref_images: [] }),
-        );
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
 
-        expect(await db.uploads.get('1730_cat.png')).toBeDefined();
+        expect(await store.lookupUpload('1730_cat.png')).toBeDefined();
     });
 
-    it('keeps a copy a skipped entry still holds', async () => {
-        await db.uploads.put({
-            id: '1730_cat.png',
-            filename: '1730_cat.png',
-            file: file('cat.png'),
-            lastUsedAt: 1,
+    it('keeps everything when the window is set to 0', async () => {
+        await db.settings.put({
+            name: settings.upload_retention_days,
+            value: '0',
         });
-        const state = saved({
-            ref_images: [{ image: '1730_cat.png', skip: true }],
-        });
-        await db.formState.put({ tab: 'R2V', state });
+        await copy('1730_cat.png', 365);
 
-        await dropCopiesLostByTab(state, state);
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
 
-        expect(await db.uploads.get('1730_cat.png')).toBeDefined();
+        expect(await store.lookupUpload('1730_cat.png')).toBeDefined();
     });
 
-    it('ignores a wholesale empty state (initialization or reset)', async () => {
+    it('follows use, not only restores', async () => {
+        // The preflight touches a copy whose file the server still holds; with
+        // no such touch the copies of a form used daily age out under the
+        // user's hands.
+        await copy('1730_cat.png', 30);
+        await touchUpload('1730_cat.png');
+
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
+
+        expect(await store.lookupUpload('1730_cat.png')).toBeDefined();
+    });
+
+    it('shrinks to the storage budget from the copy nothing names first', async () => {
+        const now = Date.now();
         await db.uploads.put({
-            id: '1730_cat.png',
-            filename: '1730_cat.png',
-            file: file('cat.png'),
-            lastUsedAt: 1,
+            id: 'orphan.png',
+            filename: 'orphan.png',
+            file: file('orphan.png'),
+            lastUsedAt: now,
         });
-        await db.formState.put({ tab: 'R2V', state: saved({}) });
+        await db.uploads.put({
+            id: 'used.png',
+            filename: 'used.png',
+            file: file('used.png'),
+            lastUsedAt: now - DAY,
+        });
+        await db.formState.put({
+            tab: 'R2V',
+            state: JSON.stringify({ image: 'used.png' }),
+        });
 
-        await dropCopiesLostByTab(
-            saved({ ref_images: [{ image: '1730_cat.png' }] }),
-            '{}',
-        );
+        // Over budget exactly once, so the sweep stops after one deletion. The
+        // copy it must give up is the one no form names — even though the copy
+        // a form names is the older of the two.
+        let estimates = 0;
+        const original = Object.getOwnPropertyDescriptor(navigator, 'storage');
+        Object.defineProperty(navigator, 'storage', {
+            configurable: true,
+            value: {
+                estimate: async () => ({
+                    quota: 1000,
+                    usage: ++estimates === 1 ? 900 : 100,
+                }),
+            },
+        });
+        restoreStorage = () => {
+            if (original) {
+                Object.defineProperty(navigator, 'storage', original);
+            } else {
+                delete (navigator as { storage?: unknown }).storage;
+            }
+        };
 
-        expect(await db.uploads.get('1730_cat.png')).toBeDefined();
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
+
+        expect(await db.uploads.get('orphan.png')).toBeUndefined();
+        expect(await db.uploads.get('used.png')).toBeDefined();
     });
 });
 

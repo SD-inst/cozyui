@@ -3,6 +3,7 @@ import { Box } from '@mui/material';
 import { useContext, useRef } from 'react';
 import { settings } from '../../hooks/settings';
 import { useBooleanSetting } from '../../hooks/useSetting';
+import { useTranslate } from '../../i18n/I18nContext';
 import { autoscrollSlotProps } from '../controls/utils';
 import { SectionAccordion } from '../controls/SectionAccordion';
 import { ExportImport } from '../export/ExportImport';
@@ -24,6 +25,7 @@ import {
 } from '../contexts/WorkflowTabsContext';
 
 export const AppSettings = () => {
+    const tr = useTranslate();
     const save_history = useBooleanSetting(settings.save_history);
     const tag_enabled = useBooleanSetting(settings.tag_completion);
     const { workflowTabs } = useContext(WorkflowTabsContext);
@@ -55,6 +57,21 @@ export const AppSettings = () => {
                     <SettingCheckbox name={settings.chat_stream} />
                     <SettingCheckbox name={settings.letterbox_crop} />
                     <SettingCheckbox name={settings.connection_sound} />
+                </Box>
+                <Box
+                    mb={1}
+                    display='flex'
+                    gap={2}
+                    alignItems='center'
+                    flexWrap='wrap'
+                >
+                    {/* Local copies are what survives a wiped input folder, so
+                        how long they live is a user decision, not a constant. */}
+                    <SettingNumber
+                        name={settings.upload_retention_days}
+                        defaultValue={7}
+                        helperText={tr('settings.upload_retention_days_hint')}
+                    />
                 </Box>
                 <LLMSettings />
                 {tag_enabled && (

@@ -393,6 +393,9 @@ const translation = {
         select_language: 'Select language',
         save_history: 'Save history locally',
         save_outputs_locally: 'Save generation results locally',
+        upload_retention_days: 'Keep local copies of uploaded files, days',
+        upload_retention_days_hint:
+            'Copies no form uses are dropped after this many days; 0 keeps them until the storage budget evicts the oldest.',
         disable_help: 'Disable tooltips',
         enable_previews: 'Enable previews',
         tag_completion: 'Tag completion',

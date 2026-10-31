@@ -9,14 +9,29 @@
 // The store is keyed by the server filename — the only identity that survives
 // reordering, slot changes and re-uploads. A re-upload renames the record
 // (old name → new name) instead of leaving a stale entry behind.
+//
+// What decides whether bytes are still here is age and volume, never the form:
+// a copy is dropped once it is older than the retention window and no saved
+// form state names it, or when the cache has to shrink to stay inside its
+// share of the storage quota. Nothing is deleted the moment a form stops
+// naming a file — a history entry, an Undo, or a tab the user has not opened
+// in a week can all ask for that name again, and the store cannot tell those
+// apart from a deliberate removal.
 import { uploadToInputDir } from '../api/files';
 import { get } from 'lodash-es';
+import { settings } from '../hooks/settings';
 import { db } from '../components/history/db';
 
 // Above this share of the browser's storage quota, the oldest copies go away.
 // The browser's own quota error is the hard limit (see `registerUpload`); this
 // only keeps the cache from growing into it.
 const SOFT_QUOTA_RATIO = 0.4;
+
+// How long a copy nothing references is kept, in days. The server wipes its
+// `input` folder on a schedule, so for a history entry from last week these
+// bytes are the only surviving copy of the file it names.
+const DEFAULT_RETENTION_DAYS = 7;
+const DAY_MS = 24 * 60 * 60 * 1000;
 
 type UploadMeta = {
     // Diagnostics only: which control the bytes came from.
@@ -43,11 +58,74 @@ const isQuotaError = (e: unknown): boolean => {
     );
 };
 
-// Oldest stored copy, for eviction after a write was refused.
-const nextEvictable = async (): Promise<string | undefined> => {
-    const ids = await db.uploads.orderBy('lastUsedAt').primaryKeys();
-    return ids[0] as string | undefined;
+// The retention window is a user setting, read where the decision is made: a
+// change then applies to the next pass without any wiring, and 0 (or anything
+// negative) means "never age out" — only the byte budget decides.
+const retentionDays = async (): Promise<number> => {
+    const row = await db.settings
+        .where({ name: settings.upload_retention_days })
+        .first()
+        .catch(() => undefined);
+    if (row === undefined) {
+        return DEFAULT_RETENTION_DAYS;
+    }
+    const days = Number(row.value);
+    return Number.isFinite(days) ? Math.max(0, days) : DEFAULT_RETENTION_DAYS;
 };
+
+// 0 when age must not evict anything.
+const ageCutoff = async (): Promise<number> => {
+    const days = await retentionDays();
+    return days > 0 ? Date.now() - days * DAY_MS : 0;
+};
+
+// The saved form states, as the JSON they are stored in. Naming a file is a
+// substring test over these: it cannot miss a name buried in a nested array
+// entry or sitting in a `skip`ped slot, and it costs one read of a row per tab.
+const formStateTexts = async (): Promise<string[]> => {
+    try {
+        return (await db.formState.toArray()).map((row) => row.state);
+    } catch {
+        // A form-state read that fails only means nothing looks referenced;
+        // `evictOrder` then falls back to age, which is the safer guess.
+        return [];
+    }
+};
+
+// Copies in the order they may go: expired and unreferenced first, then any
+// unreferenced copy, and only when nothing else is left, the copies a saved
+// form still names — oldest of those first. A copy a form names is the last
+// thing to lose its bytes: the server wipes its input folder, so without the
+// copy that generation is not merely slower, it is impossible.
+const evictOrder = async (): Promise<string[]> => {
+    const texts = await formStateTexts();
+    const referenced = (id: string): boolean =>
+        texts.some((text) => text.includes(id));
+    const cutoff = await ageCutoff();
+    // Rows written before `lastUsedAt` existed are absent from that index, so
+    // they are never "expired"; the migration pass is what clears those.
+    const expired = new Set<string>(
+        cutoff > 0
+            ? ((await db.uploads
+                  .where('lastUsedAt')
+                  .below(cutoff)
+                  .primaryKeys()) as string[])
+            : [],
+    );
+    const all = (await db.uploads
+        .orderBy('lastUsedAt')
+        .primaryKeys()) as string[];
+    return [
+        ...all.filter((id) => expired.has(id) && !referenced(id)),
+        ...all.filter((id) => !expired.has(id) && !referenced(id)),
+        ...all.filter((id) => expired.has(id) && referenced(id)),
+        ...all.filter((id) => !expired.has(id) && referenced(id)),
+    ];
+};
+
+// Next copy to sacrifice after a write was refused.
+const nextEvictable = async (): Promise<string | undefined> =>
+    (await evictOrder())[0];
 
 // Store (or refresh) the local copy of `name`. A full IndexedDB must not break
 // generation: the worst case is a file we can no longer restore by ourselves.
@@ -111,6 +189,14 @@ export const lookupUpload = async (name: string): Promise<File | undefined> => {
         return undefined;
     }
     return undefined;
+};
+
+// The server still holding a file says nothing about the local copy being
+// useless — it is what makes the next wipe survivable. Nothing else refreshes
+// the clock on a copy that never has to be restored, so a form used every day
+// for a month would otherwise watch its copies age out under it.
+export const touchUpload = async (name: string): Promise<void> => {
+    await db.uploads.update(name, { lastUsedAt: now() }).catch(() => undefined);
 };
 
 // A re-upload gives the file a new server name; the local copy follows it, so
@@ -183,22 +269,31 @@ const migrateUploadBackups = async (
     }
 };
 
-// Copies of files no saved form value mentions anymore cannot be needed: the
-// only thing that asks for a stored copy is a payload that names the file.
-// Beyond that, the oldest copies go once the cache approaches its share of the
-// storage quota — losing a copy costs a re-pick, and the browser's quota is the
-// hard limit anyway.
-const pruneUploads = async (stateTexts: string[]): Promise<void> => {
-    const ids = (await db.uploads.orderBy('lastUsedAt').primaryKeys()) as string[];
-    const referenced = (id: string): boolean =>
-        stateTexts.some((text) => text.includes(id));
-
-    for (const id of ids) {
-        if (!referenced(id)) {
-            await db.uploads.delete(id);
+// Two things take copies away: age, and the cache having to shrink. Age only
+// touches a copy no saved form state names — a file still sitting in a form is
+// the one thing a restore must never find missing, whatever its timestamp says,
+// because a tab the user has not opened in a month never gets a chance to
+// refresh its own copies.
+const pruneUploads = async (): Promise<void> => {
+    const cutoff = await ageCutoff();
+    if (cutoff > 0) {
+        const texts = await formStateTexts();
+        const expired = (await db.uploads
+            .where('lastUsedAt')
+            .below(cutoff)
+            .primaryKeys()) as string[];
+        for (const id of expired) {
+            if (!texts.some((text) => text.includes(id))) {
+                await db.uploads.delete(id);
+            }
         }
     }
+    await evictToBudget();
+};
 
+// Losing a copy costs a re-pick, and the browser's quota is the hard limit
+// anyway — this only keeps the cache from growing into it.
+const evictToBudget = async (): Promise<void> => {
     const estimate = await navigator.storage?.estimate?.();
     if (!estimate?.quota || !estimate.usage) {
         return;
@@ -206,16 +301,7 @@ const pruneUploads = async (stateTexts: string[]): Promise<void> => {
     if (estimate.usage <= estimate.quota * SOFT_QUOTA_RATIO) {
         return;
     }
-    // Oldest first, referenced ones last: a file still in a form can still be
-    // needed, so it is the last thing to lose its copy.
-    const remaining = (await db.uploads
-        .orderBy('lastUsedAt')
-        .primaryKeys()) as string[];
-    const victims = [
-        ...remaining.filter((id) => !referenced(id)),
-        ...remaining.filter((id) => referenced(id)),
-    ];
-    for (const id of victims) {
+    for (const id of await evictOrder()) {
         await db.uploads.delete(id);
         const after = await navigator.storage.estimate();
         if (!after.usage || !after.quota) {
@@ -223,37 +309,6 @@ const pruneUploads = async (stateTexts: string[]): Promise<void> => {
         }
         if (after.usage <= after.quota * SOFT_QUOTA_RATIO) {
             break;
-        }
-    }
-};
-
-// A tab that stopped referencing a file can no longer need its copy, so the
-// copy goes as soon as that removal is saved, instead of waiting for the next
-// session's startup pass. The check runs against the states that are actually
-// persisted (this tab's new row included), so a file another tab still uses, or
-// one still sitting in a skipped array entry, keeps its copy.
-//
-// An empty new state is skipped: that shape comes from initialization or a
-// wholesale reset rather than from removing one element, and acting on it would
-// drop copies the form is about to reference again.
-export const dropCopiesLostByTab = async (
-    previousState: string | undefined,
-    newState: string,
-): Promise<void> => {
-    if (!previousState || !newState || newState === '{}') {
-        return;
-    }
-    const names = (await db.uploads
-        .orderBy('lastUsedAt')
-        .primaryKeys()) as string[];
-    const lost = names.filter((name) => previousState.includes(name));
-    if (!lost.length) {
-        return;
-    }
-    const texts = (await db.formState.toArray()).map((row) => row.state);
-    for (const name of lost) {
-        if (!texts.some((text) => text.includes(name))) {
-            await db.uploads.delete(name);
         }
     }
 };
@@ -289,7 +344,6 @@ export const ensureUploadStoreReady = (): Promise<void> => {
     if (!startup) {
         startup = (async () => {
             const rows = await db.formState.toArray();
-            const stateTexts = rows.map((row) => row.state);
             const valuesByTab: Record<string, any> = {};
             for (const row of rows) {
                 try {
@@ -300,7 +354,7 @@ export const ensureUploadStoreReady = (): Promise<void> => {
             }
             await purgeEmptyCopies();
             await migrateUploadBackups(valuesByTab);
-            await pruneUploads(stateTexts);
+            await pruneUploads();
             await requestPersistence();
         })().catch(() => undefined);
     }
