@@ -87,6 +87,8 @@ export const AppSettings = () => {
                         <SettingNumber
                             name={settings.tag_number}
                             defaultValue={10}
+                            min={0}
+                            step={1}
                         />
                         <SettingMultichoice
                             values={workflowTabs}
