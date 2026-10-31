@@ -663,6 +663,13 @@ const translation = {
         no_base: 'No base result chosen for comparison',
         no_params: 'No generation parameters stored',
         params_restored: 'Generation parameters restored',
+        params_files_restored:
+            '%{count} file(s) brought back from local copies',
+        params_files_reused:
+            'Already in the form, reused instead: %{files}',
+        params_files_lost:
+            '%{count} file(s) can no longer be restored; their fields keep what the form had: %{files}',
+        undo: 'Undo',
         error_saving_history: 'Error saving history: %{err}',
         error_importing_database: 'Error importing history: %{err}',
         error_exporting_database: 'Error exporting history: %{err}',

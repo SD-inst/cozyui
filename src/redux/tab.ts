@@ -5,6 +5,7 @@ import { Workflow } from '../api/graph';
 export enum actionEnum {
     STORE,
     RESTORE,
+    RESTORE_HISTORY,
     APPLY_PRESET,
     RESTORE_SESSION,
 }

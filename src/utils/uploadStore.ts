@@ -65,6 +65,13 @@ const isQuotaError = (e: unknown): boolean => {
 const aliasHash = async (name: string): Promise<string | undefined> =>
     (await db.uploadAliases.get(name).catch(() => undefined))?.hash;
 
+// The content a name stands for, as far as the alias table knows it. A name
+// registered before content identity existed has no alias, and reading its
+// record to find out would pull the Blob into memory — the caller that needs
+// the answer that badly already holds the bytes.
+export const nameHash = async (name: string): Promise<string | undefined> =>
+    aliasHash(name);
+
 const addAlias = async (name: string, hash: string): Promise<void> => {
     await db.uploadAliases.put({ name, hash }).catch(() => undefined);
 };

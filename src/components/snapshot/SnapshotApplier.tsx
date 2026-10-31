@@ -23,16 +23,24 @@ import {
     SnapshotStore,
     stripNulls,
 } from '../../utils/applySnapshot';
+import { resolveHistoryValues } from '../../utils/restoreHistory';
 import { deleteSession } from '../sessions/session';
 
 // Applies a stored snapshot to the current tab form once the form is
-// initialized. Handles both presets (merge on top of the current form, with an
-// Undo toast) and sessions (reset the form first, which turns the merge into a
-// plain replace; optionally deletes the session afterwards).
+// initialized. Handles presets (merge on top of the current form, with an
+// Undo toast), sessions (reset the form first, which turns the merge into a
+// plain replace; optionally deletes the session afterwards), and the parameters
+// of a past generation (every media name resolved before it is written, so a
+// file the entry can no longer produce never displaces a working one).
 const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
-    const { action, tab, presetId, sessionId, deleteAfter } = useAppSelector(
-        (s) => s.tab.params,
-    );
+    const {
+        action,
+        tab,
+        presetId,
+        sessionId,
+        deleteAfter,
+        values: historyValues,
+    } = useAppSelector((s) => s.tab.params);
     const tab_name = useTabName();
     const api = useAppSelector((s) =>
         get(s, ['config', 'tabs', tab_name], null),
@@ -47,6 +55,7 @@ const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
 
     const isPreset = action === actionEnum.APPLY_PRESET;
     const isSession = action === actionEnum.RESTORE_SESSION;
+    const isHistory = action === actionEnum.RESTORE_HISTORY;
     const id = isPreset ? presetId : sessionId;
 
     // Stable so it can be a dependency without re-running the effect on render.
@@ -60,13 +69,78 @@ const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
             !formInitialized ||
             tab !== tab_name ||
             !apiUrl ||
-            (!isPreset && !isSession) ||
-            !id
+            (!isPreset && !isSession && !isHistory) ||
+            ((isPreset || isSession) && !id) ||
+            (isHistory && !historyValues)
         ) {
             return;
         }
         let cancelled = false;
         (async () => {
+            if (isHistory) {
+                // The form as it stands, for the Undo toast: a history entry
+                // replaces parameters, and the user may well change their mind.
+                const snapshot = stripNulls(filterFormValues(getValues()));
+                const {
+                    values: resolved,
+                    restored,
+                    reused,
+                    lost,
+                } = await resolveHistoryValues({
+                    values: historyValues,
+                    current: getValues(),
+                    apiUrl,
+                });
+                if (cancelled) {
+                    return;
+                }
+                restoreValues('', stripNulls(resolved));
+                dispatch(setParams({}));
+                toast.success((t) => (
+                    <Box display='flex' alignItems='center' gap={1}>
+                        <span>{tr('toasts.params_restored')}</span>
+                        <Button
+                            size='small'
+                            onClick={() => {
+                                restoreValues('', snapshot);
+                                toast.dismiss(t.id);
+                            }}
+                        >
+                            {tr('toasts.undo')}
+                        </Button>
+                    </Box>
+                ));
+                if (restored.length) {
+                    toast(
+                        tr('toasts.params_files_restored', {
+                            count: restored.length,
+                        }),
+                    );
+                }
+                if (reused.length) {
+                    toast(
+                        tr('toasts.params_files_reused', {
+                            files: [...new Set(reused.map((r) => r.to))].join(
+                                ', ',
+                            ),
+                        }),
+                    );
+                }
+                if (lost.length) {
+                    toast.error(
+                        tr('toasts.params_files_lost', {
+                            count: lost.length,
+                            files: lost.join(', '),
+                        }),
+                    );
+                }
+                return;
+            }
+            // Presets and sessions are addressed by id; the effect's guard
+            // already refuses them without one, this narrows it for the rest.
+            if (!id) {
+                return;
+            }
             const store: SnapshotStore = isPreset
                 ? { record: db.presets, files: db.presetFiles, fk: 'preset' }
                 : { record: db.sessions, files: db.sessionFiles, fk: 'session' };
@@ -175,6 +249,7 @@ const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
         sessionId,
         id,
         deleteAfter,
+        historyValues,
         apiUrl,
         api,
         dispatch,
@@ -185,6 +260,7 @@ const SnapshotApplier = ({ formInitialized }: { formInitialized: boolean }) => {
         doReset,
         isPreset,
         isSession,
+        isHistory,
     ]);
 
     return null;

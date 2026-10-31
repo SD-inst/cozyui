@@ -14,9 +14,12 @@ export const LoadParamsButton = ({ params }: { params?: string }) => {
             return;
         }
         const values = JSON.parse(params);
-        dispatch(setParams({ action: actionEnum.RESTORE, ...values }));
+        // The stored names are the ones the server knew at the time; the
+        // applier resolves each of them before anything reaches the form.
+        dispatch(setParams({ action: actionEnum.RESTORE_HISTORY, ...values }));
         dispatch(setTab(values.tab));
-        toast.success(tr('toasts.params_restored'));
+        // The applier reports once the media has actually been resolved: what
+        // was restored, what came back from a local copy, what is gone.
     };
     return (
         <Button

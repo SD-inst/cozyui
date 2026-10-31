@@ -663,6 +663,13 @@ const translation = {
         no_base: 'Не выбран базовый результат для сравнения',
         no_params: 'Параметры генерации не сохранены',
         params_restored: 'Параметры генерации восстановлены',
+        params_files_restored:
+            'Из локальных копий возвращено файлов: %{count}',
+        params_files_reused:
+            'Эти файлы уже были в форме, использованы они: %{files}',
+        params_files_lost:
+            'Файлов, которые больше нечем восстановить: %{count}; их поля остались такими, какими были в форме: %{files}',
+        undo: 'Отменить',
         error_saving_history: 'Ошибка сохранения истории: %{err}',
         error_importing_database: 'Ошибка при импорте истории: %{err}',
         error_exporting_database: 'Ошибка при экспорте истории: %{err}',

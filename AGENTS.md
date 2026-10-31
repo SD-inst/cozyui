@@ -955,6 +955,17 @@ A restore counts only when the server really holds the bytes: the new name is pr
 
 `probeFile` is tri-state (`present | missing | unknown`): only a real HTTP 404 counts as gone; a timeout or a 5xx is `unknown`, so a wedged server is never mistaken for a mass deletion and nothing is re-uploaded. A file that is gone with no local copy aborts the generation with a message naming the control (`errors.files_lost`) rather than sending a doomed request. Files the server has and the store does not are fetched in the background after the prompt is sent (`cacheUnstored`, ≤ 20 MB each). Masks built by `I2IToggle` are deliberately not registered: they are rebuilt every generation and never appear in a form value.
 
+### Restoring a past generation resolves its media first — IMPORTANT
+
+A history entry stores form values with the filenames the server knew at the time. Writing them into the form directly is technically correct and awful in practice: those names are gone (the folder is emptied on a schedule, and a re-upload mints a new name), so the form fills with dead references — and, since retention asks what a form state names, the working copies the restore displaced start looking unreferenced too. So `LoadParamsButton` dispatches `actionEnum.RESTORE_HISTORY` and [`SnapshotApplier`](src/components/snapshot/SnapshotApplier.tsx) runs it through [`src/utils/restoreHistory.ts`](src/utils/restoreHistory.ts) before anything is written:
+
+- a name the server still has is used as is;
+- a name whose bytes are still in the store — reached through its alias — is brought back and re-referenced;
+- **a name whose content the form already holds under another name reuses that working file** instead of uploading a duplicate: the hash makes "the same photo, re-uploaded" recognizable;
+- anything else is reported lost, and its **field keeps the value the form had** — the payload simply omits it, because `useRestoreValues` only writes keys it is given.
+
+Non-media fields come from the entry as they are. In a media array, a slot whose file cannot be restored keeps the file sitting in that slot now, and a slot with nothing to keep is dropped rather than left pointing at a dead name. Compound media fields (`i2i`) hold nested filenames the media walk does not produce, so they pass through and the preflight fixes them at generation time. The apply is undoable: a toast snapshots the form first, exactly as preset apply does. This is why `actionEnum.RESTORE` (cross-tab send, the ABC panel) stays a plain write — those values were uploaded moments ago and are already live.
+
 ### Tooltips vs. the `disable_help` setting — IMPORTANT
 
 [`ThemeContext`](src/components/contexts/ThemeContext.tsx) sets `MuiTooltip` defaults `disableHoverListener` and `disableTouchListener` to the `disable_help` user setting (`settings.disable_help`). So when a user turns on "Disable tooltips", **every** `<Tooltip>` in the app stops showing — including ones that carry essential state, not just help text.
