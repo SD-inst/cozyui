@@ -12,9 +12,20 @@ import {
 const file = (name: string, body = 'bytes') =>
     new File([body], name, { type: 'image/png' });
 
+const DAY = 24 * 60 * 60 * 1000;
+
+// Pruning, migration and hashing run in the startup pass, whose promise is
+// memoized per module instance, so a case reloads the module the way a fresh
+// page load would.
+const freshStore = async () => {
+    vi.resetModules();
+    return import('./uploadStore');
+};
+
 describe('uploadStore', () => {
     beforeEach(async () => {
         await db.uploads.clear();
+        await db.uploadAliases.clear();
     });
 
     afterEach(() => {
@@ -37,12 +48,15 @@ describe('uploadStore', () => {
         expect(await lookupUpload('cat.png')).toBeUndefined();
     });
 
-    it('follows a re-upload to the new server name', async () => {
+    it('keeps both names of a re-upload pointing at one copy', async () => {
         await registerUpload('old.png', file('old.png'));
         await renameUpload('old.png', 'new.png');
 
-        expect(await lookupUpload('old.png')).toBeUndefined();
+        // The new name is what the form holds from now on, and the old one
+        // stays resolvable — it is the name a history entry may still name.
         expect(await lookupUpload('new.png')).toBeDefined();
+        expect(await lookupUpload('old.png')).toBeDefined();
+        expect(await db.uploads.count()).toBe(1);
     });
 
     it('keeps the record when renaming onto itself', async () => {
@@ -78,16 +92,65 @@ describe('uploadStore', () => {
     });
 });
 
+describe('content identity', () => {
+    beforeEach(async () => {
+        await db.uploads.clear();
+        await db.uploadAliases.clear();
+        await db.formState.clear();
+        await db.settings.delete(settings.upload_retention_days);
+    });
+
+    it('stores one copy for the same bytes uploaded twice', async () => {
+        await registerUpload('1730_cat.png', file('cat.png'));
+        await registerUpload('1740_cat.png', file('cat.png'));
+
+        // The server mints a fresh name for every upload, so without this the
+        // store would hold one Blob per generation of the same photo.
+        expect(await db.uploads.count()).toBe(1);
+        expect(await lookupUpload('1730_cat.png')).toBeDefined();
+        expect(await lookupUpload('1740_cat.png')).toBeDefined();
+    });
+
+    it('keeps a copy a form names through one of its aliases', async () => {
+        // The bytes were first registered under a name no form holds anymore;
+        // the form names the alias a re-upload minted, and the age pass must
+        // see through it rather than collect the copy as an orphan.
+        await registerUpload('1700_cat.png', file('cat.png'));
+        await renameUpload('1700_cat.png', '1730_cat.png');
+        await db.uploads.update('1700_cat.png', {
+            lastUsedAt: Date.now() - 30 * DAY,
+        });
+        await db.formState.put({
+            tab: 'R2V',
+            state: JSON.stringify({ ref_images: [{ image: '1730_cat.png' }] }),
+        });
+
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
+
+        expect(await db.uploads.get('1700_cat.png')).toBeDefined();
+        expect(await lookupUpload('1730_cat.png')).toBeDefined();
+    });
+
+    it('takes the aliases with the copy when it goes', async () => {
+        await registerUpload('1700_cat.png', file('cat.png'));
+        await renameUpload('1700_cat.png', '1730_cat.png');
+        await db.uploads.update('1700_cat.png', {
+            lastUsedAt: Date.now() - 30 * DAY,
+        });
+
+        const store = await freshStore();
+        await store.ensureUploadStoreReady();
+
+        // An alias whose bytes are gone would promise a restore that cannot
+        // happen, so it cannot outlive the copy.
+        expect(await db.uploads.count()).toBe(0);
+        expect(await db.uploadAliases.count()).toBe(0);
+        expect(await lookupUpload('1730_cat.png')).toBeUndefined();
+    });
+});
+
 describe('retention', () => {
-    const DAY = 24 * 60 * 60 * 1000;
-
-    // Pruning runs in the startup pass, whose promise is memoized per module
-    // instance, so each case reloads the module the way a fresh load would.
-    const freshStore = async () => {
-        vi.resetModules();
-        return import('./uploadStore');
-    };
-
     const copy = async (name: string, ageDays: number) => {
         await db.uploads.put({
             id: name,
@@ -101,6 +164,7 @@ describe('retention', () => {
 
     beforeEach(async () => {
         await db.uploads.clear();
+        await db.uploadAliases.clear();
         await db.formState.clear();
         await db.settings.delete(settings.upload_retention_days);
     });
@@ -219,15 +283,9 @@ describe('retention', () => {
 });
 
 describe('ensureUploadStoreReady', () => {
-    // The startup pass runs once per process; each case seeds its rows before
-    // it, and the memoized promise is reset by reloading the module.
-    const freshStore = async () => {
-        vi.resetModules();
-        return import('./uploadStore');
-    };
-
     beforeEach(async () => {
         await db.uploads.clear();
+        await db.uploadAliases.clear();
         await db.formState.clear();
     });
 

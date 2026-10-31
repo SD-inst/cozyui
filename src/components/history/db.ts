@@ -41,21 +41,37 @@ export interface FormState {
 }
 
 // Local copy of a file that lives in ComfyUI's `input` folder. `id` is the
-// server filename — the identity the rest of the app keys on, so a reorder or
-// a slot change never moves the backup. `filename` duplicates it as an indexed
-// property (Dexie cannot index a primary key) and is absent on legacy records,
-// which were keyed by form position (`<tab>/<field>[.<i>.<key>]`); those are
-// migrated once at startup by `migrateUploadBackups`.
+// server filename the bytes were first registered under — the canonical name —
+// and `hash` is the content identity that outlives it: every later upload of
+// the same bytes is an alias, not a second copy. `filename` duplicates the id
+// as an indexed property (Dexie cannot index a primary key) and is absent on
+// legacy records, which were keyed by form position
+// (`<tab>/<field>[.<i>.<key>]`); those are migrated once at startup by
+// `migrateUploadBackups`.
 export interface Uploads {
     id: string;
     file: File;
     filename?: string;
     lastUsedAt?: number;
     size?: number;
+    // SHA-256 of the bytes, hex. Absent on records written before content
+    // identity existed; they get one the first time they are looked up.
+    hash?: string;
     // Which control the bytes came from — diagnostics only, nothing reads it
     // back for a lookup.
     tab?: string;
     field?: string;
+}
+
+// One server filename this client has uploaded, mapped to the content it
+// stands for. A re-upload mints a new name and leaves the bytes where they
+// are, so a name that has long gone from the server — the one a history entry
+// holds — still resolves to bytes that did not move. Rows are a few dozen
+// bytes and are not subject to the byte budget; they go only when the copy
+// they point at does.
+export interface UploadAlias {
+    name: string;
+    hash: string;
 }
 
 export interface ChatLog {
@@ -128,6 +144,7 @@ export const db = new Dexie('task_results') as Dexie & {
     formState: Table<FormState, string>;
     tags: Table<Tags, string>;
     uploads: Table<Uploads, string>;
+    uploadAliases: Table<UploadAlias, string>;
     chatLogs: Table<ChatLog, string>;
     presets: Table<Preset, string>;
     presetFiles: Table<PresetFile, string>;
@@ -215,6 +232,15 @@ db.version(12).stores({
 // under; `lastUsedAt` orders the LRU eviction that keeps the store inside its
 // byte budget.
 db.version(13).stores({ uploads: '&id, filename, lastUsedAt' });
+
+// Content identity. `hash` lets the store notice that the bytes of a fresh
+// upload are already here, and `uploadAliases` maps every name this client
+// ever uploaded to the content it stood for — so a name that has long left the
+// server still resolves to bytes that never moved.
+db.version(14).stores({
+    uploads: '&id, filename, lastUsedAt, hash',
+    uploadAliases: '&name, hash',
+});
 
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {

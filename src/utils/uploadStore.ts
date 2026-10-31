@@ -7,8 +7,10 @@
 // the file again.
 //
 // The store is keyed by the server filename — the only identity that survives
-// reordering, slot changes and re-uploads. A re-upload renames the record
-// (old name → new name) instead of leaving a stale entry behind.
+// reordering, slot changes and re-uploads. A re-upload mints a new name and
+// leaves the bytes where they are: the new name becomes an alias of the same
+// content, so a name that has long left the server — the one a history entry
+// holds — still resolves to bytes that never moved.
 //
 // What decides whether bytes are still here is age and volume, never the form:
 // a copy is dropped once it is older than the retention window and no saved
@@ -20,6 +22,7 @@
 import { uploadToInputDir } from '../api/files';
 import { get } from 'lodash-es';
 import { settings } from '../hooks/settings';
+import { sha256Hex } from './contentHash';
 import { db } from '../components/history/db';
 
 // Above this share of the browser's storage quota, the oldest copies go away.
@@ -56,6 +59,97 @@ const isQuotaError = (e: unknown): boolean => {
         err?.name === 'QuotaExceededError' ||
         err?.innerErr?.name === 'QuotaExceededError'
     );
+};
+
+// Every name this client has uploaded, mapped to the content it stands for.
+const aliasHash = async (name: string): Promise<string | undefined> =>
+    (await db.uploadAliases.get(name).catch(() => undefined))?.hash;
+
+const addAlias = async (name: string, hash: string): Promise<void> => {
+    await db.uploadAliases.put({ name, hash }).catch(() => undefined);
+};
+
+// Which stored copy holds these bytes — without reading them. A check that
+// loaded the Blob to answer "do we have it" would cost the memory the store
+// exists to save.
+const canonicalOfHash = async (hash: string): Promise<string | undefined> =>
+    ((await db.uploads.where('hash').equals(hash).primaryKeys()) as string[])[0];
+
+// A copy and every name pointing at it go together: an alias whose bytes are
+// gone would promise a restore that cannot happen.
+const deleteCopy = async (id: string): Promise<void> => {
+    const hash = await aliasHash(id);
+    await db.uploads.delete(id);
+    if (hash) {
+        await db.uploadAliases
+            .where('hash')
+            .equals(hash)
+            .delete()
+            .catch(() => undefined);
+    }
+};
+
+// Give a stored copy its content hash and register the names that stand for
+// it. Records written before content identity existed have none, and without
+// one a re-upload cannot alias them — so the names they were known by would
+// stop resolving.
+const hashInto = async (
+    id: string,
+    file: File,
+    extraNames: string[] = [],
+): Promise<void> => {
+    const hash = await sha256Hex(file).catch(() => undefined);
+    if (!hash) {
+        return;
+    }
+    await db.uploads.update(id, { hash }).catch(() => undefined);
+    for (const name of [id, ...extraNames]) {
+        await addAlias(name, hash);
+    }
+};
+
+// On a lookup this runs off the caller's path: hashing the whole store at
+// startup would read every Blob on page load.
+const fillHash = (id: string, file: File): void => {
+    void hashInto(id, file).catch(() => undefined);
+};
+
+// Names a saved form state holds, resolved to the copies they stand for. A
+// form may name any alias of a content rather than the canonical name its
+// bytes were first stored under, so the alias table has to take part.
+const referencedUploads = async (texts: string[]): Promise<Set<string>> => {
+    // A key cursor over the whole table: `primaryKeys()` is a Collection
+    // method, and the copies themselves must not be read to answer this.
+    const ids = (await db.uploads.toCollection().primaryKeys()) as string[];
+    const referenced = new Set<string>();
+    for (const id of ids) {
+        if (texts.some((text) => text.includes(id))) {
+            referenced.add(id);
+        }
+    }
+    const aliases = await db.uploadAliases.toArray().catch(() => []);
+    if (!aliases.length) {
+        return referenced;
+    }
+    // The canonical name of a copy is itself an alias row, so the copy can be
+    // reached from its hash without loading a single Blob.
+    const owned = new Set(ids);
+    const canonical = new Map<string, string>();
+    for (const alias of aliases) {
+        if (owned.has(alias.name)) {
+            canonical.set(alias.hash, alias.name);
+        }
+    }
+    for (const alias of aliases) {
+        const id = canonical.get(alias.hash);
+        if (!id || referenced.has(id)) {
+            continue;
+        }
+        if (texts.some((text) => text.includes(alias.name))) {
+            referenced.add(id);
+        }
+    }
+    return referenced;
 };
 
 // The retention window is a user setting, read where the decision is made: a
@@ -98,9 +192,7 @@ const formStateTexts = async (): Promise<string[]> => {
 // thing to lose its bytes: the server wipes its input folder, so without the
 // copy that generation is not merely slower, it is impossible.
 const evictOrder = async (): Promise<string[]> => {
-    const texts = await formStateTexts();
-    const referenced = (id: string): boolean =>
-        texts.some((text) => text.includes(id));
+    const referenced = await referencedUploads(await formStateTexts());
     const cutoff = await ageCutoff();
     // Rows written before `lastUsedAt` existed are absent from that index, so
     // they are never "expired"; the migration pass is what clears those.
@@ -116,10 +208,10 @@ const evictOrder = async (): Promise<string[]> => {
         .orderBy('lastUsedAt')
         .primaryKeys()) as string[];
     return [
-        ...all.filter((id) => expired.has(id) && !referenced(id)),
-        ...all.filter((id) => !expired.has(id) && !referenced(id)),
-        ...all.filter((id) => expired.has(id) && referenced(id)),
-        ...all.filter((id) => !expired.has(id) && referenced(id)),
+        ...all.filter((id) => expired.has(id) && !referenced.has(id)),
+        ...all.filter((id) => !expired.has(id) && !referenced.has(id)),
+        ...all.filter((id) => expired.has(id) && referenced.has(id)),
+        ...all.filter((id) => !expired.has(id) && referenced.has(id)),
     ];
 };
 
@@ -139,11 +231,27 @@ export const registerUpload = async (
     if (file.size === 0) {
         return false;
     }
+    const hash = await sha256Hex(file).catch(() => undefined);
+    // The same bytes under a new name are not a new copy. Every upload mints a
+    // fresh server name, and with the input folder emptied on a schedule the
+    // same file is re-uploaded over and over — the name becomes an alias of the
+    // copy that is already here instead of a second Blob.
+    if (hash) {
+        const canonical = await canonicalOfHash(hash);
+        if (canonical) {
+            await addAlias(name, hash);
+            await db.uploads
+                .update(canonical, { lastUsedAt: now() })
+                .catch(() => undefined);
+            return true;
+        }
+    }
     const record = {
         id: name,
         filename: name,
         file,
         size: file.size,
+        hash,
         lastUsedAt: now(),
         tab: meta.tab,
         field: meta.field,
@@ -151,6 +259,9 @@ export const registerUpload = async (
     for (let attempt = 0; attempt < 6; attempt++) {
         try {
             await db.uploads.put(record);
+            if (hash) {
+                await addAlias(name, hash);
+            }
             return true;
         } catch (e) {
             if (!isQuotaError(e)) {
@@ -160,7 +271,7 @@ export const registerUpload = async (
             if (!victim) {
                 return false;
             }
-            await db.uploads.delete(victim);
+            await deleteCopy(victim);
         }
     }
     return false;
@@ -177,18 +288,47 @@ export const lookupUpload = async (name: string): Promise<File | undefined> => {
             // file on the server, so the copy goes and the caller treats the
             // file as one we cannot bring back.
             if (isEmptyCopy(record)) {
-                await db.uploads.delete(name).catch(() => undefined);
+                await deleteCopy(name).catch(() => undefined);
                 return undefined;
             }
             await db.uploads
                 .update(name, { lastUsedAt: now() })
                 .catch(() => undefined);
+            if (!record.hash && record.file) {
+                fillHash(record.id, record.file);
+            }
             return record.file;
         }
+        // Not stored under this name — but the bytes may never have moved. A
+        // re-upload leaves them where they are and mints an alias, and that is
+        // what lets the dead name a history entry holds resolve.
+        const hash = await aliasHash(name);
+        if (!hash) {
+            return undefined;
+        }
+        const canonical = await canonicalOfHash(hash);
+        if (!canonical) {
+            // A pointer to bytes that are gone; drop it rather than chase it
+            // again on the next lookup.
+            await db.uploadAliases
+                .where('name')
+                .equals(name)
+                .delete()
+                .catch(() => undefined);
+            return undefined;
+        }
+        const copy = await db.uploads.get(canonical);
+        if (!copy || isEmptyCopy(copy)) {
+            await deleteCopy(canonical).catch(() => undefined);
+            return undefined;
+        }
+        await db.uploads
+            .update(canonical, { lastUsedAt: now() })
+            .catch(() => undefined);
+        return copy.file;
     } catch {
         return undefined;
     }
-    return undefined;
 };
 
 // The server still holding a file says nothing about the local copy being
@@ -199,12 +339,29 @@ export const touchUpload = async (name: string): Promise<void> => {
     await db.uploads.update(name, { lastUsedAt: now() }).catch(() => undefined);
 };
 
-// A re-upload gives the file a new server name; the local copy follows it, so
-// the next generation finds it under the name the form now holds.
+// A re-upload gives the file a new server name. The bytes stay under the name
+// they were first registered with and the new name becomes an alias of them:
+// the next generation finds the copy either way, a history entry's old name
+// still resolves, and the store rewrites a row instead of the whole Blob every
+// time the server empties its folder.
 export const renameUpload = async (from: string, to: string): Promise<void> => {
     if (from === to) {
         return;
     }
+    const hash = await aliasHash(from);
+    if (hash) {
+        await addAlias(to, hash);
+        const canonical = await canonicalOfHash(hash);
+        if (canonical) {
+            await db.uploads
+                .update(canonical, { lastUsedAt: now() })
+                .catch(() => undefined);
+        }
+        return;
+    }
+    // A record predating content identity has no hash to alias onto, so its
+    // bytes still have to be carried over by hand.
+    let carried: File | undefined;
     await db.transaction('rw', db.uploads, async () => {
         const record = await db.uploads.get(from);
         if (!record) {
@@ -217,7 +374,14 @@ export const renameUpload = async (from: string, to: string): Promise<void> => {
             filename: to,
             lastUsedAt: now(),
         });
+        carried = record.file;
     });
+    if (carried) {
+        // Awaited, unlike the lazy fill on a lookup: this is the one path where
+        // a name would otherwise stop resolving, and the caller — a restore or
+        // a preflight rename — is relying on the alias it leaves behind.
+        await hashInto(to, carried, [from]);
+    }
 };
 
 // Upload a file and keep its bytes locally. Returns the server name and the
@@ -277,14 +441,14 @@ const migrateUploadBackups = async (
 const pruneUploads = async (): Promise<void> => {
     const cutoff = await ageCutoff();
     if (cutoff > 0) {
-        const texts = await formStateTexts();
+        const referenced = await referencedUploads(await formStateTexts());
         const expired = (await db.uploads
             .where('lastUsedAt')
             .below(cutoff)
             .primaryKeys()) as string[];
         for (const id of expired) {
-            if (!texts.some((text) => text.includes(id))) {
-                await db.uploads.delete(id);
+            if (!referenced.has(id)) {
+                await deleteCopy(id);
             }
         }
     }
@@ -302,7 +466,7 @@ const evictToBudget = async (): Promise<void> => {
         return;
     }
     for (const id of await evictOrder()) {
-        await db.uploads.delete(id);
+        await deleteCopy(id);
         const after = await navigator.storage.estimate();
         if (!after.usage || !after.quota) {
             break;
@@ -322,7 +486,7 @@ const purgeEmptyCopies = async (): Promise<void> => {
         await db.uploads.filter((r) => isEmptyCopy(r)).primaryKeys()
     ) as string[];
     for (const id of empty) {
-        await db.uploads.delete(id);
+        await deleteCopy(id);
     }
 };
 

@@ -2,6 +2,7 @@ import 'fake-indexeddb/auto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { db } from '../components/history/db';
 import { createPreflightRun } from './filePreflightRun';
+import { lookupUpload } from './uploadStore';
 
 const apiUrl = 'http://localhost:8188';
 
@@ -139,7 +140,7 @@ describe('createPreflightRun', () => {
         expect(run.report.lost).toEqual([]);
     });
 
-    it('moves the stored copy onto the new server name', async () => {
+    it('keeps one copy addressable by the old and the new server name', async () => {
         await db.uploads.put({
             id: '1700000001100_gone.png',
             filename: '1700000001100_gone.png',
@@ -152,8 +153,12 @@ describe('createPreflightRun', () => {
         const run = createPreflightRun(apiUrl);
         await run.values(form.access);
 
-        expect(await db.uploads.get('1700000001100_gone.png')).toBeUndefined();
-        expect(await db.uploads.get('1700000002000_uploaded.png')).toBeDefined();
+        // The form names the new name and the store answers it. The old one
+        // stays resolvable as well: it is the name a history entry of this
+        // generation carries, and the bytes never moved.
+        expect(await db.uploads.count()).toBe(1);
+        expect(await lookupUpload('1700000002000_uploaded.png')).toBeDefined();
+        expect(await lookupUpload('1700000001100_gone.png')).toBeDefined();
     });
 
     it('reports a missing file it has no copy of', async () => {
