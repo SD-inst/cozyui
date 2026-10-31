@@ -70,6 +70,8 @@ export const AppSettings = () => {
                     <SettingNumber
                         name={settings.upload_retention_days}
                         defaultValue={7}
+                        min={0}
+                        step={1}
                         helperText={tr('settings.upload_retention_days_hint')}
                     />
                 </Box>

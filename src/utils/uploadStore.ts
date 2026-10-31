@@ -170,8 +170,15 @@ const retentionDays = async (): Promise<number> => {
     if (row === undefined) {
         return DEFAULT_RETENTION_DAYS;
     }
-    const days = Number(row.value);
-    return Number.isFinite(days) ? Math.max(0, days) : DEFAULT_RETENTION_DAYS;
+    const raw = String(row.value ?? '').trim();
+    const days = Number(raw);
+    // Only a number the field can mean decides anything: `0` is the documented
+    // "never age out", while a negative or a blank box — reachable through a
+    // settings import as much as a stray keystroke — falls back to the default
+    // instead of silently switching age out off.
+    return raw !== '' && Number.isFinite(days) && days >= 0
+        ? days
+        : DEFAULT_RETENTION_DAYS;
 };
 
 // 0 when age must not evict anything.

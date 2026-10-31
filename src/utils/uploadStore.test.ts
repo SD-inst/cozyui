@@ -220,6 +220,25 @@ describe('retention', () => {
         expect(await store.lookupUpload('1730_cat.png')).toBeDefined();
     });
 
+    it.each(['-1', '', 'seven'])(
+        'reads a window setting of "%s" as the default window',
+        async (value) => {
+            // Only an explicit 0 means "keep forever". A negative, a blank row,
+            // or junk from a settings import must not quietly switch age out
+            // off — that is the opposite of what a negative reads like.
+            await db.settings.put({
+                name: settings.upload_retention_days,
+                value,
+            });
+            await copy('1730_cat.png', 30);
+
+            const store = await freshStore();
+            await store.ensureUploadStoreReady();
+
+            expect(await db.uploads.get('1730_cat.png')).toBeUndefined();
+        },
+    );
+
     it('follows use, not only restores', async () => {
         // The preflight touches a copy whose file the server still holds; with
         // no such touch the copies of a form used daily age out under the
