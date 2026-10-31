@@ -413,13 +413,26 @@ export const uploadInputFile = async (
 // the user's original filename. The server name each legacy entry belongs to is
 // read back from that tab's persisted form values; an entry no form value
 // references belongs to a file nothing asks for anymore, and goes away.
+//
+// Finding those rows means reading every record, so the pass marks itself done
+// and never runs again: nothing writes a key without `filename` anymore, and no
+// import path touches this table, so a shape that cannot come back is not worth
+// a full scan of the store on every page load. The marker lives in `settings`
+// under a `schema.` name, which the settings export skips — a marker from one
+// database must not talk another one out of its own migration.
+const MIGRATED_KEY = 'schema.uploads_positional_migrated';
+
 const migrateUploadBackups = async (
     valuesByTab: Record<string, any>,
 ): Promise<void> => {
-    const legacy = await db.uploads.filter((r) => !r.filename).toArray();
-    if (!legacy.length) {
+    const done = await db.settings
+        .where({ name: MIGRATED_KEY })
+        .first()
+        .catch(() => undefined);
+    if (done) {
         return;
     }
+    const legacy = await db.uploads.filter((r) => !r.filename).toArray();
     for (const record of legacy) {
         const slash = record.id.indexOf('/');
         const tab = slash > 0 ? record.id.slice(0, slash) : '';
@@ -431,13 +444,18 @@ const migrateUploadBackups = async (
                     id: filename,
                     filename,
                     file: record.file,
-                    size: record.file?.size,
+                    // The recorded size is the one the empty sweep can reach;
+                    // the bytes only add information when they can speak.
+                    size: record.file?.size ?? record.size,
                     lastUsedAt: now(),
                 })
                 .catch(() => undefined);
         }
         await db.uploads.delete(record.id);
     }
+    await db.settings
+        .put({ name: MIGRATED_KEY, value: '1' })
+        .catch(() => undefined);
 };
 
 // Two things take copies away: age, and the cache having to shrink. Age only
@@ -484,14 +502,17 @@ const evictToBudget = async (): Promise<void> => {
     }
 };
 
-// Copies holding no bytes are worse than no copy: they make a restore "succeed"
-// with a 0-byte file on the server. The old positional guard stored exactly
-// that whenever it fetched a name the server did not have (a 404 body is empty),
-// so the pass runs at startup to clear whatever it left behind.
+// Copies holding no bytes are worse than no copy: restoring one puts a 0-byte
+// input on the server, which the workflow accepts and then fails over in some
+// later node whose error names neither the file nor the control. They come from
+// backups fetched for names the server never had — a 404 body is empty. The
+// sweep runs on the `size` index: the alternative is pulling every stored video
+// into memory at page load, a stall on a phone before the controls appear.
 const purgeEmptyCopies = async (): Promise<void> => {
-    const empty = (
-        await db.uploads.filter((r) => isEmptyCopy(r)).primaryKeys()
-    ) as string[];
+    const empty = (await db.uploads
+        .where('size')
+        .equals(0)
+        .primaryKeys()) as string[];
     for (const id of empty) {
         await deleteCopy(id);
     }
@@ -523,8 +544,10 @@ export const ensureUploadStoreReady = (): Promise<void> => {
                     // A corrupt row only means its backups cannot be placed.
                 }
             }
-            await purgeEmptyCopies();
+            // Migration first: it stamps a `size` onto every legacy row, which
+            // is what lets the empty sweep reach them through the index.
             await migrateUploadBackups(valuesByTab);
+            await purgeEmptyCopies();
             await pruneUploads();
             await requestPersistence();
         })().catch(() => undefined);

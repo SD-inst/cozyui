@@ -242,6 +242,11 @@ db.version(14).stores({
     uploadAliases: '&name, hash',
 });
 
+// `size` in the index so the startup sweep for copies that hold no bytes can
+// run on a key cursor. Without it the sweep has to read every record — every
+// stored video — before the controls appear.
+db.version(15).stores({ uploads: '&id, filename, lastUsedAt, hash, size' });
+
 const indexPrompt = (obj: TaskResult) => {
     if (!obj.params) {
         return;

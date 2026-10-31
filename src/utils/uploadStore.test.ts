@@ -97,7 +97,7 @@ describe('content identity', () => {
         await db.uploads.clear();
         await db.uploadAliases.clear();
         await db.formState.clear();
-        await db.settings.delete(settings.upload_retention_days);
+        await db.settings.clear();
     });
 
     it('stores one copy for the same bytes uploaded twice', async () => {
@@ -166,7 +166,7 @@ describe('retention', () => {
         await db.uploads.clear();
         await db.uploadAliases.clear();
         await db.formState.clear();
-        await db.settings.delete(settings.upload_retention_days);
+        await db.settings.clear();
     });
 
     afterEach(() => {
@@ -287,6 +287,9 @@ describe('ensureUploadStoreReady', () => {
         await db.uploads.clear();
         await db.uploadAliases.clear();
         await db.formState.clear();
+        // The positional migration is one-shot per database; each case needs
+        // it eligible again.
+        await db.settings.where('name').startsWith('schema.').delete();
     });
 
     it('re-keys a positional backup onto the name its tab still holds', async () => {
@@ -347,6 +350,26 @@ describe('ensureUploadStoreReady', () => {
         await store.ensureUploadStoreReady();
 
         expect(await db.uploads.count()).toBe(0);
+    });
+
+    it('runs the positional scan once per database', async () => {
+        const first = await freshStore();
+        await first.ensureUploadStoreReady();
+
+        await db.uploads.put({ id: 'R2V/image', file: file('cat.png') });
+        await db.formState.put({
+            tab: 'R2V',
+            state: JSON.stringify({ image: '1730_cat.png' }),
+        });
+
+        const second = await freshStore();
+        await second.ensureUploadStoreReady();
+
+        // Re-reading every record on every load to look for a shape nothing can
+        // produce anymore is the cost the marker removes; a row that somehow
+        // arrives later simply keeps its key.
+        expect(await db.uploads.get('R2V/image')).toBeDefined();
+        expect(await db.uploads.get('1730_cat.png')).toBeUndefined();
     });
 
     it('is a no-op once every record carries a filename', async () => {

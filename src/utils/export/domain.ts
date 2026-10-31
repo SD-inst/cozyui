@@ -117,7 +117,12 @@ export const collectRefMods = async (ids?: string[]): Promise<RawRecord[]> => {
 
 export const collectSettings = async (): Promise<RawRecord[]> => {
     const recs = await db.settings.toArray();
-    return recs.map((r) => ({ table: 'settings', key: r.name, value: r }));
+    // Rows named `schema.*` are migration markers of this database rather than
+    // user settings: carrying one into another database would talk it out of a
+    // migration it still needs.
+    return recs
+        .filter((r) => !r.name.startsWith('schema.'))
+        .map((r) => ({ table: 'settings', key: r.name, value: r }));
 };
 
 // ---- Restore (write an incoming archive's records into the DB) ----
