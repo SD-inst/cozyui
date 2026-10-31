@@ -87,9 +87,24 @@ export const useNumberSetting = (
             return await db.settings
                 .where({ name })
                 .first()
-                .then((v) =>
-                    v !== undefined ? parseInt(v.value) : defaultValue
-                );
+                .then((v) => {
+                    if (v === undefined) {
+                        return defaultValue;
+                    }
+                    // The row is text, and a settings import or an older build
+                    // can leave it holding anything. `NaN` is invisible to a
+                    // consumer — it compares false against everything, so a
+                    // limit silently becomes none — so junk reads as the
+                    // default. Range is the field's business, not the hook's:
+                    // it has no way to know one.
+                    // `text` is the schema, not a guarantee: an imported
+                    // archive can carry a number or a null.
+                    const raw = String(v.value ?? '').trim();
+                    const parsed = Number(raw);
+                    return raw !== '' && Number.isFinite(parsed)
+                        ? parsed
+                        : defaultValue;
+                });
         }, [defaultValue, name]) ?? (undefinedAwait ? undefined : defaultValue)
     );
 };

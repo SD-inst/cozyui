@@ -1,9 +1,20 @@
 import 'fake-indexeddb/auto';
 import { describe, expect, it, beforeEach } from 'vitest';
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import {
+    act,
+    fireEvent,
+    render,
+    renderHook,
+    screen,
+    waitFor,
+} from '@testing-library/react';
 
 import { settings } from './settings';
-import { useSettingEditor, useStringSetting } from './useSetting';
+import {
+    useNumberSetting,
+    useSettingEditor,
+    useStringSetting,
+} from './useSetting';
 import { db } from '../components/history/db';
 
 const name = settings.llm_url;
@@ -103,5 +114,37 @@ describe('useSettingEditor', () => {
         });
 
         await waitFor(() => expect(input).toHaveValue('second'));
+    });
+});
+
+// The row is text, so it can arrive holding anything: an import from another
+// database, a value an older build wrote. `NaN` is invisible to a consumer —
+// it compares false against everything — so an unreadable row reads as the
+// default here, while a range stays the field's business.
+describe('useNumberSetting', () => {
+    const name = settings.tag_number;
+
+    beforeEach(async () => {
+        await db.settings.clear();
+    });
+
+    const cases: [string | undefined, number][] = [
+        ['12', 12],
+        ['0', 0],
+        ['-1', -1],
+        [' 3 ', 3],
+        ['', 10],
+        ['seven', 10],
+        [undefined, 10],
+    ];
+
+    it.each(cases)('reads "%s" as %i', async (stored, expected) => {
+        if (stored !== undefined) {
+            await db.settings.put({ name, value: stored });
+        }
+
+        const { result } = renderHook(() => useNumberSetting(name, 10));
+
+        await waitFor(() => expect(result.current).toBe(expected));
     });
 });
