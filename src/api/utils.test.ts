@@ -5,6 +5,7 @@ import {
     getFreeNodeId,
     insertGraph,
     insertNode,
+    invalidateOutputUrls,
     makeOutputUrl,
     replaceNodeConnection,
 } from './utils';
@@ -160,5 +161,36 @@ describe('makeOutputUrl', () => {
         expect(url).toContain('subfolder=outputs');
         expect(url).toContain('type=temp');
         expect(url).toContain('noCache=');
+    });
+
+    it('keeps the url of one file stable across calls', () => {
+        const r = { filename: 'keep.png', subfolder: '', type: 'output' };
+        expect(makeOutputUrl('http://comfy', r)).toBe(
+            makeOutputUrl('http://comfy', r),
+        );
+    });
+
+    it('renews only the url of a file a node has just written', () => {
+        const audio = { filename: 'song.mp3', subfolder: '', type: 'output' };
+        const image = { filename: 'pic.png', subfolder: '', type: 'output' };
+        const audio_before = makeOutputUrl('http://comfy', audio);
+        const image_before = makeOutputUrl('http://comfy', image);
+
+        invalidateOutputUrls({ images: [image] });
+
+        expect(makeOutputUrl('http://comfy', image)).not.toBe(image_before);
+        // the track that is still playing keeps its url — a result arriving
+        // somewhere else must not reload it out from under the listener
+        expect(makeOutputUrl('http://comfy', audio)).toBe(audio_before);
+    });
+
+    it('ignores output entries that are not served files', () => {
+        expect(() =>
+            invalidateOutputUrls({
+                text: ['some text'],
+                images: [{ filename: 'x.png' }],
+                meta: { ignored: true },
+            }),
+        ).not.toThrow();
     });
 });

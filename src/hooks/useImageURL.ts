@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApiURL } from './useApiURL';
 import { db } from '../components/history/db';
+import { viewCacheToken } from '../api/utils';
 
 const buildImageURL = (apiUrl: string, filename: string) => {
     const params = new URLSearchParams();
     params.set('subfolder', '');
     params.set('type', 'input');
     params.set('filename', filename);
-    params.set('noCache', Math.floor(Math.random() * 1000000).toFixed(0));
+    // one token per file, not per render: an unrelated state change must not
+    // hand the <img> a new src and reload the picture out from under the user
+    params.set('noCache', viewCacheToken(filename, '', 'input'));
     return apiUrl + '/api/view?' + params.toString();
 };
 

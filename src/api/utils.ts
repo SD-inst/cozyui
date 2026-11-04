@@ -6,10 +6,50 @@ import {
     isNodeRef,
 } from './graph';
 
-let noCache = '';
+/**
+ * Cache-busting tokens for `/api/view`.
+ *
+ * ComfyUI can write new bytes under a name the browser has already cached, so
+ * every view URL carries a `noCache` token. It used to be one global value
+ * refreshed whenever any node executed, which made every result on screen
+ * change its URL when an unrelated one arrived: the audio element reloaded and
+ * stopped playing, the image re-fetched, thumbnails flickered. The token is now
+ * per file, so a URL only changes when the file behind it was actually
+ * rewritten — `invalidateOutputUrls` forgets the tokens of the files a node has
+ * just written.
+ */
+const cacheTokens: Record<string, string> = {};
 
-export const updateNoCache = () =>
-    (noCache = Math.floor(Math.random() * 1000000).toFixed(0));
+const cacheKey = (type?: string, subfolder?: string, filename?: string) =>
+    `${type ?? ''}/${subfolder ?? ''}/${filename ?? ''}`;
+
+/** The current cache-busting token for one served file, minted on first use. */
+export const viewCacheToken = (
+    filename: string,
+    subfolder?: string,
+    type?: string,
+) =>
+    (cacheTokens[cacheKey(type, subfolder, filename)] ||= Math.floor(
+        Math.random() * 1000000,
+    ).toFixed(0));
+
+/**
+ * Forget the tokens of the files a node just wrote, so the next URL built for
+ * them asks the browser for the new bytes. Everything else keeps its URL — and
+ * with it its playback, its decoded frame and its place on screen.
+ */
+export const invalidateOutputUrls = (output: any) => {
+    for (const entries of Object.values(output ?? {})) {
+        if (!Array.isArray(entries)) {
+            continue;
+        }
+        for (const r of entries) {
+            if (r?.filename) {
+                delete cacheTokens[cacheKey(r.type, r.subfolder, r.filename)];
+            }
+        }
+    }
+};
 
 export const getFreeNodeId = (api: Workflow) =>
     Object.keys(api)
@@ -81,7 +121,11 @@ export const makeOutputUrl = (apiUrl: string, r: any) => {
     if (r.url) {
         return r.url;
     }
-    return `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}&noCache=${noCache}`;
+    return `${apiUrl}/api/view?filename=${r.filename}&subfolder=${r.subfolder}&type=${r.type}&noCache=${viewCacheToken(
+        r.filename,
+        r.subfolder,
+        r.type,
+    )}`;
 };
 
 export const bigRandom = (len: number) => {

@@ -317,9 +317,9 @@ tr('some.key', { param: value });  // With interpolation
 
 | Message Type | Action |
 |-------------|--------|
-| `execution_success` | Generation completed — reset progress |
+| `execution_success` | Generation completed — prune the tab's leftover results, reset progress |
 | `execution_start` | Generation started — set status to RUNNING |
-| `executed` | Node executed — add result, update preview |
+| `executed` | Node executed — add result, drop the cache tokens of the files it wrote, update preview |
 | `progress` | Generation progress — update progress bar |
 | `status` | Queue status — update queue info |
 | `new_queue` | Queue changed |
@@ -329,7 +329,7 @@ tr('some.key', { param: value });  // With interpolation
 
 - `setProgress`, `setCurrentNode`, `setGenerationStart`, `setGenerationEnd`
 - `setStatus`, `setStatusMessage`, `setConnected`, `setQueue`
-- `addResult`, `clearPrompt`
+- `addResult`, `pruneResults`, `clearPrompt`
 - `setFrame`, `initPreview`
 
 ---
@@ -487,7 +487,7 @@ Top-level `llm` section of `public/conf/config.json` (type `llmConfigType` in `s
 | [`useOpenAIChat.ts`](src/hooks/useOpenAIChat.ts) | Chat state, streaming, `sendMessage(content, context?, media?)`, per-tab IndexedDB persistence (`db.chatLogs`) |
 | [`useMessageProcessor.ts`](src/hooks/useMessageProcessor.ts) | `processUserMessage(text, media?)` → message with processed media parts |
 | [`useImageProcessor.ts`](src/hooks/useImageProcessor.ts) | `processImage` (fetch → JPEG → `image_url` base64), `processVideo` (fetch → `input_video` base64) |
-| [`useImageURL.ts`](src/hooks/useImageURL.ts) | `useImageURLs` — filenames → `/api/view` URLs (random `noCache` param) |
+| [`useImageURL.ts`](src/hooks/useImageURL.ts) | `useImageURLs` — filenames → `/api/view` URLs (a `noCache` token kept per file, see "Result Handling") |
 
 ### `ChatComponent` Props
 
@@ -930,9 +930,13 @@ Latent/mask plumbing facts (all verified against this ComfyUI):
 
 All tab forms use `react-hook-form` via `FormProvider`. The `WorkflowTabs` component creates a single form per tab and all controls subscribe via `Controller` or `useController`.
 
-### Result Handling
+### Result Handling — results merge per node, leftovers are pruned when the run ends — IMPORTANT
 
-Results arrive via WebSocket, dispatched to `s.tab.result[tabName][id][type]`. The `useResult()` hook reads from this location. Results can be overridden via `ResultOverrideContext` for features like sending images between tabs.
+Results arrive via WebSocket and are filed **per producing node** at `s.tab.result[tabName][id][type]`; `useResult()` reads that path, and `ResultOverrideContext` overrides it (sending media between tabs, replaying history). A run executes its nodes one after another, so an intermediate result — a YuE2 ABC score, a P-H3 expanded prompt — must not disturb what is already on screen: nothing clears the tab at generation start, each node simply replaces its own key.
+
+What stops that from leaving debris: `setPrompt` records the tab's current generation (`s.tab.run[tab] = prompt_id`) and every `addResult` tags the node with it (`s.tab.result_run[tab][node]`). On `execution_success` `pruneResults` drops the nodes still tagged with an older generation — output the current workflow no longer produces disappears instead of hanging in the panel. A run started by another client registers no generation, and pruning is a no-op for it. `delResult` (a tab turning a side result off) removes the result and its tag together; the WS may also file a result under the `prompt_id` before `setPrompt` resolves the tab, and the relocation moves the tags with it.
+
+**The `/api/view` cache-buster is per file, never global.** ComfyUI can rewrite a name the browser already cached, so each view URL carries a `noCache` token; `makeOutputUrl` mints one per `type/subfolder/filename` and keeps it, and `executed` invalidates only the files that node just wrote (`invalidateOutputUrls`). A single shared token looks identical until a second result arrives: the URL of every image, video and audio element on the tab changes, the audio element reloads and stops mid-playback, the picture re-fetches. `useImageURL` (input thumbnails) shares the same tokens.
 
 ### Dynamic Control Values
 

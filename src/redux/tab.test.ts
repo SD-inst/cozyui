@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import {
     addResult,
     clearPrompt,
+    delResult,
+    pruneResults,
     setPrompt,
     tab as reducer,
 } from './tab';
@@ -122,5 +124,96 @@ describe('tab slice — clearPrompt', () => {
         expect(s.prompt).toHaveProperty('abc');
         s = reducer(s, clearPrompt());
         expect(s.prompt).toEqual({});
+    });
+});
+
+describe('tab slice — results per generation', () => {
+    it('keeps what the finished run produced and drops its leftovers', () => {
+        let s = initialState();
+        s = reducer(s, setPrompt({ prompt_id: 'run1', tab_name: 'YuE2' }));
+        s = reducer(
+            s,
+            addResult({
+                tab_name: 'YuE2',
+                node_id: '30',
+                output: { audio: ['a.mp3'] },
+            }),
+        );
+        s = reducer(
+            s,
+            addResult({
+                tab_name: 'YuE2',
+                node_id: '40',
+                output: { text: ['abc'] },
+            }),
+        );
+
+        // the next run replans without the ABC node: only the audio arrives
+        s = reducer(s, setPrompt({ prompt_id: 'run2', tab_name: 'YuE2' }));
+        s = reducer(
+            s,
+            addResult({
+                prompt_id: 'run2',
+                node_id: '30',
+                output: { audio: ['b.mp3'] },
+            }),
+        );
+        // mid-run the previous ABC is still on screen, it is not wiped by the
+        // audio result arriving
+        expect(s.result.YuE2['40']).toEqual({ text: ['abc'] });
+
+        s = reducer(s, pruneResults({ prompt_id: 'run2' }));
+        expect(s.result.YuE2['30']).toEqual({ audio: ['b.mp3'] });
+        expect(s.result.YuE2['40']).toBeUndefined();
+        expect(s.result_run.YuE2['40']).toBeUndefined();
+    });
+
+    it('a result that arrived before the prompt was registered survives the prune', () => {
+        const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+        let s = initialState();
+        // the websocket beat /api/prompt, so the result is filed under the
+        // prompt id and only moved to the tab by setPrompt
+        s = reducer(
+            s,
+            addResult({
+                prompt_id: 'run1',
+                node_id: '16',
+                output: { images: ['x.png'] },
+            }),
+        );
+        s = reducer(s, setPrompt({ prompt_id: 'run1', tab_name: 'T2V' }));
+        s = reducer(s, pruneResults({ prompt_id: 'run1' }));
+        expect(s.result.T2V['16']).toEqual({ images: ['x.png'] });
+        warnSpy.mockRestore();
+    });
+
+    it('prunes nothing for a tab with no registered generation', () => {
+        let s = initialState();
+        s = reducer(
+            s,
+            addResult({
+                tab_name: 'T2V',
+                node_id: '16',
+                output: { images: ['x.png'] },
+            }),
+        );
+        s = reducer(s, pruneResults({ tab_name: 'T2V' }));
+        expect(s.result.T2V['16']).toEqual({ images: ['x.png'] });
+    });
+
+    it('delResult forgets the result and its tag', () => {
+        let s = initialState();
+        s = reducer(s, setPrompt({ prompt_id: 'run1', tab_name: 'T2V' }));
+        s = reducer(
+            s,
+            addResult({
+                tab_name: 'T2V',
+                node_id: '17',
+                output: { text: ['expanded'] },
+            }),
+        );
+        s = reducer(s, delResult({ tab_name: 'T2V', id: '17' }));
+        expect(s.result.T2V['17']).toBeUndefined();
+        expect(s.result_run.T2V['17']).toBeUndefined();
     });
 });

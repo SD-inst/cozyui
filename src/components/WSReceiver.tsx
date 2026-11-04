@@ -17,9 +17,9 @@ import {
     setStatusMessage,
     statusEnum,
 } from '../redux/progress';
-import { addResult, clearPrompt } from '../redux/tab';
+import { addResult, clearPrompt, pruneResults } from '../redux/tab';
 import { useRef } from 'react';
-import { updateNoCache } from '../api/utils';
+import { invalidateOutputUrls } from '../api/utils';
 import { settings } from '../hooks/settings';
 import { useBooleanSetting } from '../hooks/useSetting';
 
@@ -104,6 +104,10 @@ export const WSReceiver = () => {
         }
         switch (j.type) {
             case 'execution_success':
+                // the generation is over: a result of this tab still tagged
+                // with an older one was not produced by this run, so it stops
+                // being shown instead of hanging around
+                dispatch(pruneResults({ prompt_id: j.data.prompt_id }));
                 dispatch(setStatus(statusEnum.FINISHED));
                 reset();
                 break;
@@ -122,7 +126,10 @@ export const WSReceiver = () => {
                 dispatch(setGenerationStart());
                 break;
             case 'executed':
-                updateNoCache();
+                // only the files this node just wrote lose their cache token:
+                // the results already on screen keep their URLs, so an audio
+                // track keeps playing and an image keeps its decoded frame
+                invalidateOutputUrls(j.data.output);
                 dispatch(
                     addNodeEvent({
                         node: j.data.node || '',

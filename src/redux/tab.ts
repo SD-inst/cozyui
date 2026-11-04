@@ -37,6 +37,16 @@ type tabType = {
     };
     params: paramsType;
     result: resultType;
+    /**
+     * Which generation each stored result came from. `run` is the prompt_id of
+     * the newest generation of a tab, `result_run` records the generation that
+     * produced each node's result, so `pruneResults` can drop what this
+     * generation did not produce while leaving the results it did alone.
+     */
+    run: { [tab: string]: string };
+    result_run: {
+        [tab: string]: { [node_id: string]: string };
+    };
 };
 
 const slice = createSlice({
@@ -50,6 +60,8 @@ const slice = createSlice({
             values: {},
         },
         result: {},
+        run: {},
+        result_run: {},
     } as tabType,
     reducers: {
         setTab: (s, action: PayloadAction<string>) => ({
@@ -70,17 +82,38 @@ const slice = createSlice({
                 { tab_name: action.payload.tab_name },
                 Object
             );
+            // this prompt is the current generation of its tab: results tagged
+            // with an older one are dropped once it finishes
+            setWith(
+                s,
+                ['run', action.payload.tab_name],
+                action.payload.prompt_id,
+                Object
+            );
             const temp_result = s.result[action.payload.prompt_id];
             if (temp_result) {
                 // found temporary result, must be a race condition when
                 // /api/prompt returned *after* the results arrived via
-                // the websocket; move the result
+                // the websocket; move the result and its run tags with it
                 setWith(
                     s,
                     ['result', action.payload.tab_name],
                     temp_result,
                     Object
                 );
+                const temp_run = s.result_run[action.payload.prompt_id];
+                if (temp_run) {
+                    setWith(
+                        s,
+                        ['result_run', action.payload.tab_name],
+                        {
+                            ...(s.result_run[action.payload.tab_name] || {}),
+                            ...temp_run,
+                        },
+                        Object
+                    );
+                    unset(s, ['result_run', action.payload.prompt_id]);
+                }
                 unset(s, ['result', action.payload.prompt_id]);
                 console.warn(
                     `Found temporary prompt results for ${action.payload.prompt_id}, moving to tab ${action.payload.tab_name}`
@@ -134,6 +167,16 @@ const slice = createSlice({
                         output,
                         Object
                     );
+                    setWith(
+                        s,
+                        [
+                            'result_run',
+                            action.payload.prompt_id,
+                            action.payload.node_id,
+                        ],
+                        action.payload.prompt_id,
+                        Object
+                    );
                     console.warn(
                         `Prompt origin tab is not defined, storing prompt result under id ${action.payload.prompt_id} for later.`
                     );
@@ -150,12 +193,50 @@ const slice = createSlice({
                 output,
                 Object
             );
+            // remember which generation produced it, so the ones this
+            // generation never reached can be dropped when it finishes
+            setWith(
+                s,
+                ['result_run', tab_name, action.payload.node_id],
+                s.run[tab_name] || action.payload.prompt_id || '',
+                Object
+            );
         },
         delResult: (
             s,
             action: PayloadAction<{ tab_name: string; id: string }>
         ) => {
             unset(s, ['result', action.payload.tab_name, action.payload.id]);
+            unset(
+                s,
+                ['result_run', action.payload.tab_name, action.payload.id],
+            );
+        },
+        /**
+         * Drop the results of a tab that the finished generation did not
+         * produce. A node that ran has already written its fresh result, so
+         * anything still tagged with an older generation is a leftover the
+         * current workflow no longer creates — and the panel that would
+         * otherwise keep showing it.
+         */
+        pruneResults: (
+            s,
+            action: PayloadAction<{ prompt_id?: string; tab_name?: string }>
+        ) => {
+            const tab_name =
+                action.payload.tab_name ||
+                s.prompt[action.payload.prompt_id!]?.tab_name;
+            const run = tab_name && s.run[tab_name];
+            const tags = tab_name && s.result_run[tab_name];
+            if (!tab_name || !run || !tags) {
+                return;
+            }
+            for (const node_id of Object.keys(s.result[tab_name] || {})) {
+                if (tags[node_id] !== run) {
+                    unset(s, ['result', tab_name, node_id]);
+                    unset(s, ['result_run', tab_name, node_id]);
+                }
+            }
         },
     },
 });
@@ -170,5 +251,6 @@ export const {
         setParams,
         addResult,
         delResult,
+        pruneResults,
     },
 } = slice;
