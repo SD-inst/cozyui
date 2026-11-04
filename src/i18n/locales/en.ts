@@ -74,6 +74,9 @@ const translation = {
         difference: 'Difference',
         image: 'image',
         image_end: 'end image',
+        edit_images: 'images — the first one gets edited',
+        picture_numbering_note:
+            'the upsampler sees the images as <Picture 1>, <Picture 2>… — address them like that in the request',
         drop_files_here: 'Drop the files here...',
         drop_files_desc:
             "Drag'n'drop some files here, or click to select files",

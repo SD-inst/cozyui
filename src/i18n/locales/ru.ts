@@ -74,6 +74,9 @@ const translation = {
         difference: 'Различия',
         image: 'изображение',
         image_end: 'конечное изображение',
+        edit_images: 'картинки — первая правится',
+        picture_numbering_note:
+            'апсемплер видит картинки как <Picture 1>, <Picture 2>… — так же к ним обращаться в запросе',
         drop_files_here: 'Перетащите файлы сюда...',
         drop_files_desc: 'Перетащите файлы сюда или кликните для выбора файлов',
         drop_to_add: 'Отпустите, чтобы добавить',

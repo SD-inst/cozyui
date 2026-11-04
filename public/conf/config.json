@@ -2881,6 +2881,75 @@
                 "megapixels": 8
             }
         },
+        "P-H3 I2I": {
+            "api": "api/p-h3_i2i.json",
+            "controls": {
+                "images": {
+                    "id": "handle",
+                    "image_node_id": "4",
+                    "cond_node_id": "30",
+                    "batch_node_id": "24",
+                    "size_node_id": "22",
+                    "format_node_id": "20",
+                    "format_field": "values.b"
+                },
+                "prompt": {
+                    "id": "19",
+                    "field": "value"
+                },
+                "prompt_upsample": {
+                    "id": "handle",
+                    "node_id": "26",
+                    "field": "switch",
+                    "preview_node_id": "18"
+                },
+                "megapixels": {
+                    "id": "31",
+                    "field": "megapixels"
+                },
+                "sampler": {
+                    "id": "9",
+                    "field": "sampler_name"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "field": "unet_name"
+                },
+                "seed": {
+                    "id": "32",
+                    "field": "value"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["15"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": [
+                {
+                    "id": "13",
+                    "type": "images"
+                },
+                {
+                    "id": "18",
+                    "type": "text"
+                }
+            ],
+            "defaults": {
+                "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                "megapixels": 4
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {

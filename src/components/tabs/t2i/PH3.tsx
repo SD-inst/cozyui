@@ -1,5 +1,4 @@
-import { Button, Typography, useEventCallback } from '@mui/material';
-import { useFormContext } from 'react-hook-form';
+import { Typography } from '@mui/material';
 import { AdvancedSettings } from '../../controls/AdvancedSettings';
 import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
@@ -11,23 +10,13 @@ import { PromptUpsampleToggle } from '../../controls/PromptUpsampleToggle';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
 import { SeedInput } from '../../controls/SeedInput';
 import { SliderInput } from '../../controls/SliderInput';
-import { TextResultPanel } from '../../controls/TextResultPanel';
 import { TextInput } from '../../controls/TextInput';
+import { UpsampledPromptPanel } from '../../controls/UpsampledPromptPanel';
 import { WFTab } from '../../WFTab';
 import { useTranslate } from '../../../i18n/I18nContext';
 
 const Content = () => {
     const tr = useTranslate();
-    const { setValue } = useFormContext();
-
-    // Keep the expanded text as the prompt itself. Upsampling is switched off
-    // in the same click, because feeding an already expanded prompt back
-    // through the upsampler would expand it twice.
-    const applyUpsampledPrompt = useEventCallback((text: string) => {
-        setValue('prompt', text);
-        setValue('prompt_upsample', false);
-    });
-
     return (
         <Layout>
             <GridLeft>
@@ -68,20 +57,7 @@ const Content = () => {
             </GridLeft>
             <GridRight>
                 <ImageResult />
-                <TextResultPanel
-                    index={1}
-                    title={tr('controls.upsampled_prompt')}
-                    emptyText={tr('controls.upsampled_prompt_empty')}
-                    renderAction={(text) => (
-                        <Button
-                            variant='contained'
-                            color='primary'
-                            onClick={() => applyUpsampledPrompt(text)}
-                        >
-                            {tr('controls.upsampled_prompt_use')}
-                        </Button>
-                    )}
-                />
+                <UpsampledPromptPanel />
             </GridRight>
             <GridBottom>
                 <GenerateButton />
