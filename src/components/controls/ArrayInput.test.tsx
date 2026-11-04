@@ -280,6 +280,58 @@ describe('ArrayInput reset button', () => {
             screen.queryByRole('button', { name: 'Reset array' }),
         ).toBeNull();
     });
+
+    it('refills to exactly the minimum after clearing, not past it', async () => {
+        let formRef: any;
+        const HarnessFloor = () => {
+            const form = useForm({ defaultValues: twoVideos });
+            useEffect(() => {
+                formRef = form;
+            }, [form]);
+
+            const ctx = makeCtx('R2V');
+
+            return (
+                <TabContext.Provider value={ctx}>
+                    <I18nContext.Provider
+                        value={{ ...defaultValue, polyglot, locale: 'en' }}
+                    >
+                        <FormProvider {...form}>
+                            <ArrayInput
+                                name='ref_videos'
+                                keyField='video'
+                                min={1}
+                                max={9}
+                                newValue={{
+                                    video: '',
+                                    no_audio: false,
+                                    trim: 0,
+                                    last: false,
+                                }}
+                            >
+                                <input name='video' />
+                            </ArrayInput>
+                        </FormProvider>
+                    </I18nContext.Provider>
+                </TabContext.Provider>
+            );
+        };
+
+        render(<HarnessFloor />);
+
+        fireEvent.click(screen.getByRole('button', { name: 'Reset array' }));
+        fireEvent.click(screen.getByRole('button', { name: 'OK' }));
+
+        await waitFor(() => {
+            const values = formRef?.getValues('ref_videos') as any[];
+            expect(values?.length).toBe(1);
+        });
+        // The floor is re-checked on later renders too; the watched value lags
+        // the field array by a render, so a second pass must not add another
+        // empty slot on top of the one it just appended.
+        await new Promise((r) => setTimeout(r, 50));
+        expect((formRef.getValues('ref_videos') as any[]).length).toBe(1);
+    });
 });
 
 // ============================================================================

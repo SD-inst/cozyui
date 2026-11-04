@@ -398,8 +398,13 @@ export const ArrayInput = ({
             replace([]);
             return;
         }
-        if (value.length < min && min > 0) {
-            for (let i = 0; i < min; i++) {
+        // The floor is measured against `fields`, the count the field array and
+        // the renderer agree on: the watched `value` lags it by a render, so
+        // judging on `value.length` ran this loop again after the append had
+        // landed and added a second empty slot. Only the deficit is appended —
+        // an array sitting between 0 and `min` is topped up, not grown by `min`.
+        if (min > 0 && fields.length < min) {
+            for (let i = fields.length; i < min; i++) {
                 append(clone(newValue));
             }
         }

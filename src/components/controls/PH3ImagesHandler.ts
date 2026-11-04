@@ -67,7 +67,9 @@ const clearSlots = (
  * Skipping a row drops it from the array, so the numbering stays contiguous:
  * the picture a request calls `<Picture 3>` is the third image that survives.
  * The upsampler prompt is text, so its `{b}` placeholder is rebuilt with one
- * `<Picture N>` line per image the model is shown.
+ * `<Picture N>` line per image the model is shown. With no image at all the
+ * template is left alone — the tab locks its Generate button, so nothing is
+ * sent in that state.
  *
  * Config control fields: `image_node_id` (the edited image's `LoadImage`),
  * `cond_node_id`, `batch_node_id`, `size_node_id` (the `GetImageSize` of the
@@ -125,7 +127,7 @@ export const applyPH3Images = (
         api[batchId].inputs[`images.image${idx + 1}`] = [`${base}:pad`, 0];
     });
     const formatId = control.format_node_id;
-    if (formatId && control.format_field && api[formatId]) {
+    if (images.length && formatId && control.format_field && api[formatId]) {
         api[formatId].inputs[control.format_field] = upsamplerPictures(
             images.length,
         );

@@ -130,4 +130,19 @@ describe('applyPH3Images', () => {
         expect(api['24'].inputs['images.image0']).toEqual(['21', 0]);
         expect(api['20'].inputs['values.b']).toBe(upsamplerPictures(1));
     });
+
+    it('leaves the prompt template alone with no image at all', () => {
+        const api = makeApi();
+        api['30'].inputs['images.image_2'] = ['5', 0];
+        api['24'].inputs['images.image1'] = ['7', 0];
+
+        applyPH3Images(api, [], control);
+
+        // the slots still go, so a stale reference cannot survive an empty list
+        expect(api['30'].inputs['images.image_2']).toBeUndefined();
+        expect(api['24'].inputs['images.image1']).toBeUndefined();
+        // and the template is not blanked: the tab locks Generate here
+        expect(api['4'].inputs.image).toBe('old.png');
+        expect(api['20'].inputs['values.b']).toBe('');
+    });
 });
