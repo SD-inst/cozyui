@@ -387,6 +387,12 @@ const translation = {
         correct_brightness: 'коррекция яркости',
         overlap: 'перекрытие',
         loop_overlap: 'перекрытие цикла',
+        prompt_upsample: 'улучшение промпта',
+        upsampled_prompt: 'улучшенный промпт',
+        upsampled_prompt_empty: 'улучшенный промпт пока не готов',
+        upsampled_prompt_use: 'использовать как промпт',
+        text_result_empty: 'текста пока нет',
+        steps_fixed_note: 'шаги фиксированы сигмами модели',
     },
     settings: {
         select_language: 'Выбор языка',

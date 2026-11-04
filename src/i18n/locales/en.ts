@@ -388,6 +388,12 @@ const translation = {
         correct_brightness: 'correct brightness',
         overlap: 'overlap',
         loop_overlap: 'loop overlap',
+        prompt_upsample: 'prompt upsample',
+        upsampled_prompt: 'Upsampled prompt',
+        upsampled_prompt_empty: 'No upsampled prompt yet',
+        upsampled_prompt_use: 'Use as prompt',
+        text_result_empty: 'No text yet',
+        steps_fixed_note: 'steps are fixed by the model sigmas',
     },
     settings: {
         select_language: 'Select language',

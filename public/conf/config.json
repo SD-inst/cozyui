@@ -2813,6 +2813,74 @@
                 }
             }
         },
+        "P-H3 T2I": {
+            "api": "api/p-h3_t2i.json",
+            "controls": {
+                "prompt": {
+                    "id": "18",
+                    "field": "value"
+                },
+                "prompt_upsample": {
+                    "id": "handle",
+                    "node_id": "21",
+                    "field": "switch",
+                    "format_node_id": "19",
+                    "format_field": "values.b",
+                    "preview_node_id": "17",
+                    "aspect_field": "aspect_ratio"
+                },
+                "aspect_ratio": {
+                    "id": "22",
+                    "field": "aspect_ratio"
+                },
+                "megapixels": {
+                    "id": "22",
+                    "field": "megapixels"
+                },
+                "sampler": {
+                    "id": "8",
+                    "field": "sampler_name"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "1",
+                    "field": "unet_name"
+                },
+                "seed": {
+                    "id": "29",
+                    "field": "value"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["14"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": [
+                {
+                    "id": "12",
+                    "type": "images"
+                },
+                {
+                    "id": "17",
+                    "type": "text"
+                }
+            ],
+            "defaults": {
+                "model": "h3/minimax_h3_fl2va_pruned_int8_convrot.safetensors",
+                "aspect_ratio": "16:9 (Widescreen)",
+                "megapixels": 8
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {

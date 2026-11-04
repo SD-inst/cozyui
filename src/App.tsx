@@ -29,6 +29,7 @@ import { FluxKontextTab } from './components/tabs/i2i/FluxKontext';
 import { HiDreamTab } from './components/tabs/t2i/HiDream';
 import { Krea2Tab } from './components/tabs/t2i/Krea2';
 import { MossImageTab } from './components/tabs/t2i/MossImage';
+import { PH3Tab } from './components/tabs/t2i/PH3';
 import { HiDreamO1Tab } from './components/tabs/i2i/HiDreamO1';
 import { Hunyan15I2VTab } from './components/tabs/i2v/Hunyuan15I2V';
 import { Hunyan15T2VTab } from './components/tabs/t2v/Hunyuan15T2V';
@@ -117,6 +118,7 @@ function App() {
                                 {WanT2VTab}
                                 {Krea2Tab}
                                 {MossImageTab}
+                                {PH3Tab}
                                 {SDTab}
                                 {ChromaTab}
                                 {AnimaTab}

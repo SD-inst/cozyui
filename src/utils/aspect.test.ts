@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { ASPECT_LABELS, aspectRatio, closestAspect } from './aspect';
+import {
+    ASPECT_LABELS,
+    aspectRatio,
+    aspectString,
+    closestAspect,
+} from './aspect';
 
 describe('aspectRatio', () => {
     it('returns w/h for known labels', () => {
@@ -9,6 +14,19 @@ describe('aspectRatio', () => {
     });
     it('returns 1 for unknown labels', () => {
         expect(aspectRatio('nope')).toBe(1);
+    });
+});
+
+describe('aspectString', () => {
+    it('drops the human-readable suffix', () => {
+        expect(aspectString('16:9 (Widescreen)')).toBe('16:9');
+        expect(aspectString('1:1 (Square)')).toBe('1:1');
+        expect(aspectString('2:3 (Portrait Photo)')).toBe('2:3');
+    });
+    it('keeps a bare ratio of an unknown label, empty otherwise', () => {
+        expect(aspectString('5:4 (Custom)')).toBe('5:4');
+        expect(aspectString('landscape')).toBe('');
+        expect(aspectString('')).toBe('');
     });
 });
 

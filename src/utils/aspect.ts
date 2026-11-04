@@ -17,6 +17,17 @@ export const ASPECT_CHOICES: AspectChoice[] = [
 // Labels only — for controls that store the label as the value.
 export const ASPECT_LABELS: string[] = ASPECT_CHOICES.map((a) => a.label);
 
+// The bare "W:H" text for a stored label ('16:9 (Widescreen)' -> '16:9'), for
+// prompts and node fields that want the ratio without the human-readable
+// suffix. An unknown label keeps its own leading "W:H"; anything else -> ''.
+export const aspectString = (label: string): string => {
+    const found = ASPECT_CHOICES.find((a) => a.label === label);
+    if (found) {
+        return `${found.w}:${found.h}`;
+    }
+    return label?.match(/^\s*(\d+:\d+)/)?.[1] ?? '';
+};
+
 // The ratio (w/h) for a stored label; 1 for unknown labels.
 export const aspectRatio = (label: string): number => {
     const found = ASPECT_CHOICES.find((a) => a.label === label);
