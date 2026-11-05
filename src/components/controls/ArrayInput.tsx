@@ -11,6 +11,7 @@ import {
     DialogTitle,
     IconButton,
     Stack,
+    SxProps,
     Typography,
     useTheme,
 } from '@mui/material';
@@ -291,6 +292,7 @@ export const ArrayInput = ({
     highlightIndex,
     hideChatToggle = false,
     hideHeading = false,
+    sx,
     ...props
 }: {
     name: string;
@@ -313,6 +315,10 @@ export const ArrayInput = ({
     // Drop the internal title row when the array is wrapped in an accordion
     // that already shows the label (the reset button stays).
     hideHeading?: boolean;
+    // The array renders no margin of its own, so a tab that stacks another
+    // control under it passes the gap here — otherwise the row of thumbnails
+    // glues to whatever follows.
+    sx?: SxProps;
 } & PropsWithChildren) => {
     const tr = useTranslate();
     const theme = useTheme();
@@ -848,7 +854,7 @@ export const ArrayInput = ({
         const childrenArray = effectiveChildren;
 
         return (
-            <Box display='flex' flexDirection='column' gap={1}>
+            <Box sx={sx} display='flex' flexDirection='column' gap={1}>
                 <Box
                     display='flex'
                     alignItems='center'
@@ -1202,7 +1208,13 @@ export const ArrayInput = ({
 
     // List mode rendering
     return (
-        <Box display='flex' flexDirection='column' alignItems='center' gap={2}>
+        <Box
+            sx={sx}
+            display='flex'
+            flexDirection='column'
+            alignItems='center'
+            gap={2}
+        >
             <Box
                 width='100%'
                 display='flex'

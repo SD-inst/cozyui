@@ -39,7 +39,14 @@ const Content = () => {
                     name='prompt_upsample'
                     defaultValue={true}
                 />
-                <ModArrayInput name='refmods' max={8} />
+                {/* No chat on this tab, so the per-item chat skip is hidden;
+                    mb keeps the thumbnails off the megapixels slider. */}
+                <ModArrayInput
+                    name='refmods'
+                    max={8}
+                    hideChatToggle
+                    sx={{ mb: 2 }}
+                />
                 <SliderInput
                     name='megapixels'
                     defaultValue={4}

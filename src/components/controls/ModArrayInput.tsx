@@ -1,4 +1,4 @@
-import { Box, useTheme } from '@mui/material';
+import { Box, SxProps, useTheme } from '@mui/material';
 import { Image as ImageIcon, MusicNote, Videocam } from '@mui/icons-material';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { memo, useEffect, useMemo, useState } from 'react';
@@ -248,10 +248,15 @@ export const ModArrayInput = ({
     label,
     name,
     max = -1,
+    sx,
+    hideChatToggle = false,
 }: {
     name: string;
     label?: string;
     max?: number;
+    sx?: SxProps;
+    // A tab without a chat has no consumer for `skip_chat`.
+    hideChatToggle?: boolean;
 }) => {
     const picker = useModPicker({ name, max });
     const value = useWatch({
@@ -355,6 +360,8 @@ export const ModArrayInput = ({
                 newValue={{ id: '', strength: 1.0, copies: 1 }}
                 keyField='id'
                 max={max}
+                sx={sx}
+                hideChatToggle={hideChatToggle}
                 renderItem={renderItem}
                 onAddClick={() => picker.openPicker()}
                 onReplaceClick={handleReplace}

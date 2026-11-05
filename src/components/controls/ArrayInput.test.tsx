@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom/vitest';
 import { useEffect } from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import { Box } from '@mui/material';
+import { Box, SxProps } from '@mui/material';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import type { Control } from 'react-hook-form';
 import { describe, expect, it, vi } from 'vitest';
@@ -65,10 +65,14 @@ const makeCtx = (tabName = 'T2V'): TabContextValueType => ({
 const Harness = ({
     min = 0,
     max = -1,
+    sx,
+    listMode = false,
     defaultValues,
 }: {
     min?: number;
     max?: number;
+    sx?: SxProps;
+    listMode?: boolean;
     defaultValues?: Record<string, any>;
 }) => {
     const form = useForm({
@@ -96,6 +100,8 @@ const Harness = ({
                         keyField='video'
                         min={min}
                         max={max}
+                        sx={sx}
+                        listMode={listMode}
                         newValue={{
                             video: '',
                             no_audio: false,
@@ -847,6 +853,31 @@ describe('ArrayInput receiver fields', () => {
                 'existing.png',
                 'sent_file.png',
             ]);
+        });
+    });
+});
+
+// ============================================================================
+// Root margin
+// ============================================================================
+
+describe('ArrayInput root sx', () => {
+    // The array brings no margin of its own, so a tab that stacks another
+    // control under it passes the gap through sx. Each render mode has its own
+    // root, and a root that ignores sx glues its thumbnails to what follows.
+    it('puts the tab-supplied sx on the compact root', () => {
+        const { container } = render(<Harness sx={{ mb: 2 }} />);
+
+        expect(container.firstElementChild).toHaveStyle({
+            'margin-bottom': '16px',
+        });
+    });
+
+    it('puts the tab-supplied sx on the list-mode root', () => {
+        const { container } = render(<Harness sx={{ mb: 2 }} listMode />);
+
+        expect(container.firstElementChild).toHaveStyle({
+            'margin-bottom': '16px',
         });
     });
 });
