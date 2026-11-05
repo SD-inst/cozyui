@@ -4,6 +4,7 @@ import { GenerateButton } from '../../controls/GenerateButton';
 import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { ImageResult } from '../../controls/ImageResult';
 import { LoraInput } from '../../controls/LoraInput';
+import { ModArrayInput } from '../../controls/ModArrayInput';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { PH3ImageEntry } from '../../controls/PH3ImagesHandler';
 import { PH3Images } from '../../controls/PH3Images';
@@ -14,7 +15,9 @@ import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { UpsampledPromptPanel } from '../../controls/UpsampledPromptPanel';
 import { WFTab } from '../../WFTab';
+import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHandler';
 import { useWatchForm } from '../../../hooks/useWatchForm';
+import { useRegisterHandler } from '../../contexts/TabContext';
 import { useTranslate } from '../../../i18n/I18nContext';
 import { activeEntries } from '../../../utils/arraySlots';
 
@@ -22,6 +25,8 @@ const Content = () => {
     const tr = useTranslate();
     const images: PH3ImageEntry[] = useWatchForm('images');
     const hasImage = activeEntries(images).some((i) => !!i.image);
+    const refModHandler = useMiniMaxH3RefModHandler();
+    useRegisterHandler({ name: 'refmods', handler: refModHandler });
     return (
         <Layout>
             <GridLeft>
@@ -34,6 +39,7 @@ const Content = () => {
                     name='prompt_upsample'
                     defaultValue={true}
                 />
+                <ModArrayInput name='refmods' max={8} />
                 <SliderInput
                     name='megapixels'
                     defaultValue={4}

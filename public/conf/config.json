@@ -2829,6 +2829,11 @@
                     "preview_node_id": "17",
                     "aspect_field": "aspect_ratio"
                 },
+                "refmods": {
+                    "id": "handle",
+                    "cond_node_id": "26",
+                    "cond_consumer_node_id": "7"
+                },
                 "aspect_ratio": {
                     "id": "22",
                     "field": "aspect_ratio"
@@ -2902,6 +2907,11 @@
                     "node_id": "26",
                     "field": "switch",
                     "preview_node_id": "18"
+                },
+                "refmods": {
+                    "id": "handle",
+                    "cond_node_id": "30",
+                    "cond_consumer_node_id": "8"
                 },
                 "megapixels": {
                     "id": "31",

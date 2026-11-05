@@ -37,9 +37,11 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Z-Image
         - Anima
         - Krea2
+        - P-H3 (with reference mods)
     - I2I
         - Flux Kontext
         - Qwen Image Edit
+        - P-H3 Edit (multi-reference edit, with reference mods)
     - Postprocessing
         - Chroma upscale
         - SD Upscale
@@ -59,7 +61,7 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
 - Reference mods (MiniMax H3):
     - Create reusable reference "mods" (a character, scene, or style) from uploaded images/videos/audio in the RefMod Manager tab — each mod is a `.safetensors` file stored locally with a thumbnail, name, description, and type badge (image/video/audio)
     - Interactive crop dialog to reframe reference images before creating a mod
-    - Apply mods to T2V/I2V/R2V from a searchable library with lightbox preview; per-mod strength and copy-count sliders
+    - Apply mods to T2V/I2V/R2V and to the P-H3 image tabs (T2I/I2I) from a searchable library with lightbox preview; per-mod strength and copy-count sliders
     - Choose a mod's audio source: reuse a reference video's own track, upload a separate file, or none
 - LLM prompt assistant (optional chat):
     - Generate and refine prompts with an OpenAI-compatible LLM, with vision support for attached reference media (images/videos)

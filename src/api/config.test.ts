@@ -14,7 +14,11 @@ const read = (rel: string): any =>
 const config = read('public/conf/config.json') as {
     tabs: Record<
         string,
-        { api?: string; result?: ResultEntry | ResultEntry[] }
+        {
+            api?: string;
+            result?: ResultEntry | ResultEntry[];
+            controls?: Record<string, Record<string, string>>;
+        }
     >;
 };
 
@@ -84,6 +88,60 @@ describe('config.json — gifs result wiring', () => {
             if (!cvNode || cvNode.class_type !== 'CreateVideo') {
                 problems.push(
                     `${tab}: getCreateVideoNodeId('${id}') -> '${cvId}' is not a CreateVideo`,
+                );
+            }
+        }
+        expect(problems).toEqual([]);
+    });
+});
+
+/**
+ * Every tab that offers ref mods names the conditioning node to inject into and
+ * the node that consumes it, in its own control entry. The apply node is only
+ * wired in when the consumer really reads that conditioning node, so a stale id
+ * silently drops every mod from the run.
+ */
+describe('config.json — refmods wiring', () => {
+    const refModTabs = Object.entries(config.tabs).flatMap(
+        ([tab, tabCfg]) => {
+            const control = tabCfg.controls?.refmods;
+            if (!tabCfg.api || !control) {
+                return [];
+            }
+            return [
+                {
+                    tab,
+                    api: read(`public/${tabCfg.api}`) as Workflow,
+                    control,
+                },
+            ];
+        },
+    );
+
+    it('has tabs with refmods to check', () => {
+        expect(refModTabs.length).toBeGreaterThan(0);
+    });
+
+    it('the named conditioning node feeds the named consumer', () => {
+        const problems: string[] = [];
+        for (const { tab, api, control } of refModTabs) {
+            const { cond_node_id: cond, cond_consumer_node_id: consumer } =
+                control;
+            if (!cond || !consumer) {
+                problems.push(`${tab}: refmods needs cond_node_id and cond_consumer_node_id`);
+                continue;
+            }
+            if (!api[cond]) {
+                problems.push(`${tab}: refmods cond_node_id='${cond}' is not in the API`);
+            }
+            const node = api[consumer];
+            if (!node) {
+                problems.push(`${tab}: refmods cond_consumer_node_id='${consumer}' is not in the API`);
+                continue;
+            }
+            if (!isNodeRef(node.inputs.conditioning) || node.inputs.conditioning[0] !== cond) {
+                problems.push(
+                    `${tab}: refmods consumer '${consumer}' does not read conditioning from '${cond}'`,
                 );
             }
         }

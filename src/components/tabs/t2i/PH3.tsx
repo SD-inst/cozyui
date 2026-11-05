@@ -5,6 +5,7 @@ import { GridBottom, GridLeft, GridRight, Layout } from '../../controls/Layout';
 import { ImageResult } from '../../controls/ImageResult';
 import { LoraInput } from '../../controls/LoraInput';
 import { MiniMaxH3ResolutionSelector } from '../../controls/MiniMaxH3ResolutionSelector';
+import { ModArrayInput } from '../../controls/ModArrayInput';
 import { ModelSelectAutocomplete } from '../../controls/ModelSelectAutocomplete';
 import { PromptUpsampleToggle } from '../../controls/PromptUpsampleToggle';
 import { SamplerSelectInput } from '../../controls/SamplerSelectInput';
@@ -13,10 +14,14 @@ import { SliderInput } from '../../controls/SliderInput';
 import { TextInput } from '../../controls/TextInput';
 import { UpsampledPromptPanel } from '../../controls/UpsampledPromptPanel';
 import { WFTab } from '../../WFTab';
+import { useMiniMaxH3RefModHandler } from '../../../hooks/useMiniMaxH3RefModHandler';
+import { useRegisterHandler } from '../../contexts/TabContext';
 import { useTranslate } from '../../../i18n/I18nContext';
 
 const Content = () => {
     const tr = useTranslate();
+    const refModHandler = useMiniMaxH3RefModHandler();
+    useRegisterHandler({ name: 'refmods', handler: refModHandler });
     return (
         <Layout>
             <GridLeft>
@@ -25,6 +30,7 @@ const Content = () => {
                     name='prompt_upsample'
                     defaultValue={true}
                 />
+                <ModArrayInput name='refmods' max={8} />
                 <MiniMaxH3ResolutionSelector
                     name='aspect_ratio'
                     defaultValue='16:9 (Widescreen)'

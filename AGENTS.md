@@ -908,6 +908,16 @@ Why: with latent upscale active, the second sampler gets its own `BasicGuider` w
 
 Corollary for the model chain: insert accelerator LoRAs at the node's **consumers** (`turbo_model_node_ids`, e.g. `137`), not into the node's own input (`136`), so downstream branches can tap that node's output without them.
 
+### RefMods ride the native H3 reference path — P-H3 image included — IMPORTANT
+
+`useMiniMaxH3RefModHandler` inserts `MiniMaxH3RefModsLoader` → `MiniMaxH3RefModApply` and rewires the consumer's `conditioning`; it never touches the model, the VAE or the latent, so it applies to any H3 conditioning — the video tabs and the P-H3 image tabs alike (`cond_node_id`/`cond_consumer_node_id` are `26`/`7` in [p-h3_t2i.json](public/api/p-h3_t2i.json), `30`/`8` in [p-h3_i2i.json](public/api/p-h3_i2i.json)).
+
+Both sides speak one shape: core's `PH3ImageConditioning` puts its edit references in through `conditioning_set_values(cond, {"minimax_refs": …})` as `{"kind": "image", "latent_h", "latent_w", "latent"}` dicts, `MiniMaxH3RefModApply` appends to that same key with the blocks its `H3RefMod.ref_block()` builds, and `comfy/model_base.py` (`extra_conds`) folds `minimax_refs` into `minimax_payload["refs"]` for every `MiniMaxH3` model.
+
+A mod extracted by the RefMod Manager with the H3 **video** VAE therefore still fits an image run: `PH3ImageVAE` is `MiniMaxH3VideoVAE` with a single-frame decoder (`comfy/ldm/minimax/vae.py`), so the encoder — the only half extraction uses — and the 24-channel latent space are shared. There is no image-specific extraction path, and none is needed.
+
+Wiring a new tab is two config ids: `cond_node_id` (the conditioning node) and `cond_consumer_node_id` (the node reading it — the apply node is inserted only when that consumer's `conditioning` really points at the conditioning node, so a stale id silently drops every mod). `config.test.ts` asserts the pair for every tab that declares a `refmods` control.
+
 ### H3 latent anchors (latent keyframes via masked AV latent) — IMPORTANT
 
 The `latent` toggle next to `keyframe` on R2V references (`MiniMaxH3LatentAnchor.ts`) VAE-encodes an image/clip into the sampler's AV latent and freezes those slots with a nested `noise_mask` — unlike `MiniMaxH3AddGuide` (conditioning tokens re-injected every step), the sampler blends the anchor back every step, so the model never has to "understand" an end-clip it was not trained on.
