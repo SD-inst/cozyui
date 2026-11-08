@@ -940,6 +940,10 @@ Latent/mask plumbing facts (all verified against this ComfyUI):
 
 All tab forms use `react-hook-form` via `FormProvider`. The `WorkflowTabs` component creates a single form per tab and all controls subscribe via `Controller` or `useController`.
 
+### Props a MUI text field does not know reach the wrapper `<div>` — IMPORTANT
+
+`TextField` spreads every prop it does not recognise onto its root `<div>`, not onto the `<input>`/`<textarea>` — that includes `onKeyDown` and the `onChange`/`ref` pair `register()` returns. Key events still get there (they bubble), so a handler may test `e.key`; but `e.currentTarget` is the wrapper, so `e.currentTarget.value` and `.selectionStart` are `undefined`, and MUI types the handler `KeyboardEventHandler<HTMLDivElement>` to say exactly that. The element itself comes from the `inputRef` prop — which is what the caret-preserving edits in [`PromptInput`](src/components/controls/PromptInput.tsx) and [`ChatComponent`](src/components/chat/ChatComponent.tsx) use: write the value with `setValue(name, text)`, then restore the caret with `inputRef.current?.setSelectionRange(...)`. A key the browser already handles natively (a line break on Shift+Enter in a `<textarea>`) is best left alone: the native path keeps the caret and the undo history.
+
 ### Result Handling — results merge per node, leftovers are pruned when the run ends — IMPORTANT
 
 Results arrive via WebSocket and are filed **per producing node** at `s.tab.result[tabName][id][type]`; `useResult()` reads that path, and `ResultOverrideContext` overrides it (sending media between tabs, replaying history). A run executes its nodes one after another, so an intermediate result — a YuE2 ABC score, a P-H3 expanded prompt — must not disturb what is already on screen: nothing clears the tab at generation start, each node simply replaces its own key.

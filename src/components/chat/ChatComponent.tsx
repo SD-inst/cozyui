@@ -263,6 +263,16 @@ export const ChatComponent = ({
         );
     };
 
+    // Enter sends; Shift+Enter is left to the browser. A multiline TextField
+    // renders a real <textarea>, which inserts that line break on its own,
+    // caret and undo history intact. Nothing here may read `e.currentTarget`:
+    // MUI spreads these props onto the wrapper <div>, which has no `value`.
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
+            handleSubmit(e);
+        }
+    };
+
     const extractFirstMessageText = (content: string | ImagePart[]): string => {
         const text = Array.isArray(content)
             ? content.find((m) => m.type === 'text')?.text || ''
@@ -479,31 +489,7 @@ export const ChatComponent = ({
                                 size='small'
                                 inputRef={inputRef}
                                 multiline
-                                onKeyDown={(e) => {
-                                    if (
-                                        e.key === 'Enter' &&
-                                        !e.shiftKey &&
-                                        !e.ctrlKey
-                                    ) {
-                                        handleSubmit(e);
-                                    } else if (
-                                        e.key === 'Enter' &&
-                                        e.shiftKey &&
-                                        !e.ctrlKey
-                                    ) {
-                                        const input = e.currentTarget as
-                                            | HTMLInputElement
-                                            | HTMLTextAreaElement;
-                                        const start = input.selectionStart ?? 0;
-                                        const end = input.selectionEnd ?? 0;
-                                        const text = input.value;
-                                        const newText =
-                                            text.slice(0, start) +
-                                            '\n' +
-                                            text.slice(end);
-                                        form.setValue('input', newText);
-                                    }
-                                }}
+                                onKeyDown={handleKeyDown}
                             />
                             <Box
                                 sx={{
