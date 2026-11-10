@@ -121,9 +121,9 @@
   "9": {
     "inputs": {
       "double_layers": "",
-      "single_layers": "22",
+      "single_layers": "22, 24",
       "start_percent": 0,
-      "end_percent": 0.5,
+      "end_percent": 1,
       "model": [
         "1",
         0
