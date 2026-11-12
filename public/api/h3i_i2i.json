@@ -1,0 +1,260 @@
+{
+  "9": {
+    "inputs": {
+      "filename_prefix": [
+        "63",
+        0
+      ],
+      "images": [
+        "42",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "29": {
+    "inputs": {
+      "unet_name": "h3/minimax_h3_image_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "30": {
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "31": {
+    "inputs": {
+      "vae_name": "minimax_h3_image_vae_fp16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "32": {
+    "inputs": {
+      "prompt": [
+        "43",
+        0
+      ],
+      "width": [
+        "50",
+        0
+      ],
+      "height": [
+        "50",
+        1
+      ],
+      "clip": [
+        "30",
+        0
+      ],
+      "vae": [
+        "31",
+        0
+      ],
+      "images.image_0": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3ImageConditioning",
+    "_meta": {
+      "title": "MiniMax H3 Image Conditioning"
+    }
+  },
+  "65": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 6,
+      "denoise": 1,
+      "model": [
+        "29",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "Schedule: simple, 6 steps"
+    }
+  },
+  "66": {
+    "inputs": {
+      "noise_seed": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Noise"
+    }
+  },
+  "67": {
+    "inputs": {
+      "model": [
+        "29",
+        0
+      ],
+      "conditioning": [
+        "32",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "Guider (CFG 1)"
+    }
+  },
+  "68": {
+    "inputs": {
+      "eta": 1,
+      "s_noise": 0.9
+    },
+    "class_type": "SamplerEulerAncestral",
+    "_meta": {
+      "title": "Euler Ancestral (eta 1, s_noise 0.9)"
+    }
+  },
+  "69": {
+    "inputs": {
+      "noise": [
+        "66",
+        0
+      ],
+      "guider": [
+        "67",
+        0
+      ],
+      "sampler": [
+        "68",
+        0
+      ],
+      "sigmas": [
+        "65",
+        0
+      ],
+      "latent_image": [
+        "32",
+        1
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "Sampler"
+    }
+  },
+  "42": {
+    "inputs": {
+      "samples": [
+        "69",
+        0
+      ],
+      "vae": [
+        "31",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "43": {
+    "inputs": {
+      "value": "Prompt"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Text (user_prompt)"
+    }
+  },
+  "45": {
+    "inputs": {
+      "image": "vintage_yellow_taxi.png"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "48": {
+    "inputs": {
+      "resize_type": "scale to multiple",
+      "resize_type.multiple": 32,
+      "scale_method": "area",
+      "input": [
+        "56",
+        0
+      ]
+    },
+    "class_type": "ResizeImageMaskNode",
+    "_meta": {
+      "title": "Resize Image/Mask"
+    }
+  },
+  "50": {
+    "inputs": {
+      "image": [
+        "48",
+        0
+      ]
+    },
+    "class_type": "GetImageSize",
+    "_meta": {
+      "title": "Get Image Size"
+    }
+  },
+  "56": {
+    "inputs": {
+      "resize_type": "scale total pixels",
+      "resize_type.megapixels": 4,
+      "scale_method": "area",
+      "input": [
+        "45",
+        0
+      ]
+    },
+    "class_type": "ResizeImageMaskNode",
+    "_meta": {
+      "title": "Resize Image/Mask"
+    }
+  },
+  "63": {
+    "inputs": {
+      "prefix": "h3i_i2i_",
+      "suffix": "",
+      "input": [
+        "64",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "64": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Int"
+    }
+  }
+}

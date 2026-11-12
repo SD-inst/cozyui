@@ -532,6 +532,8 @@ Images use the standard format: `{ "type": "image_url", "image_url": { "url": "d
 
 - [`useMiniMaxH3FirstMessageTransform`](src/hooks/useMiniMaxH3FirstMessageTransform.ts) (T2V; also used for R2V): prepends `length=N`, `aspect=A:B` (from the `length` / `aspect_ratio` form fields), then `description=...`.
 - [`useMiniMaxH3I2VFirstMessageTransform`](src/hooks/useMiniMaxH3I2VFirstMessageTransform.ts) (I2V): same, plus `first_image=Picture 1` / `last_image=Picture 2` lines depending on which frame fields are filled (last-only → `last_image=Picture 1`).
+- [`useMiniMaxH3ImageFirstMessageTransform`](src/hooks/useMiniMaxH3ImageFirstMessageTransform.ts) (H3 Image): `aspect=A:B` from the resolution selector, then `description=...` — the caption is composed for the canvas it will be rendered on.
+- [`useMiniMaxH3ImageEditFirstMessageTransform`](src/hooks/useMiniMaxH3ImageEditFirstMessageTransform.ts) (H3 Image Edit): `edited_image=Picture 1` and `reference_images=Picture 2, ...` for the rows of the `images` array, then `description=...`. The numbering mirrors `ChatComponent`'s attachment filter (`skip_chat` and empty rows dropped) so a label names the thumbnail the model was actually given. With the custom-aspect toggle on, an `aspect=A:B` line says which canvas the result will be rendered on instead of the edited picture's.
 
 ### System Prompts (minimaxH3*)
 
@@ -539,7 +541,7 @@ Images use the standard format: `{ "type": "image_url", "image_url": { "url": "d
 - T2V: three inline blocks — `integrated_multimodal_description: ...`, `overall_soundscape: ...`, `non_diegetic_music: ...`.
 - I2V: a picture-instruction line, then the same three blocks.
 - R2V (full-reference mode): six sections, each with a header on its own line — `subject_definitions`, `summary`, `retention_analysis`, `detailed_description`, `overall_soundscape`, `non_diegetic_music`. Reference labels `<Subject N>`, `<Picture N>`, `<Video N>`, `<Audio N>` are numbered independently per category in attachment order. The output must enumerate assets fully (`<Picture 1>, <Picture 2>, ...`) — never ranges like "Pictures 1 to 4". Audio files are never attached to the message; `<Audio N>` labels are assigned from the user's text only.
-- Reference guides: `docs/VIDEO_PROMPT_WRITING_GUIDE_base_en.md` (shared shot/camera/speaker rules) and `docs/VIDEO_PROMPT_WRITING_GUIDE_ref_en.md` (full-reference mode).
+- H3 Image and H3 Image Edit (`minimaxH3Image.ts`, `minimaxH3ImageEdit.ts`): still-image caption prompts — picture prompts, not video ones, so no soundscape blocks and no dialogue tags. The caption and source-grounding rules are the model vendor's own wording; only the framing around them is the chat's: the first message carries `aspect=` or names the attached pictures, and the answer is one plain paragraph written straight into the prompt field.
 
 ### Chat system prompts are lazy chunks — IMPORTANT
 
@@ -918,6 +920,12 @@ A mod extracted by the RefMod Manager with the H3 **video** VAE therefore still 
 
 Wiring a new tab is two config ids: `cond_node_id` (the conditioning node) and `cond_consumer_node_id` (the node reading it — the apply node is inserted only when that consumer's `conditioning` really points at the conditioning node, so a stale id silently drops every mod). `config.test.ts` asserts the pair for every tab that declares a `refmods` control.
 
+### H3 Image Edit sizes the canvas, never the pictures — IMPORTANT
+
+[`applyH3IImages`](src/components/controls/H3IImagesHandler.ts) wires every uploaded picture of the H3 Image Edit array into `MiniMaxH3ImageConditioning` as a bare `LoadImage` (`images.image_0` is the edited one, the rest references), so the conditioning anchors the pixels the user uploaded. The tab's megapixel slider is not a resize of them: the `ResizeImageMaskNode` pair and the `GetImageSize` of [h3i_i2i.json](public/api/h3i_i2i.json) exist only to measure the canvas — their size is what feeds conditioning `width`/`height`, and the align node is what keeps that size a multiple of 32.
+
+`applyH3ICustomAspect` (control `custom_aspect`) replaces those two inputs with the outputs of a `ResolutionSelector` it inserts, and drops the measuring chain, which by then has no consumer left. The slider value feeds both paths: it is a direct control on the resize node, and the handler reads the same form field for the selector — one control, one value, whichever node ends up deciding the size. The aspect list is mounted only while the toggle is on, and the chat is told (`aspect=A:B` in the first message) because the edited picture no longer decides the shape the description is composed for.
+
 ### H3 latent anchors (latent keyframes via masked AV latent) — IMPORTANT
 
 The `latent` toggle next to `keyframe` on R2V references (`MiniMaxH3LatentAnchor.ts`) VAE-encodes an image/clip into the sampler's AV latent and freezes those slots with a nested `noise_mask` — unlike `MiniMaxH3AddGuide` (conditioning tokens re-injected every step), the sampler blends the anchor back every step, so the model never has to "understand" an end-clip it was not trained on.
@@ -1008,6 +1016,8 @@ Only leave `disableHoverListener`/`disableTouchListener` unset for genuine "help
 
 LoRA loading is configured via `handler_options.lora_params` in config. The system dynamically inserts LoRA loader nodes and connects them to the model pipeline.
 
+`output_node_ids` must name **every** node that reads the model: `insertNode` rewires each listed id to the same inserted loader, so a consumer left out keeps running the untouched weights. A modular sampler chain — `BasicScheduler` and `BasicGuider` both take the model, as in [`h3i_t2i.json`](public/api/h3i_t2i.json) and [`h3i_i2i.json`](public/api/h3i_i2i.json) — therefore lists both ids, where a single `KSampler` listed one.
+
 For tab-specific LoRA loaders (e.g., `NunchakuQwenImageLoraLoader`), use the `classNameOverride` prop on `LoraInput`:
 
 ```tsx
@@ -1065,6 +1075,7 @@ Where it's honored:
 
 **Compact vs. positional renumbering — pick per consumer and keep it internally consistent:**
 - **`refmods`** uses **compact** renumbering: `useMiniMaxH3RefModHandler` resolves the active mods to a list and fills loader slots `mod_1..mod_N` in order (no gaps), matching the compact `refmods=` line in chat.
+- **Image edit arrays** (`images` on P-H3 Edit and H3 Image Edit) use **compact** renumbering too: the conditioning slots and the `<Picture N>` labels in the prompt come from the same active-entry order, so a skipped row must close the gap ([`PH3ImagesHandler.ts`](src/components/controls/PH3ImagesHandler.ts), [`H3IImagesHandler.ts`](src/components/controls/H3IImagesHandler.ts)). On H3 Image Edit the chat numbers the same list by attachment order, so its `<Picture N>` matches the conditioning slot of that number only while a row is skipped for both consumers (`useMiniMaxH3ImageEditFirstMessageTransform` reads `skip_chat`, the handler reads `skip`).
 - **R2V reference arrays** (`ref_images`/`ref_videos`/`ref_audio`) use **positional** skip: the handler does `if (!v.image || v.skip) return;` keeping the original index and leaving the skipped slot unassigned. `collectKeyframeEntries` in [`src/components/controls/MiniMaxH3KeyframeHandler.ts`](src/components/controls/MiniMaxH3KeyframeHandler.ts) reads node inputs by **original** index, so positional is what keeps the keyframe collector aligned — do not switch these to compact renumbering without updating the collector.
 
 ### Drag-to-reorder list items (dnd-kit) — IMPORTANT

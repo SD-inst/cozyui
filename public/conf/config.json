@@ -2960,6 +2960,113 @@
                 "megapixels": 4
             }
         },
+        "H3 Image T2I": {
+            "api": "api/h3i_t2i.json",
+            "controls": {
+                "prompt": {
+                    "id": "23_24",
+                    "field": "value"
+                },
+                "aspect_ratio": {
+                    "id": "14",
+                    "field": "aspect_ratio"
+                },
+                "megapixels": {
+                    "id": "14",
+                    "field": "megapixels"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "23_1",
+                    "field": "unet_name"
+                },
+                "seed": {
+                    "id": "15",
+                    "field": "value"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["23_9", "23_11"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": [
+                {
+                    "id": "9",
+                    "type": "images"
+                }
+            ],
+            "defaults": {
+                "model": "h3/minimax_h3_image_pruned_int8_convrot.safetensors",
+                "aspect_ratio": "1:1 (Square)"
+            }
+        },
+        "H3 Image I2I": {
+            "api": "api/h3i_i2i.json",
+            "controls": {
+                "images": {
+                    "id": "handle",
+                    "image_node_id": "45",
+                    "cond_node_id": "32"
+                },
+                "prompt": {
+                    "id": "43",
+                    "field": "value"
+                },
+                "megapixels": {
+                    "id": "56",
+                    "field": "resize_type.megapixels"
+                },
+                "custom_aspect": {
+                    "id": "handle",
+                    "cond_node_id": "32",
+                    "megapixels_node_id": "56",
+                    "align_node_id": "48",
+                    "size_node_id": "50"
+                },
+                "model": {
+                    "id": "handle",
+                    "node_id": "29",
+                    "field": "unet_name"
+                },
+                "seed": {
+                    "id": "64",
+                    "field": "value"
+                },
+                "lora": {
+                    "id": "handle"
+                }
+            },
+            "handler_options": {
+                "lora_params": {
+                    "lora_input_name": "model",
+                    "api_input_name": "model",
+                    "output_node_ids": ["65", "67"],
+                    "output_idx": 0,
+                    "class_name": "LoraLoaderModelOnly",
+                    "strength_field_name": "strength_model",
+                    "name_field_name": "lora_name"
+                }
+            },
+            "result": [
+                {
+                    "id": "9",
+                    "type": "images"
+                }
+            ],
+            "defaults": {
+                "model": "h3/minimax_h3_image_pruned_int8_convrot.safetensors"
+            }
+        },
         "Chroma Upscale": {
             "api": "api/chroma_upscale.json",
             "controls": {

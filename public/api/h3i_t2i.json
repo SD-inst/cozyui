@@ -1,0 +1,216 @@
+{
+  "9": {
+    "inputs": {
+      "filename_prefix": [
+        "16",
+        0
+      ],
+      "images": [
+        "23_8",
+        0
+      ]
+    },
+    "class_type": "SaveImage",
+    "_meta": {
+      "title": "Save Image"
+    }
+  },
+  "14": {
+    "inputs": {
+      "aspect_ratio": "1:1 (Square)",
+      "megapixels": 4,
+      "multiple": 32
+    },
+    "class_type": "ResolutionSelector",
+    "_meta": {
+      "title": "Resolution Selector"
+    }
+  },
+  "15": {
+    "inputs": {
+      "value": 1024
+    },
+    "class_type": "PrimitiveInt",
+    "_meta": {
+      "title": "Seed"
+    }
+  },
+  "16": {
+    "inputs": {
+      "prefix": "h3i_t2i_",
+      "suffix": "",
+      "input": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "SomethingToString",
+    "_meta": {
+      "title": "Something To String"
+    }
+  },
+  "23_1": {
+    "inputs": {
+      "unet_name": "h3/minimax_h3_image_pruned_int8_convrot.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "23_2": {
+    "inputs": {
+      "clip_name": "qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors",
+      "type": "minimax",
+      "device": "default"
+    },
+    "class_type": "CLIPLoader",
+    "_meta": {
+      "title": "Load CLIP"
+    }
+  },
+  "23_3": {
+    "inputs": {
+      "vae_name": "minimax_h3_image_vae_fp16.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "23_24": {
+    "inputs": {
+      "value": "Prompt"
+    },
+    "class_type": "PrimitiveStringMultiline",
+    "_meta": {
+      "title": "Text (user_prompt)"
+    }
+  },
+  "23_5": {
+    "inputs": {
+      "prompt": [
+        "23_24",
+        0
+      ],
+      "width": [
+        "14",
+        0
+      ],
+      "height": [
+        "14",
+        1
+      ],
+      "clip": [
+        "23_2",
+        0
+      ],
+      "vae": [
+        "23_3",
+        0
+      ]
+    },
+    "class_type": "MiniMaxH3ImageConditioning",
+    "_meta": {
+      "title": "MiniMax H3 Image Conditioning"
+    }
+  },
+  "23_9": {
+    "inputs": {
+      "scheduler": "simple",
+      "steps": 6,
+      "denoise": 1,
+      "model": [
+        "23_1",
+        0
+      ]
+    },
+    "class_type": "BasicScheduler",
+    "_meta": {
+      "title": "Schedule: simple, 6 steps"
+    }
+  },
+  "23_10": {
+    "inputs": {
+      "noise_seed": [
+        "15",
+        0
+      ]
+    },
+    "class_type": "RandomNoise",
+    "_meta": {
+      "title": "Noise"
+    }
+  },
+  "23_11": {
+    "inputs": {
+      "model": [
+        "23_1",
+        0
+      ],
+      "conditioning": [
+        "23_5",
+        0
+      ]
+    },
+    "class_type": "BasicGuider",
+    "_meta": {
+      "title": "Guider (CFG 1)"
+    }
+  },
+  "23_12": {
+    "inputs": {
+      "eta": 1,
+      "s_noise": 0.9
+    },
+    "class_type": "SamplerEulerAncestral",
+    "_meta": {
+      "title": "Euler Ancestral (eta 1, s_noise 0.9)"
+    }
+  },
+  "23_13": {
+    "inputs": {
+      "noise": [
+        "23_10",
+        0
+      ],
+      "guider": [
+        "23_11",
+        0
+      ],
+      "sampler": [
+        "23_12",
+        0
+      ],
+      "sigmas": [
+        "23_9",
+        0
+      ],
+      "latent_image": [
+        "23_5",
+        1
+      ]
+    },
+    "class_type": "SamplerCustomAdvanced",
+    "_meta": {
+      "title": "Sampler"
+    }
+  },
+  "23_8": {
+    "inputs": {
+      "samples": [
+        "23_13",
+        0
+      ],
+      "vae": [
+        "23_3",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  }
+}

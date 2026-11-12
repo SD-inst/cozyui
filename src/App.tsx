@@ -31,6 +31,8 @@ import { Krea2Tab } from './components/tabs/t2i/Krea2';
 import { MossImageTab } from './components/tabs/t2i/MossImage';
 import { PH3Tab } from './components/tabs/t2i/PH3';
 import { PH3EditTab } from './components/tabs/i2i/PH3Edit';
+import { H3ImageTab } from './components/tabs/t2i/H3Image';
+import { H3ImageEditTab } from './components/tabs/i2i/H3ImageEdit';
 import { HiDreamO1Tab } from './components/tabs/i2i/HiDreamO1';
 import { Hunyan15I2VTab } from './components/tabs/i2v/Hunyuan15I2V';
 import { Hunyan15T2VTab } from './components/tabs/t2v/Hunyuan15T2V';
@@ -120,6 +122,7 @@ function App() {
                                 {Krea2Tab}
                                 {MossImageTab}
                                 {PH3Tab}
+                                {H3ImageTab}
                                 {SDTab}
                                 {ChromaTab}
                                 {AnimaTab}
@@ -130,6 +133,7 @@ function App() {
                                 {QwenImage21Tab}
                                 {Flux2KleinImageEditTab}
                                 {PH3EditTab}
+                                {H3ImageEditTab}
                                 {WanI2VITTab}
                                 {LTX2I2VTab}
                                 {LTX23I2VTab}

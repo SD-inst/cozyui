@@ -38,10 +38,12 @@ This is a yet another frontend for ComfyUI to make it actually not so painful to
         - Anima
         - Krea2
         - P-H3 (with reference mods)
+        - H3 Image
     - I2I
         - Flux Kontext
         - Qwen Image Edit
         - P-H3 Edit (multi-reference edit, with reference mods)
+        - H3 Image Edit (up to 16 reference images)
     - Postprocessing
         - Chroma upscale
         - SD Upscale

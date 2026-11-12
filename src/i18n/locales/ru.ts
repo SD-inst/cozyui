@@ -77,6 +77,8 @@ const translation = {
         edit_images: 'картинки — первая правится',
         picture_numbering_note:
             'апсемплер видит картинки как <Picture 1>, <Picture 2>… — так же к ним обращаться в запросе',
+        chat_picture_numbering_note:
+            'и чат, и модель видят картинки как <Picture 1>, <Picture 2>… — первая из них правится, так же к ним и обращайтесь в запросе',
         drop_files_here: 'Перетащите файлы сюда...',
         drop_files_desc: 'Перетащите файлы сюда или кликните для выбора файлов',
         drop_to_add: 'Отпустите, чтобы добавить',
@@ -396,6 +398,9 @@ const translation = {
         upsampled_prompt_use: 'использовать как промпт',
         text_result_empty: 'текста пока нет',
         steps_fixed_note: 'шаги фиксированы сигмами модели',
+        aspect_follows_input_note:
+            'пропорции результата берутся с редактируемой картинки, мегапиксели задают разрешение',
+        custom_aspect: 'свои пропорции',
     },
     settings: {
         select_language: 'Выбор языка',

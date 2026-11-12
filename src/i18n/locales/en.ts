@@ -77,6 +77,8 @@ const translation = {
         edit_images: 'images — the first one gets edited',
         picture_numbering_note:
             'the upsampler sees the images as <Picture 1>, <Picture 2>… — address them like that in the request',
+        chat_picture_numbering_note:
+            'the chat and the model both see the images as <Picture 1>, <Picture 2>… — the first one is the picture being edited, address them like that in the request',
         drop_files_here: 'Drop the files here...',
         drop_files_desc:
             "Drag'n'drop some files here, or click to select files",
@@ -397,6 +399,9 @@ const translation = {
         upsampled_prompt_use: 'Use as prompt',
         text_result_empty: 'No text yet',
         steps_fixed_note: 'steps are fixed by the model sigmas',
+        aspect_follows_input_note:
+            'the result keeps the aspect ratio of the edited image, megapixels set its resolution',
+        custom_aspect: 'custom aspect ratio',
     },
     settings: {
         select_language: 'Select language',
